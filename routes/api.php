@@ -3,8 +3,8 @@
 use App\Http\Controllers\ClientController;
 use App\Http\Controllers\InstallationController;
 // use App\Http\Controllers\TelegramBotController;
+use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Log;
-use Illuminate\Support\Facades\Request;
 use Illuminate\Support\Facades\Route;
 
 Route::group(['prefix' => 'api'], function () {
@@ -26,8 +26,9 @@ Route::group(['prefix' => 'api'], function () {
 });
 
 // Route::post('/telegram/webhook', [TelegramBotController::class, 'handle']);
+
 Route::post('/telegram/webhook', function (Request $request) {
-    Log::info('Requête Telegram Webhook reçue', $request->all());
+    Log::info('Requête Telegram Webhook reçue', ['data' => $request->all()]);
 
     return response()->json(['status' => 'ok']);
 });
