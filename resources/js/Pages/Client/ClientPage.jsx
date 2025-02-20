@@ -16,22 +16,18 @@ const ClientPage = () => {
     const [openFormulaire, setOpenFormulaire] = useState(false);
     const [currentPage, setCurrentPage] = useState(1);
     const [clients, setClients] = useState([]);
+    const [filteredData, setFilteredData] = useState([]);
     const [dataToEdit, setDataToEdit] = useState({});
     const [suppression, setSuppression] = useState({
         open: false,
         message: '',
         id: 0,
     });
-    const [filteredData, setFilteredData] = useState([]);
     const [alert, setAlert] = useState({
         open: false,
         message: '',
         type: 'success'
     });
-
-    const handleNewClient = () => {
-        setOpenFormulaire(true);
-    };
 
     const fetchClients = async () => {
         const data = await getClients();
@@ -69,7 +65,20 @@ const ClientPage = () => {
         setFilteredData(filteredData);
     };
 
-    const headers = ['ID', 'Nom', 'Prénom', 'Téléphone', 'Localisation', 'Surface cultivée', 'Type d\'activité agricole'];
+    const handleNewClient = () => {
+        setOpenFormulaire(true);
+    };
+
+    const headers = [
+        { key: 'id', label: 'ID' },
+        { key: 'nom', label: 'Nom' },
+        { key: 'prenom', label: 'Prénom' },
+        { key: 'telephone', label: 'Téléphone' },
+        { key: 'localisation', label: 'Localisation' },
+        { key: 'surface_cultivee', label: 'Surface cultivée (ha)' },
+        { key: 'type_activite_agricole', label: 'Type d\'activité agricole' },
+    ];
+
     const actions = [
         {
             label: <FaEye className="text-base" />,
@@ -91,15 +100,15 @@ const ClientPage = () => {
         },
     ];
 
-    const editItem = (item) => {
-        setDataToEdit(item);
-        setOpenFormulaire(true);
-    }
-
     const onCloseFormulaire = (message) => {
         fetchClients();
         message && setAlert({ ...alert, message, open: true });
         setDataToEdit({});
+    }
+
+    const editItem = (item) => {
+        setDataToEdit(item);
+        setOpenFormulaire(true);
     }
 
     const handleDelete = (item) => {
@@ -115,6 +124,7 @@ const ClientPage = () => {
         setAlert({ ...alert, message, open: true });
         setSuppression({ ...suppression, open: false, id: 0 });
         fetchClients();
+        setCurrentPage(1);
     };
 
     const ShowDetail = async (id) => {
@@ -157,7 +167,7 @@ const ClientPage = () => {
                 <DataTable
                     headers={headers}
                     rows={filteredData}
-                    itemsPerPage={5}
+                    itemsPerPage={10}
                     actions={actions}
                     className="mt-4"
                     currentPage={currentPage}

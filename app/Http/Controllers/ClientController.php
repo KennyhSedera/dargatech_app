@@ -1,9 +1,8 @@
 <?php
 namespace App\Http\Controllers;
 
+use App\Http\Requests\ClientRequest;
 use App\Models\Client;
-use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Validator;
 
 class ClientController extends Controller
 {
@@ -48,35 +47,14 @@ class ClientController extends Controller
      * @param  \Illuminate\Http\Request  $request
      * @return \Illuminate\Http\Response
      */
-    public function store(Request $request)
+
+    public function store(ClientRequest $request)
     {
-        $validator = Validator::make($request->all(), [
-            'nom'                    => 'required|string|max:255',
-            'prenom'                 => 'required|string|max:255',
-            'telephone'              => 'required|string|max:20',
-            'localisation'           => 'required|string|max:255',
-            'surface_cultivee'       => 'required|numeric|min:0',
-            'type_activite_agricole' => 'required|string|max:255',
-        ]);
-
-        if ($validator->fails()) {
-            return response()->json([
-                'errors' => $validator->errors(),
-            ], 422);
-        }
-
-        $client = Client::create([
-            'nom'                    => $request->nom,
-            'prenom'                 => $request->prenom,
-            'telephone'              => $request->telephone,
-            'localisation'           => $request->localisation,
-            'surface_cultivee'       => $request->surface_cultivee,
-            'type_activite_agricole' => $request->type_activite_agricole,
-        ]);
+        Client::create($request->validated());
 
         return response()->json([
             'message' => 'Client créé avec succès !',
-            'client'  => $client,
+            'success' => true,
         ], 201);
     }
 
@@ -87,7 +65,7 @@ class ClientController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function update(Request $request, $id)
+    public function update(ClientRequest $request, $id)
     {
         $client = Client::find($id);
 
@@ -97,29 +75,7 @@ class ClientController extends Controller
             ], 404);
         }
 
-        $validator = Validator::make($request->all(), [
-            'nom'                    => 'sometimes|string|max:255',
-            'prenom'                 => 'sometimes|string|max:255',
-            'telephone'              => 'sometimes|string|max:20',
-            'localisation'           => 'sometimes|string|max:255',
-            'surface_cultivee'       => 'sometimes|numeric|min:0',
-            'type_activite_agricole' => 'sometimes|string|max:255',
-        ]);
-
-        if ($validator->fails()) {
-            return response()->json([
-                'errors' => $validator->errors(),
-            ], 422);
-        }
-
-        $client->update($request->only([
-            'nom',
-            'prenom',
-            'telephone',
-            'localisation',
-            'surface_cultivee',
-            'type_activite_agricole',
-        ]));
+        $client->update($request->validated());
 
         return response()->json([
             'message' => 'Client mis à jour avec succès !',

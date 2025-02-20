@@ -1,11 +1,11 @@
 import React, { useEffect, useState } from 'react';
 import Modal from '../Modal';
-import TextInput from '../TextInput';
-import InputLabel from '../InputLabel';
-import InputError from '../InputError';
+import TextInput from '../inputs/TextInput';
+import InputLabel from '../inputs/InputLabel';
+import InputError from '../inputs/InputError';
 import { useForm } from '@inertiajs/react';
-import validateForm from './validateForm';
 import { createClients, updateClients } from '@/Services/clientService';
+import { validateFormClient } from './validateForm';
 
 const FormulaireClient = ({
     open = true,
@@ -15,8 +15,9 @@ const FormulaireClient = ({
 }) => {
     const [btnTitle, setBtnTitle] = useState('Enregistrer');
     const [validationErrors, setValidationErrors] = useState({});
+    const [load, setLoad] = useState(false);
 
-    const { data, setData, post, put, processing, errors, reset } = useForm({
+    const { data, setData, errors, reset } = useForm({
         nom: '',
         prenom: '',
         telephone: '',
@@ -55,10 +56,12 @@ const FormulaireClient = ({
 
     const submit = async () => {
 
-        if (!validateForm(data, setValidationErrors)) {
+        if (!validateFormClient(data, setValidationErrors)) {
             return;
         }
 
+        setLoad(true);
+        setBtnTitle('Loanding ...');
         if (btnTitle === 'Enregistrer') {
             const { message } = await createClients(data);
             onClose(message);
@@ -146,7 +149,7 @@ const FormulaireClient = ({
                     <InputError message={validationErrors.type_activite_agricole || errors.type_activite_agricole} className="mt-2" />
                 </div>
                 <div>
-                    <InputLabel htmlFor="surface_cultivee" value="Surface cultivée" />
+                    <InputLabel htmlFor="surface_cultivee" value="Surface cultivée (en ha)" />
                     <TextInput
                         id="surface_cultivee"
                         name="surface_cultivee"
@@ -169,8 +172,8 @@ const FormulaireClient = ({
                 </button>
                 <button
                     type="submit"
-                    className='rounded-md py-1 px-4 bg-blue-500 text-white'
-                    disabled={processing}
+                    className={`disabled:cursor-not-allowed rounded-md py-1 px-4 bg-blue-500 text-white ${load && 'opacity-25'}`}
+                    disabled={load}
                     onClick={submit}
                 >
                     {btnTitle}

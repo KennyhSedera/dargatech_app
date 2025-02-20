@@ -1,5 +1,5 @@
 import React from 'react'
-import Dropdown from './Dropdown';
+import Dropdown from '../inputs/Dropdown';
 import { TbBellFilled } from 'react-icons/tb';
 import { usePage } from '@inertiajs/react';
 import { formatRelativeDate } from '@/hooks/fomatDate';

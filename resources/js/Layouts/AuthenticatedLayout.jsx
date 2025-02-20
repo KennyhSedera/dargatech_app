@@ -1,12 +1,12 @@
-import NavLinkIcon from '@/Components/NavLinkIcon';
-import NotificationDropdown from '@/Components/NotificationDropdown';
-import ResponsiveNavLink from '@/Components/ResponsiveNavLink';
-import ThemeDropdown from '@/Components/ThemeDropdown';
-import UserDropdown from '@/Components/UserDropdown';
+import NavLinkIcon from '@/Components/nav/NavLinkIcon';
+import NotificationDropdown from '@/Components/nav/NotificationDropdown';
+import ResponsiveNavLink from '@/Components/nav/ResponsiveNavLink';
+import ThemeDropdown from '@/Components/nav/ThemeDropdown';
+import UserDropdown from '@/Components/nav/UserDropdown';
 import sidebarPages, { logo, titre } from '@/constant';
 import { Link, usePage } from '@inertiajs/react';
 import { useState } from 'react';
-import { MdSettings } from 'react-icons/md';
+import { FaTelegramPlane } from 'react-icons/fa';
 
 export default function AuthenticatedLayout({ children }) {
     const user = usePage().props.auth.user;
@@ -42,11 +42,11 @@ export default function AuthenticatedLayout({ children }) {
 
                             <div className="hidden sm:ms-6 sm:flex sm:items-center gap-2">
                                 <Link
-                                    href='parametres'
+                                    href='telegram'
                                     type="button"
                                     className="w-9 h-9 flex items-center rounded-full justify-center bg-gray-200 dark:bg-gray-900"
                                 >
-                                    <MdSettings />
+                                    <FaTelegramPlane />
                                 </Link>
                                 <NotificationDropdown />
                                 <ThemeDropdown />

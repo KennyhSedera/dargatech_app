@@ -47,5 +47,9 @@ Route::get('/parametres', function () {
     return Inertia::render('SettingPage');
 })->middleware(['auth', 'verified'])->name('parametres');
 
+Route::get('/telegram', function () {
+    return Inertia::render('Bot/ChatBot');
+})->middleware(['auth', 'verified'])->name('telegram');
+
 require __DIR__ . '/auth.php';
 require __DIR__ . '/api.php';

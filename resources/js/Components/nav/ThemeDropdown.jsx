@@ -1,5 +1,5 @@
-import React, { useEffect, useState } from 'react'
-import Dropdown from './Dropdown'
+import React, { useState } from 'react'
+import Dropdown from '../inputs/Dropdown'
 import { RiMoonClearFill } from 'react-icons/ri'
 import useTheme from '@/hooks/useTheme';
 import { MdMonitor } from 'react-icons/md';

@@ -1,10 +1,9 @@
 import React from 'react'
-import Dropdown from './Dropdown';
-import { FaUserCircle } from 'react-icons/fa';
 import { MdLogout } from 'react-icons/md';
 import { TbPointFilled, TbUserSquareRounded } from 'react-icons/tb';
 import { usePage } from '@inertiajs/react';
 import { getInitials } from '@/hooks/letterInWord';
+import Dropdown from '../inputs/Dropdown';
 
 const UserDropdown = () => {
     const user = usePage().props.auth.user;

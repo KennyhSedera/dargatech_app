@@ -21,4 +21,14 @@ class Client extends Model
         'surface_cultivee',
         'type_activite_agricole',
     ];
+
+    public function installations()
+    {
+        return $this->hasMany(Installation::class, 'client_id');
+    }
+
+    public function paiement()
+    {
+        return $this->hasMany(Paiement::class, 'client_id');
+    }
 }

@@ -4,10 +4,11 @@ export default function DataTable({
     headers,
     rows,
     className = '',
-    itemsPerPage = 10,
+    itemsPerPage = 5,
     actions = [],
-    currentPage = 1, // Page courante passée depuis le parent
-    onPageChange = () => { }, // Fonction pour changer la page
+    currentPage = 1,
+    onPageChange = () => { },
+    masqueColumns = [],
 }) {
     const indexOfLastItem = currentPage * itemsPerPage;
     const indexOfFirstItem = indexOfLastItem - itemsPerPage;
@@ -16,7 +17,7 @@ export default function DataTable({
     const totalPages = Math.ceil(rows.length / itemsPerPage);
 
     const paginate = (pageNumber) => {
-        onPageChange(pageNumber); // Appeler la fonction pour mettre à jour la page courante
+        onPageChange(pageNumber);
     };
 
     return (
@@ -25,14 +26,19 @@ export default function DataTable({
                 <table className="min-w-full bg-white dark:bg-gray-800">
                     <thead className="bg-gray-50 dark:bg-gray-700">
                         <tr>
-                            {headers.map((header, index) => (
-                                <th
-                                    key={index}
-                                    className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider dark:text-gray-300"
-                                >
-                                    {header}
-                                </th>
-                            ))}
+                            {headers.map((header, index) => {
+                                if (!masqueColumns.includes(header.key)) {
+                                    return (
+                                        <th
+                                            key={index}
+                                            className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider dark:text-gray-300"
+                                        >
+                                            {header.label}
+                                        </th>
+                                    );
+                                }
+                                return null;
+                            })}
                             {actions.length > 0 && (
                                 <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider dark:text-gray-300">
                                     Actions
@@ -43,26 +49,25 @@ export default function DataTable({
 
                     <tbody className="divide-y divide-gray-200 dark:divide-gray-700">
                         {currentRows.map((row, rowIndex) => (
-                            <tr
-                                key={rowIndex}
-                                className="hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors"
-                            >
-                                {Object.keys(row).map((key, cellIndex) => (
-                                    <td
-                                        key={cellIndex}
-                                        className="px-2 py-1 whitespace-nowrap text-sm text-gray-900 dark:text-gray-200"
-                                    >
-                                        {row[key]}
-                                    </td>
-                                ))}
+                            <tr key={rowIndex} className="hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors">
+                                {headers.map((header, cellIndex) => {
+                                    if (!masqueColumns.includes(header.key)) {
+                                        return (
+                                            <td key={cellIndex} className="px-4 py-2 whitespace-nowrap text-sm text-gray-900 dark:text-gray-200">
+                                                {header.customRender ? header.customRender(row[header.key]) : row[header.key]}
+                                            </td>
+                                        );
+                                    }
+                                    return null;
+                                })}
                                 {actions.length > 0 && (
-                                    <td className="px-2 py-1 whitespace-nowrap text-sm text-gray-900 dark:text-gray-200">
+                                    <td className="px-4 py-2 whitespace-nowrap text-sm text-gray-900 dark:text-gray-200">
                                         <div className="flex space-x-2">
                                             {actions.map((action, index) => (
                                                 <button
                                                     key={index}
                                                     onClick={() => action.handler(row)}
-                                                    className={`px-1 py-1 ${action.color} rounded-md hover:${action.hoverColor} transition`}
+                                                    className={`px-3 py-1 ${action.color} rounded-md hover:${action.hoverColor} transition`}
                                                 >
                                                     {action.label}
                                                 </button>
