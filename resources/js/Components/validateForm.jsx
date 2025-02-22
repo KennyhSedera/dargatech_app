@@ -62,6 +62,85 @@ export const validateFormInstalation = (data, setValidationErrors) => {
 export const validateFormPaiement = (data, setValidationErrors) => {
     const errors = {};
 
+    if (data.client_id <= 0) {
+        errors.client_id = 'Le nom client est obligatoire.';
+    }
+    if (!data.montant.trim()) {
+        errors.montant = 'Le montant est obligatoire.';
+    } else if (isNaN(data.montant) || data.montant <= 0) {
+        errors.montant = 'Le montant doit être un nombre positif.';
+    }
+    if (data.mode_paiement <= 0) {
+        errors.mode_paiement = 'La mode de paiment est obligatoire.';
+    }
+    if (!data.periode_couverte.trim()) {
+        errors.periode_couverte = 'La période couverte est obligatoire.';
+    }
+
+    setValidationErrors(errors);
+    return Object.keys(errors).length === 0;
+}
+
+
+export const validateFormTypePaiement = (data, setValidationErrors) => {
+    const errors = {};
+
+    if (!data.name.trim()) {
+        errors.name = 'Le nom du type est obligatoire.';
+    }
+    if (data.logo_path === null) {
+        errors.logo_path = 'Logo est obligatoire.';
+    }
+
+    setValidationErrors(errors);
+    return Object.keys(errors).length === 0;
+}
+
+export const validateFormMaintenance = (data, setValidationErrors) => {
+    const errors = {};
+
+    if (data.installation_id <= 0) {
+        errors.installation_id = 'Le nom client avec date d\'installation est obligatoire.';
+    }
+    if (!data.description_probleme.trim()) {
+        errors.description_probleme = 'La description du problème est obligatoire.';
+    }
+    if (!data.solutions_apportees.trim()) {
+        errors.solutions_apportees = 'La solutions apportées est obligatoire.';
+    }
+    if (data.technicien <= 0) {
+        errors.technicien = 'Le nom du technicien est obligatoire.';
+    }
+    if (!data.duree_intervention.toString().trim()) {
+        errors.duree_intervention = 'La durée de l\'intervention est obligatoire.';
+    } else if (isNaN(data.duree_intervention) || data.duree_intervention <= 0) {
+        errors.duree_intervention = 'La durée de l\'intervention doit être un nombre positif.';
+    }
+
+    setValidationErrors(errors);
+    return Object.keys(errors).length === 0;
+}
+
+export const validateFormTechnicien = (data, setValidationErrors) => {
+    const errors = {};
+
+    if (!data.name.trim()) {
+        errors.name = 'Le nom est obligatoire.';
+    }
+    if (!data.email.trim()) {
+        errors.email = 'L\' adresse email est obligatoire.';
+    }
+    if (!data.adress.trim()) {
+        errors.adress = 'L\'adresse est obligatoire.';
+    }
+    if (!data.speciality.trim()) {
+        errors.speciality = 'La spécialité est obligatoire.';
+    }
+    if (!data.contact.trim()) {
+        errors.contact = 'Le contact est obligatoire.';
+    } else if (!/^\d{10}$/.test(data.contact)) {
+        errors.contact = 'Le contact doit contenir 10 chiffres.';
+    }
     setValidationErrors(errors);
     return Object.keys(errors).length === 0;
 }

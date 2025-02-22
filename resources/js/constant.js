@@ -1,22 +1,18 @@
 import moment from "moment";
-import {
-    MdHome,
-    MdPayment,
-    MdBuild,
-    MdPeople,
-    MdAssessment,
-    // MdSettings,
-    MdSolarPower
-} from "react-icons/md";
+import { HiMiniUsers, HiHome } from "react-icons/hi2";
+import { IoBuild } from "react-icons/io5";
+import { GiOilPump } from "react-icons/gi";
+import { FaMoneyCheckDollar, FaPersonDigging } from "react-icons/fa6";
+import { ImCogs } from "react-icons/im";
 
 const sidebarPages = [
-    { route: "dashboard", label: "Tableau de bord", icon: MdHome },
-    { route: "clients", label: "Clients", icon: MdPeople },
-    { route: "pompes", label: "Pompes Solaires", icon: MdSolarPower },
-    { route: "installations", label: "Installations", icon: MdBuild },
-    { route: "paiements", label: "Paiements", icon: MdPayment },
-    { route: "interventions", label: "Interventions", icon: MdAssessment },
-    // { route: "parametres", label: "Paramètres", icon: MdSettings },
+    { route: "dashboard", label: "Tableau de bord", icon: HiHome },
+    { route: "clients", label: "Clients", icon: HiMiniUsers },
+    { route: "technicien", label: "Techniciens", icon: FaPersonDigging },
+    { route: "pompes", label: "Matériels", icon: GiOilPump },
+    { route: "installations", label: "Installations", icon: IoBuild },
+    { route: "interventions", label: "Maintenances", icon: ImCogs },
+    { route: "paiements", label: "Paiements", icon: FaMoneyCheckDollar },
 ];
 
 export default sidebarPages;
@@ -49,3 +45,20 @@ export const formatDate = (date) => {
 
     return new Date(date).toLocaleDateString('fr-CA');
 };
+
+export const generateRandomWord = (length = 8) => {
+    const characters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
+    let randomWord = '';
+    for (let i = 0; i < length; i++) {
+        const randomIndex = Math.floor(Math.random() * characters.length);
+        randomWord += characters[randomIndex];
+    }
+    return randomWord;
+}
+
+export function incrementCodeInstallation(code) {
+    const prefix = code.slice(0, 1);
+    const number = parseInt(code.slice(1), 10);
+    const newNumber = (number + 1).toString().padStart(4, '0');
+    return `${prefix}${newNumber}`;
+}

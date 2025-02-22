@@ -22,6 +22,7 @@ class InstallationRequest extends FormRequest
     {
         return [
             'client_id'         => 'required|numeric',
+            'code_installation' => 'required|string',
             'date_installation' => 'required|date',
             'puissance_pompe'   => 'required|numeric',
             'profondeur_forage' => 'required|numeric',

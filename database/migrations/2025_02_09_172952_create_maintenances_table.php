@@ -18,8 +18,8 @@ return new class extends Migration
             $table->text('description_probleme');
             $table->text('solutions_apportees');
             $table->date('date_intervention');
-            $table->time('duree_intervention');
-            $table->string('technicien');
+            $table->integer('duree_intervention');
+            $table->foreignId('technicien')->constrained()->onDelete('cascade');
             $table->timestamps();
         });
     }

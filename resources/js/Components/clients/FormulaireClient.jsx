@@ -5,7 +5,7 @@ import InputLabel from '../inputs/InputLabel';
 import InputError from '../inputs/InputError';
 import { useForm } from '@inertiajs/react';
 import { createClients, updateClients } from '@/Services/clientService';
-import { validateFormClient } from './validateForm';
+import { validateFormClient } from '../validateForm';
 
 const FormulaireClient = ({
     open = true,
@@ -36,6 +36,7 @@ const FormulaireClient = ({
         reset();
         setBtnTitle('Enregistrer');
         setValidationErrors({});
+        setLoad(false);
     };
 
     useEffect(() => {
@@ -62,12 +63,19 @@ const FormulaireClient = ({
 
         setLoad(true);
         setBtnTitle('Loanding ...');
-        if (btnTitle === 'Enregistrer') {
-            const { message } = await createClients(data);
+        try {
+            let message;
+            if (btnTitle === 'Enregistrer') {
+                ({ message } = await createClients(data));
+            } else {
+                ({ message } = await updateClients(dataModify.id, data));
+            }
             onClose(message);
-        } else {
-            const { message } = await updateClients(dataModify.id, data);
-            onClose(message);
+        } catch (error) {
+            console.error('Error submitting payment:', error);
+        } finally {
+            setLoad(false);
+            setBtnTitle('Enregistrer');
         }
     };
 

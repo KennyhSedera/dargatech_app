@@ -22,25 +22,22 @@ export default function DataTable({
 
     return (
         <div>
-            <div className={`overflow-x-auto rounded-lg shadow-sm ${className}`}>
-                <table className="min-w-full bg-white dark:bg-gray-800">
+            <div className={`overflow-auto rounded-lg shadow-sm ${className}`}>
+                <table className="min-w-full w-full table-auto bg-white dark:bg-gray-800">
                     <thead className="bg-gray-50 dark:bg-gray-700">
                         <tr>
-                            {headers.map((header, index) => {
-                                if (!masqueColumns.includes(header.key)) {
-                                    return (
-                                        <th
-                                            key={index}
-                                            className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider dark:text-gray-300"
-                                        >
-                                            {header.label}
-                                        </th>
-                                    );
-                                }
-                                return null;
-                            })}
+                            {headers.map((header, index) => (
+                                !masqueColumns.includes(header.key) && (
+                                    <th
+                                        key={index}
+                                        className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider dark:text-gray-300"
+                                    >
+                                        {header.label}
+                                    </th>
+                                )
+                            ))}
                             {actions.length > 0 && (
-                                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider dark:text-gray-300">
+                                <th className="px-6 py-3 text-center text-xs font-medium text-gray-500 uppercase tracking-wider dark:text-gray-300">
                                     Actions
                                 </th>
                             )}
@@ -50,24 +47,21 @@ export default function DataTable({
                     <tbody className="divide-y divide-gray-200 dark:divide-gray-700">
                         {currentRows.map((row, rowIndex) => (
                             <tr key={rowIndex} className="hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors">
-                                {headers.map((header, cellIndex) => {
-                                    if (!masqueColumns.includes(header.key)) {
-                                        return (
-                                            <td key={cellIndex} className="px-4 py-2 whitespace-nowrap text-sm text-gray-900 dark:text-gray-200">
-                                                {header.customRender ? header.customRender(row[header.key]) : row[header.key]}
-                                            </td>
-                                        );
-                                    }
-                                    return null;
-                                })}
+                                {headers.map((header, cellIndex) => (
+                                    !masqueColumns.includes(header.key) && (
+                                        <td key={cellIndex} className="px-4 py-2 text-sm text-gray-900 dark:text-gray-200">
+                                            {header.customRender ? header.customRender(row[header.key]) : row[header.key]}
+                                        </td>
+                                    )
+                                ))}
                                 {actions.length > 0 && (
                                     <td className="px-4 py-2 whitespace-nowrap text-sm text-gray-900 dark:text-gray-200">
-                                        <div className="flex space-x-2">
+                                        <div className="flex flex-wrap gap-2 justify-center">
                                             {actions.map((action, index) => (
                                                 <button
                                                     key={index}
                                                     onClick={() => action.handler(row)}
-                                                    className={`px-3 py-1 ${action.color} rounded-md hover:${action.hoverColor} transition`}
+                                                    className={`${action.color} rounded-md hover:${action.hoverColor} transition`}
                                                 >
                                                     {action.label}
                                                 </button>
@@ -81,7 +75,7 @@ export default function DataTable({
                 </table>
             </div>
 
-            <div className="flex justify-between items-center mt-4">
+            <div className="flex flex-col sm:flex-row justify-between items-center mt-4 space-y-2 sm:space-y-0">
                 <div className="text-sm text-gray-700 dark:text-gray-300">
                     Page {currentPage} sur {totalPages}
                 </div>

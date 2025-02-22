@@ -36,7 +36,7 @@ Route::get('/installations', function () {
 })->middleware(['auth', 'verified'])->name('installations');
 
 Route::get('/paiements', function () {
-    return Inertia::render('PaiementPage');
+    return Inertia::render('Paiement/PaiementPage');
 })->middleware(['auth', 'verified'])->name('paiements');
 
 Route::get('/interventions', function () {
@@ -50,6 +50,10 @@ Route::get('/parametres', function () {
 Route::get('/telegram', function () {
     return Inertia::render('Bot/ChatBot');
 })->middleware(['auth', 'verified'])->name('telegram');
+
+Route::get('/technicien', function () {
+    return Inertia::render('Technicien');
+})->middleware(['auth', 'verified'])->name('technicien');
 
 require __DIR__ . '/auth.php';
 require __DIR__ . '/api.php';

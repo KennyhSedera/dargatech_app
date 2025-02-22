@@ -4,11 +4,11 @@ import TextInput from '../inputs/TextInput';
 import InputLabel from '../inputs/InputLabel';
 import { useForm } from '@inertiajs/react';
 import InputError from '../inputs/InputError';
-import { validateFormInstalation } from '../clients/validateForm';
-import { createinstallations, updateinstallations } from '@/Services/installationService';
+import { validateFormInstalation } from '../validateForm';
+import { createinstallations, getinstallations, updateinstallations } from '@/Services/installationService';
 import InputAutocomplete from '../inputs/InputAutocomplete ';
 import { getClients } from '@/Services/clientService';
-import { formatDate } from '@/constant';
+import { formatDate, incrementCodeInstallation } from '@/constant';
 
 const FormulaireInstallation = ({
     open = true,
@@ -27,15 +27,28 @@ const FormulaireInstallation = ({
         profondeur_forage: '',
         debit_nominal: '',
         surface_panneaux: '',
+        code_installation: '',
     });
 
     const getClient = async () => {
-        const { clients } = await getClients();
+        const [{ clients }, installation] = await Promise.all([getClients(), getinstallations()]);
         const clientFormat = clients.map(el => ({
             id: el.id,
             nom: el.nom + ' ' + el.prenom,
         }));
-        setClients(clientFormat)
+
+        const maxCode = installation.data.reduce((max, el) => {
+            const currentNumber = parseInt(el.code_installation.replace(/\D/g, ''), 10);
+            return currentNumber > max ? currentNumber : max;
+        }, 0);
+
+        const newCode = `${incrementCodeInstallation('I' + String(maxCode).padStart(4, '0'))}`;
+
+        setClients(clientFormat);
+        if (!dataModify.id) {
+            setData('code_installation', newCode);
+        }
+
     }
 
     const onClose = (message) => {
@@ -45,7 +58,15 @@ const FormulaireInstallation = ({
     };
 
     const clearForm = () => {
-        reset();
+        setData({
+            client_id: 0,
+            date_installation: new Date().toISOString().split('T')[0],
+            puissance_pompe: '',
+            profondeur_forage: '',
+            debit_nominal: '',
+            surface_panneaux: '',
+            code_installation: 'I0001',
+        });
         setLoad(false);
         setBtnTitle('Enregistrer');
         setValidationErrors({});
@@ -61,6 +82,7 @@ const FormulaireInstallation = ({
                 profondeur_forage: dataModify.profondeur_forage || '',
                 debit_nominal: dataModify.debit_nominal || '',
                 surface_panneaux: dataModify.surface_panneaux || '',
+                code_installation: dataModify.code_installation || '',
             });
             setBtnTitle('Modifier');
         } else {
@@ -108,7 +130,7 @@ const FormulaireInstallation = ({
                         data={clients}
                         className="block w-full mt-1"
                         onSelect={handleSelect}
-                        defaultValue={data.client_id}
+                        defaultValue={data.client_id ?? 0}
                     />
                     <InputError message={validationErrors.client_id || errors.client_id} className="mt-2" />
                 </div>
@@ -117,7 +139,7 @@ const FormulaireInstallation = ({
                     <TextInput
                         id="puissance_pompe"
                         name="puissance_pompe"
-                        value={data.puissance_pompe}
+                        value={data.puissance_pompe ?? 0}
                         className="block w-full mt-1"
                         autoComplete="puissance_pompe"
                         onChange={(e) => setData('puissance_pompe', e.target.value)}

@@ -31,7 +31,7 @@ const InstallationPage = () => {
     });
 
     const headers = [
-        { key: 'id', label: 'ID' },
+        { key: 'code_installation', label: 'Code' },
         { key: 'nom', label: 'Nom client' },
         { key: 'puissance_pompe', label: 'Puissance du pompe (W)' },
         { key: 'profondeur_forage', label: 'Profondeur du forage (m)' },
@@ -77,6 +77,7 @@ const InstallationPage = () => {
 
         const Installation = data.map(el => ({
             id: el.id,
+            code_installation: el.code_installation,
             client_id: el.client_id,
             nom: el.client.nom + ' ' + el.client.prenom,
             puissance_pompe: el.puissance_pompe,
@@ -102,6 +103,7 @@ const InstallationPage = () => {
         const filteredData = installations.filter(
             (el) =>
                 el.nom.toLowerCase().includes(value.toLowerCase()) ||
+                el.statuts.toLowerCase().includes(value.toLowerCase()) ||
                 el.date_installation.toString().toLowerCase().includes(value.toLowerCase())
         );
 

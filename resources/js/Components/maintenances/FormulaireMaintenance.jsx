@@ -9,6 +9,8 @@ import InputAutocomplete from '../inputs/InputAutocomplete ';
 import { formatdate, formatDate } from '@/constant';
 import { createmaintenances, updatemaintenances } from '@/Services/maintenanceService';
 import SelectInput from '../inputs/SelectInput';
+import { validateFormMaintenance } from '../validateForm';
+import { getTechniciens } from '@/Services/technicienService';
 
 const FormulaireMaintenance = ({
     open = true,
@@ -20,6 +22,7 @@ const FormulaireMaintenance = ({
     const [load, setLoad] = useState(false);
     const [validationErrors, setValidationErrors] = useState({});
     const [installation, setInstallation] = useState([]);
+    const [technicien, settechnicien] = useState([]);
     const { data, setData, errors, reset } = useForm({
         installation_id: 0,
         date_intervention: new Date().toISOString().split('T')[0],
@@ -31,12 +34,17 @@ const FormulaireMaintenance = ({
     });
 
     const getInstallation = async () => {
-        const { data } = await getinstallations();
+        const [{ data }, technicien] = await Promise.all([getinstallations(), getTechniciens()]);
         const installationFormat = data.map(el => ({
             id: el.id,
-            nom: `${el.client?.nom} ${el.client?.prenom} le ${formatdate(el.date_intervention)}`,
+            nom: el.code_installation,
         }));
-        setInstallation(installationFormat)
+        const technicienformat = technicien?.data.map(el => ({
+            id: el.id,
+            nom: el.name
+        }));
+        settechnicien(technicienformat);
+        setInstallation(installationFormat);
     }
 
     const onClose = (message) => {
@@ -62,7 +70,7 @@ const FormulaireMaintenance = ({
                 description_probleme: dataModify.description_probleme || '',
                 solutions_apportees: dataModify.solutions_apportees || '',
                 duree_intervention: dataModify.duree_intervention || '',
-                technicien: dataModify.technicien || '',
+                technicien: dataModify.technicien_id || '',
             });
             setBtnTitle('Modifier');
         } else {
@@ -71,9 +79,9 @@ const FormulaireMaintenance = ({
     }, [dataModify, setData]);
 
     const submit = async () => {
-        // if (!validateFormInstalation(data, setValidationErrors)) {
-        //     return;
-        // }
+        if (!validateFormMaintenance(data, setValidationErrors)) {
+            return;
+        }
 
         setLoad(true);
         setBtnTitle('Chargement...');
@@ -81,8 +89,7 @@ const FormulaireMaintenance = ({
         try {
             let message;
             if (btnTitle === 'Enregistrer') {
-                const datas = await createmaintenances(data);
-                console.log(datas);
+                ({ message } = await createmaintenances(data));
             } else {
                 ({ message } = await updatemaintenances(dataModify.id, data));
             }
@@ -100,7 +107,7 @@ const FormulaireMaintenance = ({
     };
 
     const handleSelectTechnicien = (item) => {
-        setData('technicien', item.nom);
+        setData('technicien', item.id);
     };
 
     return (
@@ -110,7 +117,7 @@ const FormulaireMaintenance = ({
             </div>
             <form className='grid w-full grid-cols-1 gap-4 my-6 sm:grid-cols-2'>
                 <div>
-                    <InputLabel htmlFor="installation_id" value="Nom client sur l'installation avec date" />
+                    <InputLabel htmlFor="installation_id" value="Code d'instalation" />
                     <InputAutocomplete
                         data={installation}
                         className="block w-full mt-1"
@@ -179,10 +186,10 @@ const FormulaireMaintenance = ({
                 <div>
                     <InputLabel htmlFor="installation_id" value="Nom du technicien" />
                     <InputAutocomplete
-                        data={installation}
+                        data={technicien}
                         className="block w-full mt-1"
                         onSelect={handleSelectTechnicien}
-                        defaultValue={data.installation_id}
+                        defaultValue={data.technicien}
                     />
                     <InputError message={validationErrors.installation_id || errors.installation_id} className="mt-2" />
                 </div>

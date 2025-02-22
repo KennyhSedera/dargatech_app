@@ -45,7 +45,7 @@ const Snackbar = ({ message, type = 'info', duration = 3000, position = 'top-rig
 
     return (
         <div
-            className={`fixed ${getPositionStyle()} ${getTypeStyle()} px-6 py-3 rounded-md shadow-lg transition-opacity duration-300`}
+            className={`fixed ${getPositionStyle()} ${getTypeStyle()} px-6 py-3 rounded-md shadow-lg transition-opacity duration-300 z-50`}
         >
             {message}
         </div>

@@ -1,7 +1,6 @@
 <?php
 namespace App\Http\Controllers;
 
-use App\Http\Requests\MaintenanceRequest;
 use App\Models\Maintenance;
 use Illuminate\Http\Request;
 
@@ -9,21 +8,20 @@ class MaintenanceController extends Controller
 {
     public function index()
     {
-        $data = Maintenance::all();
+        $data = Maintenance::with(['installation.client', 'technicien.profile'])->get();
 
         return response()->json(['data' => $data], 200);
     }
 
     public function store(Request $request)
     {
-
         $request->validate([
             'installation_id'      => 'required|exists:installations,id',
             'type_intervention'    => 'required|string',
             'description_probleme' => 'required|string',
             'solutions_apportees'  => 'required|string',
             'duree_intervention'   => 'required|numeric',
-            'technicien'           => 'required|string',
+            'technicien'           => 'required|numeric',
         ]);
 
         $maintenance = Maintenance::create($request->all());
@@ -36,28 +34,24 @@ class MaintenanceController extends Controller
 
     public function show($id)
     {
-        $data = Maintenance::find($id);
-
-        if (! $data) {
-            return response()->json([
-                'message' => 'Maintenance non trouvé.',
-            ], 404);
-        }
-
-        return response()->json([$data], 200);
+        $data = Maintenance::with(['installation.client', 'technicien.profile'])->findOrFail($id);
+        return response()->json(['data' => $data], 200);
     }
 
-    public function update(MaintenanceRequest $request, $id)
+    public function update(Request $request, $id)
     {
-        $data = Maintenance::find($id);
+        $data = Maintenance::findOrFail($id);
 
-        if (! $data) {
-            return response()->json([
-                'message' => 'Maintenance non trouvé.',
-            ], 404);
-        }
+        $request->validate([
+            'installation_id'      => 'required|exists:installations,id',
+            'type_intervention'    => 'required|string',
+            'description_probleme' => 'required|string',
+            'solutions_apportees'  => 'required|string',
+            'duree_intervention'   => 'required|numeric',
+            'technicien'           => 'required|numeric',
+        ]);
 
-        $data->update($request->validate());
+        $data->update($request->all());
 
         return response()->json([
             'message' => 'Maintenance modifié avec succès !',
@@ -67,15 +61,7 @@ class MaintenanceController extends Controller
 
     public function destroy($id)
     {
-        $data = Maintenance::find($id);
-
-        if (! $data) {
-            return response()->json([
-                'message' => 'Maintenance non trouvé.',
-            ], 404);
-        }
-
-        $data->delete();
+        Maintenance::findOrFail($id)->delete();
 
         return response()->json([
             'message' => 'Maintenance supprimé avec succès !',

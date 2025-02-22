@@ -27,4 +27,9 @@ class Maintenance extends Model
     {
         return $this->belongsTo(Installation::class, 'installation_id');
     }
+
+    public function technicien()
+    {
+        return $this->belongsTo(User::class, 'technicien');
+    }
 }

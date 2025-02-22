@@ -8,7 +8,7 @@ class MaintenanceRequest extends FormRequest
     /**
      * Determine if the user is authorized to make this request.
      */
-    public function authorize(): bool
+    public function authorize()
     {
         return true;
     }
@@ -18,15 +18,15 @@ class MaintenanceRequest extends FormRequest
      *
      * @return array<string, \Illuminate\Contracts\Validation\ValidationRule|array<mixed>|string>
      */
-    public function rules(): array
+    public function rules()
     {
         return [
-            'installation_id'      => 'required|numeric',
-            'type_intervention'    => 'required|string|max:255',
-            'description_probleme' => 'required|text',
-            'solutions_apportees'  => 'required|text',
-            'date_intervention'    => 'required|date',
-            'duree_intervention'   => 'required|numeric|min:1',
+            'installation_id'      => 'required|exists:installations,id',
+            'type_intervention'    => 'required|string',
+            'description_probleme' => 'required|string',
+            'solutions_apportees'  => 'required|string',
+            'duree_intervention'   => 'required|numeric',
+            'technicien'           => 'required|string',
         ];
     }
 }

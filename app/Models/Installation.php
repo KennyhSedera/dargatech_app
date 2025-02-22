@@ -20,6 +20,7 @@ class Installation extends Model
         'profondeur_forage',
         'surface_panneaux',
         'debit_nominal',
+        'code_installation',
     ];
 
     public function client()

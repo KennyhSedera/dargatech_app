@@ -13,6 +13,10 @@ return new class extends Migration
     {
         Schema::create('materiels', function (Blueprint $table) {
             $table->id();
+            $table->string('name')->nullable();
+            $table->string('description')->nullable();
+            $table->integer('prix')->nullable();
+            $table->integer('puissance')->nullable();
             $table->timestamps();
         });
     }

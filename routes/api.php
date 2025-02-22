@@ -2,12 +2,14 @@
 
 use App\Http\Controllers\AlertController;
 use App\Http\Controllers\ClientController;
+use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\InstallationController;
 use App\Http\Controllers\LocalisationController;
 use App\Http\Controllers\MaintenanceController;
 use App\Http\Controllers\MaterielController;
 use App\Http\Controllers\PaiementController;
 use App\Http\Controllers\RapportController;
+use App\Http\Controllers\TechnicienController;
 use App\Http\Controllers\TypePaiementController;
 use App\Http\Controllers\UserRoleController;
 use Illuminate\Support\Facades\Route;
@@ -91,5 +93,17 @@ Route::group(['prefix' => 'api'], function () {
         Route::post('/', [UserRoleController::class, 'store'])->name('store');
         Route::put('/{id}', [UserRoleController::class, 'update'])->name('update');
         Route::delete('/{id}', [UserRoleController::class, 'destroy'])->name('destroy');
+    });
+
+    Route::group(['prefix' => 'technicien', 'as' => 'technicien.', 'middleware' => 'auth'], function () {
+        Route::get('/', [TechnicienController::class, 'index'])->name('index');
+        Route::get('/{id}', [TechnicienController::class, 'show'])->name('show');
+        Route::post('/', [TechnicienController::class, 'store'])->name('store');
+        Route::put('/{id}', [TechnicienController::class, 'update'])->name('update');
+        Route::delete('/{id}', [TechnicienController::class, 'destroy'])->name('destroy');
+    });
+
+    Route::group(['prefix' => 'dashboard', 'as' => 'dasboard.', 'middleware' => 'auth'], function () {
+        Route::get('/count', [DashboardController::class, 'count'])->name('count');
     });
 });

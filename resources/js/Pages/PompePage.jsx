@@ -12,9 +12,9 @@ const PompePage = () => {
 
     return (
         <AuthenticatedLayout>
-            <Head title='Pompes Solaires' />
+            <Head title='Matériels' />
             <HeaderPage
-                title='Liste des Pompes Solaires'
+                title='Liste des Matériels'
                 handleClick={handleNewPompe}
                 setSearch={setSearch}
                 search={search}

@@ -1,16 +1,14 @@
 import ConfirmDialog from '@/Components/ConfirmDialog';
 import DataTable from '@/Components/DataTable';
-import HeaderPage from '@/Components/HeaderPage';
+import HeaderPage from '@/Components/HeaderPage'
 import FormulaireTypePaiement from '@/Components/Paiement/FormulaireTypePaiement';
 import Snackbar from '@/Components/Snackbar';
-import { deletePaiement } from '@/Services/PaiementService';
 import { deleteType_paiement, getType_paiements } from '@/Services/TypePaiementService';
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState } from 'react'
 import { GoTrash } from 'react-icons/go';
-import { TbEdit } from 'react-icons/tb';
 
 const TypePaiement = () => {
-    const [search, setSearch] = useState("");
+    const [search, setsearch] = useState('');
     const [dataToModify, setDataToModify] = useState({});
     const [currentPage, setCurrentPage] = useState(1);
     const [typePaiements, setTypePaiements] = useState([]);
@@ -32,12 +30,6 @@ const TypePaiement = () => {
     ];
 
     const actions = [
-        // {
-        //     label: <TbEdit className="text-lg" />,
-        //     color: 'text-blue-500',
-        //     hoverColor: 'text-blue-600',
-        //     handler: (row) => editItem(row),
-        // },
         {
             label: <GoTrash className="text-base" />,
             color: 'text-red-500',
@@ -64,22 +56,10 @@ const TypePaiement = () => {
         getTypePaiementDB();
     }, [])
 
-    const onFiltredData = (value) => {
-        setSearch(value);
-        setCurrentPage(1);
-
-        const filteredData = typePaiements.filter(
-            (el) =>
-                el.name.toString().toLowerCase().includes(value.toLowerCase())
-        );
-
-        setFilteredData(filteredData);
-    };
-
     const handleDelete = (item) => {
         setSuppression({
             open: true,
-            message: `Êtes-vous sûr de vouloir supprimer la type de paiement ${item.name} ?`,
+            message: `Êtes-vous sûr de vouloir supprimer la type de paiement par ${item.name} ?`,
             id: item.id
         });
     };
@@ -97,12 +77,24 @@ const TypePaiement = () => {
             ...item
         });
     };
+
+    const onFilteredData = (value) => {
+        setsearch(value);
+        setCurrentPage(1);
+
+        const filteredData = typePaiements.filter(
+            (el) =>
+                el.name.toString().toLowerCase().includes(value.toLowerCase())
+        );
+
+        setFilteredData(filteredData);
+    }
     return (
         <div>
             <HeaderPage
-                title='Liste des types de paiement'
-                setSearch={onFiltredData}
                 search={search}
+                onSearch={onFilteredData}
+                title='Liste des types de paiement'
             />
             <Snackbar
                 message={alert.message}
@@ -141,4 +133,4 @@ const TypePaiement = () => {
     )
 }
 
-export default TypePaiement;
+export default TypePaiement

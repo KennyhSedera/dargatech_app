@@ -16,7 +16,7 @@ export default function AuthenticatedLayout({ children }) {
 
     return (
         <div className="min-h-screen w-full bg-gray-100 dark:bg-gray-900 dark:text-white flex">
-            <div className='hidden sm:flex sm:flex-col w-16 border-r py-1 items-center h-screen sticky top-0 border-gray-100 bg-white dark:border-gray-700 dark:bg-gray-800'>
+            <div className='hidden sm:flex sm:flex-col w-16 border-r py-1 items-center h-screen sticky top-0 border-gray-100 bg-white dark:border-gray-700 dark:bg-gray-800 z-40'>
                 <img src={logo} alt="logo" className='w-12' />
                 <div className='flex flex-col gap-2 mt-6 justify-center bg-red'>
                     {sidebarPages.map((item, i) => (
@@ -31,7 +31,7 @@ export default function AuthenticatedLayout({ children }) {
                 </div>
             </div>
             <div className='w-full'>
-                <nav className="border-b border-gray-100 bg-white dark:border-gray-700 dark:bg-gray-800 sticky top-0">
+                <nav className="border-b border-gray-100 bg-white dark:border-gray-700 dark:bg-gray-800 sticky top-0 z-40">
                     <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
                         <div className="flex h-14 justify-between">
                             <div className="flex">

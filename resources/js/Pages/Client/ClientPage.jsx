@@ -59,6 +59,8 @@ const ClientPage = () => {
                 el.nom.toLowerCase().includes(value.toLowerCase()) ||
                 el.prenom.toLowerCase().includes(value.toLowerCase()) ||
                 el.telephone.toLowerCase().includes(value.toLowerCase()) ||
+                el.surface_cultivee.toLowerCase().includes(value.toLowerCase()) ||
+                el.type_activite_agricole.toLowerCase().includes(value.toLowerCase()) ||
                 el.localisation.toLowerCase().includes(value.toLowerCase())
         );
 

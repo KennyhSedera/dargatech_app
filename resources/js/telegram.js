@@ -18,12 +18,12 @@ const pool = new Pool({
     password: process.env.DB_PASSWORD || '2020',
 });
 
-async function saveUserTelegram(id, userId, phoneNumber, chatId) {
-    const checkUserQuery = `SELECT 1 FROM users WHERE id = $1`;
-    const userExists = await pool.query(checkUserQuery, [userId]);
+const saveUserTelegram = async (id, phoneNumber, chatId) => {
+    const checkUserQuery = `SELECT users.id FROM users, profile WHERE users.id = profile.user_id AND profile.contact = $1`;
+    const userExists = await pool.query(checkUserQuery, [phoneNumber]);
 
-    if (userExists.rows.length === 0) {
-        console.error(`L'utilisateur avec user_id ${userId} n'existe pas dans la table 'users'`);
+    if (userExists) {
+        console.error(`L'utilisateur avec numero tel ${phoneNumber} n'existe pas dans la table 'users'`);
         return;
     }
 
@@ -35,7 +35,7 @@ async function saveUserTelegram(id, userId, phoneNumber, chatId) {
   `;
 
     try {
-        await pool.query(query, [id, userId, phoneNumber, chatId]);
+        await pool.query(query, [id, userExists, phoneNumber, chatId]);
         console.log("Utilisateur ajouté ou mis à jour avec succès !");
     } catch (error) {
         console.error("Erreur lors de l'ajout de l'utilisateur Telegram :", error);
@@ -65,6 +65,18 @@ const getPhoneNumber = async (chatId) => {
     }
 };
 
+const getChatId = async (phone) => {
+    const query = `SELECT chat_id FROM usertelgram WHERE phone_number=$1;`;
+
+    try {
+        const result = await pool.query(query, [phone]);
+        return result.rows.length > 0 ? result.rows[0].chat_id : null;
+    } catch (error) {
+        console.error("Erreur lors de la récupération du numéro de téléphone Telegram :", error);
+        return null;
+    }
+};
+
 const getMessages = async (phone) => {
     const query = `SELECT * FROM messages WHERE phone_number=$1;`;
 
@@ -85,7 +97,7 @@ bot.on("contact", async (msg) => {
     const message = "Numéro enregistré ! \nBonjour " + firstName;
 
     try {
-        await saveUserTelegram(userId, 6, phoneNumber, chatId);
+        await saveUserTelegram(userId, phoneNumber, chatId);
         saveMessage(phoneNumber, message, firstName);
         bot.sendMessage(chatId, message);
     } catch (error) {
@@ -109,6 +121,14 @@ bot.onText(/\/help/, async (msg) => {
     saveMessage(phoneNumber, message, "Bot");
 });
 
+bot.onText(/\/messages/, async (msg) => {
+    const chatId = msg.chat.id;
+    const phoneNumber = await getPhoneNumber(chatId);
+    const message = "Voici les commandes disponibles :\n/start - Démarrer le bot\n/messages - Voir vos messages";
+    bot.sendMessage(chatId, message);
+    saveMessage(phoneNumber, message, "Bot");
+});
+
 bot.on("message", async (msg) => {
     const chatId = msg.chat.id;
     const firstName = msg.from.first_name || "User";
@@ -120,8 +140,8 @@ bot.on("message", async (msg) => {
     }
 
     saveMessage(phoneNumber, msg.text, firstName);
-    bot.sendMessage(chatId, `Tu as dit : ${msg.text}`);
-    saveMessage(phoneNumber, `Tu as dit : ${msg.text}`, "Bot");
+    // bot.sendMessage(chatId, `Tu as dit : ${msg.text}`);
+    // saveMessage(phoneNumber, `Tu as dit : ${msg.text}`, "Bot");
 });
 
 app.get("/messages/:phone", async (req, res) => {
@@ -133,14 +153,19 @@ app.post("/sendMessage", async (req, res) => {
     const { phone, message } = req.body;
     if (!message || !phone) return res.status(400).json({ error: "Données invalides" });
 
-    console.log({ phone, message });
+    const chatId = await getChatId(phone);
+
+    if (!chatId) {
+        return res.status(404).json({ error: `Aucun utilisateur trouvé avec le numéro ${phone}` });
+    }
 
     try {
-        await bot.sendMessage(phone, message);
+        await bot.sendMessage(chatId, message);
         await saveMessage(phone, message, "Bot");
-        res.json({ success: true, response: 'Message' });
+        res.json({ success: true, response: `Message envoyé à ${phone}` });
     } catch (error) {
-        res.status(500).json({ error: error.message });
+        console.error("Erreur lors de l'envoi du message :", error);
+        res.status(500).json({ error: "Impossible d'envoyer le message." });
     }
 });
 

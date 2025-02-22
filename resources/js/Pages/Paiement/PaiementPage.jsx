@@ -1,20 +1,19 @@
-import ConfirmDialog from '@/Components/ConfirmDialog';
-import DataTable from '@/Components/DataTable';
-import HeaderPage from '@/Components/HeaderPage';
-import FormulaireTypePaiement from '@/Components/Paiement/FormulaireTypePaiement';
-import PaiementFormulaire from '@/Components/Paiement/PaiementFormulaire';
-import Snackbar from '@/Components/Snackbar';
-import { formatdate, parsedate } from '@/constant';
+import ConfirmDialog from '@/Components/ConfirmDialog'
+import DataTable from '@/Components/DataTable'
+import HeaderPage from '@/Components/HeaderPage'
+import PaiementFormulaire from '@/Components/Paiement/PaiementFormulaire'
+import Snackbar from '@/Components/Snackbar'
+import { formatdate, parsedate } from '@/constant'
 import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout'
-import { deletePaiement, getPaiements } from '@/Services/PaiementService';
-import { Head } from '@inertiajs/react';
-import React, { useEffect, useState } from 'react';
-import { GoTrash } from 'react-icons/go';
-import { TbEdit } from 'react-icons/tb';
-import TypePaiement from './TypePaiement';
+import { deletePaiement, getPaiements } from '@/Services/PaiementService'
+import { Head } from '@inertiajs/react'
+import React, { useEffect, useState } from 'react'
+import { GoTrash } from 'react-icons/go'
+import { TbEdit } from 'react-icons/tb'
+import TypePaiement from './TypePaiement'
 
 const PaiementPage = () => {
-    const [search, setSearch] = useState("");
+    const [search, setsearch] = useState('');
     const [dataToModify, setDataToModify] = useState({});
     const [currentPage, setCurrentPage] = useState(1);
     const [open, setOpen] = useState(false);
@@ -84,17 +83,23 @@ const PaiementPage = () => {
         getPaiementDB();
     }, [])
 
-    const onFiltredData = (value) => {
-        setSearch(value);
+    const onFilteredData = (value) => {
+        setsearch(value);
+
         setCurrentPage(1);
 
-        const filteredData = paiements.filter(
+        const filtered = paiements.filter(
             (el) =>
+                el.nom.toLowerCase().includes(value.toLowerCase()) ||
+                el.montant.toLowerCase().includes(value.toLowerCase()) ||
+                el.type_paiement.toLowerCase().includes(value.toLowerCase()) ||
+                el.periode_couverte.toLowerCase().includes(value.toLowerCase()) ||
+                el.mode_paiement.toLowerCase().includes(value.toLowerCase()) ||
                 el.date_paiement.toString().toLowerCase().includes(value.toLowerCase())
         );
 
-        setFilteredData(filteredData);
-    };
+        setFilteredData(filtered);
+    }
 
     const onCloseFormulaire = (message) => {
         getPaiementDB();
@@ -164,7 +169,7 @@ const PaiementPage = () => {
                     onClick={() => setIsType(true)}
                     className={`w-1/2 cursor-pointer text-center py-1 rounded-md text-sm transition-colors duration-300 ${isType ? 'bg-gray-300 dark:bg-gray-700' : 'bg-transparent'}`}
                 >
-                    Type
+                    Types
                 </div>
             </span>
             {!isType ?
@@ -172,8 +177,8 @@ const PaiementPage = () => {
                     <HeaderPage
                         title='Liste des Paiements'
                         handleClick={handleNewPaiement}
-                        setSearch={onFiltredData}
                         search={search}
+                        onSearch={onFilteredData}
                     />
                     <DataTable
                         headers={headers}

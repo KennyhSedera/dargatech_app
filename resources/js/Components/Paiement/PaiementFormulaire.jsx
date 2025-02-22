@@ -8,7 +8,7 @@ import { getType_paiements } from '@/Services/TypePaiementService';
 import { useForm } from '@inertiajs/react';
 import Modal from '../Modal';
 import InputAutocomplete from '../inputs/InputAutocomplete ';
-import { validateFormPaiement } from '../clients/validateForm';
+import { validateFormPaiement } from '../validateForm';
 import { formatDate } from '@/constant';
 
 const PaiementFormulaire = ({
@@ -26,7 +26,7 @@ const PaiementFormulaire = ({
         client_id: '',
         montant: '',
         date_paiement: new Date().toISOString().split('T')[0],
-        mode_paiement: '1',
+        mode_paiement: '',
         periode_couverte: '',
         receipt_path: '',
     });
@@ -121,7 +121,7 @@ const PaiementFormulaire = ({
                     <InputError message={validationErrors.client_id || errors.client_id} className="mt-2" />
                 </div>
                 <div>
-                    <InputLabel htmlFor="montant" value="Montant" />
+                    <InputLabel htmlFor="montant" value="Montant ($)" />
                     <TextInput id="montant" name="montant" value={data.montant} className="block w-full mt-1" autoComplete="montant" onChange={(e) => setData('montant', e.target.value)} required type="number" />
                     <InputError message={validationErrors.montant || errors.montant} className="mt-2" />
                 </div>

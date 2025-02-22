@@ -1,18 +1,18 @@
 import ConfirmDialog from '@/Components/ConfirmDialog';
 import DataTable from '@/Components/DataTable';
-import HeaderPage from '@/Components/HeaderPage';
+import HeaderPage from '@/Components/HeaderPage'
 import FormulaireMaintenance from '@/Components/maintenances/FormulaireMaintenance';
 import Snackbar from '@/Components/Snackbar';
-import { parsedate } from '@/constant';
+import { formatdate, parsedate } from '@/constant';
 import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout'
 import { deletemaintenances, getmaintenances } from '@/Services/maintenanceService';
-import { Head } from '@inertiajs/react'
+import { Head } from '@inertiajs/react';
 import React, { useEffect, useState } from 'react'
 import { GoTrash } from 'react-icons/go';
 import { TbEdit } from 'react-icons/tb';
 
 const InterventionPage = () => {
-    const [search, setSearch] = useState("");
+    const [search, setsearch] = useState('');
     const [open, setOpen] = useState(false);
     const [dataToModify, setDataToModify] = useState({});
     const [currentPage, setCurrentPage] = useState(1);
@@ -31,13 +31,14 @@ const InterventionPage = () => {
 
     const headers = [
         { key: 'id', label: 'ID' },
-        { key: 'nom', label: 'Nom client' },
-        { key: 'type_intervention', label: 'Type d\'intervention' },
-        { key: 'description_probleme', label: 'Description du problème' },
-        { key: 'solutions_apportees', label: 'Solutions apportées' },
-        { key: 'duree_intervention', label: 'Durée de l\'intervention (jour)' },
-        { key: 'date_intervention', label: 'Date d\'intervention' },
-        { key: 'technicien', label: 'Nom du technicien' },
+        { key: 'code_installation', label: 'Installation' },
+        { key: 'nom', label: 'Client' },
+        { key: 'type_intervention', label: 'Type' },
+        { key: 'description_probleme', label: 'Problème' },
+        { key: 'solutions_apportees', label: 'Solutions' },
+        { key: 'duree_intervention', label: 'Durée (jour)' },
+        { key: 'date_intervention', label: 'Date' },
+        { key: 'technicien', label: 'Technicien' },
     ];
 
     const actions = [
@@ -65,17 +66,19 @@ const InterventionPage = () => {
         const intervention = data.map(el => ({
             id: el.id,
             installation_id: el.installation_id,
-            nom: el.client.nom + ' ' + el.client.prenom,
+            code_installation: el.installation.code_installation,
+            nom: el.installation.client.nom + ' ' + el.installation.client.prenom,
             type_intervention: el.type_intervention,
             description_probleme: el.description_probleme,
             solutions_apportees: el.solutions_apportees,
             duree_intervention: el.duree_intervention,
             date_intervention: formatdate(el.date_intervention),
-            technicien: el.technicien,
+            technicien: el.technicien?.name || null,
+            technicien_id: el.technicien?.id || null,
         }));
 
-        setMaintenances(intervention);
-        setFilteredData(intervention);
+        setMaintenances(intervention.filter(el => el.technicien !== null));
+        setFilteredData(intervention.filter(el => el.technicien !== null));
     };
 
     useEffect(() => {
@@ -83,7 +86,7 @@ const InterventionPage = () => {
     }, []);
 
     const onFiltredData = (value) => {
-        setSearch(value);
+        setsearch(value);
         setCurrentPage(1);
 
         const filteredData = maintenances.filter(
@@ -92,7 +95,8 @@ const InterventionPage = () => {
                 el.type_intervention.toLowerCase().includes(value.toLowerCase()) ||
                 el.description_probleme.toLowerCase().includes(value.toLowerCase()) ||
                 el.solutions_apportees.toLowerCase().includes(value.toLowerCase()) ||
-                el.duree_intervention.toLowerCase().includes(value.toLowerCase()) ||
+                el.technicien.toLowerCase().includes(value.toLowerCase()) ||
+                el.duree_intervention.toString().toLowerCase().includes(value.toLowerCase()) ||
                 el.date_intervention.toString().toLowerCase().includes(value.toLowerCase())
         );
 
@@ -108,7 +112,7 @@ const InterventionPage = () => {
     const handleDelete = (item) => {
         setSuppression({
             open: true,
-            message: `Êtes-vous sûr de vouloir supprimer l'intervention du ${item.client.nom} le ${item.date_intervention} ?`,
+            message: `Êtes-vous sûr de vouloir supprimer l'intervention du ${item.nom} le ${item.date_intervention} ?`,
             id: item.id
         });
     };
@@ -134,16 +138,10 @@ const InterventionPage = () => {
         <AuthenticatedLayout>
             <Head title='Maintenance' />
             <HeaderPage
-                title='Liste des maintenances'
-                handleClick={handleNewIntervention}
-                setSearch={onFiltredData}
                 search={search}
-            />
-            <FormulaireMaintenance
-                open={open}
-                setOpen={setOpen}
-                dataModify={dataToModify}
-                onCloseFormulaire={onCloseFormulaire}
+                onSearch={onFiltredData}
+                title='Liste des interventions'
+                handleClick={handleNewIntervention}
             />
             <Snackbar
                 message={alert.message}
@@ -162,6 +160,12 @@ const InterventionPage = () => {
                 close={() => setSuppression({ ...suppression, open: false })}
                 accept={confirmDelete}
             />
+            <FormulaireMaintenance
+                open={open}
+                setOpen={setOpen}
+                dataModify={dataToModify}
+                onCloseFormulaire={onCloseFormulaire}
+            />
             <div>
                 <DataTable
                     headers={headers}
@@ -178,4 +182,4 @@ const InterventionPage = () => {
     )
 }
 
-export default InterventionPage
+export default InterventionPage;
