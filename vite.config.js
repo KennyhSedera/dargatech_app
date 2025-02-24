@@ -7,7 +7,7 @@ export default defineConfig({
         esbuild: false,
     },
     server: {
-        port: process.env.PORT || 8081,
+        port: 8082,
         host: '0.0.0.0',
     },
     plugins: [
