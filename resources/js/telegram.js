@@ -173,7 +173,7 @@ app.get("/", (req, res) => {
     res.send("Bot Telegram avec Express.js est en ligne !");
 });
 
-const PORT = process.env.PORT || 3000;
+const PORT = process.env.PORT || 3001;
 app.listen(PORT, () => {
     console.log(`Serveur Express démarré sur http://localhost:${PORT}`);
 });

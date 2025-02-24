@@ -1,6 +1,6 @@
 import axios from "axios";
 
-const url = "http://localhost:8000/api";
+const url = "http://localhost:8000/api" || "https://dargatech.crm.railway.app/api";
 
 const api = axios.create({
     baseURL: url,

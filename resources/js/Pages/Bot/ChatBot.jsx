@@ -10,13 +10,15 @@ function ChatBot() {
     const chatContainerRef = useRef(null);
     const [isAtBottom, setIsAtBottom] = useState(true);
 
+    const url = "https://dargatech.crm.railway.app/" || "http://localhost:3001/";
+
     const sendMessage = async () => {
         if (!message) return;
 
         setChat([...chat, { text: message, sender: "Bot", created_at: new Date() }]);
         setMessage("");
 
-        await fetch("http://localhost:3000/sendMessage", {
+        await fetch(`${url}sendMessage`, {
             method: "POST",
             headers: { "Content-Type": "application/json" },
             body: JSON.stringify({ phone: userPhone, message }),
@@ -26,7 +28,7 @@ function ChatBot() {
     };
 
     const fetchMessages = async () => {
-        const response = await fetch(`http://localhost:3000/messages/${userPhone}`);
+        const response = await fetch(`${url}messages/${userPhone}`);
         const data = await response.json();
         setChat(data);
     };
