@@ -3,9 +3,12 @@ import laravel from 'laravel-vite-plugin';
 import react from '@vitejs/plugin-react';
 
 export default defineConfig({
+    build: {
+        esbuild: false,
+    },
     server: {
+        port: process.env.PORT || 8081,
         host: '0.0.0.0',
-        port: process.env.PORT || 3000,
     },
     plugins: [
         laravel({
@@ -15,4 +18,3 @@ export default defineConfig({
         react(),
     ],
 });
-
