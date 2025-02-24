@@ -9,16 +9,34 @@ class TypePaiementController extends Controller
 {
     public function index()
     {
-        $data = Type_paiements::all();
-        return response()->json(['type' => $data], 200);
+        $typePaiements = Type_paiements::all();
+
+        $images = $typePaiements->map(function ($item) {
+            return [
+                'id'        => $item->id,
+                'name'      => $item->name,
+                'logo_path' => $item->logo_path ? asset('storage/' . $item->logo_path) : null,
+            ];
+        });
+
+        return response()->json(['type' => $images], 200);
     }
 
     public function store(Request $request)
     {
-        Type_paiements::create($request->all());
+        $validate = $request->validate([
+            'name' => 'required|string|max:255',
+        ]);
+
+        $imagePath = $request->file('logo_path')->store('logos', 'public');
+
+        Type_paiements::create([
+            'name'      => $validate['name'],
+            'logo_path' => $imagePath,
+        ]);
 
         return response()->json([
-            'message' => 'Type paiement créé avec succès !',
+            'message' => 'Type de paiement créé avec succès',
             'success' => true,
         ], 201);
     }

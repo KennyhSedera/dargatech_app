@@ -19,7 +19,7 @@ const pool = new Pool({
 });
 
 const saveUserTelegram = async (id, phoneNumber, chatId) => {
-    const checkUserQuery = `SELECT users.id FROM users, profile WHERE users.id = profile.user_id AND profile.contact = $1`;
+    const checkUserQuery = `SELECT users.id FROM users, profile, techniciens WHERE users.id = profile.user_id AND users.id = techniciens.user_id AND profile.contact = $1 OR techniciens.contact = $1`;
     const userExists = await pool.query(checkUserQuery, [phoneNumber]);
 
     if (userExists) {

@@ -26,7 +26,11 @@ const TypePaiement = () => {
     const headers = [
         { key: 'id', label: 'ID' },
         { key: 'name', label: 'Nom' },
-        { key: 'logo_path', label: 'logo' },
+        {
+            key: 'logo_path', label: 'logo', customRender: (value) => (
+                <img src={value} alt='logo type' className='w-4 h-4 rounded-md' />
+            )
+        },
     ];
 
     const actions = [
@@ -126,7 +130,7 @@ const TypePaiement = () => {
                     />
                 </div>
                 <div className="col-span-1">
-                    <FormulaireTypePaiement />
+                    <FormulaireTypePaiement reload={() => getTypePaiementDB()} />
                 </div>
             </div>
         </div>

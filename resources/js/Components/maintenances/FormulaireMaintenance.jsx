@@ -30,7 +30,7 @@ const FormulaireMaintenance = ({
         description_probleme: '',
         solutions_apportees: '',
         duree_intervention: '',
-        technicien: '',
+        technicien: 0,
     });
 
     const getInstallation = async () => {
@@ -40,7 +40,7 @@ const FormulaireMaintenance = ({
             nom: el.code_installation,
         }));
         const technicienformat = technicien?.data.map(el => ({
-            id: el.id,
+            id: el.technicien.id,
             nom: el.name
         }));
         settechnicien(technicienformat);
@@ -70,7 +70,7 @@ const FormulaireMaintenance = ({
                 description_probleme: dataModify.description_probleme || '',
                 solutions_apportees: dataModify.solutions_apportees || '',
                 duree_intervention: dataModify.duree_intervention || '',
-                technicien: dataModify.technicien_id || '',
+                technicien: dataModify.technicien_id || 0,
             });
             setBtnTitle('Modifier');
         } else {
@@ -133,7 +133,7 @@ const FormulaireMaintenance = ({
                         type="type_intervention"
                         name="type_intervention"
                         value={data.type_intervention}
-                        className="mt-1 block w-full"
+                        className="block w-full mt-1"
                         autoComplete="type_intervention"
                         onChange={(e) => setData('type_intervention', e.target.value)}
                         required

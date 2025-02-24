@@ -8,7 +8,7 @@ class MaintenanceController extends Controller
 {
     public function index()
     {
-        $data = Maintenance::with(['installation.client', 'technicien.profile'])->get();
+        $data = Maintenance::with(['installation.client', 'techniciens.user'])->get();
 
         return response()->json(['data' => $data], 200);
     }
@@ -21,7 +21,7 @@ class MaintenanceController extends Controller
             'description_probleme' => 'required|string',
             'solutions_apportees'  => 'required|string',
             'duree_intervention'   => 'required|numeric',
-            'technicien'           => 'required|numeric',
+            'technicien'           => 'required|exists:techniciens,id',
         ]);
 
         $maintenance = Maintenance::create($request->all());
@@ -34,7 +34,7 @@ class MaintenanceController extends Controller
 
     public function show($id)
     {
-        $data = Maintenance::with(['installation.client', 'technicien.profile'])->findOrFail($id);
+        $data = Maintenance::with(['installation.client', 'technicien.user'])->findOrFail($id);
         return response()->json(['data' => $data], 200);
     }
 

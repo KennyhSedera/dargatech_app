@@ -86,7 +86,7 @@ const TechnicienFormulaire = ({
                         type="genre"
                         name="genre"
                         value={data.genre}
-                        className="mt-1 block w-full"
+                        className="block w-full mt-1"
                         autoComplete="genre"
                         onChange={(e) => setData('genre', e.target.value)}
                         required

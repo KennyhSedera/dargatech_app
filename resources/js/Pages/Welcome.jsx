@@ -28,10 +28,12 @@ const Welcome = () => {
         { component: <VerifyEmail />, title: 'Verify Email', id: 5 }
     ];
 
+
+
     return (
         <MainLayout>
             <Head title={title} />
-            <div className='flex w-4/5 items-center'>
+            <div className='flex items-center w-4/5'>
                 <div className='w-2/3'>
                     Welcome
                 </div>

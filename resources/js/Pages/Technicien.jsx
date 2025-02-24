@@ -60,9 +60,9 @@ const Technicien = () => {
             name: el.name,
             email: el.email,
             genre: el.genre,
-            contact: el.profile.contact,
-            adress: el.profile.adress,
-            speciality: el.profile.speciality,
+            contact: el.technicien.contact,
+            adress: el.technicien.adress,
+            speciality: el.technicien.speciality,
         }));
 
         setTechniciens(technichien);

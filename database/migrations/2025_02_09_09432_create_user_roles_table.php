@@ -13,7 +13,7 @@ return new class extends Migration
     {
         Schema::create('user_roles', function (Blueprint $table) {
             $table->id();
-            $table->string('name')->default('admin');
+            $table->string('name')->unique()->default('admin');
             $table->boolean('isAdmin')->default(true);
             $table->timestamps();
         });

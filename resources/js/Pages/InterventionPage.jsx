@@ -73,12 +73,12 @@ const InterventionPage = () => {
             solutions_apportees: el.solutions_apportees,
             duree_intervention: el.duree_intervention,
             date_intervention: formatdate(el.date_intervention),
-            technicien: el.technicien?.name || null,
-            technicien_id: el.technicien?.id || null,
+            technicien: el.techniciens?.user.name || null,
+            technicien_id: el.techniciens?.id || null,
         }));
 
-        setMaintenances(intervention.filter(el => el.technicien !== null));
-        setFilteredData(intervention.filter(el => el.technicien !== null));
+        setMaintenances(intervention);
+        setFilteredData(intervention);
     };
 
     useEffect(() => {

@@ -20,7 +20,7 @@ class User extends Authenticatable
         'name',
         'email',
         'password',
-        'role',
+        'user_role',
     ];
 
     /**
@@ -51,8 +51,13 @@ class User extends Authenticatable
         return $this->hasOne(Profile::class);
     }
 
-    public function maintenance()
+    public function technicien()
     {
-        return $this->hasMany(Maintenance::class, 'technicien');
+        return $this->hasOne(Technicien::class);
+    }
+
+    public function user_role()
+    {
+        return $this->belongsTo(UserRole::class, 'user_role');
     }
 }

@@ -82,7 +82,7 @@ Route::group(['prefix' => 'api'], function () {
     Route::group(['prefix' => 'type_paiement', 'as' => 'type_paiement.', 'middleware' => 'auth'], function () {
         Route::get('/', [TypePaiementController::class, 'index'])->name('index');
         Route::get('/{id}', [TypePaiementController::class, 'show'])->name('show');
-        Route::post('/', [TypePaiementController::class, 'create'])->name('create');
+        Route::post('/', [TypePaiementController::class, 'store'])->name('store');
         Route::put('/{id}', [TypePaiementController::class, 'update'])->name('update');
         Route::delete('/{id}', [TypePaiementController::class, 'destroy'])->name('destroy');
     });

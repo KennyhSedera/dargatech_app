@@ -16,13 +16,13 @@ class TechnicienController extends Controller
 
         try {
             $user = User::create([
-                'name'     => $request->name,
-                'email'    => $request->email,
-                'password' => Hash::make($request->password),
-                'role'     => 'technicien',
+                'name'      => $request->name,
+                'email'     => $request->email,
+                'password'  => Hash::make($request->password),
+                'user_role' => 2,
             ]);
 
-            $user->profile()->create([
+            $user->technicien()->create([
                 'contact'    => $request->contact,
                 'adress'     => $request->adress,
                 'speciality' => $request->speciality,
@@ -35,29 +35,16 @@ class TechnicienController extends Controller
             $appLink = env('APP_URL') . '/login';
             Mail::to($request->email)->send(new BotCredentialsMail($request->password, 'dargatech_bot', $appLink, $request->name));
 
-            return response()->json(['message' => 'Technicien créés avec succès', 'user' => $user->load('profile')]);
+            return response()->json(['message' => 'Technicien créés avec succès', 'user' => $user->load('technicien')]);
         } catch (\Exception $e) {
             DB::rollBack();
             return response()->json(['message' => 'Erreur lors de la création', 'error' => $e->getMessage()], 500);
         }
     }
 
-    public function sendEmail($email, $botUsername, $password)
-    {
-        $startLink = "https://t.me/{$botUsername}?start";
-        $appLink   = "http://localhost:8000/login";
-
-        Mail::raw("Voici votre mot de passe {$password}, vous pouvez authentifier sur le site {$appLink} \n Cliquez ici pour démarrer : {$startLink}", function ($message) use ($email) {
-            $message->to($email)
-                ->subject('Démarrez la conversation avec notre bot Telegram');
-        });
-
-        return response()->json(['message' => 'E-mail envoyé avec succès']);
-    }
-
     public function index()
     {
-        $data = User::with('profile')->where('role', 'technicien')->get();
+        $data = User::with('technicien')->where('user_role', 2)->get();
         return response()->json(['data' => $data], 200);
     }
 
