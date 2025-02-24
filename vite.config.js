@@ -5,6 +5,8 @@ import react from '@vitejs/plugin-react';
 export default defineConfig({
     build: {
         esbuild: false,
+        chunkSizeWarningLimit: 1000,
+        sourcemap: false,
     },
     server: {
         port: 8082,
