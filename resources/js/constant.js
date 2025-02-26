@@ -1,7 +1,7 @@
 import moment from "moment";
 import { HiMiniUsers, HiHome } from "react-icons/hi2";
-import { IoBuild } from "react-icons/io5";
-import { GiOilPump } from "react-icons/gi";
+import { IoAlertCircle, IoBuild } from "react-icons/io5";
+// import { GiOilPump } from "react-icons/gi";
 import { FaMoneyCheckDollar, FaPersonDigging } from "react-icons/fa6";
 import { ImCogs } from "react-icons/im";
 
@@ -9,8 +9,9 @@ const sidebarPages = [
     { route: "dashboard", label: "Tableau de bord", icon: HiHome },
     { route: "clients", label: "Clients", icon: HiMiniUsers },
     { route: "technicien", label: "Techniciens", icon: FaPersonDigging },
-    { route: "pompes", label: "Matériels", icon: GiOilPump },
+    // { route: "pompes", label: "Matériels", icon: GiOilPump },
     { route: "installations", label: "Installations", icon: IoBuild },
+    { route: "alert", label: "Alerts", icon: IoAlertCircle },
     { route: "interventions", label: "Maintenances", icon: ImCogs },
     { route: "paiements", label: "Paiements", icon: FaMoneyCheckDollar },
 ];

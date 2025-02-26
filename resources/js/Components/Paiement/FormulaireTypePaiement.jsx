@@ -10,7 +10,7 @@ import { validateFormTypePaiement } from '../validateForm';
 import axios from 'axios';
 import { url } from '@/Services/api';
 
-const FormulaireTypePaiement = ( reload = () => { } ) => {
+const FormulaireTypePaiement = ({ reload = () => { } }) => {
     const { data, setData, errors, reset } = useForm({
         name: '',
         logo_path: null,
@@ -73,12 +73,12 @@ const FormulaireTypePaiement = ( reload = () => { } ) => {
             <form className='grid w-full grid-cols-1 gap-2 mb-4'>
                 <div>
                     <InputLabel htmlFor="type_name" value="Nom" />
-                    <TextInput id="type_name" name="type_name" value={data.name} className="block w-full mt-1" autoComplete="type_name" onChange={(e) => setData('name', e.target.value)} required placeholder="Nom de la type" />
+                    <TextInput id="type_name" name="type_name" value={data.name} className="block w-full mt-1" autoComplete="type_name" onChange={(e) => setData('name', e.target.value)} required placeholder="Nom de la type" onFocus={() => setValidationErrors({ ...validationErrors, 'name': '' })} />
                     <InputError message={validationErrors.name || errors.name} className="mt-2" />
                 </div>
                 <div>
                     <InputLabel htmlFor="logo_path" value="Logo" />
-                    <InputImage ref={fileInputRef} selectedFile={data.logo_path} onLoadFile={onLoadFile} />
+                    <InputImage ref={fileInputRef} selectedFile={data.logo_path} onLoadFile={onLoadFile} onFocus={() => setValidationErrors({ ...validationErrors, 'logo_path': '' })} />
                     <InputError message={validationErrors.logo_path || errors.logo_path} className="mt-2" />
                 </div>
             </form>

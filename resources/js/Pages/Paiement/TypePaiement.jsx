@@ -28,7 +28,7 @@ const TypePaiement = () => {
         { key: 'name', label: 'Nom' },
         {
             key: 'logo_path', label: 'logo', customRender: (value) => (
-                <img src={value} alt='logo type' className='w-4 h-4 rounded-md' />
+                <img src={value} alt="logo type" className="w-10 h-10 object-cover rounded-md" />
             )
         },
     ];

@@ -10,6 +10,16 @@ export const getClients = async () => {
     }
 };
 
+export const getClientInstalations = async () => {
+    try {
+        const response = await api.get("/clients/avec/installation");
+        return response.data;
+    } catch (error) {
+        console.error("Erreur lors de la récupération des clients", error);
+        throw error;
+    }
+};
+
 export const createClients = async (data) => {
     try {
         const response = await api.post("/clients", data);

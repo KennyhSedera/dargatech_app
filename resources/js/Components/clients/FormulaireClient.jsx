@@ -101,6 +101,7 @@ const FormulaireClient = ({
                         isFocused={true}
                         onChange={(e) => setData('nom', e.target.value)}
                         required
+                        onFocus={() => setValidationErrors({ ...validationErrors, 'nom': '' })}
                     />
                     <InputError message={validationErrors.nom || errors.nom} className="mt-2" />
                 </div>
@@ -114,6 +115,7 @@ const FormulaireClient = ({
                         autoComplete="prenom"
                         onChange={(e) => setData('prenom', e.target.value)}
                         required
+                        onFocus={() => setValidationErrors({ ...validationErrors, 'prenom': '' })}
                     />
                     <InputError message={validationErrors.prenom || errors.prenom} className="mt-2" />
                 </div>
@@ -127,6 +129,7 @@ const FormulaireClient = ({
                         autoComplete="telephone"
                         onChange={(e) => setData('telephone', e.target.value)}
                         required
+                        onFocus={() => setValidationErrors({ ...validationErrors, 'telephone': '' })}
                     />
                     <InputError message={validationErrors.telephone || errors.telephone} className="mt-2" />
                 </div>
@@ -140,6 +143,7 @@ const FormulaireClient = ({
                         autoComplete="localisation"
                         onChange={(e) => setData('localisation', e.target.value)}
                         required
+                        onFocus={() => setValidationErrors({ ...validationErrors, 'localisation': '' })}
                     />
                     <InputError message={validationErrors.localisation || errors.localisation} className="mt-2" />
                 </div>
@@ -153,6 +157,7 @@ const FormulaireClient = ({
                         autoComplete="type_activite_agricole"
                         onChange={(e) => setData('type_activite_agricole', e.target.value)}
                         required
+                        onFocus={() => setValidationErrors({ ...validationErrors, 'type_activite_agricole': '' })}
                     />
                     <InputError message={validationErrors.type_activite_agricole || errors.type_activite_agricole} className="mt-2" />
                 </div>
@@ -166,6 +171,7 @@ const FormulaireClient = ({
                         autoComplete="surface_cultivee"
                         onChange={(e) => setData('surface_cultivee', e.target.value)}
                         required
+                        onFocus={() => setValidationErrors({ ...validationErrors, 'surface_cultivee': '' })}
                     />
                     <InputError message={validationErrors.surface_cultivee || errors.surface_cultivee} className="mt-2" />
                 </div>

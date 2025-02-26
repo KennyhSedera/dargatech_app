@@ -14,7 +14,8 @@ return new class extends Migration
         Schema::create('alerts', function (Blueprint $table) {
             $table->id();
             $table->foreignId('client_id')->constrained()->onDelete('cascade');
-            $table->string('type_alerte');
+            $table->foreignId('installation_id')->constrained()->onDelete('cascade');
+            $table->string('type_alert');
             $table->text('message');
             $table->boolean('resolue')->default(false);
             $table->timestamps();

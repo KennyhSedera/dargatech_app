@@ -71,12 +71,12 @@ const TechnicienFormulaire = ({
             <form className="grid w-full grid-cols-1 gap-4 my-6 sm:grid-cols-2">
                 <div>
                     <InputLabel htmlFor="name" value="Nom" />
-                    <TextInput id="name" name="name" value={data.name} className="block w-full mt-1" autoComplete="name" onChange={(e) => setData('name', e.target.value)} required />
+                    <TextInput id="name" name="name" value={data.name} className="block w-full mt-1" autoComplete="name" onChange={(e) => setData('name', e.target.value)} required onFocus={() => setValidationErrors({ ...validationErrors, 'name': '' })} />
                     <InputError message={validationErrors.name || errors.name} className="mt-2" />
                 </div>
                 <div>
                     <InputLabel htmlFor="email" value="Email" />
-                    <TextInput id="email" name="email" value={data.email} className="block w-full mt-1" autoComplete="email" onChange={(e) => setData('email', e.target.value)} required />
+                    <TextInput id="email" name="email" value={data.email} className="block w-full mt-1" autoComplete="email" onChange={(e) => setData('email', e.target.value)} required onFocus={() => setValidationErrors({ ...validationErrors, 'email': '' })} />
                     <InputError message={validationErrors.email || errors.email} className="mt-2" />
                 </div>
                 <div>
@@ -98,17 +98,17 @@ const TechnicienFormulaire = ({
                 </div>
                 <div>
                     <InputLabel htmlFor="contact" value="Contact" />
-                    <TextInput id="contact" name="contact" value={data.contact} className="block w-full mt-1" autoComplete="contact" onChange={(e) => setData('contact', e.target.value)} required />
+                    <TextInput id="contact" name="contact" value={data.contact} className="block w-full mt-1" autoComplete="contact" onChange={(e) => setData('contact', e.target.value)} required onFocus={() => setValidationErrors({ ...validationErrors, 'contact': '' })} />
                     <InputError message={validationErrors.contact || errors.contact} className="mt-2" />
                 </div>
                 <div>
                     <InputLabel htmlFor="adress" value="Adresse" />
-                    <TextInput id="adress" name="adress" value={data.adress} className="block w-full mt-1" autoComplete="adress" onChange={(e) => setData('adress', e.target.value)} required />
+                    <TextInput id="adress" name="adress" value={data.adress} className="block w-full mt-1" autoComplete="adress" onChange={(e) => setData('adress', e.target.value)} required onFocus={() => setValidationErrors({ ...validationErrors, 'adress': '' })} />
                     <InputError message={validationErrors.adress || errors.adress} className="mt-2" />
                 </div>
                 <div>
                     <InputLabel htmlFor="speciality" value="Spécialité" />
-                    <TextInput id="speciality" name="speciality" value={data.speciality} className="block w-full mt-1" autoComplete="adress" onChange={(e) => setData('speciality', e.target.value)} required />
+                    <TextInput id="speciality" name="speciality" value={data.speciality} className="block w-full mt-1" autoComplete="adress" onChange={(e) => setData('speciality', e.target.value)} required onFocus={() => setValidationErrors({ ...validationErrors, 'speciality': '' })} />
                     <InputError message={validationErrors.speciality || errors.speciality} className="mt-2" />
                 </div>
             </form>

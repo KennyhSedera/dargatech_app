@@ -117,27 +117,28 @@ const PaiementFormulaire = ({
             <form className="grid w-full grid-cols-1 gap-4 my-6 sm:grid-cols-2">
                 <div>
                     <InputLabel htmlFor="client_id" value="Nom client" />
-                    <InputAutocomplete data={clients} className="block w-full mt-1" onSelect={handleSelect} defaultValue={data.client_id} />
+                    <InputAutocomplete data={clients} className="block w-full mt-1" onSelect={handleSelect} defaultValue={data.client_id} onFocus={() => setValidationErrors({ ...validationErrors, 'client_id': '' })} />
                     <InputError message={validationErrors.client_id || errors.client_id} className="mt-2" />
                 </div>
                 <div>
                     <InputLabel htmlFor="montant" value="Montant ($)" />
-                    <TextInput id="montant" name="montant" value={data.montant} className="block w-full mt-1" autoComplete="montant" onChange={(e) => setData('montant', e.target.value)} required type="number" />
+                    <TextInput id="montant" name="montant" value={data.montant} className="block w-full mt-1" autoComplete="montant" onChange={(e) => setData('montant', e.target.value)} required type="number"
+                        onFocus={() => setValidationErrors({ ...validationErrors, 'montant': '' })} />
                     <InputError message={validationErrors.montant || errors.montant} className="mt-2" />
                 </div>
                 <div>
                     <InputLabel htmlFor="mode_paiement" value="Mode paiement" />
-                    <InputAutocomplete data={typePaiement} className="block w-full mt-1" onSelect={handleSelectType} defaultValue={data.mode_paiement} />
+                    <InputAutocomplete data={typePaiement} className="block w-full mt-1" onSelect={handleSelectType} defaultValue={data.mode_paiement} onFocus={() => setValidationErrors({ ...validationErrors, 'mode_paiement': '' })} />
                     <InputError message={validationErrors.mode_paiement || errors.mode_paiement} className="mt-2" />
                 </div>
                 <div>
                     <InputLabel htmlFor="periode_couverte" value="Période couverte" />
-                    <TextInput id="periode_couverte" name="periode_couverte" value={data.periode_couverte} className="block w-full mt-1" autoComplete="periode_couverte" onChange={(e) => setData('periode_couverte', e.target.value)} required />
+                    <TextInput id="periode_couverte" name="periode_couverte" value={data.periode_couverte} className="block w-full mt-1" autoComplete="periode_couverte" onChange={(e) => setData('periode_couverte', e.target.value)} required onFocus={() => setValidationErrors({ ...validationErrors, 'periode_couverte': '' })} />
                     <InputError message={validationErrors.periode_couverte || errors.periode_couverte} className="mt-2" />
                 </div>
                 <div>
                     <InputLabel htmlFor="date_paiement" value="Date de paiement" />
-                    <TextInput id="date_paiement" name="date_paiement" value={data.date_paiement} className="block w-full mt-1" autoComplete="date_paiement" type="date" onChange={(e) => setData('date_paiement', e.target.value)} required />
+                    <TextInput id="date_paiement" name="date_paiement" value={data.date_paiement} className="block w-full mt-1" autoComplete="date_paiement" type="date" onChange={(e) => setData('date_paiement', e.target.value)} required onFocus={() => setValidationErrors({ ...validationErrors, 'date_paiement': '' })} />
                     <InputError message={validationErrors.date_paiement || errors.date_paiement} className="mt-2" />
                 </div>
             </form>

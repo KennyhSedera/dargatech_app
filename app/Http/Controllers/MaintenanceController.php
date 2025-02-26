@@ -1,8 +1,11 @@
 <?php
 namespace App\Http\Controllers;
 
+use App\Models\Alerts;
+use App\Models\Installation;
 use App\Models\Maintenance;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
 
 class MaintenanceController extends Controller
 {
@@ -24,12 +27,36 @@ class MaintenanceController extends Controller
             'technicien'           => 'required|exists:techniciens,id',
         ]);
 
-        $maintenance = Maintenance::create($request->all());
+        $installation = Installation::find($request->installation_id);
+        $alert        = Alerts::where([
+            'installation_id' => $request->installation_id,
+            'resolue'         => false,
+        ])->first();
 
-        return response()->json([
-            'message' => 'Maintenance enregistrée avec succès',
-            'data'    => $maintenance,
-        ], 201);
+        DB::beginTransaction();
+
+        try {
+            $installation->update(['statuts' => 'installée']);
+
+            $alert->update(['resolue' => true]);
+
+            $maintenance = Maintenance::create($request->all());
+
+            DB::commit();
+
+            return response()->json([
+                'message' => 'Maintenance enregistrée avec succès',
+                'data'    => $maintenance,
+            ], 201);
+        } catch (\Exception $e) {
+            DB::rollBack();
+
+            return response()->json([
+                'message' => 'Failed to add maintenance.',
+                'error'   => $e->getMessage(),
+                'success' => false,
+            ], 500);
+        }
     }
 
     public function show($id)

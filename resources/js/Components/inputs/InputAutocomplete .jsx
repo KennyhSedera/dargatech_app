@@ -1,7 +1,7 @@
 import React, { useState, forwardRef, useEffect, useImperativeHandle, useRef } from 'react';
 
 const InputAutocomplete = forwardRef(
-    ({ data = [], className = '', isFocused = false, defaultValue = null, onSelect, ...props }, ref) => {
+    ({ data = [], className = '', isFocused = false, defaultValue = null, onSelect, onFocus, ...props }, ref) => {
         const [inputValue, setInputValue] = useState('');
         const [filteredData, setFilteredData] = useState([]);
         const [showSuggestions, setShowSuggestions] = useState(false);
@@ -73,7 +73,7 @@ const InputAutocomplete = forwardRef(
                         className
                     }
                     ref={autocompleteRef}
-                    onFocus={() => setShowSuggestions(true)}
+                    onFocus={() => (setShowSuggestions(true), onFocus())}
                 />
                 {showSuggestions && filteredData.length > 0 && (
                     <ul className="absolute z-10 mt-1 w-full bg-white dark:bg-gray-800 border border-gray-300 dark:border-gray-700 rounded-md shadow-lg max-h-48 overflow-y-auto">

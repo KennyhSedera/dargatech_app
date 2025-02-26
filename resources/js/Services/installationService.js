@@ -10,6 +10,16 @@ export const getinstallations = async () => {
     }
 };
 
+export const getinstallationsenpanne = async () => {
+    try {
+        const response = await api.get("/installation/en/panne");
+        return response.data;
+    } catch (error) {
+        console.error("Erreur lors de la récupération des installations", error);
+        throw error;
+    }
+};
+
 export const createinstallations = async (data) => {
     try {
         const response = await api.post("/installation", data);

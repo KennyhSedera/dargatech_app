@@ -21,6 +21,7 @@ class Installation extends Model
         'surface_panneaux',
         'debit_nominal',
         'code_installation',
+        'statuts',
     ];
 
     public function client()
@@ -31,6 +32,11 @@ class Installation extends Model
     public function maintenance()
     {
         return $this->hasMany(Maintenance::class, 'installation_id');
+    }
+
+    public function alert()
+    {
+        return $this->hasMany(Alerts::class);
     }
 
 }

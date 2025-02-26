@@ -13,6 +13,15 @@ class InstallationController extends Controller
         return response()->json(["data" => $installations]);
     }
 
+    public function getInstallation()
+    {
+        $installations = Installation::whereHas('alert', function ($query) {
+            $query->where('resolue', false);
+        })->with('alert')->get();
+
+        return response()->json(["data" => $installations]);
+    }
+
     public function store(InstallationRequest $request)
     {
         Installation::create($request->validated());

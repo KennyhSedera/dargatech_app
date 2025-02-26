@@ -1,5 +1,4 @@
 <?php
-
 namespace App\Http\Requests;
 
 use Illuminate\Foundation\Http\FormRequest;
@@ -22,7 +21,10 @@ class AlertRequest extends FormRequest
     public function rules(): array
     {
         return [
-            //
+            'client_id'       => 'required|numeric|min:0',
+            'type_alert'      => 'required|string',
+            'message'         => 'required|string',
+            'installation_id' => 'required|numeric|min:0',
         ];
     }
 }

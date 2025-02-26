@@ -20,6 +20,15 @@ class ClientController extends Controller
         ]);
     }
 
+    public function getclientinstallation()
+    {
+        $clients = Client::with('installations')->get();
+
+        return response()->json([
+            'clients' => $clients,
+        ]);
+    }
+
     /**
      * Afficher les détails d'un client spécifique.
      *
@@ -28,7 +37,7 @@ class ClientController extends Controller
      */
     public function show($id)
     {
-        $client = Client::find($id);
+        $client = Client::with(['installations', 'paiement'])->find($id);
 
         if (! $client) {
             return response()->json([

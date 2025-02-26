@@ -109,8 +109,7 @@ const FormulaireInstallation = ({
         } catch (error) {
             console.error('Error submitting payment:', error);
         } finally {
-            setLoad(false);
-            setBtnTitle('Enregistrer');
+            clearForm();
         }
     };
 
@@ -131,6 +130,7 @@ const FormulaireInstallation = ({
                         className="block w-full mt-1"
                         onSelect={handleSelect}
                         defaultValue={data.client_id ?? 0}
+                        onFocus={() => setValidationErrors({ ...validationErrors, 'client_id': '' })}
                     />
                     <InputError message={validationErrors.client_id || errors.client_id} className="mt-2" />
                 </div>
@@ -145,6 +145,7 @@ const FormulaireInstallation = ({
                         onChange={(e) => setData('puissance_pompe', e.target.value)}
                         required
                         type='number'
+                        onFocus={() => setValidationErrors({ ...validationErrors, 'puissance_pompe': '' })}
                     />
                     <InputError message={validationErrors.puissance_pompe || errors.puissance_pompe} className="mt-2" />
                 </div>
@@ -159,6 +160,7 @@ const FormulaireInstallation = ({
                         onChange={(e) => setData('profondeur_forage', e.target.value)}
                         required
                         type='number'
+                        onFocus={() => setValidationErrors({ ...validationErrors, 'profondeur_forage': '' })}
                     />
                     <InputError message={validationErrors.profondeur_forage || errors.profondeur_forage} className="mt-2" />
                 </div>
@@ -173,6 +175,7 @@ const FormulaireInstallation = ({
                         onChange={(e) => setData('debit_nominal', e.target.value)}
                         required
                         type='number'
+                        onFocus={() => setValidationErrors({ ...validationErrors, 'debit_nominal': '' })}
                     />
                     <InputError message={validationErrors.debit_nominal || errors.debit_nominal} className="mt-2" />
                 </div>
@@ -187,6 +190,7 @@ const FormulaireInstallation = ({
                         onChange={(e) => setData('surface_panneaux', e.target.value)}
                         required
                         type='number'
+                        onFocus={() => setValidationErrors({ ...validationErrors, 'surface_panneaux': '' })}
                     />
                     <InputError message={validationErrors.surface_panneaux || errors.surface_panneaux} className="mt-2" />
                 </div>
@@ -201,6 +205,7 @@ const FormulaireInstallation = ({
                         type='date'
                         onChange={(e) => setData('date_installation', e.target.value)}
                         required
+                        onFocus={() => setValidationErrors({ ...validationErrors, 'date_installation': '' })}
                     />
                     <InputError message={validationErrors.date_installation || errors.date_installation} className="mt-2" />
                 </div>

@@ -1,26 +1,53 @@
 <?php
 namespace App\Http\Controllers;
 
-use App\Http\Requests\AlertRequest;
 use App\Models\Alerts;
+use App\Models\Installation;
+use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
 
 class AlertController extends Controller
 {
     public function index()
     {
-        $data = Alerts::all();
+        $data = Alerts::with('installation', 'client')->get();
 
-        return response()->json([$data], 200);
+        return response()->json(['data' => $data], 200);
     }
 
-    public function store(AlertRequest $request)
+    public function store(Request $request)
     {
-        Alerts::create($request->validate());
+        $data = $request->validate([
+            'client_id'       => 'required|numeric|min:0',
+            'type_alert'      => 'required|string',
+            'message'         => 'required|string',
+            'installation_id' => 'required|numeric|min:0',
+        ]);
 
-        return response()->json([
-            'message' => 'Alert ajouté avec succès !',
-            'success' => true,
-        ], 200);
+        $installation = Installation::find($data['installation_id']);
+
+        DB::beginTransaction();
+
+        try {
+            $installation->update(['statuts' => 'en panne']);
+
+            Alerts::create($data);
+
+            DB::commit();
+
+            return response()->json([
+                'message' => 'Alert ajouté avec succès !',
+                'success' => true,
+            ], 200);
+        } catch (\Exception $e) {
+            DB::rollBack();
+
+            return response()->json([
+                'message' => 'Failed to add alert.',
+                'error'   => $e->getMessage(),
+                'success' => false,
+            ], 500);
+        }
     }
 
     public function show($id)
@@ -36,7 +63,7 @@ class AlertController extends Controller
         return response()->json([$data], 200);
     }
 
-    public function update(AlertRequest $request, $id)
+    public function update(Request $request, $id)
     {
         $data = Alerts::find($id);
 
@@ -46,7 +73,14 @@ class AlertController extends Controller
             ], 404);
         }
 
-        $data->update($request->validate());
+        $new = $request->validate([
+            'client_id'       => 'required|numeric|min:0',
+            'type_alert'      => 'required|string',
+            'message'         => 'required|string',
+            'installation_id' => 'required|numeric|min:0',
+        ]);
+
+        $data->update($new);
 
         return response()->json([
             'message' => 'Alert modifié avec succès !',

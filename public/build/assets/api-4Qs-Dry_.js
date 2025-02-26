@@ -1,0 +1,1 @@
+import{a}from"./app-05-OovjQ.js";const r="/api",o=a.create({baseURL:r,headers:{"Content-Type":"application/json"}});o.interceptors.request.use(e=>{const t=localStorage.getItem("token");return t&&(e.headers.Authorization=`Bearer ${t}`),e},e=>Promise.reject(e));export{o as a,r as u};

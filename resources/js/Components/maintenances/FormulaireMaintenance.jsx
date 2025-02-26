@@ -4,7 +4,7 @@ import TextInput from '../inputs/TextInput';
 import InputLabel from '../inputs/InputLabel';
 import { useForm } from '@inertiajs/react';
 import InputError from '../inputs/InputError';
-import { getinstallations } from '@/Services/installationService';
+import { getinstallationsenpanne } from '@/Services/installationService';
 import InputAutocomplete from '../inputs/InputAutocomplete ';
 import { formatdate, formatDate } from '@/constant';
 import { createmaintenances, updatemaintenances } from '@/Services/maintenanceService';
@@ -34,10 +34,11 @@ const FormulaireMaintenance = ({
     });
 
     const getInstallation = async () => {
-        const [{ data }, technicien] = await Promise.all([getinstallations(), getTechniciens()]);
+        const [{ data }, technicien] = await Promise.all([getinstallationsenpanne(), getTechniciens()]);
         const installationFormat = data.map(el => ({
             id: el.id,
             nom: el.code_installation,
+            message: el.alert[0].message,
         }));
         const technicienformat = technicien?.data.map(el => ({
             id: el.technicien.id,
@@ -103,7 +104,7 @@ const FormulaireMaintenance = ({
     };
 
     const handleSelect = (item) => {
-        setData('installation_id', item.id);
+        setData({ ...data, 'installation_id': item.id, 'description_probleme': item.message });
     };
 
     const handleSelectTechnicien = (item) => {
@@ -123,6 +124,8 @@ const FormulaireMaintenance = ({
                         className="block w-full mt-1"
                         onSelect={handleSelect}
                         defaultValue={data.installation_id}
+                        readOnly={dataModify.id}
+                        onFocus={() => setValidationErrors({ ...validationErrors, 'installation_id': '' })}
                     />
                     <InputError message={validationErrors.installation_id || errors.installation_id} className="mt-2" />
                 </div>
@@ -153,6 +156,7 @@ const FormulaireMaintenance = ({
                         autoComplete="description_probleme"
                         onChange={(e) => setData('description_probleme', e.target.value)}
                         required
+                        onFocus={() => setValidationErrors({ ...validationErrors, 'description_probleme': '' })}
                     />
                     <InputError message={validationErrors.description_probleme || errors.description_probleme} className="mt-2" />
                 </div>
@@ -166,6 +170,7 @@ const FormulaireMaintenance = ({
                         autoComplete="solutions_apportees"
                         onChange={(e) => setData('solutions_apportees', e.target.value)}
                         required
+                        onFocus={() => setValidationErrors({ ...validationErrors, 'solutions_apportees': '' })}
                     />
                     <InputError message={validationErrors.solutions_apportees || errors.solutions_apportees} className="mt-2" />
                 </div>
@@ -180,18 +185,20 @@ const FormulaireMaintenance = ({
                         onChange={(e) => setData('duree_intervention', e.target.value)}
                         required
                         type='number'
+                        onFocus={() => setValidationErrors({ ...validationErrors, 'duree_intervention': '' })}
                     />
                     <InputError message={validationErrors.duree_intervention || errors.duree_intervention} className="mt-2" />
                 </div>
                 <div>
-                    <InputLabel htmlFor="installation_id" value="Nom du technicien" />
+                    <InputLabel htmlFor="technicien" value="Nom du technicien" />
                     <InputAutocomplete
                         data={technicien}
                         className="block w-full mt-1"
                         onSelect={handleSelectTechnicien}
                         defaultValue={data.technicien}
+                        onFocus={() => setValidationErrors({ ...validationErrors, 'technicien': '' })}
                     />
-                    <InputError message={validationErrors.installation_id || errors.installation_id} className="mt-2" />
+                    <InputError message={validationErrors.technicien || errors.technicien} className="mt-2" />
                 </div>
                 <div>
                     <InputLabel htmlFor="date_intervention" value="Date d'intervention" />
@@ -204,6 +211,7 @@ const FormulaireMaintenance = ({
                         type='date'
                         onChange={(e) => setData('date_intervention', e.target.value)}
                         required
+                        onFocus={() => setValidationErrors({ ...validationErrors, 'date_intervention': '' })}
                     />
                     <InputError message={validationErrors.date_intervention || errors.date_intervention} className="mt-2" />
                 </div>

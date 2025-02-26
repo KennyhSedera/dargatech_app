@@ -17,6 +17,7 @@ use Illuminate\Support\Facades\Route;
 Route::group(['prefix' => 'api'], function () {
     Route::group(['prefix' => 'clients', 'as' => 'clients.', 'middleware' => 'auth'], function () {
         Route::get('/', [ClientController::class, 'index'])->name('index');
+        Route::get('/avec/installation', [ClientController::class, 'getclientinstallation'])->name('getclientinstallation');
         Route::get('/{id}', [ClientController::class, 'show'])->name('show');
         Route::post('/', [ClientController::class, 'store'])->name('store');
         Route::put('/{id}', [ClientController::class, 'update'])->name('update');
@@ -41,6 +42,7 @@ Route::group(['prefix' => 'api'], function () {
 
     Route::group(['prefix' => 'installation', 'as' => 'installation.', 'middleware' => 'auth'], function () {
         Route::get('/', [InstallationController::class, 'index'])->name('index');
+        Route::get('/en/panne', [InstallationController::class, 'getInstallation'])->name('getInstallation');
         Route::get('/{id}', [InstallationController::class, 'show'])->name('show');
         Route::post('/', [InstallationController::class, 'store'])->name('store');
         Route::put('/{id}', [InstallationController::class, 'update'])->name('update');

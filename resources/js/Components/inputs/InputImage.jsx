@@ -1,6 +1,6 @@
 import { forwardRef, useEffect, useImperativeHandle, useRef, useState } from 'react';
 
-const InputImage = forwardRef(({ className = '', isFocused = false, selectedFile, onLoadFile, ...props }, ref) => {
+const InputImage = forwardRef(({ className = '', isFocused = false, selectedFile, onLoadFile, onFocus, ...props }, ref) => {
     const inputRef = useRef(null);
     const [filename, setFilename] = useState('Sélectionner une image');
 
@@ -24,6 +24,7 @@ const InputImage = forwardRef(({ className = '', isFocused = false, selectedFile
 
     const handleClick = () => {
         inputRef.current?.click();
+        onFocus();
     };
 
     const handleFileChange = () => {

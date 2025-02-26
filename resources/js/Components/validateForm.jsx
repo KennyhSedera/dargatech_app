@@ -144,3 +144,38 @@ export const validateFormTechnicien = (data, setValidationErrors) => {
     setValidationErrors(errors);
     return Object.keys(errors).length === 0;
 }
+
+export function validateFormLogin(data, setValidationErrors) {
+    const errors = {};
+
+    if (!data.email.trim()) {
+        errors.email = 'L\'email est obligatoire.';
+    }
+    if (!data.password.trim()) {
+        errors.password = 'Le mot de passe est obligatoire.';
+    }
+
+    setValidationErrors(errors);
+    return Object.keys(errors).length === 0;
+}
+
+
+export function validateFormAlert(data, setValidationErrors) {
+    const errors = {};
+
+    if (!data.message.trim()) {
+        errors.message = 'La message est obligatoire.';
+    }
+    if (!data.type_alert.trim()) {
+        errors.type_alert = 'Le type d\'alerte est obligatoire.';
+    }
+    if (data.client_id <= 0) {
+        errors.client_id = 'Le nom client est obligatoire.';
+    }
+    if (data.installation_id <= 0) {
+        errors.installation_id = 'Le code d\'installation est obligatoire.';
+    }
+
+    setValidationErrors(errors);
+    return Object.keys(errors).length === 0;
+}

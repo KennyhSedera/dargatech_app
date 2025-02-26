@@ -55,5 +55,9 @@ Route::get('/technicien', function () {
     return Inertia::render('Technicien');
 })->middleware(['auth', 'verified'])->name('technicien');
 
+Route::get('/alert', function () {
+    return Inertia::render('Alert/AlertPage');
+})->middleware(['auth', 'verified'])->name('alert');
+
 require __DIR__ . '/auth.php';
 require __DIR__ . '/api.php';

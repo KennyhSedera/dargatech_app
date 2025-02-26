@@ -31,4 +31,9 @@ class Client extends Model
     {
         return $this->hasMany(Paiement::class, 'client_id');
     }
+
+    public function alert()
+    {
+        return $this->hasMany(Alerts::class);
+    }
 }
