@@ -13,6 +13,7 @@ import { TbEdit } from 'react-icons/tb';
 
 const InterventionPage = () => {
     const [search, setsearch] = useState('');
+    const [id, setid] = useState(0);
     const [open, setOpen] = useState(false);
     const [dataToModify, setDataToModify] = useState({});
     const [currentPage, setCurrentPage] = useState(1);
@@ -135,7 +136,7 @@ const InterventionPage = () => {
     };
 
     return (
-        <AuthenticatedLayout>
+        <AuthenticatedLayout setId={setid}>
             <Head title='Maintenance' />
             <HeaderPage
                 search={search}
@@ -165,6 +166,7 @@ const InterventionPage = () => {
                 setOpen={setOpen}
                 dataModify={dataToModify}
                 onCloseFormulaire={onCloseFormulaire}
+                idTechnicien={id}
             />
             <div>
                 <DataTable

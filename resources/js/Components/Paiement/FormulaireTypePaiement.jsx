@@ -73,7 +73,7 @@ const FormulaireTypePaiement = ({ reload = () => { } }) => {
             <form className='grid w-full grid-cols-1 gap-2 mb-4'>
                 <div>
                     <InputLabel htmlFor="type_name" value="Nom" />
-                    <TextInput id="type_name" name="type_name" value={data.name} className="block w-full mt-1" autoComplete="type_name" onChange={(e) => setData('name', e.target.value)} required placeholder="Nom de la type" onFocus={() => setValidationErrors({ ...validationErrors, 'name': '' })} />
+                    <TextInput id="type_name" isFocused={true} name="type_name" value={data.name} className="block w-full mt-1" autoComplete="type_name" onChange={(e) => setData('name', e.target.value)} required placeholder="Nom de la type" onFocus={() => setValidationErrors({ ...validationErrors, 'name': '' })} />
                     <InputError message={validationErrors.name || errors.name} className="mt-2" />
                 </div>
                 <div>

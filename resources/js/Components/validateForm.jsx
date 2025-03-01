@@ -108,9 +108,9 @@ export const validateFormMaintenance = (data, setValidationErrors) => {
     if (!data.solutions_apportees.trim()) {
         errors.solutions_apportees = 'La solutions apportées est obligatoire.';
     }
-    if (data.technicien <= 0) {
-        errors.technicien = 'Le nom du technicien est obligatoire.';
-    }
+    // if (data.technicien <= 0) {
+    //     errors.technicien = 'Le nom du technicien est obligatoire.';
+    // }
     if (!data.duree_intervention.toString().trim()) {
         errors.duree_intervention = 'La durée de l\'intervention est obligatoire.';
     } else if (isNaN(data.duree_intervention) || data.duree_intervention <= 0) {

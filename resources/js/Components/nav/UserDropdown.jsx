@@ -14,7 +14,7 @@ const UserDropdown = () => {
                 <Dropdown.Trigger>
                     <button
                         type="button"
-                        className="w-9 h-9 flex items-center rounded-full justify-center bg-gray-200 dark:bg-gray-900"
+                        className="w-9 h-9 flex items-center rounded-full justify-center bg-gray-200 dark:bg-gray-900 border border-orange-500 dark:border-indigo-500"
                     >
                         {user.profile ? (<img src={JSON.parse(user.profile)} alt="pdp" className='w-full h-full rounded-full object-cover' />)
                             : (<span className='text-base font-bold'>{getInitials(user.name)}</span>)}

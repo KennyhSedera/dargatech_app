@@ -71,7 +71,7 @@ const TechnicienFormulaire = ({
             <form className="grid w-full grid-cols-1 gap-4 my-6 sm:grid-cols-2">
                 <div>
                     <InputLabel htmlFor="name" value="Nom" />
-                    <TextInput id="name" name="name" value={data.name} className="block w-full mt-1" autoComplete="name" onChange={(e) => setData('name', e.target.value)} required onFocus={() => setValidationErrors({ ...validationErrors, 'name': '' })} />
+                    <TextInput id="name" name="name" value={data.name} isFocused={true} className="block w-full mt-1" autoComplete="name" onChange={(e) => setData('name', e.target.value)} required onFocus={() => setValidationErrors({ ...validationErrors, 'name': '' })} />
                     <InputError message={validationErrors.name || errors.name} className="mt-2" />
                 </div>
                 <div>

@@ -8,6 +8,7 @@ import ForgotPassword from './Auth/ForgotPassword';
 import ConfirmPassword from './Auth/ConfirmPassword';
 import ResetPassword from './Auth/ResetPassword';
 import VerifyEmail from './Auth/VerifyEmail';
+import { logo, titre } from '@/constant';
 
 const Welcome = () => {
     const [title, setTitle] = useState('Log In');
@@ -33,14 +34,16 @@ const Welcome = () => {
     return (
         <MainLayout>
             <Head title={title} />
-            <div className='flex items-center w-4/5'>
-                <div className='w-2/3'>
-                    Welcome
+            <div className="flex items-center w-4/5 p-4 rounded-md z-50">
+                <div className="w-2/3 flex items-center justify-center flex-col">
+                    <img src={logo} alt="Logo" className="max-w-md h-auto" />
+                    <img src={titre} alt="Titre" className="max-w-md h-auto" />
                 </div>
-                <div className='w-1/3'>
-                    {Components.find(el => el.title === title)?.component}
+                <div className="w-1/3">
+                    {Components.find(el => el.title === title)?.component || <p>Aucun composant trouvé</p>}
                 </div>
             </div>
+
         </MainLayout>
     );
 };

@@ -9,7 +9,7 @@ class InstallationController extends Controller
 {
     public function index()
     {
-        $installations = Installation::with('client')->get();
+        $installations = Installation::with('client')->orderBy('code_installation', 'asc')->get();
         return response()->json(["data" => $installations]);
     }
 

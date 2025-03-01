@@ -30,6 +30,17 @@ export const getTechnicien = async (id) => {
     }
 };
 
+export const getTechnicienbyUser = async (id) => {
+    try {
+        const response = await api.get("/technicien/by/user" + id);
+        return response.data;
+    } catch (error) {
+        console.error("Erreur lors de la récupération du technicien", error);
+        throw error;
+    }
+};
+
+
 export const updateTechniciens = async (id, data) => {
     try {
         const response = await api.put(`/technicien/${id}`, data);

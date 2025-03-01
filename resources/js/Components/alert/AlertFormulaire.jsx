@@ -100,6 +100,7 @@ const Alertformulaire = ({
                         data={clients}
                         className="block w-full mt-1"
                         onSelect={handleSelect}
+                        isFocused={true}
                         defaultValue={data.client_id ?? 0}
                         onFocus={() => setValidationErrors({ ...validationErrors, 'client_id': '' })}
                     />

@@ -117,7 +117,7 @@ const PaiementFormulaire = ({
             <form className="grid w-full grid-cols-1 gap-4 my-6 sm:grid-cols-2">
                 <div>
                     <InputLabel htmlFor="client_id" value="Nom client" />
-                    <InputAutocomplete data={clients} className="block w-full mt-1" onSelect={handleSelect} defaultValue={data.client_id} onFocus={() => setValidationErrors({ ...validationErrors, 'client_id': '' })} />
+                    <InputAutocomplete data={clients} isFocused={true} className="block w-full mt-1" onSelect={handleSelect} defaultValue={data.client_id} onFocus={() => setValidationErrors({ ...validationErrors, 'client_id': '' })} />
                     <InputError message={validationErrors.client_id || errors.client_id} className="mt-2" />
                 </div>
                 <div>

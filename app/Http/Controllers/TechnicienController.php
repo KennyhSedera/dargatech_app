@@ -50,7 +50,8 @@ class TechnicienController extends Controller
 
     public function show($id)
     {
-
+        $data = User::with('technicien')->where('user_role', 2)->find($id);
+        return response()->json(['data' => $data], 200);
     }
 
     public function update(Request $request, $id)

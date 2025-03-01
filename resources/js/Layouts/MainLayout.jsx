@@ -8,9 +8,11 @@ const MainLayout = ({ children }) => {
     }, [theme])
 
     return (
-        <div className='h-screen w-full bg-gray-100 dark:bg-gray-900 dark:text-white flex items-center justify-center'>
+        <div className="relative h-screen w-full bg-gray-100 bg-[url('/images/bg.webp')] bg-no-repeat bg-cover bg-center dark:bg-gray-900 dark:text-white flex items-center justify-center">
+            <div className="absolute inset-0 bg-gradient-to-b from-black/40 to-black/60 z-0"></div>
             {children}
         </div>
+
     )
 }
 

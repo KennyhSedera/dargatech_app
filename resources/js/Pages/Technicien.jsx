@@ -56,7 +56,7 @@ const Technicien = () => {
         const { data } = await getTechniciens();
 
         const technichien = data.map(el => ({
-            id: el.id,
+            id: el.technicien.id,
             name: el.name,
             email: el.email,
             genre: el.genre,

@@ -17,6 +17,7 @@ const FormulaireMaintenance = ({
     setOpen,
     dataModify = {},
     onCloseFormulaire = () => { },
+    idTechnicien,
 }) => {
     const [btnTitle, setBtnTitle] = useState('Enregistrer');
     const [load, setLoad] = useState(false);
@@ -30,7 +31,7 @@ const FormulaireMaintenance = ({
         description_probleme: '',
         solutions_apportees: '',
         duree_intervention: '',
-        technicien: 0,
+        technicien: idTechnicien,
     });
 
     const getInstallation = async () => {
@@ -79,6 +80,12 @@ const FormulaireMaintenance = ({
         }
     }, [dataModify, setData]);
 
+    useEffect(() => {
+        if (idTechnicien) {
+            setData('technicien', idTechnicien);
+        }
+    }, [idTechnicien, setData])
+
     const submit = async () => {
         if (!validateFormMaintenance(data, setValidationErrors)) {
             return;
@@ -86,7 +93,7 @@ const FormulaireMaintenance = ({
 
         setLoad(true);
         setBtnTitle('Chargement...');
-
+        console.log(data)
         try {
             let message;
             if (btnTitle === 'Enregistrer') {
@@ -107,9 +114,9 @@ const FormulaireMaintenance = ({
         setData({ ...data, 'installation_id': item.id, 'description_probleme': item.message });
     };
 
-    const handleSelectTechnicien = (item) => {
-        setData('technicien', item.id);
-    };
+    // const handleSelectTechnicien = (item) => {
+    //     setData('technicien', item.id);
+    // };
 
     return (
         <Modal show={open} closeable={false} onClose={onClose} maxWidth='xl'>
@@ -123,6 +130,7 @@ const FormulaireMaintenance = ({
                         data={installation}
                         className="block w-full mt-1"
                         onSelect={handleSelect}
+                        isFocused={true}
                         defaultValue={data.installation_id}
                         readOnly={dataModify.id}
                         onFocus={() => setValidationErrors({ ...validationErrors, 'installation_id': '' })}
@@ -189,7 +197,7 @@ const FormulaireMaintenance = ({
                     />
                     <InputError message={validationErrors.duree_intervention || errors.duree_intervention} className="mt-2" />
                 </div>
-                <div>
+                {/* <div>
                     <InputLabel htmlFor="technicien" value="Nom du technicien" />
                     <InputAutocomplete
                         data={technicien}
@@ -199,7 +207,7 @@ const FormulaireMaintenance = ({
                         onFocus={() => setValidationErrors({ ...validationErrors, 'technicien': '' })}
                     />
                     <InputError message={validationErrors.technicien || errors.technicien} className="mt-2" />
-                </div>
+                </div> */}
                 <div>
                     <InputLabel htmlFor="date_intervention" value="Date d'intervention" />
                     <TextInput

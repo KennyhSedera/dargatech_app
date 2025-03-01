@@ -4,12 +4,37 @@ import ResponsiveNavLink from '@/Components/nav/ResponsiveNavLink';
 import ThemeDropdown from '@/Components/nav/ThemeDropdown';
 import UserDropdown from '@/Components/nav/UserDropdown';
 import sidebarPages, { logo, titre } from '@/constant';
+import { getTechnicien } from '@/Services/technicienService';
 import { Link, usePage } from '@inertiajs/react';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { FaTelegramPlane } from 'react-icons/fa';
 
-export default function AuthenticatedLayout({ children }) {
+export default function AuthenticatedLayout({ setId = () => { }, children }) {
     const user = usePage().props.auth.user;
+
+    useEffect(() => {
+        const fetchUser = async () => {
+            try {
+                const response = await fetch("/api/user", {
+                    method: "GET",
+                    credentials: "include",
+                });
+
+                if (response.ok) {
+                    const data = await response.json();
+                    const role = data.user.user_role;
+                    if (role.name === 'technicien') {
+                        const { data } = await getTechnicien(user.id);
+                        setId(data.technicien.id);
+                    }
+                }
+            } catch (error) {
+                console.error("Erreur lors de la récupération de l'utilisateur", error);
+            }
+        };
+
+        fetchUser();
+    }, [user]);
 
     const [showingNavigationDropdown, setShowingNavigationDropdown] =
         useState(false);

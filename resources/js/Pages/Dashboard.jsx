@@ -6,6 +6,14 @@ import { HiMiniUsers } from 'react-icons/hi2';
 import { ImCogs } from 'react-icons/im';
 import { IoBuild } from 'react-icons/io5';
 import { GrMoney } from "react-icons/gr";
+// import LineChart from '@/Components/charts/LineChart';
+import BarChart from '@/Components/charts/BarChart';
+import CircleChart from '@/Components/charts/CircleChart';
+import AreaChart from '@/Components/charts/AreaChart';
+// import DashboardComponent from '@/Components/DashboardComponent';
+import RapportQuotidient from '@/Components/dashboard/RapportQuotidient';
+import moment from 'moment';
+import "moment/locale/fr";
 
 export default function Dashboard() {
     const [data, setData] = useState({});
@@ -18,6 +26,38 @@ export default function Dashboard() {
     useEffect(() => {
         getDataDB();
     }, []);
+
+    const alertcount = data?.alertcount ?? [];
+    const installationcount = data?.installationcount ?? [];
+    const interventioncount = data?.interventioncount ?? [];
+
+    const allDatesFormated = [
+        ...new Set([...alertcount, ...installationcount, ...interventioncount].map((d) =>
+            moment(d.date).format("DD MMM")
+        )),
+    ].sort();
+
+    const allDates = [
+        ...new Set([...alertcount, ...installationcount, ...interventioncount].map((d) => d.date)),
+    ].sort();
+
+    const transformData = (data) =>
+        allDates.map((date) => {
+            const entry = data.find((d) => d.date === date);
+            return entry ? entry.total : 0;
+        });
+
+    const series = [
+        { name: "Installations", data: transformData(installationcount) },
+        { name: "Alertes", data: transformData(alertcount) },
+        { name: "Interventions", data: transformData(interventioncount) },
+    ];
+
+    const categories = allDatesFormated;
+
+    const percentenpanne = data?.installation > 0
+        ? parseFloat(((data?.enpanne * 100) / data?.installation).toFixed(2))
+        : 0;
 
     const stats = [
         { label: 'Clients', value: data?.client ?? 0, color: 'from-orange-400 dark:to-orange-800 to-orange-600', icon: <HiMiniUsers /> },
@@ -51,6 +91,26 @@ export default function Dashboard() {
 
                 ))}
             </div>
+            <div className='grid grid-cols-1 md:grid-cols-3 gap-2 mt-2'>
+                <RapportQuotidient data={data} />
+                <BarChart
+                    className="col-span-2"
+                    categories={categories}
+                    series={series}
+                    yaxistitle='Nombre total'
+                    title='Mouvement dans 7 derniers jour'
+                />
+            </div>
+            <div className='grid grid-cols-1 md:grid-cols-3 gap-2 mt-2'>
+                <AreaChart
+                    className="col-span-2"
+                />
+                <CircleChart
+                    value={percentenpanne || 0}
+                    title="Installation en panne"
+                />
+            </div>
+            {/* <DashboardComponent /> */}
         </AuthenticatedLayout>
     );
 }
