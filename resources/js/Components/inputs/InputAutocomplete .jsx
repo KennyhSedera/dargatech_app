@@ -76,7 +76,7 @@ const InputAutocomplete = forwardRef(
                     onFocus={() => (setShowSuggestions(true), onFocus())}
                 />
                 {showSuggestions && filteredData.length > 0 && (
-                    <ul className="absolute z-10 mt-1 w-full bg-white dark:bg-gray-800 border border-gray-300 dark:border-gray-700 rounded-md shadow-lg max-h-48 overflow-y-auto">
+                    <ul className="absolute z-50 mt-1 w-full bg-white dark:bg-gray-800 border border-gray-300 dark:border-gray-700 rounded-md shadow-lg max-h-48 overflow-y-auto">
                         {filteredData.map((item) => (
                             <li
                                 key={item.id}

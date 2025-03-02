@@ -107,7 +107,7 @@ const AlertPage = () => {
     const onCloseFormulaire = (message) => {
         setopen(false);
         fetchDataDB();
-        setAlert({ open: true, message, type: 'success' });
+        message && setAlert({ open: true, message, type: 'success' });
     }
 
     return (

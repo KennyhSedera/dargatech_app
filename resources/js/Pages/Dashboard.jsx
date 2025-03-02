@@ -33,9 +33,9 @@ export default function Dashboard() {
 
     const allDatesFormated = [
         ...new Set([...alertcount, ...installationcount, ...interventioncount].map((d) =>
-            moment(d.date).format("DD MMM")
+            moment(d.date).format("dd-mm-yyyy")
         )),
-    ];
+    ].sort();
 
     const allDates = [
         ...new Set([...alertcount, ...installationcount, ...interventioncount].map((d) => d.date)),
@@ -53,7 +53,7 @@ export default function Dashboard() {
         { name: "Interventions", data: transformData(interventioncount) },
     ];
 
-    const categories = allDates;
+    const categories = allDatesFormated;
 
     const percentenpanne = data?.installation > 0
         ? parseFloat(((data?.enpanne * 100) / data?.installation).toFixed(2))
