@@ -13,7 +13,7 @@ const NotificationDropdown = () => {
                 <Dropdown.Trigger>
                     <button
                         type="button"
-                        className="w-9 h-9 flex items-center rounded-full justify-center bg-gray-200 dark:bg-gray-900"
+                        className="w-9 h-9 inline-flex items-center justify-center rounded-md p-2 text-gray-400 transition duration-150 ease-in-out hover:bg-gray-100 hover:text-gray-500 focus:bg-gray-100 focus:text-gray-500 focus:outline-none dark:text-gray-500 dark:hover:bg-gray-900 dark:hover:text-gray-400 dark:focus:bg-gray-900 dark:focus:text-gray-400"
                     >
                         <TbBellFilled className='text-lg' />
                     </button>

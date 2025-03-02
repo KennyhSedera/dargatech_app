@@ -89,12 +89,19 @@ const Alertformulaire = ({
     };
 
     return (
-        <Modal show={open} closeable={false} onClose={onClose} maxWidth='xl'>
+        <Modal
+            show={open}
+            onClose={onClose}
+            closeable={false}
+            role="dialog"
+            aria-labelledby="modal-title"
+            maxWidth='xl'
+        >
             <div className='text-2xl font-semibold text-center'>
                 {dataModify.nom ? 'Modifier une alert' : 'Ajouter une alert'}
             </div>
-            <form className='grid w-full grid-cols-1 gap-4 my-6 sm:grid-cols-2'>
-                <div>
+            <form className='grid w-full gap-4 my-6 sm:grid-cols-2'>
+                <div className='w-full'>
                     <InputLabel htmlFor="client_id" value="Nom client" />
                     <InputAutocomplete
                         data={clients}

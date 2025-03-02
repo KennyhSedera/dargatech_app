@@ -16,6 +16,15 @@ const sidebarPages = [
     { route: "paiements", label: "Paiements", icon: FaMoneyCheckDollar },
 ];
 
+export const sidebarPagestech = [
+    { route: "dashboard", label: "Tableau de bord", icon: HiHome },
+    { route: "clients", label: "Clients", icon: HiMiniUsers },
+    { route: "installations", label: "Installations", icon: IoBuild },
+    { route: "alert", label: "Alerts", icon: IoAlertCircle },
+    { route: "interventions", label: "Maintenances", icon: ImCogs },
+    { route: "paiements", label: "Paiements", icon: FaMoneyCheckDollar },
+];
+
 export default sidebarPages;
 
 export const logo = '/images/logo.png';

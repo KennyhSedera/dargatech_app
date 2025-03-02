@@ -12,9 +12,10 @@ const AreaChart = ({
         { x: new Date("2024-01-07").getTime(), y: 70 },
     ],
     title = "Analyse des Mouvements Boursiers",
-    subtitle = "Évolution des prix (en $)",
+    subtitle = "",
     chartOptions = {},
     className = "",
+    name = "Valeurs"
 }) => {
     const defaultOptions = {
         chart: {
@@ -36,11 +37,11 @@ const AreaChart = ({
             style: { color: "#6366f1", fontSize: "14px" },
         },
         xaxis: {
-            type: "datetime",
+            type: "category",
             labels: { style: { colors: "#22c55e", fontSize: "12px" } },
         },
         yaxis: {
-            title: { text: "Valeurs", style: { color: "#3b82f6" } },
+            title: { text: name, style: { color: "#3b82f6" } },
             labels: { style: { colors: "#3b82f6", fontSize: "12px" } },
             opposite: true,
         },
@@ -63,7 +64,7 @@ const AreaChart = ({
         <div className={`bg-white dark:bg-gray-800 p-4 rounded-md shadow-md ${className}`}>
             <ReactApexChart
                 options={{ ...defaultOptions, ...chartOptions }}
-                series={[{ name: "Valeurs", data: seriesData }]}
+                series={[{ name, data: seriesData }]}
                 type="area"
                 height={350}
             />

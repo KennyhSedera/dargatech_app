@@ -3,14 +3,17 @@ import NotificationDropdown from '@/Components/nav/NotificationDropdown';
 import ResponsiveNavLink from '@/Components/nav/ResponsiveNavLink';
 import ThemeDropdown from '@/Components/nav/ThemeDropdown';
 import UserDropdown from '@/Components/nav/UserDropdown';
-import sidebarPages, { logo, titre } from '@/constant';
+import sidebarPages, { logo, sidebarPagestech, titre } from '@/constant';
 import { getTechnicien } from '@/Services/technicienService';
 import { Link, usePage } from '@inertiajs/react';
 import { useEffect, useState } from 'react';
 import { FaTelegramPlane } from 'react-icons/fa';
+import { IoMdMenu } from 'react-icons/io';
+import { IoClose } from 'react-icons/io5';
 
 export default function AuthenticatedLayout({ setId = () => { }, children }) {
     const user = usePage().props.auth.user;
+    const [link, setLink] = useState(sidebarPages);
 
     useEffect(() => {
         const fetchUser = async () => {
@@ -26,6 +29,7 @@ export default function AuthenticatedLayout({ setId = () => { }, children }) {
                     if (role.name === 'technicien') {
                         const { data } = await getTechnicien(user.id);
                         setId(data.technicien.id);
+                        setLink(sidebarPagestech)
                     }
                 }
             } catch (error) {
@@ -44,7 +48,7 @@ export default function AuthenticatedLayout({ setId = () => { }, children }) {
             <div className='hidden sm:flex sm:flex-col w-16 border-r py-1 items-center h-screen sticky top-0 border-gray-100 bg-white dark:border-gray-700 dark:bg-gray-800 z-40'>
                 <img src={logo} alt="logo" className='w-12' />
                 <div className='flex flex-col gap-2 mt-6 justify-center bg-red'>
-                    {sidebarPages.map((item, i) => (
+                    {link.map((item, i) => (
                         <NavLinkIcon
                             key={item.route}
                             route={route(item.route)}
@@ -65,58 +69,31 @@ export default function AuthenticatedLayout({ setId = () => { }, children }) {
                                 </div>
                             </div>
 
-                            <div className="hidden sm:ms-6 sm:flex sm:items-center gap-2">
-                                <Link
-                                    href='telegram'
-                                    type="button"
-                                    className="w-9 h-9 flex items-center rounded-full justify-center bg-gray-200 dark:bg-gray-900"
-                                >
-                                    <FaTelegramPlane />
-                                </Link>
-                                <NotificationDropdown />
+                            <div className="flex items-center">
                                 <ThemeDropdown />
-                                <UserDropdown />
-                            </div>
-
-                            <div className="-me-2 flex items-center sm:hidden">
-                                <button
-                                    onClick={() =>
-                                        setShowingNavigationDropdown(
-                                            (previousState) => !previousState,
-                                        )
-                                    }
-                                    className="inline-flex items-center justify-center rounded-md p-2 text-gray-400 transition duration-150 ease-in-out hover:bg-gray-100 hover:text-gray-500 focus:bg-gray-100 focus:text-gray-500 focus:outline-none dark:text-gray-500 dark:hover:bg-gray-900 dark:hover:text-gray-400 dark:focus:bg-gray-900 dark:focus:text-gray-400"
-                                >
-                                    <svg
-                                        className="h-6 w-6"
-                                        stroke="currentColor"
-                                        fill="none"
-                                        viewBox="0 0 24 24"
+                                <div className="hidden sm:flex sm:items-center gap-2">
+                                    <Link
+                                        href='telegram'
+                                        type="button"
+                                        className="w-9 h-9 inline-flex items-center justify-center rounded-md p-2 text-gray-400 transition duration-150 ease-in-out hover:bg-gray-100 hover:text-gray-500 focus:bg-gray-100 focus:text-gray-500 focus:outline-none dark:text-gray-500 dark:hover:bg-gray-900 dark:hover:text-gray-400 dark:focus:bg-gray-900 dark:focus:text-gray-400"
                                     >
-                                        <path
-                                            className={
-                                                !showingNavigationDropdown
-                                                    ? 'inline-flex'
-                                                    : 'hidden'
-                                            }
-                                            strokeLinecap="round"
-                                            strokeLinejoin="round"
-                                            strokeWidth="2"
-                                            d="M4 6h16M4 12h16M4 18h16"
-                                        />
-                                        <path
-                                            className={
-                                                showingNavigationDropdown
-                                                    ? 'inline-flex'
-                                                    : 'hidden'
-                                            }
-                                            strokeLinecap="round"
-                                            strokeLinejoin="round"
-                                            strokeWidth="2"
-                                            d="M6 18L18 6M6 6l12 12"
-                                        />
-                                    </svg>
-                                </button>
+                                        <FaTelegramPlane />
+                                    </Link>
+                                    <NotificationDropdown />
+                                    <UserDropdown />
+                                </div>
+                                <div className="-me-2 flex items-center gap-2 sm:hidden">
+                                    <button
+                                        onClick={() =>
+                                            setShowingNavigationDropdown(
+                                                (previousState) => !previousState,
+                                            )
+                                        }
+                                        className="inline-flex items-center justify-center rounded-md p-2 text-gray-400 transition duration-150 ease-in-out hover:bg-gray-100 hover:text-gray-500 focus:bg-gray-100 focus:text-gray-500 focus:outline-none dark:text-gray-500 dark:hover:bg-gray-900 dark:hover:text-gray-400 dark:focus:bg-gray-900 dark:focus:text-gray-400"
+                                    >
+                                        {showingNavigationDropdown ? <IoClose className='text-xl' /> : <IoMdMenu className='text-xl' />}
+                                    </button>
+                                </div>
                             </div>
                         </div>
                     </div>
@@ -128,7 +105,7 @@ export default function AuthenticatedLayout({ setId = () => { }, children }) {
                         }
                     >
                         <div className="space-y-1 pb-3 pt-2">
-                            {sidebarPages.map((item, i) => (
+                            {link.map((item, i) => (
                                 <ResponsiveNavLink
                                     key={item.route}
                                     href={route(item.route)}

@@ -1,6 +1,6 @@
 import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout';
 import { getCount } from '@/Services/dasboardService';
-import { Head } from '@inertiajs/react';
+import { Head, Link } from '@inertiajs/react';
 import { useEffect, useState } from 'react';
 import { HiMiniUsers } from 'react-icons/hi2';
 import { ImCogs } from 'react-icons/im';
@@ -32,10 +32,10 @@ export default function Dashboard() {
     const interventioncount = data?.interventioncount ?? [];
 
     const allDatesFormated = [
-        ...new Set([...alertcount, ...installationcount, ...interventioncount].map((d) =>
-            moment(d.date).format("dd-mm-yyyy")
-        )),
-    ].sort();
+        ...new Set([...alertcount, ...installationcount, ...interventioncount].map(d => d.date))
+    ]
+        .sort((a, b) => new Date(a) - new Date(b))
+        .map(date => moment(date).format("DD MMM"));
 
     const allDates = [
         ...new Set([...alertcount, ...installationcount, ...interventioncount].map((d) => d.date)),
@@ -46,6 +46,8 @@ export default function Dashboard() {
             const entry = data.find((d) => d.date === date);
             return entry ? entry.total : 0;
         });
+
+
 
     const series = [
         { name: "Installations", data: transformData(installationcount) },
@@ -59,20 +61,36 @@ export default function Dashboard() {
         ? parseFloat(((data?.enpanne * 100) / data?.installation).toFixed(2))
         : 0;
 
+    const transformDataArea = (data) =>
+        allDates.map((date) => {
+            const entry = data.find((d) => d.date === date);
+            return entry ? { x: date, y: entry.total } : { x: date, y: 0 };
+        });
+    const inst = transformDataArea(installationcount);
+
     const stats = [
-        { label: 'Clients', value: data?.client ?? 0, color: 'from-orange-400 dark:to-orange-800 to-orange-600', icon: <HiMiniUsers /> },
-        { label: 'Installations', value: data?.installation ?? 0, color: 'from-red-400 dark:to-red-800 to-orange-600', icon: <IoBuild /> },
-        { label: 'Maintenances', value: data?.maintenance ?? 0, color: 'from-blue-400 dark:to-blue-800 to-orange-600', icon: <ImCogs /> },
-        { label: 'Total Solde', value: `${data?.soldtotal ?? 0} €`, color: 'from-green-400 dark:to-green-800 to-orange-600', icon: <GrMoney /> },
+        { label: 'Clients', value: data?.client ?? 0, color: 'from-orange-400 dark:to-orange-800 to-orange-600', icon: <HiMiniUsers />, route: 'clients' },
+        { label: 'Installations', value: data?.installation ?? 0, color: 'from-red-400 dark:to-red-800 to-orange-600', icon: <IoBuild />, route: 'installations' },
+        { label: 'Maintenances', value: data?.maintenance ?? 0, color: 'from-blue-400 dark:to-blue-800 to-orange-600', icon: <ImCogs />, route: 'interventions' },
+        { label: 'Total Solde', value: `${data?.soldtotal ?? 0} €`, color: 'from-green-400 dark:to-green-800 to-orange-600', icon: <GrMoney />, route: 'paiements' },
     ];
+
+    const chartOptions = {
+        xaxis: {
+            type: "category",
+            categories: allDatesFormated,
+            labels: { style: { colors: "#22c55e", fontSize: "12px" } },
+        },
+    };
 
     return (
         <AuthenticatedLayout>
             <Head title="Tableau de bord" />
             <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 p-4">
                 {stats.map((stat, index) => (
-                    <div
+                    <Link
                         key={index}
+                        href={stat.route}
                         className={`group relative cursor-pointer bg-gradient-to-tr ${stat.color} text-white rounded-xl shadow-lg p-6 flex items-center justify-between overflow-hidden transition-transform transform hover:scale-105 hover:shadow-2xl z-10`}
                     >
                         <div className="absolute inset-0 bg-gradient-to-bl opacity-0 group-hover:opacity-100 transition-opacity duration-1000"></div>
@@ -87,7 +105,7 @@ export default function Dashboard() {
                         </div>
 
                         <div className="absolute inset-0 bg-gradient-to-tr opacity-0 group-hover:opacity-30 transition-opacity duration-500"></div>
-                    </div>
+                    </Link>
                 ))}
             </div>
             <div className='grid grid-cols-1 md:grid-cols-3 gap-2 mt-2'>
@@ -102,6 +120,10 @@ export default function Dashboard() {
             </div>
             <div className='grid grid-cols-1 md:grid-cols-3 gap-2 mt-2'>
                 <AreaChart
+                    name='Total'
+                    seriesData={inst}
+                    chartOptions={chartOptions}
+                    title="Analyse des Mouvements de l'installation"
                     className="col-span-2"
                 />
                 <CircleChart
