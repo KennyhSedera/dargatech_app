@@ -128,12 +128,17 @@ export default function AuthenticatedLayout({ setId = () => { }, children }) {
                         }
                     >
                         <div className="space-y-1 pb-3 pt-2">
-                            <ResponsiveNavLink
-                                href={route('dashboard')}
-                                active={route().current('dashboard')}
-                            >
-                                Dashboard
-                            </ResponsiveNavLink>
+                            {sidebarPages.map((item, i) => (
+                                <ResponsiveNavLink
+                                    key={item.route}
+                                    href={route(item.route)}
+                                    active={route().current(item.route)}
+                                >
+                                    <div className="flex items-center gap-2">
+                                        <item.icon /> {item.label}
+                                    </div>
+                                </ResponsiveNavLink>
+                            ))}
                         </div>
 
                         <div className="border-t border-gray-200 pb-1 pt-4 dark:border-gray-600">

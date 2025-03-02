@@ -30,16 +30,15 @@ const Welcome = () => {
     ];
 
 
-
     return (
         <MainLayout>
             <Head title={title} />
-            <div className="flex items-center w-4/5 p-4 rounded-md z-50">
-                <div className="w-2/3 flex items-center justify-center flex-col">
-                    <img src={logo} alt="Logo" className="max-w-md h-auto" />
-                    <img src={titre} alt="Titre" className="max-w-md h-auto" />
+            <div className="grid grid-cols-1 md:grid-cols-3 w-4/5 p-4 rounded-md z-50">
+                <div className="flex items-center justify-center flex-col md:col-span-2">
+                    <img src={logo} alt="Logo" className="max-w-xs md:max-w-md h-auto" />
+                    <img src={titre} alt="Titre" className="max-w-xs md:max-w-md h-auto" />
                 </div>
-                <div className="w-1/3">
+                <div className="flex items-center justify-center">
                     {Components.find(el => el.title === title)?.component || <p>Aucun composant trouvé</p>}
                 </div>
             </div>

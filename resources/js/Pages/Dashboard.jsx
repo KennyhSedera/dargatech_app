@@ -35,7 +35,7 @@ export default function Dashboard() {
         ...new Set([...alertcount, ...installationcount, ...interventioncount].map((d) =>
             moment(d.date).format("DD MMM")
         )),
-    ].sort();
+    ];
 
     const allDates = [
         ...new Set([...alertcount, ...installationcount, ...interventioncount].map((d) => d.date)),
@@ -53,7 +53,7 @@ export default function Dashboard() {
         { name: "Interventions", data: transformData(interventioncount) },
     ];
 
-    const categories = allDatesFormated;
+    const categories = allDates;
 
     const percentenpanne = data?.installation > 0
         ? parseFloat(((data?.enpanne * 100) / data?.installation).toFixed(2))
@@ -88,7 +88,6 @@ export default function Dashboard() {
 
                         <div className="absolute inset-0 bg-gradient-to-tr opacity-0 group-hover:opacity-30 transition-opacity duration-500"></div>
                     </div>
-
                 ))}
             </div>
             <div className='grid grid-cols-1 md:grid-cols-3 gap-2 mt-2'>
