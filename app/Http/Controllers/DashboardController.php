@@ -27,7 +27,7 @@ class DashboardController extends Controller
 
         $paiement = DB::table('paiements')
             ->whereDate('created_at', Carbon::today())
-            ->sum('montant');
+            ->count();
 
         $alert = DB::table('alerts')
             ->whereDate('created_at', Carbon::today())
