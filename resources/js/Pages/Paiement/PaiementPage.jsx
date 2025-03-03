@@ -10,6 +10,7 @@ import React, { useEffect, useState } from 'react'
 import { GoTrash } from 'react-icons/go'
 import { TbEdit } from 'react-icons/tb'
 import TypePaiement from './TypePaiement'
+import HeaderPage from '@/Components/HeaderPage'
 
 const PaiementPage = () => {
     const [search, setsearch] = useState('');
