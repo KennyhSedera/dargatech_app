@@ -46,7 +46,7 @@ const UserDropdown = () => {
                         className='rounded-bl-md rounded-br-md'
                     >
                         <div className='flex items-center gap-2'>
-                            <MdLogout /> Log Out
+                            <MdLogout /> Se déconnecter
                         </div>
                     </Dropdown.Link>
                 </Dropdown.Content>

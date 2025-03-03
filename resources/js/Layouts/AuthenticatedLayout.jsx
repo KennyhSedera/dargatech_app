@@ -72,13 +72,13 @@ export default function AuthenticatedLayout({ setId = () => { }, children }) {
                             <div className="flex items-center">
                                 <ThemeDropdown />
                                 <div className="hidden sm:flex sm:items-center gap-2">
-                                    <Link
+                                    {/* <Link
                                         href='telegram'
                                         type="button"
                                         className="w-9 h-9 inline-flex items-center justify-center rounded-md p-2 text-gray-400 transition duration-150 ease-in-out hover:bg-gray-100 hover:text-gray-500 focus:bg-gray-100 focus:text-gray-500 focus:outline-none dark:text-gray-500 dark:hover:bg-gray-900 dark:hover:text-gray-400 dark:focus:bg-gray-900 dark:focus:text-gray-400"
                                     >
                                         <FaTelegramPlane />
-                                    </Link>
+                                    </Link> */}
                                     <NotificationDropdown />
                                     <UserDropdown />
                                 </div>
@@ -137,13 +137,13 @@ export default function AuthenticatedLayout({ setId = () => { }, children }) {
                                     href={route('logout')}
                                     as="button"
                                 >
-                                    Log Out
+                                    Se déconnecter
                                 </ResponsiveNavLink>
                             </div>
                         </div>
                     </div>
                 </nav>
-                <main className='p-2'>{children}</main>
+                <main className='p-2 pb-6'>{children}</main>
             </div>
         </div>
     );

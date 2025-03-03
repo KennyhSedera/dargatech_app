@@ -64,7 +64,7 @@ export default function Dashboard() {
     const transformDataArea = (data) =>
         allDates.map((date) => {
             const entry = data.find((d) => d.date === date);
-            return entry ? { x: date, y: entry.total } : { x: date, y: 0 };
+            return entry ? { x: moment(date).format("DD MMM"), y: entry.total } : { x: moment(date).format("DD MMM"), y: 0 };
         });
     const inst = transformDataArea(installationcount);
 
@@ -78,7 +78,6 @@ export default function Dashboard() {
     const chartOptions = {
         xaxis: {
             type: "category",
-            categories: allDatesFormated,
             labels: { style: { colors: "#22c55e", fontSize: "12px" } },
         },
     };
@@ -86,7 +85,7 @@ export default function Dashboard() {
     return (
         <AuthenticatedLayout>
             <Head title="Tableau de bord" />
-            <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 p-4">
+            <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 p-4 pb-6">
                 {stats.map((stat, index) => (
                     <Link
                         key={index}
@@ -109,7 +108,6 @@ export default function Dashboard() {
                 ))}
             </div>
             <div className='grid grid-cols-1 md:grid-cols-3 gap-2 mt-2'>
-                <RapportQuotidient data={data} />
                 <BarChart
                     className="col-span-2"
                     categories={categories}
@@ -117,18 +115,19 @@ export default function Dashboard() {
                     yaxistitle='Nombre total'
                     title='Mouvement dans 7 derniers jour'
                 />
+                <RapportQuotidient data={data} />
             </div>
             <div className='grid grid-cols-1 md:grid-cols-3 gap-2 mt-2'>
+                <CircleChart
+                    value={percentenpanne || 0}
+                    title="Installation en panne"
+                />
                 <AreaChart
                     name='Total'
                     seriesData={inst}
                     chartOptions={chartOptions}
                     title="Analyse des Mouvements de l'installation"
                     className="col-span-2"
-                />
-                <CircleChart
-                    value={percentenpanne || 0}
-                    title="Installation en panne"
                 />
             </div>
             {/* <DashboardComponent /> */}
