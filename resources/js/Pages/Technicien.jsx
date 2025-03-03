@@ -3,6 +3,7 @@ import DataTable from '@/Components/DataTable'
 import HeaderPage from '@/Components/HeaderPage'
 import Snackbar from '@/Components/Snackbar'
 import TechnicienFormulaire from '@/Components/technicien/TechnicienFormulaire'
+import { nodata2 } from '@/constant'
 import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout'
 import { deleteTechniciens, getTechniciens } from '@/Services/technicienService'
 import { Head } from '@inertiajs/react'
@@ -137,16 +138,21 @@ const Technicien = () => {
                 accept={confirmDelete}
             />
             <div>
-                <DataTable
-                    headers={headers}
-                    rows={filteredData}
-                    itemsPerPage={10}
-                    actions={actions}
-                    className="mt-4"
-                    currentPage={currentPage}
-                    onPageChange={setCurrentPage}
-                    masqueColumns={['client_id']}
-                />
+                {filteredData.length > 0 ?
+                    <DataTable
+                        headers={headers}
+                        rows={filteredData}
+                        itemsPerPage={10}
+                        actions={actions}
+                        className="mt-4"
+                        currentPage={currentPage}
+                        onPageChange={setCurrentPage}
+                        masqueColumns={['client_id']}
+                    /> :
+                    <div className='flex justify-center'>
+                        <img src={nodata2} alt="no data" className='max-w-md opacity-50 mt-2' />
+                    </div>
+                }
             </div>
         </AuthenticatedLayout>
     )

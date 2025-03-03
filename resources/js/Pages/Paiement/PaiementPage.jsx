@@ -1,9 +1,8 @@
 import ConfirmDialog from '@/Components/ConfirmDialog'
 import DataTable from '@/Components/DataTable'
-import HeaderPage from '@/Components/HeaderPage'
 import PaiementFormulaire from '@/Components/Paiement/PaiementFormulaire'
 import Snackbar from '@/Components/Snackbar'
-import { formatdate, parsedate } from '@/constant'
+import { formatdate, nodata2, parsedate } from '@/constant'
 import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout'
 import { deletePaiement, getPaiements } from '@/Services/PaiementService'
 import { Head } from '@inertiajs/react'
@@ -30,6 +29,7 @@ const PaiementPage = () => {
         type: 'success'
     });
     const [isType, setIsType] = useState(false);
+    const [id, setId] = useState(false);
 
     const headers = [
         { key: 'id', label: 'ID' },
@@ -133,7 +133,7 @@ const PaiementPage = () => {
     };
 
     return (
-        <AuthenticatedLayout>
+        <AuthenticatedLayout setId={setId}>
             <Head title='Paiements' />
             <PaiementFormulaire
                 open={open}
@@ -158,7 +158,7 @@ const PaiementPage = () => {
                 close={() => setSuppression({ ...suppression, open: false })}
                 accept={confirmDelete}
             />
-            <span className='flex items-center w-40 p-1 mb-2 border border-gray-300 rounded-md dark:border-gray-700'>
+            {!id && <span className='flex items-center w-40 p-1 mb-2 border border-gray-300 rounded-md dark:border-gray-700'>
                 <div
                     onClick={() => setIsType(false)}
                     className={`w-1/2 cursor-pointer text-center py-1 rounded-md text-sm transition-colors duration-300 ${!isType ? 'bg-gray-300 dark:bg-gray-700' : 'bg-transparent'}`}
@@ -171,7 +171,7 @@ const PaiementPage = () => {
                 >
                     Types
                 </div>
-            </span>
+            </span>}
             {!isType ?
                 <div>
                     <HeaderPage
@@ -180,16 +180,21 @@ const PaiementPage = () => {
                         search={search}
                         onSearch={onFilteredData}
                     />
-                    <DataTable
-                        headers={headers}
-                        rows={filteredData}
-                        itemsPerPage={10}
-                        actions={actions}
-                        className="mt-4"
-                        currentPage={currentPage}
-                        onPageChange={setCurrentPage}
-                        masqueColumns={['client_id']}
-                    />
+                    {filteredData.length > 0 ?
+                        <DataTable
+                            headers={headers}
+                            rows={filteredData}
+                            itemsPerPage={10}
+                            actions={actions}
+                            className="mt-4"
+                            currentPage={currentPage}
+                            onPageChange={setCurrentPage}
+                            masqueColumns={['client_id']}
+                        /> :
+                        <div className='flex justify-center'>
+                            <img src={nodata2} alt="no data" className='max-w-md opacity-50 mt-2' />
+                        </div>
+                    }
                 </div> :
                 <TypePaiement />
             }

@@ -29,6 +29,9 @@ export default sidebarPages;
 
 export const logo = '/images/logo.png';
 export const titre = '/images/titre.png';
+export const nodata = '/images/nodata.webp';
+export const nodata1 = '/images/nodata1.png';
+export const nodata2 = '/images/nodata2.png';
 
 export const formatdate = (date) => {
     if (!date || moment(date).isValid()) {

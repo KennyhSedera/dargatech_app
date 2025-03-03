@@ -3,6 +3,7 @@ import DataTable from '@/Components/DataTable';
 import HeaderPage from '@/Components/HeaderPage'
 import FormulaireTypePaiement from '@/Components/Paiement/FormulaireTypePaiement';
 import Snackbar from '@/Components/Snackbar';
+import { nodata2 } from '@/constant';
 import { deleteType_paiement, getType_paiements } from '@/Services/TypePaiementService';
 import React, { useEffect, useState } from 'react'
 import { GoTrash } from 'react-icons/go';
@@ -117,19 +118,24 @@ const TypePaiement = () => {
                 close={() => setSuppression({ ...suppression, open: false })}
                 accept={confirmDelete}
             />
-            <div className="grid grid-cols-3 gap-4">
-                <div className="col-span-2">
-                    <DataTable
-                        headers={headers}
-                        rows={filteredData}
-                        itemsPerPage={10}
-                        actions={actions}
-                        className="mt-4"
-                        currentPage={currentPage}
-                        onPageChange={setCurrentPage}
-                    />
+            <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
+                <div className="sm:col-span-2">
+                    {filteredData.length > 0 ?
+                        <DataTable
+                            headers={headers}
+                            rows={filteredData}
+                            itemsPerPage={10}
+                            actions={actions}
+                            className="mt-4"
+                            currentPage={currentPage}
+                            onPageChange={setCurrentPage}
+                        /> :
+                        <div className='flex justify-center'>
+                            <img src={nodata2} alt="no data" className='max-w-md opacity-50 mt-2' />
+                        </div>
+                    }
                 </div>
-                <div className="col-span-1">
+                <div className="sm:col-span-1">
                     <FormulaireTypePaiement reload={() => getTypePaiementDB()} />
                 </div>
             </div>

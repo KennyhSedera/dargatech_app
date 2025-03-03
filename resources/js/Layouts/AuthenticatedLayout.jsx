@@ -4,12 +4,15 @@ import ResponsiveNavLink from '@/Components/nav/ResponsiveNavLink';
 import ThemeDropdown from '@/Components/nav/ThemeDropdown';
 import UserDropdown from '@/Components/nav/UserDropdown';
 import sidebarPages, { logo, sidebarPagestech, titre } from '@/constant';
+import { getInitials } from '@/hooks/letterInWord';
 import { getTechnicien } from '@/Services/technicienService';
 import { Link, usePage } from '@inertiajs/react';
+import React from 'react';
 import { useEffect, useState } from 'react';
 import { FaTelegramPlane } from 'react-icons/fa';
 import { IoMdMenu } from 'react-icons/io';
 import { IoClose } from 'react-icons/io5';
+import { TbPointFilled } from 'react-icons/tb';
 
 export default function AuthenticatedLayout({ setId = () => { }, children }) {
     const user = usePage().props.auth.user;
@@ -119,12 +122,14 @@ export default function AuthenticatedLayout({ setId = () => { }, children }) {
                         </div>
 
                         <div className="border-t border-gray-200 pb-1 pt-4 dark:border-gray-600">
-                            <div className="px-4">
-                                <div className="text-base font-medium text-gray-800 dark:text-gray-200">
-                                    {user.name}
+                            <div className='p-2 flex items-center gap-2'>
+                                <div className='w-8 h-8 bg-gray-500 ring-1 ring-gray-300 rounded-full flex items-center justify-center'>
+                                    {user.profile ? (<img src={JSON.parse(user.profile)} alt="pdp" className="w-full h-full rounded-full object-cover antialiased " />)
+                                        : (<span className='text-lg sm:text-2xl text-white font-bold'>{getInitials(user.name)}</span>)}
                                 </div>
-                                <div className="text-sm font-medium text-gray-500">
-                                    {user.email}
+                                <div>
+                                    <div className='flex'><span className='line-clamp-1'>{user.name}</span> <TbPointFilled className='text-green-500' /></div>
+                                    <div className='text-sm font-extralight text-gray-500'>{user.email}</div>
                                 </div>
                             </div>
 

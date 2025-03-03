@@ -3,8 +3,9 @@ import ConfirmDialog from '@/Components/ConfirmDialog';
 import DataTable from '@/Components/DataTable';
 import HeaderPage from '@/Components/HeaderPage';
 import Snackbar from '@/Components/Snackbar';
+import { nodata2 } from '@/constant';
 import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout';
-import { deleteClients, getClient, getClients } from '@/Services/clientService';
+import { deleteClients, getClients } from '@/Services/clientService';
 import { Head, router } from '@inertiajs/react';
 import React, { useEffect, useState } from 'react';
 import { FaEye } from 'react-icons/fa';
@@ -166,15 +167,20 @@ const ClientPage = () => {
                 accept={confirmDelete}
             />
             <div>
-                <DataTable
-                    headers={headers}
-                    rows={filteredData}
-                    itemsPerPage={10}
-                    actions={actions}
-                    className="mt-4"
-                    currentPage={currentPage}
-                    onPageChange={setCurrentPage}
-                />
+                {filteredData.length > 0 ?
+                    <DataTable
+                        headers={headers}
+                        rows={filteredData}
+                        itemsPerPage={10}
+                        actions={actions}
+                        className="mt-4"
+                        currentPage={currentPage}
+                        onPageChange={setCurrentPage}
+                    /> :
+                    <div className='flex justify-center'>
+                        <img src={nodata2} alt="no data" className='max-w-md opacity-50 mt-2' />
+                    </div>
+                }
             </div>
         </AuthenticatedLayout>
     );
