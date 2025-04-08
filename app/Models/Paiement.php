@@ -25,9 +25,5 @@ class Paiement extends Model
         return $this->belongsTo(Client::class, 'client_id');
     }
 
-    public function type_paiement()
-    {
-        return $this->belongsTo(Type_paiements::class, 'mode_paiement');
-    }
 
 }

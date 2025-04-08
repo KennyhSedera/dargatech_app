@@ -5,6 +5,7 @@ import TextInput from '../inputs/TextInput'
 import InputError from '../inputs/InputError'
 
 const PaiementFooter = ({ data, errors, setData, setValidationErrors, validationErrors, typePaiement }) => {
+    
     return (
         <div className='grid grid-cols-2 gap-10'>
             <div className='flex flex-col gap-3'>
@@ -68,7 +69,7 @@ const PaiementFooter = ({ data, errors, setData, setValidationErrors, validation
                         onChange={(e) => setData('etat_paiment', e.target.value)}
                         required
                     >
-                        <option value="paye">Payé</option>
+                        <option value="Payé">Payé</option>
                     </SelectInput>
                     <InputError message={validationErrors.etat_paiment || errors.etat_paiment} className="mt-2" />
                 </div>

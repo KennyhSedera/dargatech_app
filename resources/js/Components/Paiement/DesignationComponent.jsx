@@ -53,6 +53,8 @@ const DesignationComponent = ({ data, setData }) => {
 
     useEffect(() => {
         setData('montant_paye', totalTTCGlobal.toFixed(2));
+        setData('produits', products);
+        setData('description', data.description);
     }, [totalTTCGlobal])
 
     return (

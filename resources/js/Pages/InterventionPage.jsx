@@ -7,7 +7,7 @@ import Snackbar from '@/Components/Snackbar';
 import { formatdate, nodata2, parsedate } from '@/constant';
 import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout'
 import { deletemaintenances, getmaintenances } from '@/Services/maintenanceService';
-import { Head } from '@inertiajs/react';
+import { Head, router } from '@inertiajs/react';
 import React, { useEffect, useState } from 'react'
 import { GoTrash } from 'react-icons/go';
 import { TbEdit } from 'react-icons/tb';
@@ -49,7 +49,7 @@ const InterventionPage = () => {
         },
         {
             key: 'status_intervention', label: 'Rapport', customRender: (value, row) => (
-                <span onClick={() => value === 'terminée' ? alert('termine') : handleNewRapport(row)}
+                <span onClick={() => value === 'terminée' ? router.visit('/rapport', { data: { intervention_id: row.id } }) : handleNewRapport(row)}
                     className={`px-2 py-1 rounded-full flex text-nowrap cursor-pointer ${value === 'terminée' ? 'text-green-500' : 'text-blue-500'}`}>
                     {value === 'terminée' ? 'Consulter' : 'Ajouter'}
                 </span>

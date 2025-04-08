@@ -5,6 +5,7 @@ use App\Http\Requests\ClientRequest;
 use App\Models\Client;
 use App\Models\Localisation;
 use Carbon\Carbon;
+use Illuminate\Support\Facades\DB;
 
 class ClientController extends Controller
 {
@@ -16,19 +17,13 @@ class ClientController extends Controller
     public function index()
     {
         $clients = Client::with('localisation')->get();
-
-        return response()->json([
-            'clients' => $clients,
-        ]);
+        return response()->json(['clients' => $clients]);
     }
 
     public function getclientinstallation()
     {
         $clients = Client::with('installations')->get();
-
-        return response()->json([
-            'clients' => $clients,
-        ]);
+        return response()->json(['clients' => $clients]);
     }
 
     /**
@@ -39,16 +34,18 @@ class ClientController extends Controller
      */
     public function show($id)
     {
-        $client = Client::with(['installations', 'paiement'])->find($id);
+        $client = Client::with(['installations', 'paiement', 'localisation'])->find($id);
 
-        if (! $client) {
+        if (!$client) {
             return response()->json([
                 'message' => 'Client non trouvé.',
+                'success' => false
             ], 404);
         }
 
         return response()->json([
             'client' => $client,
+            'success' => true
         ]);
     }
 
@@ -58,36 +55,56 @@ class ClientController extends Controller
      * @param  \Illuminate\Http\Request  $request
      * @return \Illuminate\Http\Response
      */
-
     public function store(ClientRequest $request)
     {
-        $validatedData = $request->validated();
+        try {
+            DB::beginTransaction();
+            
+            $validatedData = $request->validated();
 
-        $localisation = Localisation::create([
-            'latitude'  => $validatedData['latitude'] ?? null,
-            'longitude' => $validatedData['longitude'] ?? null,
-            'pays'      => $validatedData['pays'] ?? null,
-            'ville'     => $validatedData['ville'] ?? null,
-        ]);
+            // Créer la localisation
+            $localisation = Localisation::create([
+                'latitude' => $validatedData['latitude'] ?? 0,
+                'longitude' => $validatedData['longitude'] ?? 0,
+                'pays' => $validatedData['pays'],
+                'ville' => $validatedData['ville'],
+                'quartier' => $validatedData['quartier'] ?? 'Non spécifié',
+                'village' => $validatedData['village'] ?? 'Non spécifié'
+            ]);
 
-        $client = Client::create([
-            'nom'                    => $validatedData['nom'],
-            'prenom'                 => $validatedData['prenom'],
-            'CIN'                    => $validatedData['CIN'],
-            'genre'                  => $validatedData['genre'],
-            'email'                  => $validatedData['email'],
-            'telephone'              => $validatedData['telephone'],
-            'localisation'           => $validatedData['localisation'],
-            'localisation_id'        => $localisation->id,
-            'surface_cultivee'       => $validatedData['surface_cultivee'],
-            'type_activite_agricole' => $validatedData['type_activite_agricole'],
-            'date_contrat'           => Carbon::now(),
-        ]);
+            // Créer le client
+            $client = Client::create([
+                'nom' => $validatedData['nom'],
+                'prenom' => $validatedData['prenom'],
+                'CIN' => $validatedData['CIN'] ?? null,
+                'genre' => $validatedData['genre'] ?? 'Non spécifié',
+                'email' => $validatedData['email'] ?? null,
+                'telephone' => $validatedData['telephone'],
+                'localisation' => $validatedData['localisation'],
+                'localisation_id' => $localisation->id,
+                'surface_cultivee' => $validatedData['surface_cultivee'],
+                'type_activite_agricole' => $validatedData['type_activite_agricole'],
+                'date_contrat' => Carbon::now(),
+            ]);
 
-        return response()->json([
-            'message' => 'Client créé avec succès !',
-            'success' => true,
-        ], 201);
+            DB::commit();
+
+            return response()->json([
+                'message' => 'Client créé avec succès !',
+                'client' => $client->load('localisation'),
+                'success' => true,
+            ], 201);
+
+        } catch (\Exception $e) {
+            DB::rollBack();
+            \Log::error('Erreur création client: ' . $e->getMessage());
+            
+            return response()->json([
+                'message' => 'Erreur lors de la création du client',
+                'error' => $e->getMessage(),
+                'success' => false
+            ], 500);
+        }
     }
 
     /**
@@ -99,20 +116,61 @@ class ClientController extends Controller
      */
     public function update(ClientRequest $request, $id)
     {
-        $client = Client::find($id);
+        try {
+            DB::beginTransaction();
 
-        if (! $client) {
+            $client = Client::find($id);
+            if (!$client) {
+                return response()->json([
+                    'message' => 'Client non trouvé.',
+                    'success' => false
+                ], 404);
+            }
+
+            $validatedData = $request->validated();
+            
+            // Mettre à jour la localisation
+            if ($client->localisation) {
+                $client->localisation->update([
+                    'latitude' => $validatedData['latitude'] ?? $client->localisation->latitude,
+                    'longitude' => $validatedData['longitude'] ?? $client->localisation->longitude,
+                    'pays' => $validatedData['pays'] ?? $client->localisation->pays,
+                    'ville' => $validatedData['ville'] ?? $client->localisation->ville,
+                    'quartier' => $validatedData['quartier'] ?? $client->localisation->quartier,
+                    'village' => $validatedData['village'] ?? $client->localisation->village
+                ]);
+            }
+
+            // Mettre à jour le client
+            $client->update([
+                'nom' => $validatedData['nom'],
+                'prenom' => $validatedData['prenom'],
+                'CIN' => $validatedData['CIN'] ?? $client->CIN,
+                'genre' => $validatedData['genre'] ?? $client->genre,
+                'email' => $validatedData['email'] ?? $client->email,
+                'telephone' => $validatedData['telephone'],
+                'localisation' => $validatedData['localisation'],
+                'surface_cultivee' => $validatedData['surface_cultivee'],
+                'type_activite_agricole' => $validatedData['type_activite_agricole']
+            ]);
+
+            DB::commit();
+
             return response()->json([
-                'message' => 'Client non trouvé.',
-            ], 404);
+                'message' => 'Client mis à jour avec succès !',
+                'client' => $client->load('localisation'),
+                'success' => true
+            ]);
+
+        } catch (\Exception $e) {
+            DB::rollBack();
+            
+            return response()->json([
+                'message' => 'Erreur lors de la mise à jour du client',
+                'error' => $e->getMessage(),
+                'success' => false
+            ], 500);
         }
-
-        $client->update($request->validated());
-
-        return response()->json([
-            'message' => 'Client mis à jour avec succès !',
-            'client'  => $client,
-        ]);
     }
 
     /**
@@ -123,18 +181,29 @@ class ClientController extends Controller
      */
     public function destroy($id)
     {
-        $client = Client::find($id);
+        try {
+            $client = Client::find($id);
 
-        if (! $client) {
+            if (!$client) {
+                return response()->json([
+                    'message' => 'Client non trouvé.',
+                    'success' => false
+                ], 404);
+            }
+
+            $client->delete();
+
             return response()->json([
-                'message' => 'Client non trouvé.',
-            ], 404);
+                'message' => 'Client supprimé avec succès !',
+                'success' => true
+            ]);
+            
+        } catch (\Exception $e) {
+            return response()->json([
+                'message' => 'Erreur lors de la suppression du client',
+                'error' => $e->getMessage(),
+                'success' => false
+            ], 500);
         }
-
-        $client->delete();
-
-        return response()->json([
-            'message' => 'Client supprimé avec succès !',
-        ]);
     }
 }

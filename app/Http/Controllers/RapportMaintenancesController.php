@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\rapportMaintenances;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Validator;
 
 class RapportMaintenancesController extends Controller
 {
@@ -12,7 +13,8 @@ class RapportMaintenancesController extends Controller
      */
     public function index()
     {
-        //
+        $rapports = rapportMaintenances::with(['client', 'technicien', 'maintenance'])->get();
+        return response()->json(['data' => $rapports], 200);
     }
 
     /**
@@ -28,7 +30,54 @@ class RapportMaintenancesController extends Controller
      */
     public function store(Request $request)
     {
-        //
+        try {
+            $validator = Validator::make($request->all(), [
+                'clientId' => 'required|exists:clients,id',
+                'technicienId' => 'required|exists:techniciens,id',
+                'maintenanceId' => 'required|exists:maintenances,id',
+                'description_probleme' => 'required|string',
+                'photo_probleme' => 'nullable|image|max:2048',
+                'verifications_preliminaires' => 'required|string',
+                'resultat_diagnostic' => 'required|string',
+                'actions_correctives' => 'required|string',
+                'verification_fonctionnement' => 'required|string',
+                'recommandations' => 'nullable|string',
+                'date_intervention' => 'required|date',
+            ]);
+
+            if ($validator->fails()) {
+                return response()->json([
+                    'message' => 'Erreur de validation',
+                    'errors' => $validator->errors(),
+                    'success' => false
+                ], 422);
+            }
+
+            $data = $validator->validated();
+
+            // Gérer l'upload de la photo si elle existe
+            if ($request->hasFile('photo_probleme')) {
+                $photo = $request->file('photo_probleme');
+                $photoName = time() . '.' . $photo->getClientOriginalExtension();
+                $photo->move(public_path('uploads/rapports'), $photoName);
+                $data['photo_probleme'] = 'uploads/rapports/' . $photoName;
+            }
+
+            $rapport = rapportMaintenances::create($data);
+
+            return response()->json([
+                'message' => 'Rapport de maintenance créé avec succès',
+                'data' => $rapport,
+                'success' => true
+            ], 201);
+
+        } catch (\Exception $e) {
+            return response()->json([
+                'message' => 'Erreur lors de la création du rapport',
+                'error' => $e->getMessage(),
+                'success' => false
+            ], 500);
+        }
     }
 
     /**

@@ -168,3 +168,34 @@ export function validateFormAlert(data, setValidationErrors) {
     setValidationErrors(errors);
     return Object.keys(errors).length === 0;
 }
+
+export const validateRapportMaintenanceForm = (data, setValidationErrors) => {
+    const errors = {};
+
+    if (!data.description_probleme.trim()) {
+        errors.description_probleme = 'Le problème rapporté est obligatoire';
+    }
+
+    if (!data.verifications_preliminaires.trim()) {
+        errors.verifications_preliminaires = 'Les vérifications préliminaires sont obligatoires';
+    }
+
+    if (!data.resultat_diagnostic.trim()) {
+        errors.resultat_diagnostic = 'Le résultat du diagnostic est obligatoire';
+    }
+
+    if (!data.actions_correctives.trim()) {
+        errors.actions_correctives = 'Les actions correctives sont obligatoires';
+    }
+
+    if (!data.verification_fonctionnement.trim()) {
+        errors.verification_fonctionnement = 'La vérification du fonctionnement est obligatoire';
+    }
+
+    if (!data.date_intervention) {
+        errors.date_intervention = 'La date d\'intervention est obligatoire';
+    }
+
+    setValidationErrors(errors);
+    return Object.keys(errors).length === 0;
+};

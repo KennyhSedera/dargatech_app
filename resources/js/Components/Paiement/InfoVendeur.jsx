@@ -52,7 +52,7 @@ const InfoVendeur = ({ data, setData, errors, validationErrors, setValidationErr
                     </div>
                 </div>
                 <div>
-                    <InputLabel htmlFor="nom_rue_vendeur" value="N* et nom de rue" />
+                    <InputLabel htmlFor="nom_rue_vendeur" value="Village ou Quartier" />
                     <TextInput
                         id="nom_rue_vendeur"
                         name="nom_rue_vendeur"

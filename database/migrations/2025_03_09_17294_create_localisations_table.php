@@ -18,6 +18,8 @@
                 $table->float('longitude');
                 $table->string('pays');
                 $table->string('ville');
+                $table->string('village');
+                $table->string('quartier');
                 $table->timestamps();
             });
         }

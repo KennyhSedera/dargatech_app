@@ -3,19 +3,18 @@ import { Head, useForm } from '@inertiajs/react'
 import InputLabel from '@/Components/inputs/InputLabel';
 import TextInput from '@/Components/inputs/TextInput';
 import InputError from '@/Components/inputs/InputError';
-import SelectInput from '@/Components/inputs/SelectInput';
 import useTheme from '@/hooks/useTheme';
 import DangerButton from '@/Components/buttons/DangerButton';
 import { getType_paiements } from '@/Services/TypePaiementService';
 import { getClients } from '@/Services/clientService';
-import InputAutocomplete from '@/Components/inputs/InputAutocomplete ';
 import PrimaryButton from '@/Components/buttons/PrimaryButton';
 import DesignationComponent from '@/Components/Paiement/DesignationComponent';
 import InfoPaiement from '@/Components/Paiement/InfoPaiement';
 import InfoMaraicher from '@/Components/Paiement/InfoMaraicher';
 import InfoVendeur from '@/Components/Paiement/InfoVendeur';
 import PaiementFooter from '@/Components/Paiement/PaiementFooter';
-
+import { createPaiement } from '@/Services/PaiementService';
+import Snackbar from '@/Components/Snackbar';
 const FormulairePaiement = () => {
     const { theme, setTheme } = useTheme();
     useEffect(() => {
@@ -25,40 +24,40 @@ const FormulairePaiement = () => {
         type: 'recu',
         numero: 'R/1_TEST',
         date_creation: new Date().toISOString().split('T')[0],
-        lieu_creation: 'Atakpamé',
-        date_additionnel: '',
         date: new Date().toISOString().split('T')[0],
+        lieu_creation: 'Atakpamé',
+        date_additionnel: 'Date de vente',
+        periode_couverte: '',
         nom_vendeur: 'Darga',
         nom_vendeurs: 'DARGATECH TOGO',
-        select1: '',
+        select1: 'Numéro TVA',
         num_tva: '',
-        nom_rue_vendeur: '',
+        nom_rue_vendeur: 'Kara',
         ville_vendeur: 'Kara',
         pays_vendeur: 'Togo',
-        civilite_acheteur: '',
+        civilite_acheteur: 'Mr.',
         prenom_acheteur: '',
         nom_acheteur: '',
         num_rue_acheteur: '',
         ville_acheteur: '',
         pays_acheteur: '',
-        designation: '',
-        reference: '',
-        quantite: 1,
-        unite: '',
-        tva: '',
-        prix_unitaire: '',
-        total_ht: '',
-        total_ttc: '',
-        mode_paiement: '',
+        mode_paiement: 'Espèce',
         date_echeance: new Date().toISOString().split('T')[0],
-        etat_paiment: '',
+        date_paiement: new Date().toISOString().split('T')[0],
+        etat_paiment: 'Payé',
         montant_paye: '',
         objet: '',
         description: '',
+        produits: [],
     });
     const [validationErrors, setValidationErrors] = useState({});
     const [clients, setClients] = useState([]);
     const [typePaiement, setTypePaiement] = useState([]);
+    const [alert, setAlert] = useState({
+        open: false,
+        message: '',
+        type: 'success'
+    });
 
     const getType = async () => {
         try {
@@ -69,6 +68,8 @@ const FormulairePaiement = () => {
                 nom_famille: el.nom,
                 ville: el.localisation.ville,
                 pays: el.localisation.pays,
+                village: el.localisation.village,
+                quartier: el.localisation.quartier,
             })));
             setTypePaiement(type.type?.map(el => ({ id: el.id, nom: el.name })));
         } catch (error) {
@@ -88,12 +89,42 @@ const FormulairePaiement = () => {
             setData('prenom_acheteur', cli.nom);
             setData('ville_acheteur', cli.ville);
             setData('pays_acheteur', cli.pays);
+            setData('num_rue_acheteur', cli.village || cli.quartier);
+        }
+    };
+
+    const handleSubmit = async () => {
+        data.periode_couverte = data.date_creation + " jusqu'à " + data.date;
+        data.date_paiement = data.date_paiement ? new Date(data.date_paiement).toISOString().split('T')[0] : new Date().toISOString().split('T')[0];
+        data.observation = data.description;
+        data.echeance = data.date_echeance;
+        data.statut_paiement = data.etat_paiment;
+        data.montant_paye = data.montant_paye || "0";
+        data.montant = data.montant_paye || "0";
+        try {
+            const response = await createPaiement(data);
+            setAlert({
+                open: true,
+                message: response.message,
+                type: 'success'
+            });
+            reset();
+        } catch (error) {
+            console.error('Error submitting payment:', error);
         }
     };
 
     return (
         <div className=' bg-gray-100 dark:bg-gray-900 dark:text-white p-10'>
             <Head title='Formulaire Paiement' />
+            <Snackbar
+                message={alert.message}
+                type={alert.type}
+                duration={3000}
+                position="top-right"
+                show={alert.open}
+                onClose={() => setAlert({ ...alert, message: '', open: false })}
+            />
             <div className='bg-white dark:bg-gray-800 p-6 rounded-lg'>
                 <DangerButton
                     onClick={() => window.history.back()}
@@ -107,6 +138,7 @@ const FormulairePaiement = () => {
                     errors={errors}
                     setData={setData}
                     validationErrors={validationErrors}
+                    setValidationErrors={setValidationErrors}
                 />
 
                 <div className='border-b w-full my-6 opacity-35 '></div>
@@ -173,7 +205,7 @@ const FormulairePaiement = () => {
                     validationErrors={validationErrors}
                 />
                 <div className='mt-8 flex items-center justify-end'>
-                    <PrimaryButton className='px-10'>Enregistrer</PrimaryButton>
+                    <PrimaryButton className='px-10' onClick={handleSubmit}>Enregistrer</PrimaryButton>
                 </div>
             </div>
         </div>

@@ -49,7 +49,7 @@ const InfoMaraicher = ({ clients, data, setData, errors, validationErrors, setVa
                     </div>
                 </div>
                 <div>
-                    <InputLabel htmlFor="num_rue_acheteur" value="N* et nom de rue" />
+                    <InputLabel htmlFor="num_rue_acheteur" value="Village ou Quartier" />
                     <TextInput
                         id="num_rue_acheteur"
                         name="num_rue_acheteur"

@@ -26,13 +26,15 @@ const FormulaireClient = ({
         genre: 'homme',
         CIN: '',
         telephone: '',
-        pays: '',
-        ville: '',
+        pays: 'Togo',
+        ville: 'Kara',
         latitude: '',
         longitude: '',
         localisation: '',
         surface_cultivee: '',
         type_activite_agricole: '',
+        quartier: '',
+        village: '',
     });
 
     const onClose = (message) => {
@@ -75,22 +77,24 @@ const FormulaireClient = ({
         setBtnTitle("Loading ...");
 
         try {
-            const { lat, lon } = await getCoordinates(data.ville, data.pays);
+            const { lat, lon } = await getCoordinates(data.ville, data.pays, data.village, data.quartier);
+            
+            const clientData = {
+                ...data,
+                latitude: lat,
+                longitude: lon,
+                localisation: `${data.pays} ${data.ville}${data.village ? ` ${data.village}` : ''}${data.quartier ? ` ${data.quartier}` : ''}`,
+                quartier: data.quartier || 'Non spécifié',
+                village: data.village || 'Non spécifié'
+            };
 
-            setData((prevData) => {
-                const newData = {
-                    ...prevData,
-                    latitude: lat,
-                    longitude: lon,
-                    localisation: `${prevData.pays} ${prevData.ville}`,
-                };
-
-                enregistrerClient(newData);
-
-                return newData;
-            });
+            await enregistrerClient(clientData);
+            
+            onClose('Client créé avec succès !');
         } catch (error) {
-            console.log("Erreur lors de la récupération des coordonnées:", error);
+            console.error("Erreur:", error);
+            setLoad(false);
+            setBtnTitle("Enregistrer");
         }
     };
 
@@ -104,7 +108,7 @@ const FormulaireClient = ({
             }
             onClose(message);
         } catch (error) {
-            console.error("Erreur lors de l’enregistrement du client:", error);
+            console.error("Erreur lors de l'enregistrement du client:", error);
         } finally {
             setLoad(false);
             setBtnTitle("Enregistrer");
@@ -237,6 +241,32 @@ const FormulaireClient = ({
                         onFocus={() => setValidationErrors({ ...validationErrors, 'ville': '' })}
                     />
                     <InputError message={validationErrors.ville || errors.ville} className="mt-2" />
+                </div>
+                <div>
+                    <InputLabel htmlFor="village" value="Village" />
+                    <TextInput
+                        id="village"
+                        name="village"
+                        value={data.village}
+                        className="mt-1 block w-full"
+                        autoComplete="village"
+                        onChange={(e) => setData('village', e.target.value)}
+                        onFocus={() => setValidationErrors({ ...validationErrors, 'village': '' })}
+                    />
+                    <InputError message={validationErrors.village || errors.village} className="mt-2" />
+                </div>
+                <div>
+                    <InputLabel htmlFor="quartier" value="Quartier" />
+                    <TextInput
+                        id="quartier"
+                        name="quartier"
+                        value={data.quartier}
+                        className="mt-1 block w-full"
+                        autoComplete="quartier"
+                        onChange={(e) => setData('quartier', e.target.value)}
+                        onFocus={() => setValidationErrors({ ...validationErrors, 'quartier': '' })}
+                    />
+                    <InputError message={validationErrors.quartier || errors.quartier} className="mt-2" />
                 </div>
                 <div>
                     <InputLabel htmlFor="type_activite_agricole" value="Type activité agricole" />

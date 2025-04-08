@@ -4,6 +4,7 @@ use App\Http\Controllers\ProfileController;
 use App\Models\Client;
 use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
+use Illuminate\Http\Request;
 
 Route::get('/', function () {
     return Inertia::render('Dashboard');
@@ -62,6 +63,18 @@ Route::get('/technicien', function () {
 Route::get('/alert', function () {
     return Inertia::render('Alert/AlertPage');
 })->middleware(['auth', 'verified'])->name('alert');
+
+Route::get('/rapport', function (Request $request) {
+    return Inertia::render('rapport/RapportMaintenance', [
+        'intervention_id' => $request->input('intervention_id')
+    ]);
+})->middleware(['auth', 'verified'])->name('rapport');
+
+Route::get('/rapport/{id}', function ($id) {
+    return Inertia::render('rapport/RapportMaintenance', [
+        'intervention_id' => $id
+    ]);
+})->middleware(['auth', 'verified'])->name('rapport.show');
 
 require __DIR__ . '/auth.php';
 require __DIR__ . '/api.php';

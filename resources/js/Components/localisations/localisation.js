@@ -1,11 +1,19 @@
-export const getCoordinates = async (city, country) => {
+export const getCoordinates = async (city, country, village = '', quartier = '') => {
     if (!city || !country) {
         throw new Error("Veuillez entrer un pays et une ville.");
     }
 
     try {
+        let searchQuery = `${city},${country}`;
+        if (village) {
+            searchQuery = `${village},${searchQuery}`;
+        }
+        if (quartier) {
+            searchQuery = `${quartier},${searchQuery}`;
+        }
+
         const response = await fetch(
-            `https://nominatim.openstreetmap.org/search?format=json&q=${city},${country}`
+            `https://nominatim.openstreetmap.org/search?format=json&q=${searchQuery}`
         );
         const data = await response.json();
 

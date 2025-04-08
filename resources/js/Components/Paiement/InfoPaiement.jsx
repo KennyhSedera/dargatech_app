@@ -4,7 +4,7 @@ import InputLabel from '../inputs/InputLabel'
 import SelectInput from '../inputs/SelectInput'
 import TextInput from '../inputs/TextInput'
 
-const InfoPaiement = ({ data, setData, validationErrors, errors }) => {
+const InfoPaiement = ({ data, setData, validationErrors, errors, setValidationErrors }) => {
     return (
         <div className='grid grid-cols-6 gap-2 mt-4'>
             <div>
@@ -78,7 +78,7 @@ const InfoPaiement = ({ data, setData, validationErrors, errors }) => {
                     onChange={(e) => setData('date_additionnel', e.target.value)}
                     required
                 >
-                    <option value="préventive">Date de vente</option>
+                    <option value="Date de vente">Date de vente</option>
                 </SelectInput>
                 <InputError message={errors.date_additionnel} className="mt-2" />
             </div>

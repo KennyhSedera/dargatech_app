@@ -36,18 +36,14 @@ const PaiementPage = () => {
         { key: 'id', label: 'ID' },
         { key: 'nom', label: 'Nom client' },
         { key: 'montant', label: 'Montant ($)' },
-        { key: 'type_paiement', label: 'Mode de paiement' },
+        { key: 'mode_paiement', label: 'Mode de paiement' },
         { key: 'periode_couverte', label: 'Periode couverte' },
         { key: 'date_paiement', label: 'Date de paiement' },
+        { key: 'statut_paiement', label: 'Statut' },
+        { key: 'observation', label: 'Observation' },
     ];
 
     const actions = [
-        {
-            label: <TbEdit className="text-lg" />,
-            color: 'text-blue-500',
-            hoverColor: 'text-blue-600',
-            handler: (row) => editItem(row),
-        },
         {
             label: <GoTrash className="text-base" />,
             color: 'text-red-500',
@@ -68,13 +64,15 @@ const PaiementPage = () => {
                 client_id: el.client_id,
                 nom: `${el.client.nom} ${el.client.prenom}`,
                 montant: el.montant,
-                type_paiement: el.type_paiement.name,
                 mode_paiement: el.mode_paiement,
                 periode_couverte: el.periode_couverte,
                 date_paiement: formatdate(el.date_paiement),
+                statut_paiement: el.statut_paiement,
+                observation: el.observation,
             }))
             setPaiements(datas);
             setFilteredData(datas);
+            console.log(data);
         } catch (error) {
             console.log(error);
         }

@@ -33,6 +33,10 @@ Route::group(['prefix' => 'api'], function () {
         Route::delete('/{id}', [MaintenanceController::class, 'destroy'])->name('destroy');
     });
 
+    Route::group(['prefix' => 'rapport-maintenances', 'as' => 'rapport-maintenances.', 'middleware' => 'auth'], function () {
+        Route::post('/', [RapportController::class, 'storeRapportMaintenance'])->name('store');
+    });
+
     Route::group(['prefix' => 'alert', 'as' => 'alert.', 'middleware' => 'auth'], function () {
         Route::get('/', [AlertController::class, 'index'])->name('index');
         Route::get('/{id}', [AlertController::class, 'show'])->name('show');
@@ -116,4 +120,6 @@ Route::group(['prefix' => 'api'], function () {
             'user' => Auth::user()->load('user_role'),
         ]);
     })->middleware('auth');
+
+    Route::get('/rapport/maintenance/{maintenance_id}', [RapportController::class, 'showByMaintenanceId']);
 });

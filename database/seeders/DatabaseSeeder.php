@@ -12,6 +12,12 @@ class DatabaseSeeder extends Seeder
      */
     public function run(): void
     {
+        // Run the RoleUser seeder first
+        $this->call([
+            RoleUser::class
+        ]);
+
+        // Then create the admin user
         User::factory()->create([
             'name'      => 'Admin',
             'email'     => 'admin@example.com',
