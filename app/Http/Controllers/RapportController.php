@@ -53,8 +53,6 @@ class RapportController extends Controller
             $photoPath = 'uploads/rapports/' . $imageName;
         }
 
-        $validatedData['technicienId'] = 1;
-
         // Adapter les noms des champs à ceux de la base de données
         $dbData = [
             'clientId' => $validatedData['clientId'],
@@ -116,7 +114,7 @@ class RapportController extends Controller
 
     public function showByMaintenanceId($maintenance_id)
     {
-        $data = rapportMaintenances::with('maintenance', 'client', 'technicien')->where('maintenanceId', $maintenance_id)->first();
+        $data = rapportMaintenances::with('maintenance', 'client', 'technicien', 'technicien.user')->where('maintenanceId', $maintenance_id)->first();
 
         if (! $data) {
             return response()->json([

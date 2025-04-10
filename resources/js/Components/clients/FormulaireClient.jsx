@@ -23,7 +23,7 @@ const FormulaireClient = ({
         nom: '',
         prenom: '',
         email: '',
-        genre: 'homme',
+        genre: 'Homme',
         CIN: '',
         telephone: '',
         pays: 'Togo',
@@ -55,10 +55,17 @@ const FormulaireClient = ({
             setData({
                 nom: dataModify.nom || '',
                 prenom: dataModify.prenom || '',
-                genre: dataModify.genre || '',
+                email: dataModify.email || '',
+                genre: dataModify.genre || 'Homme',
                 CIN: dataModify.CIN || '',
                 telephone: dataModify.telephone || '',
-                localisation: dataModify.localisation || '',
+                pays: dataModify.localisation?.pays || 'Togo',
+                ville: dataModify.localisation?.ville || 'Kara',
+                quartier: dataModify.localisation?.quartier || '',
+                village: dataModify.localisation?.village || '',
+                latitude: dataModify.localisation?.latitude || '',
+                longitude: dataModify.localisation?.longitude || '',
+                localisation: dataModify.localisation?.localisation || '',
                 surface_cultivee: dataModify.surface_cultivee || '',
                 type_activite_agricole: dataModify.type_activite_agricole || '',
             });
@@ -66,7 +73,7 @@ const FormulaireClient = ({
         } else {
             clearForm();
         }
-    }, [dataModify, setData, setBtnTitle]);
+    }, [dataModify, setData]);
 
     const submit = async () => {
         if (!validateFormClient(data, setValidationErrors)) {
@@ -74,7 +81,7 @@ const FormulaireClient = ({
         }
 
         setLoad(true);
-        setBtnTitle("Loading ...");
+        setBtnTitle(dataModify.id ? "Modification..." : "Enregistrement...");
 
         try {
             const { lat, lon } = await getCoordinates(data.ville, data.pays, data.village, data.quartier);
@@ -88,30 +95,17 @@ const FormulaireClient = ({
                 village: data.village || 'Non spécifié'
             };
 
-            await enregistrerClient(clientData);
-            
+            if (dataModify.id) {
+                await updateClients(dataModify.id, clientData);
+                onClose('Client modifié avec succès !');
+            } else {
+                await createClients(clientData);
             onClose('Client créé avec succès !');
+            }
         } catch (error) {
             console.error("Erreur:", error);
             setLoad(false);
-            setBtnTitle("Enregistrer");
-        }
-    };
-
-    const enregistrerClient = async (updatedData) => {
-        try {
-            let message = '';
-            if (btnTitle === "Enregistrer") {
-                ({ message } = await createClients(updatedData));
-            } else {
-                ({ message } = await updateClients(dataModify.id, updatedData));
-            }
-            onClose(message);
-        } catch (error) {
-            console.error("Erreur lors de l'enregistrement du client:", error);
-        } finally {
-            setLoad(false);
-            setBtnTitle("Enregistrer");
+            setBtnTitle(dataModify.id ? "Modifier" : "Enregistrer");
         }
     };
 
@@ -123,7 +117,7 @@ const FormulaireClient = ({
             maxWidth='xl'
         >
             <div className='text-center font-semibold text-2xl'>
-                {dataModify.nom ? 'Modifier un Maraîcher' : 'Ajouter un Maraîcher'}
+                {dataModify.id ? 'Modifier un Maraîcher' : 'Ajouter un Maraîcher'}
             </div>
             <form className='w-full my-6 grid grid-cols-1 sm:grid-cols-2 gap-4'>
                 <div>
@@ -164,7 +158,6 @@ const FormulaireClient = ({
                         className="mt-1 block w-full"
                         autoComplete="email"
                         onChange={(e) => setData('email', e.target.value)}
-                        required
                         onFocus={() => setValidationErrors({ ...validationErrors, 'email': '' })}
                     />
                     <InputError message={validationErrors.email || errors.email} className="mt-2" />
@@ -181,8 +174,8 @@ const FormulaireClient = ({
                         onChange={(e) => setData('genre', e.target.value)}
                         required
                     >
-                        <option value="homme">Homme</option>
-                        <option value="femme">Femme</option>
+                        <option value="Homme">Homme</option>
+                        <option value="Femme">Femme</option>
                     </SelectInput>
                     <InputError message={errors.genre} className="mt-2" />
                 </div>
@@ -214,6 +207,8 @@ const FormulaireClient = ({
                     />
                     <InputError message={validationErrors.telephone || errors.telephone} className="mt-2" />
                 </div>
+
+                {!dataModify.id ? <>
                 <div>
                     <InputLabel htmlFor="pays" value="Pays" />
                     <TextInput
@@ -268,6 +263,7 @@ const FormulaireClient = ({
                     />
                     <InputError message={validationErrors.quartier || errors.quartier} className="mt-2" />
                 </div>
+                </> : null}
                 <div>
                     <InputLabel htmlFor="type_activite_agricole" value="Type activité agricole" />
                     <TextInput

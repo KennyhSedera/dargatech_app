@@ -3,44 +3,33 @@ import NotificationDropdown from '@/Components/nav/NotificationDropdown';
 import ResponsiveNavLink from '@/Components/nav/ResponsiveNavLink';
 import ThemeDropdown from '@/Components/nav/ThemeDropdown';
 import UserDropdown from '@/Components/nav/UserDropdown';
-import sidebarPages, { logo, sidebarPagestech, titre } from '@/constant';
+import sidebarPages, { logo, sidebarPagestech, sidebarPagespart, titre } from '@/constant';
 import { getInitials } from '@/hooks/letterInWord';
-import { getTechnicien } from '@/Services/technicienService';
-import { Link, usePage } from '@inertiajs/react';
+import { usePage } from '@inertiajs/react';
 import React from 'react';
 import { useEffect, useState } from 'react';
-import { FaTelegramPlane } from 'react-icons/fa';
 import { IoMdMenu } from 'react-icons/io';
 import { IoClose } from 'react-icons/io5';
 import { TbPointFilled } from 'react-icons/tb';
 
 export default function AuthenticatedLayout({ setId = () => { }, children }) {
     const user = usePage().props.auth.user;
+    const profile = user.profile || {};
+    const technicien = user.technicien || {};
+    const partenaire = user.partenaire || {};
     const [link, setLink] = useState(sidebarPages);
 
     useEffect(() => {
-        const fetchUser = async () => {
-            try {
-                const response = await fetch("/api/user", {
-                    method: "GET",
-                    credentials: "include",
-                });
-
-                if (response.ok) {
-                    const data = await response.json();
-                    const role = data.user.user_role;
-                    if (role.name === 'technicien') {
-                        const { data } = await getTechnicien(user.id);
-                        setId(data.technicien.id);
-                        setLink(sidebarPagestech)
-                    }
-                }
-            } catch (error) {
-                console.error("Erreur lors de la récupération de l'utilisateur", error);
+        if (user) {
+            const role = user.user_role;
+            if (role && role.name === 'technicien') {
+                setId(user.technicien.id);
+                setLink(sidebarPagestech);
             }
-        };
-
-        fetchUser();
+            if (role && role.name === 'partenaire') {
+                setLink(sidebarPagespart);
+            }
+        }
     }, [user]);
 
     const [showingNavigationDropdown, setShowingNavigationDropdown] =
@@ -124,8 +113,11 @@ export default function AuthenticatedLayout({ setId = () => { }, children }) {
                         <div className="border-t border-gray-200 pb-1 pt-4 dark:border-gray-600">
                             <div className='p-2 flex items-center gap-2'>
                                 <div className='w-8 h-8 bg-gray-500 ring-1 ring-gray-300 rounded-full flex items-center justify-center'>
-                                    {user.profile ? (<img src={JSON.parse(user.profile)} alt="pdp" className="w-full h-full rounded-full object-cover antialiased " />)
-                                        : (<span className='text-lg sm:text-2xl text-white font-bold'>{getInitials(user.name)}</span>)}
+                                {profile.photo || technicien.photo || partenaire.logo ? (
+                                            <img src={profile.photo || technicien.photo || partenaire.logo} alt="Photo de profil" className="w-full h-full object-cover" />
+                                        ) : (
+                                            <span className="text-lg font-bold">{getInitials(user.name)}</span>
+                                        )}
                                 </div>
                                 <div>
                                     <div className='flex'><span className='line-clamp-1'>{user.name}</span> <TbPointFilled className='text-green-500' /></div>

@@ -13,16 +13,8 @@ class RapportMaintenancesController extends Controller
      */
     public function index()
     {
-        $rapports = rapportMaintenances::with(['client', 'technicien', 'maintenance'])->get();
+        $rapports = rapportMaintenances::with(['client', 'technicien', 'technicien.user', 'maintenance'])->get();
         return response()->json(['data' => $rapports], 200);
-    }
-
-    /**
-     * Show the form for creating a new resource.
-     */
-    public function create()
-    {
-        //
     }
 
     /**

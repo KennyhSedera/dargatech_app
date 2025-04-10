@@ -1,30 +1,36 @@
 import moment from "moment";
 import { HiMiniUsers, HiHome } from "react-icons/hi2";
 import { IoAlertCircle, IoBuild } from "react-icons/io5";
-// import { GiOilPump } from "react-icons/gi";
 import { FaMoneyCheckDollar, FaPersonDigging } from "react-icons/fa6";
 import { ImCogs } from "react-icons/im";
+import { FaUserCircle } from "react-icons/fa";
+import { LuHandshake } from "react-icons/lu";
 
 const sidebarPages = [
     { route: "dashboard", label: "Tableau de bord", icon: HiHome },
     { route: "clients", label: "Maraîchers", icon: HiMiniUsers },
     { route: "technicien", label: "Techniciens", icon: FaPersonDigging },
-    // { route: "pompes", label: "Matériels", icon: GiOilPump },
     { route: "installations", label: "Installations", icon: IoBuild },
-    // { route: "alert", label: "Alerts", icon: IoAlertCircle },
     { route: "interventions", label: "Maintenances", icon: ImCogs },
     { route: "paiements", label: "Paiements", icon: FaMoneyCheckDollar },
+    { route: "users", label: "Utilisateurs", icon: FaUserCircle },
+    { route: "partenaires", label: "Partenaires", icon: LuHandshake },
 ];
 
 export const sidebarPagestech = [
     { route: "dashboard", label: "Tableau de bord", icon: HiHome },
     { route: "clients", label: "Maraîchers", icon: HiMiniUsers },
     { route: "installations", label: "Installations", icon: IoBuild },
-    // { route: "alert", label: "Alerts", icon: IoAlertCircle },
     { route: "interventions", label: "Maintenances", icon: ImCogs },
     { route: "paiements", label: "Paiements", icon: FaMoneyCheckDollar },
 ];
 
+export const sidebarPagespart = [
+    { route: "dashboard", label: "Tableau de bord", icon: HiHome },
+    { route: "clients", label: "Maraîchers", icon: HiMiniUsers },
+    { route: "installations", label: "Installations", icon: IoBuild },
+    { route: "interventions", label: "Maintenances", icon: ImCogs },
+];
 export default sidebarPages;
 
 export const logo = '/images/logo.png';
@@ -32,7 +38,7 @@ export const titre = '/images/titre.png';
 export const nodata = '/images/nodata.webp';
 export const nodata1 = '/images/nodata1.png';
 export const nodata2 = '/images/nodata2.png';
-
+export const togo = '/images/togo.png';
 export const formatdate = (date) => {
     if (!date || moment(date).isValid()) {
         return moment(date).format('DD/MM/YYYY');

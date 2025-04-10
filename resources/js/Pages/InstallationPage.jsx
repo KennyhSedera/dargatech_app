@@ -19,6 +19,7 @@ const InstallationPage = () => {
     const [currentPage, setCurrentPage] = useState(1);
     const [installations, setInstallations] = useState([]);
     const [filteredData, setFilteredData] = useState([]);
+    const [isLoading, setIsLoading] = useState(true);
     const [suppression, setSuppression] = useState({
         open: false,
         message: '',
@@ -48,12 +49,12 @@ const InstallationPage = () => {
     ];
 
     const actions = [
-        {
-            label: <FaEye className="text-base" />,
-            color: 'text-green-500',
-            hoverColor: 'text-green-600',
-            handler: (row) => showDetail(row.id),
-        },
+        // {
+        //     label: <FaEye className="text-base" />,
+        //     color: 'text-green-500',
+        //     hoverColor: 'text-green-600',
+        //     handler: (row) => showDetail(row.id),
+        // },
         {
             label: <TbEdit className="text-lg" />,
             color: 'text-blue-500',
@@ -73,6 +74,7 @@ const InstallationPage = () => {
     }
 
     const fetchInstallation = async () => {
+        setIsLoading(true);
         const { data } = await getinstallations();
 
         const Installation = data.map(el => ({
@@ -90,6 +92,7 @@ const InstallationPage = () => {
 
         setInstallations(Installation);
         setFilteredData(Installation);
+        setIsLoading(false);
     };
 
     useEffect(() => {
@@ -173,6 +176,11 @@ const InstallationPage = () => {
                 close={() => setSuppression({ ...suppression, open: false })}
                 accept={confirmDelete}
             />
+            {isLoading ? (
+        <div className="flex justify-center items-center h-64">
+          <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-blue-500"></div>
+        </div>
+      ) : ( 
             <div>
                 {filteredData.length > 0 ?
                     <DataTable
@@ -189,7 +197,8 @@ const InstallationPage = () => {
                         <img src={nodata2} alt="no data" className='max-w-md opacity-50 mt-2' />
                     </div>
                 }
-            </div>
+                </div>
+            )}
         </AuthenticatedLayout>
     )
 }

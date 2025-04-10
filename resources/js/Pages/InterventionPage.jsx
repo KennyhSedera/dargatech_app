@@ -22,6 +22,7 @@ const InterventionPage = () => {
     const [currentPage, setCurrentPage] = useState(1);
     const [maintenances, setMaintenances] = useState([]);
     const [filteredData, setFilteredData] = useState([]);
+    const [isLoading, setIsLoading] = useState(true);
     const [suppression, setSuppression] = useState({
         open: false,
         message: '',
@@ -82,6 +83,7 @@ const InterventionPage = () => {
     }
 
     const fetchDataDB = async () => {
+        setIsLoading(true);
         const { data } = await getmaintenances();
 
         const intervention = data.map(el => ({
@@ -98,6 +100,7 @@ const InterventionPage = () => {
 
         setMaintenances(intervention);
         setFilteredData(intervention);
+        setIsLoading(false);
     };
 
     useEffect(() => {
@@ -196,12 +199,17 @@ const InterventionPage = () => {
                 onCloseFormulaire={onCloseFormulaireRapport}
                 idTechnicien={id}
             />
+            {isLoading ? (
+        <div className="flex justify-center items-center h-64">
+          <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-blue-500"></div>
+        </div>
+      ) : (
             <div>
                 {filteredData.length > 0 ?
                     <DataTable
                         headers={headers}
                         rows={filteredData}
-                        itemsPerPage={10}
+                        itemsPerPage={6}
                         actions={actions}
                         className="mt-4"
                         currentPage={currentPage}
@@ -212,7 +220,8 @@ const InterventionPage = () => {
                         <img src={nodata2} alt="no data" className='max-w-md mt-2 opacity-50' />
                     </div>
                 }
-            </div>
+                </div>
+            )}
         </AuthenticatedLayout>
     )
 }

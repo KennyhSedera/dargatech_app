@@ -17,6 +17,7 @@ const Technicien = () => {
     const [currentPage, setCurrentPage] = useState(1);
     const [techniciens, setTechniciens] = useState([]);
     const [filteredData, setFilteredData] = useState([]);
+    const [isLoading, setIsLoading] = useState(true);
     const [suppression, setSuppression] = useState({
         open: false,
         message: '',
@@ -54,6 +55,7 @@ const Technicien = () => {
     ];
 
     const fetchTechnicien = async () => {
+        setIsLoading(true);
         const { data } = await getTechniciens();
 
         const technichien = data.map(el => ({
@@ -68,6 +70,7 @@ const Technicien = () => {
 
         setTechniciens(technichien);
         setFilteredData(technichien);
+        setIsLoading(false);
     };
 
     useEffect(() => {
@@ -137,6 +140,11 @@ const Technicien = () => {
                 close={() => setSuppression({ ...suppression, open: false })}
                 accept={confirmDelete}
             />
+            {isLoading ? (
+        <div className="flex justify-center items-center h-64">
+          <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-blue-500"></div>
+        </div>
+      ) : (
             <div>
                 {filteredData.length > 0 ?
                     <DataTable
@@ -154,6 +162,7 @@ const Technicien = () => {
                     </div>
                 }
             </div>
+            )}
         </AuthenticatedLayout>
     )
 }

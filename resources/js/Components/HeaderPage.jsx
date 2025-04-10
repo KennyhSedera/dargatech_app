@@ -1,21 +1,22 @@
 import React from 'react';
 import { FaPlusCircle } from 'react-icons/fa';
 import { MdSearch } from 'react-icons/md';
-
+import { usePage } from '@inertiajs/react';
 const HeaderPage = ({
     search = '',
     onSearch = () => { },
     handleClick = () => { },
-    title = 'title'
+    title = 'title',
+    btn = true
 }) => {
     return (
         <div className='w-full h-auto bg-white dark:bg-gray-800 rounded-md flex flex-row flex-wrap sm:flex-nowrap items-center justify-between px-4 py-2 gap-2 sm:gap-0 shadow-sm'>
-            <button
+           {btn ? <button
                 onClick={handleClick}
                 className='bg-blue-500 px-2 py-1 sm:px-4 sm:py-2 rounded-md flex items-center gap-2 font-semibold text-white hover:bg-blue-600 transition'
             >
                 Nouveau <FaPlusCircle />
-            </button>
+            </button> : <div></div>}
 
             <span className='text-xl sm:text-2xl font-semibold text-gray-800 dark:text-white text-center'>
                 {title}

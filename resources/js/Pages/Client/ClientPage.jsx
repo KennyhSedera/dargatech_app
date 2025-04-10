@@ -2,7 +2,6 @@ import FormulaireClient from '@/Components/clients/FormulaireClient';
 import ConfirmDialog from '@/Components/ConfirmDialog';
 import DataTable from '@/Components/DataTable';
 import HeaderPage from '@/Components/HeaderPage';
-import LocationSearch from '@/Components/localisations/LocationSearch';
 import Snackbar from '@/Components/Snackbar';
 import { nodata2 } from '@/constant';
 import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout';
@@ -20,6 +19,7 @@ const ClientPage = () => {
     const [clients, setClients] = useState([]);
     const [filteredData, setFilteredData] = useState([]);
     const [dataToEdit, setDataToEdit] = useState({});
+    const [isLoading, setIsLoading] = useState(true);
     const [suppression, setSuppression] = useState({
         open: false,
         message: '',
@@ -32,6 +32,7 @@ const ClientPage = () => {
     });
 
     const fetchClients = async () => {
+        setIsLoading(true);
         const data = await getClients();
         const clients = data.clients.map(el => ({
             id: el.id,
@@ -47,6 +48,7 @@ const ClientPage = () => {
 
         setClients(clients);
         setFilteredData(clients);
+        setIsLoading(false);
     };
 
     useEffect(() => {
@@ -170,6 +172,11 @@ const ClientPage = () => {
                 close={() => setSuppression({ ...suppression, open: false })}
                 accept={confirmDelete}
             />
+            {isLoading ? (
+        <div className="flex justify-center items-center h-64">
+          <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-blue-500"></div>
+        </div>
+      ) : (
             <div>
                 {filteredData.length > 0 ?
                     <DataTable
@@ -186,6 +193,7 @@ const ClientPage = () => {
                     </div>
                 }
             </div>
+            )}
             {/* <LocationSearch /> */}
         </AuthenticatedLayout>
     );

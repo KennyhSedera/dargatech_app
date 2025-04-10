@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react'
+import React, { useEffect, useState, useRef } from 'react'
 import { Head, useForm } from '@inertiajs/react'
 import InputLabel from '@/Components/inputs/InputLabel';
 import TextInput from '@/Components/inputs/TextInput';
@@ -15,11 +15,20 @@ import InfoVendeur from '@/Components/Paiement/InfoVendeur';
 import PaiementFooter from '@/Components/Paiement/PaiementFooter';
 import { createPaiement } from '@/Services/PaiementService';
 import Snackbar from '@/Components/Snackbar';
+import html2pdf from 'html2pdf.js';
+import FichierPaiementPdf from '@/Components/paiements/FichierPaiementPdf';
+import moment from 'moment';
+
 const FormulairePaiement = () => {
     const { theme, setTheme } = useTheme();
+    const contentRef = useRef(null);
+    const [showPdf, setShowPdf] = useState(false);
+    const [paiementData, setPaiementData] = useState(null);
+
     useEffect(() => {
         setTheme(theme || 'light')
     }, [theme])
+
     const { data, setData, errors, reset } = useForm({
         type: 'recu',
         numero: 'R/1_TEST',
@@ -50,6 +59,7 @@ const FormulairePaiement = () => {
         description: '',
         produits: [],
     });
+
     const [validationErrors, setValidationErrors] = useState({});
     const [clients, setClients] = useState([]);
     const [typePaiement, setTypePaiement] = useState([]);
@@ -90,11 +100,27 @@ const FormulairePaiement = () => {
             setData('ville_acheteur', cli.ville);
             setData('pays_acheteur', cli.pays);
             setData('num_rue_acheteur', cli.village || cli.quartier);
+            setData('civilite_acheteur', cli.genre ==='Homme'?'Mr.':'Mme.')
         }
     };
 
+    const generatePDF = () => {
+        const element = contentRef.current;
+        if (!element) return;
+
+        const opt = {
+            margin: 0.5,
+            filename: `${data.type === 'recu' ? 'recu' : 'facture'}-${data.numero}.pdf`,
+            image: { type: 'jpeg', quality: 0.98 },
+            html2canvas: { scale: 2 },
+            jsPDF: { unit: 'in', format: 'a4', orientation: 'portrait' }
+        };
+
+        html2pdf().from(element).set(opt).save();
+    };
+
     const handleSubmit = async () => {
-        data.periode_couverte = data.date_creation + " jusqu'à " + data.date;
+        data.periode_couverte = moment(data.date_creation).format('DD/MM/YYYY') + " au " + moment(data.date).format('DD/MM/YYYY');
         data.date_paiement = data.date_paiement ? new Date(data.date_paiement).toISOString().split('T')[0] : new Date().toISOString().split('T')[0];
         data.observation = data.description;
         data.echeance = data.date_echeance;
@@ -103,19 +129,31 @@ const FormulairePaiement = () => {
         data.montant = data.montant_paye || "0";
         try {
             const response = await createPaiement(data);
+            setPaiementData(data);
+            setShowPdf(true);
             setAlert({
                 open: true,
                 message: response.message,
                 type: 'success'
             });
-            reset();
+            // Générer le PDF après un court délai pour permettre le rendu
+            setTimeout(() => {
+                generatePDF();
+                setShowPdf(false);
+                // reset();
+            }, 500);
         } catch (error) {
             console.error('Error submitting payment:', error);
+            setAlert({
+                open: true,
+                message: 'Erreur lors de l\'enregistrement du paiement',
+                type: 'error'
+            });
         }
     };
 
     return (
-        <div className=' bg-gray-100 dark:bg-gray-900 dark:text-white p-10'>
+        <div className='bg-gray-100 dark:bg-gray-900 dark:text-white p-10'>
             <Head title='Formulaire Paiement' />
             <Snackbar
                 message={alert.message}
@@ -207,6 +245,15 @@ const FormulairePaiement = () => {
                 <div className='mt-8 flex items-center justify-end'>
                     <PrimaryButton className='px-10' onClick={handleSubmit}>Enregistrer</PrimaryButton>
                 </div>
+            </div>
+
+            {/* Composant PDF caché */}
+            <div className="hidden">
+                {showPdf && paiementData && (
+                    <div ref={contentRef}>
+                        <FichierPaiementPdf data={paiementData} />
+                    </div>
+                )}
             </div>
         </div>
     )

@@ -19,6 +19,7 @@ const PaiementPage = () => {
     const [open, setOpen] = useState(false);
     const [paiements, setPaiements] = useState([]);
     const [filteredData, setFilteredData] = useState([]);
+    const [isLoading, setIsLoading] = useState(true);
     const [suppression, setSuppression] = useState({
         open: false,
         message: '',
@@ -58,6 +59,7 @@ const PaiementPage = () => {
 
     const getPaiementDB = async () => {
         try {
+            setIsLoading(true);
             const { data } = await getPaiements();
             const datas = data.map(el => ({
                 id: el.id,
@@ -72,9 +74,10 @@ const PaiementPage = () => {
             }))
             setPaiements(datas);
             setFilteredData(datas);
-            console.log(data);
         } catch (error) {
             console.log(error);
+        } finally {
+            setIsLoading(false);
         }
     }
 
@@ -179,21 +182,29 @@ const PaiementPage = () => {
                         search={search}
                         onSearch={onFilteredData}
                     />
-                    {filteredData.length > 0 ?
-                        <DataTable
-                            headers={headers}
-                            rows={filteredData}
-                            itemsPerPage={10}
-                            actions={actions}
-                            className="mt-4"
-                            currentPage={currentPage}
-                            onPageChange={setCurrentPage}
-                            masqueColumns={['client_id']}
-                        /> :
-                        <div className='flex justify-center'>
-                            <img src={nodata2} alt="no data" className='max-w-md mt-2 opacity-50' />
+                    {isLoading ? (
+                        <div className="flex justify-center items-center h-64">
+                            <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-blue-500"></div>
                         </div>
-                    }
+                    ) : (
+                        <div>
+                            {filteredData.length > 0 ?
+                                <DataTable
+                                    headers={headers}
+                                    rows={filteredData}
+                                    itemsPerPage={9}
+                                    actions={actions}
+                                    className="mt-4"
+                                    currentPage={currentPage}
+                                    onPageChange={setCurrentPage}
+                                    masqueColumns={['client_id']}
+                                /> :
+                                <div className='flex justify-center'>
+                                    <img src={nodata2} alt="no data" className='max-w-md mt-2 opacity-50' />
+                                </div>
+                            }
+                        </div>
+                    )}
                 </div> :
                 <TypePaiement />
             }

@@ -55,15 +55,15 @@ class PaiementController extends Controller
 
     public function show($id)
     {
-        $data = Paiement::find($id);
+        $data = Paiement::with(['client'])->find($id);
 
-        if (! $data) {
+        if (!$data) {
             return response()->json([
-                'message' => 'Rapport non trouvé.',
+                'message' => 'Paiement non trouvé.',
             ], 404);
         }
 
-        return response()->json($data, 200, );
+        return response()->json($data, 200);
     }
 
     public function update(Request $request, $id)

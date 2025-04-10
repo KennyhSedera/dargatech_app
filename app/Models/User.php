@@ -60,4 +60,8 @@ class User extends Authenticatable
     {
         return $this->belongsTo(UserRole::class, 'user_role');
     }
+    public function partenaire()
+    {
+        return $this->hasOne(Partenaire::class);
+    }
 }

@@ -18,14 +18,14 @@ const TechnicienFormulaire = ({
     const [validationErrors, setValidationErrors] = useState({});
     const [load, setLoad] = useState(false);
     const { data, setData, errors, reset } = useForm({
-        name: '',
+        nom: '',
         email: '',
         contact: '',
         password: '',
         adress: '',
         speciality: '',
-        genre: 'homme',
-        photo: 'logo.png',
+        genre: 'Homme',
+        photo: '',
     });
 
     const onClose = (message) => {
@@ -70,9 +70,9 @@ const TechnicienFormulaire = ({
             </div>
             <form className="grid w-full grid-cols-1 gap-4 my-6 sm:grid-cols-2">
                 <div>
-                    <InputLabel htmlFor="name" value="Nom" />
-                    <TextInput id="name" name="name" value={data.name} isFocused={true} className="block w-full mt-1" autoComplete="name" onChange={(e) => setData('name', e.target.value)} required onFocus={() => setValidationErrors({ ...validationErrors, 'name': '' })} />
-                    <InputError message={validationErrors.name || errors.name} className="mt-2" />
+                    <InputLabel htmlFor="nom" value="Nom" />
+                    <TextInput id="nom" name="nom" value={data.nom} isFocused={true} className="block w-full mt-1" autoComplete="nom" onChange={(e) => setData('nom', e.target.value)} required onFocus={() => setValidationErrors({ ...validationErrors, 'nom': '' })} />
+                    <InputError message={validationErrors.nom || errors.nom} className="mt-2" />
                 </div>
                 <div>
                     <InputLabel htmlFor="email" value="Email" />
@@ -91,8 +91,8 @@ const TechnicienFormulaire = ({
                         onChange={(e) => setData('genre', e.target.value)}
                         required
                     >
-                        <option value="homme">Homme</option>
-                        <option value="femme">Femme</option>
+                        <option value="Homme">Homme</option>
+                        <option value="Femme">Femme</option>
                     </SelectInput>
                     <InputError message={errors.genre} className="mt-2" />
                 </div>

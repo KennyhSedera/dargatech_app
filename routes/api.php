@@ -12,10 +12,19 @@ use App\Http\Controllers\RapportController;
 use App\Http\Controllers\TechnicienController;
 use App\Http\Controllers\TypePaiementController;
 use App\Http\Controllers\UserRoleController;
+use App\Http\Controllers\UserController;
+use App\Http\Controllers\PartenaireController;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Route;
 
 Route::group(['prefix' => 'api'], function () {
+    Route::get('/test', function() {
+        return response()->json([
+            'message' => 'API is working!',
+            'status' => 'success'
+        ]);
+    });
+
     Route::group(['prefix' => 'clients', 'as' => 'clients.', 'middleware' => 'auth'], function () {
         Route::get('/', [ClientController::class, 'index'])->name('index');
         Route::get('/avec/installation', [ClientController::class, 'getclientinstallation'])->name('getclientinstallation');
@@ -121,5 +130,15 @@ Route::group(['prefix' => 'api'], function () {
         ]);
     })->middleware('auth');
 
+    Route::get('/users', [UserController::class, 'index'])->name('users.index');
+
     Route::get('/rapport/maintenance/{maintenance_id}', [RapportController::class, 'showByMaintenanceId']);
+
+    Route::group(['prefix' => 'partenaire', 'as' => 'partenaire.', 'middleware' => 'auth'], function () {
+        Route::get('/', [PartenaireController::class, 'index'])->name('index');
+        Route::post('/', [PartenaireController::class, 'store'])->name('store');
+        Route::get('/{id}', [PartenaireController::class, 'show'])->name('show');
+        Route::put('/{id}', [PartenaireController::class, 'update'])->name('update');
+        Route::delete('/{id}', [PartenaireController::class, 'destroy'])->name('destroy');
+    });
 });

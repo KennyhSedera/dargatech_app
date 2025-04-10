@@ -128,18 +128,6 @@ class ClientController extends Controller
             }
 
             $validatedData = $request->validated();
-            
-            // Mettre à jour la localisation
-            if ($client->localisation) {
-                $client->localisation->update([
-                    'latitude' => $validatedData['latitude'] ?? $client->localisation->latitude,
-                    'longitude' => $validatedData['longitude'] ?? $client->localisation->longitude,
-                    'pays' => $validatedData['pays'] ?? $client->localisation->pays,
-                    'ville' => $validatedData['ville'] ?? $client->localisation->ville,
-                    'quartier' => $validatedData['quartier'] ?? $client->localisation->quartier,
-                    'village' => $validatedData['village'] ?? $client->localisation->village
-                ]);
-            }
 
             // Mettre à jour le client
             $client->update([
@@ -149,7 +137,6 @@ class ClientController extends Controller
                 'genre' => $validatedData['genre'] ?? $client->genre,
                 'email' => $validatedData['email'] ?? $client->email,
                 'telephone' => $validatedData['telephone'],
-                'localisation' => $validatedData['localisation'],
                 'surface_cultivee' => $validatedData['surface_cultivee'],
                 'type_activite_agricole' => $validatedData['type_activite_agricole']
             ]);

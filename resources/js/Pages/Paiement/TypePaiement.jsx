@@ -14,6 +14,7 @@ const TypePaiement = () => {
     const [currentPage, setCurrentPage] = useState(1);
     const [typePaiements, setTypePaiements] = useState([]);
     const [filteredData, setFilteredData] = useState([]);
+    const [isLoading, setIsLoading] = useState(true);
     const [suppression, setSuppression] = useState({
         open: false,
         message: '',
@@ -43,6 +44,7 @@ const TypePaiement = () => {
         },
     ];
     const getTypePaiementDB = async () => {
+        setIsLoading(true);
         try {
             const { type } = await getType_paiements();
             const datas = type.map(el => ({
@@ -54,6 +56,8 @@ const TypePaiement = () => {
             setFilteredData(datas);
         } catch (error) {
             console.log(error);
+        } finally {
+            setIsLoading(false);
         }
     }
 
@@ -100,6 +104,7 @@ const TypePaiement = () => {
                 search={search}
                 onSearch={onFilteredData}
                 title='Liste des types de paiement'
+                btn={false}
             />
             <Snackbar
                 message={alert.message}
@@ -118,6 +123,11 @@ const TypePaiement = () => {
                 close={() => setSuppression({ ...suppression, open: false })}
                 accept={confirmDelete}
             />
+            {isLoading ? (
+        <div className="flex justify-center items-center h-64">
+          <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-blue-500"></div>
+        </div>
+      ) : (
             <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
                 <div className="sm:col-span-2">
                     {filteredData.length > 0 ?
@@ -139,6 +149,7 @@ const TypePaiement = () => {
                     <FormulaireTypePaiement reload={() => getTypePaiementDB()} />
                 </div>
             </div>
+            )}
         </div>
     )
 }

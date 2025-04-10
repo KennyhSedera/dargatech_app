@@ -2,12 +2,12 @@ import React, { useEffect, useRef, useState } from 'react';
 import InputLabel from '../inputs/InputLabel';
 import InputError from '../inputs/InputError';
 import TextInput from '../inputs/TextInput';
+import TextArea from '../inputs/TextArea';
 import Modal from '../Modal';
 import InputImage from '../inputs/InputImage';
 import { useForm } from '@inertiajs/react';
 import { createRapportMaintenance } from '@/Services/maintenanceService';
 import Snackbar from '@/Components/Snackbar';
-
 const FormulaireRapportMaintenance = ({
     open = true,
     setOpen,
@@ -15,11 +15,12 @@ const FormulaireRapportMaintenance = ({
     onCloseFormulaire = () => { },
     idTechnicien,
 }) => {
+
     const today = new Date().toISOString().split('T')[0];
-    
+
     const { data, setData, errors, reset } = useForm({
         clientId: 0,
-        technicienId: idTechnicien,
+        technicienId: idTechnicien || 1,
         maintenanceId: 0,
         description_probleme: '',
         photo_probleme: null,
@@ -75,31 +76,31 @@ const FormulaireRapportMaintenance = ({
 
     const validateForm = () => {
         const newErrors = {};
-        
+
         if (!data.description_probleme.trim()) {
             newErrors.description_probleme = 'Le problème rapporté est obligatoire';
         }
-        
+
         if (!data.verifications_preliminaires.trim()) {
             newErrors.verifications_preliminaires = 'Les vérifications préliminaires sont obligatoires';
         }
-        
+
         if (!data.resultat_diagnostic.trim()) {
             newErrors.resultat_diagnostic = 'Le résultat du diagnostic est obligatoire';
         }
-        
+
         if (!data.actions_correctives.trim()) {
             newErrors.actions_correctives = 'Les actions correctives sont obligatoires';
         }
-        
+
         if (!data.verification_fonctionnement.trim()) {
             newErrors.verification_fonctionnement = 'La vérification du fonctionnement est obligatoire';
         }
-        
+
         if (!data.date_intervention) {
             newErrors.date_intervention = 'La date d\'intervention est obligatoire';
         }
-        
+
         setFormErrors(newErrors);
         return Object.keys(newErrors).length === 0;
     };
@@ -108,7 +109,7 @@ const FormulaireRapportMaintenance = ({
         if (!validateForm()) {
             return;
         }
-        
+
         try {
             setload(true);
             const formData = new FormData();
@@ -146,7 +147,7 @@ const FormulaireRapportMaintenance = ({
             <form className='grid w-full grid-cols-1 gap-4 my-6 sm:grid-cols-2'>
                 <div>
                     <InputLabel htmlFor="description_probleme" value="Problème rapporté *" />
-                    <TextInput
+                    <TextArea
                         id="description_probleme"
                         name="description_probleme"
                         value={data.description_probleme}
@@ -154,18 +155,15 @@ const FormulaireRapportMaintenance = ({
                         autoComplete="off"
                         onChange={(e) => setData('description_probleme', e.target.value)}
                         required
+                        rows={3}
+                        readOnly={true}
                         onFocus={() => setFormErrors({ ...formErrors, description_probleme: '' })}
                     />
                     <InputError message={formErrors.description_probleme || validationErrors.description_probleme || errors.description_probleme} className="mt-2" />
                 </div>
                 <div>
-                    <InputLabel htmlFor="photo_probleme" value="Photo du problème (optionnel)" />
-                    <InputImage ref={fileInputRef} selectedFile={data.photo_probleme} onLoadFile={onLoadFile} onFocus={() => setValidationErrors({ ...validationErrors, photo_probleme: '' })} />
-                    <p className="mt-1 text-xs text-gray-500">Vous pouvez soumettre le rapport sans photo</p>
-                </div>
-                <div>
                     <InputLabel htmlFor="verifications_preliminaires" value="Vérifications préliminaires *" />
-                    <TextInput
+                    <TextArea
                         id="verifications_preliminaires"
                         name="verifications_preliminaires"
                         value={data.verifications_preliminaires}
@@ -173,13 +171,14 @@ const FormulaireRapportMaintenance = ({
                         autoComplete="off"
                         onChange={(e) => setData('verifications_preliminaires', e.target.value)}
                         required
+                        rows={3}
                         onFocus={() => setFormErrors({ ...formErrors, verifications_preliminaires: '' })}
                     />
                     <InputError message={formErrors.verifications_preliminaires || errors.verifications_preliminaires} className="mt-2" />
                 </div>
                 <div>
                     <InputLabel htmlFor="resultat_diagnostic" value="Résultat du diagnostic *" />
-                    <TextInput
+                    <TextArea
                         id="resultat_diagnostic"
                         name="resultat_diagnostic"
                         value={data.resultat_diagnostic}
@@ -187,13 +186,14 @@ const FormulaireRapportMaintenance = ({
                         autoComplete="off"
                         onChange={(e) => setData('resultat_diagnostic', e.target.value)}
                         required
+                        rows={3}
                         onFocus={() => setFormErrors({ ...formErrors, resultat_diagnostic: '' })}
                     />
                     <InputError message={formErrors.resultat_diagnostic || errors.resultat_diagnostic} className="mt-2" />
                 </div>
                 <div>
                     <InputLabel htmlFor="actions_correctives" value="Actions correctives *" />
-                    <TextInput
+                    <TextArea
                         id="actions_correctives"
                         name="actions_correctives"
                         value={data.actions_correctives}
@@ -201,13 +201,14 @@ const FormulaireRapportMaintenance = ({
                         autoComplete="off"
                         onChange={(e) => setData('actions_correctives', e.target.value)}
                         required
+                        rows={3}
                         onFocus={() => setFormErrors({ ...formErrors, actions_correctives: '' })}
                     />
                     <InputError message={formErrors.actions_correctives || errors.actions_correctives} className="mt-2" />
                 </div>
                 <div>
                     <InputLabel htmlFor="verification_fonctionnement" value="Vérification du fonctionnement *" />
-                    <TextInput
+                    <TextArea
                         id="verification_fonctionnement"
                         name="verification_fonctionnement"
                         value={data.verification_fonctionnement}
@@ -215,22 +216,28 @@ const FormulaireRapportMaintenance = ({
                         autoComplete="off"
                         onChange={(e) => setData('verification_fonctionnement', e.target.value)}
                         required
+                        rows={3}
                         onFocus={() => setFormErrors({ ...formErrors, verification_fonctionnement: '' })}
                     />
                     <InputError message={formErrors.verification_fonctionnement || errors.verification_fonctionnement} className="mt-2" />
                 </div>
                 <div>
                     <InputLabel htmlFor="recommandations" value="Recommandations au Client (optionnel)" />
-                    <TextInput
+                    <TextArea
                         id="recommandations"
                         name="recommandations"
                         value={data.recommandations}
                         className="block w-full mt-1"
                         autoComplete="off"
                         onChange={(e) => setData('recommandations', e.target.value)}
+                        rows={3}
                         onFocus={() => setFormErrors({ ...formErrors, recommandations: '' })}
                     />
                     <InputError message={errors.recommandations} className="mt-2" />
+                </div>
+                <div>
+                    <InputLabel htmlFor="photo_probleme" value="Photo du problème (optionnel)" />
+                    <InputImage ref={fileInputRef} selectedFile={data.photo_probleme} onLoadFile={onLoadFile} onFocus={() => setValidationErrors({ ...validationErrors, photo_probleme: '' })} />
                 </div>
                 <div>
                     <InputLabel htmlFor="date_intervention" value="Date de l'intervention *" />
@@ -243,6 +250,7 @@ const FormulaireRapportMaintenance = ({
                         onChange={(e) => setData('date_intervention', e.target.value)}
                         type="date"
                         required
+                        readOnly={true}
                         onFocus={() => setFormErrors({ ...formErrors, date_intervention: '' })}
                     />
                     <InputError message={formErrors.date_intervention || errors.date_intervention} className="mt-2" />
@@ -256,11 +264,11 @@ const FormulaireRapportMaintenance = ({
                     {load ? 'Enregistrement...' : 'Enregistrer'}
                 </button>
             </div>
-            <Snackbar 
-                show={snackbar.show} 
-                message={snackbar.message} 
-                type={snackbar.type} 
-                onClose={() => setSnackbar({ ...snackbar, show: false })} 
+            <Snackbar
+                show={snackbar.show}
+                message={snackbar.message}
+                type={snackbar.type}
+                onClose={() => setSnackbar({ ...snackbar, show: false })}
             />
         </Modal>
     );

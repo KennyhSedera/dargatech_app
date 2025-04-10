@@ -14,6 +14,7 @@ Route::middleware('auth')->group(function () {
     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
     Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
     Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
+    Route::post('/api/profile/photo', [ProfileController::class, 'updatePhoto'])->name('profile.photo.update');
 });
 
 Route::get('/clients', function () {
@@ -75,6 +76,18 @@ Route::get('/rapport/{id}', function ($id) {
         'intervention_id' => $id
     ]);
 })->middleware(['auth', 'verified'])->name('rapport.show');
+
+Route::get('/affiche', function () {
+    return Inertia::render('paiements/AfficherPaiement');
+})->name('affiche');
+
+Route::get('/users', function () {
+    return Inertia::render('UsersPage');
+})->middleware(['auth', 'verified'])->name('users');
+
+Route::get('/partenaires', function () {
+    return Inertia::render('PartenairePage');
+})->middleware(['auth', 'verified'])->name('partenaires');
 
 require __DIR__ . '/auth.php';
 require __DIR__ . '/api.php';

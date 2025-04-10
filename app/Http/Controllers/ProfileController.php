@@ -2,14 +2,19 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Requests\PasswordUpdateRequest;
 use App\Http\Requests\ProfileUpdateRequest;
+use App\Models\Profile;
 use Illuminate\Contracts\Auth\MustVerifyEmail;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Redirect;
+use Illuminate\Support\Facades\Storage;
+use Illuminate\Support\Facades\Hash;
 use Inertia\Inertia;
 use Inertia\Response;
+use Illuminate\View\View;
 
 class ProfileController extends Controller
 {
@@ -18,9 +23,10 @@ class ProfileController extends Controller
      */
     public function edit(Request $request): Response
     {
+        $user = $request->user()->load(['user_role', 'profile', 'technicien']);
+        
         return Inertia::render('Profile/Edit', [
-            'mustVerifyEmail' => $request->user() instanceof MustVerifyEmail,
-            'status' => session('status'),
+            'user' => $user,
         ]);
     }
 
@@ -37,7 +43,93 @@ class ProfileController extends Controller
 
         $request->user()->save();
 
-        return Redirect::route('profile.edit');
+        // Mise à jour ou création du profil
+        $profileData = $request->validate([
+            'genre' => 'nullable|string|max:255',
+            'contact' => 'nullable|string|max:255',
+            'adress' => 'nullable|string|max:255',
+            'speciality' => 'nullable|string|max:255',
+        ]);
+
+        // Mise à jour ou création du profil
+        if ($request->user()->profile) {
+            $request->user()->profile->update($profileData);
+        } else {
+            $request->user()->profile()->create($profileData);
+        }
+
+        return Redirect::route('profile.edit')->with('status', 'profile-updated');
+    }
+
+    public function updatePassword(PasswordUpdateRequest $request): RedirectResponse
+    {
+        $validated = $request->validated();
+
+        $request->user()->update([
+            'password' => Hash::make($validated['password']),
+        ]);
+
+        return Redirect::route('profile.edit')->with('status', 'password-updated');
+    }
+
+    /**
+     * Update the user's profile photo.
+     */
+    public function updatePhoto(Request $request): RedirectResponse
+    {
+        $request->validate([
+            'photo' => 'required|image|mimes:jpeg,png,jpg,gif|max:2048',
+        ]);
+
+        $user = $request->user();
+        
+        // Delete old photo if exists
+        if ($user->profile && $user->profile->photo) {
+            // Supprimer l'ancienne photo du dossier public
+            $oldPhotoPath = public_path($user->profile->photo);
+            if (file_exists($oldPhotoPath)) {
+                unlink($oldPhotoPath);
+            }
+        }
+        
+        if ($user->technicien && $user->technicien->photo) {
+            // Supprimer l'ancienne photo du dossier public
+            $oldPhotoPath = public_path($user->technicien->photo);
+            if (file_exists($oldPhotoPath)) {
+                unlink($oldPhotoPath);
+            }
+        }
+
+        if ($user->partenaire && $user->partenaire->logo) {
+            // Supprimer l'ancienne photo du dossier public
+            $oldPhotoPath = public_path($user->partenaire->logo);
+            if (file_exists($oldPhotoPath)) {
+                unlink($oldPhotoPath);
+            }
+        }
+        // Stocker la nouvelle photo dans le dossier public
+        $image = $request->file('photo');
+        $imageName = time() . '.' . $image->getClientOriginalExtension();
+        $image->move(public_path('uploads/profile-photos'), $imageName);
+        $photoPath = 'uploads/profile-photos/' . $imageName;
+        
+        // Update or create profile with new photo
+        if ($user->profile) {
+            $user->profile->update(['photo' => $photoPath]);
+        } else {
+            $user->profile()->create(['photo' => $photoPath]);
+        }
+        
+        // Update technicien photo if exists
+        if ($user->technicien) {
+            $user->technicien->update(['photo' => $photoPath]);
+        }
+
+        if ($user->partenaire) {
+            $user->partenaire->update(['logo' => $photoPath]);
+        }
+
+        return Redirect::route('profile.edit')->with('status', 'photo-updated');
     }
 
     /**
@@ -45,13 +137,18 @@ class ProfileController extends Controller
      */
     public function destroy(Request $request): RedirectResponse
     {
-        $request->validate([
+        $request->validateWithBag('userDeletion', [
             'password' => ['required', 'current_password'],
         ]);
 
         $user = $request->user();
 
         Auth::logout();
+
+        // Suppression de la photo de profil si elle existe
+        if ($user->profile && $user->profile->photo) {
+            Storage::delete($user->profile->photo);
+        }
 
         $user->delete();
 
