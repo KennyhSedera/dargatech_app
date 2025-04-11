@@ -62,12 +62,12 @@ const PartenaireCard = ({ partenaire }) => {
       )}
       
       {/* Menu d'options */}
-      <div className="absolute top-2 right-2 z-10">
+      {/* <div className="absolute top-2 right-2 z-10">
         <button 
-          className={`p-2 rounded-full ${isMenuOpen ? 'bg-gray-200 dark:bg-gray-600' : 'bg-gray-100 dark:bg-gray-700'} hover:bg-gray-200 dark:hover:bg-gray-600 transition-colors`}
+          className={`p-2 rounded-full transition-colors`}
           onClick={() => setIsMenuOpen(!isMenuOpen)}
         >
-          <FaEllipsisV className="text-gray-600 dark:text-gray-300" />
+          <FaEllipsisV className="text-gray-200 dark:text-gray-600" />
         </button>
         
         {isMenuOpen && (
@@ -76,16 +76,13 @@ const PartenaireCard = ({ partenaire }) => {
               <button className="w-full text-left px-4 py-2 text-sm text-gray-700 dark:text-gray-200 hover:bg-gray-100 dark:hover:bg-gray-600 flex items-center">
                 <FaEdit className="mr-2" /> Modifier
               </button>
-              <button className="w-full text-left px-4 py-2 text-sm text-gray-700 dark:text-gray-200 hover:bg-gray-100 dark:hover:bg-gray-600 flex items-center">
-                <FaExternalLinkAlt className="mr-2" /> Voir détails
-              </button>
               <button className="w-full text-left px-4 py-2 text-sm text-red-600 dark:text-red-400 hover:bg-red-50 dark:hover:bg-red-900/20 flex items-center">
                 <FaTrash className="mr-2" /> Supprimer
               </button>
             </div>
           </div>
         )}
-      </div>
+      </div> */}
       
       {/* En-tête avec effet de gradient amélioré */}
       <div className="relative pb-6">
