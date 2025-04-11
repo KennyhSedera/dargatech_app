@@ -35,13 +35,13 @@ class PaiementPdfController extends Controller
             'data.pays_acheteur' => 'required|string',
             'data.periode_couverte' => 'required|string',
             'data.produits' => 'required|array',
-            'data.produits.*.designation' => 'required|string',
-            'data.produits.*.reference' => 'required|string',
-            'data.produits.*.quantite' => 'required|numeric',
-            'data.produits.*.prix_unitaire' => 'required|numeric',
-            'data.produits.*.tva' => 'required|numeric',
-            'data.montant_paye' => 'required|string',
-            'data.mode_paiement' => 'required|string',
+            'data.produits.*.designation' => 'nullable|string',
+            'data.produits.*.reference' => 'nullable|string',
+            'data.produits.*.quantite' => 'nullable|numeric',
+            'data.produits.*.prix_unitaire' => 'nullable|numeric',
+            'data.produits.*.tva' => 'nullable|numeric',
+            'data.montant_paye' => 'nullable|string',
+            'data.mode_paiement' => 'nullable|string',
         ]);
 
         // Compléter les données avec les informations bancaires

@@ -18,7 +18,7 @@ const TechnicienFormulaire = ({
     const [validationErrors, setValidationErrors] = useState({});
     const [load, setLoad] = useState(false);
     const { data, setData, errors, reset } = useForm({
-        nom: '',
+        name: '',
         email: '',
         contact: '',
         password: '',
@@ -70,9 +70,9 @@ const TechnicienFormulaire = ({
             </div>
             <form className="grid w-full grid-cols-1 gap-4 my-6 sm:grid-cols-2">
                 <div>
-                    <InputLabel htmlFor="nom" value="Nom" />
-                    <TextInput id="nom" name="nom" value={data.nom} isFocused={true} className="block w-full mt-1" autoComplete="nom" onChange={(e) => setData('nom', e.target.value)} required onFocus={() => setValidationErrors({ ...validationErrors, 'nom': '' })} />
-                    <InputError message={validationErrors.nom || errors.nom} className="mt-2" />
+                    <InputLabel htmlFor="name" value="Nom" />
+                    <TextInput id="name" name="name" value={data.name} isFocused={true} className="block w-full mt-1" autoComplete="name" onChange={(e) => setData('name', e.target.value)} required onFocus={() => setValidationErrors({ ...validationErrors, 'name': '' })} />
+                    <InputError message={validationErrors.name || errors.name} className="mt-2" />
                 </div>
                 <div>
                     <InputLabel htmlFor="email" value="Email" />

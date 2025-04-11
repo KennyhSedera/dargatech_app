@@ -21,7 +21,7 @@ export const sendPdfByEmail = async (pdfData, email) => {
 };
 
 // Exemple d'utilisation
-const handleSendPdf = () => {
+export const handleSendPdf = (data) => {
   const email = 'kennyhsedera@gmail.com';
   
   // Utilisez les mêmes données que vous passeriez au composant React FichierPaiementPdf
@@ -45,7 +45,14 @@ const handleSendPdf = () => {
         quantite: 1,
         prix_unitaire: 200,
         tva: 0
-      }
+      },
+      {
+        designation: 'test2',
+        reference: '1',
+        quantite: 1,
+        prix_unitaire: 200,
+        tva: 0
+      },
     ],
     a_payer: '0 Franc CFA',
     montant_paye: '200.00',

@@ -83,6 +83,9 @@ const FormulairePaiement = () => {
                 village: el.localisation.village,
                 quartier: el.localisation.quartier,
                 email: el.email,
+                genre: el.genre,
+                telephone: el.telephone,
+                localisation: el.localisation.pays + ' ' + el.localisation.ville
             })));
             setTypePaiement(type.type?.map(el => ({ id: el.id, nom: el.name })));
         } catch (error) {
@@ -103,9 +106,8 @@ const FormulairePaiement = () => {
             setData('ville_acheteur', cli.ville);
             setData('pays_acheteur', cli.pays);
             setData('num_rue_acheteur', cli.village || cli.quartier);
-            setData('civilite_acheteur', cli.genre ==='Homme'?'Mr.':'Mme.');
+            setData('civilite_acheteur', cli.genre === 'Homme' ? 'Mr.' : 'Mme.');
             setEmail(cli.email);
-            console.log(cli);
         }
     };
 
@@ -141,12 +143,12 @@ const FormulairePaiement = () => {
                 message: response.message,
                 type: 'success'
             });
+            setShowPdf(false);
+            reset();
+            window.history.back();
             // Générer le PDF après un court délai pour permettre le rendu
             setTimeout(() => {
-                generatePDF();
-                sendPdfByEmail(data, email);    
-                setShowPdf(false);
-                // reset();
+                sendPdfByEmail(data, email);
             }, 500);
         } catch (error) {
             console.error('Error submitting payment:', error);
@@ -249,6 +251,7 @@ const FormulairePaiement = () => {
                     validationErrors={validationErrors}
                 />
                 <div className='mt-8 flex items-center justify-end'>
+                    <button className='bg-blue-500 text-white px-4 py-2 rounded-md' onClick={generatePDF}>Télécharger le PDF</button>
                     <PrimaryButton className='px-10' onClick={handleSubmit}>Enregistrer</PrimaryButton>
                 </div>
             </div>

@@ -121,6 +121,7 @@
         .total-summary {
             float: right;
             margin-top: 16px;
+            margin-bottom: 30px;
             width: 50%;
             clear: both;
         }
@@ -130,7 +131,7 @@
         .payment-info {
             border: 1px solid #3490dc;
             margin-bottom: 24px;
-            margin-top: 10px;
+            margin-top: 40px;
             padding: 10px;
             width: 100%;
             clear: both;
@@ -138,6 +139,7 @@
         .signature {
             text-align: left;
             clear: both;
+            margin-top: 20px;
         }
         .footer {
             text-align: center;
@@ -276,28 +278,32 @@
             </table>
         </div>
 
+        <!-- Espace de séparation clair -->
+        <div class="clearfix" style="height: 0px; clear: both;"></div>
+
         <!-- Informations de paiement -->
-        <div class="clearfix" style="height: 10px;"></div>
-        <table class="payment-info">
-            <tr>
-                <td>À payer:</td>
-                <td>{{ $data['a_payer'] ?? '0 Franc CFA' }}</td>
-            </tr>
-            <tr>
-                <td>Montant payé:</td>
-                <td>{{ $data['montant_paye'] }} Franc CFA</td>
-            </tr>
-            <tr>
-                <td>Mode de règlement:</td>
-                <td>{{ $data['mode_paiement'] }}</td>
-            </tr>
-            <tr>
-                <td>Banque:</td>
-                <td>{{ $data['banque'] }}</td>
-                <td>IBAN:</td>
-                <td>{{ $data['iban'] }}</td>
-            </tr>
-        </table>
+        <div class="payment-info">
+            <table style="width: 100%;">
+                <tr>
+                    <td style="width: 25%;">À payer:</td>
+                    <td style="width: 25%;">{{ $data['a_payer'] ?? '0 Franc CFA' }}</td>
+                    <td style="width: 25%;">Montant payé:</td>
+                    <td style="width: 25%;">{{ $data['montant_paye'] }} Franc CFA</td>
+                </tr>
+                <tr>
+                    <td>Mode de règlement:</td>
+                    <td>{{ $data['mode_paiement'] }}</td>
+                    <td>Banque:</td>
+                    <td>{{ $data['banque'] }}</td>
+                </tr>
+                <tr>
+                    <td></td>
+                    <td></td>
+                    <td>IBAN:</td>
+                    <td>{{ $data['iban'] }}</td>
+                </tr>
+            </table>
+        </div>
 
         <!-- Signature -->
         <div class="signature">
