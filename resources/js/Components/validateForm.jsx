@@ -9,8 +9,6 @@ export const validateFormClient = (data, setValidationErrors) => {
     }
     if (!data.telephone.trim()) {
         errors.telephone = 'Le téléphone est obligatoire.';
-    } else if (!/^\d{10}$/.test(data.telephone)) {
-        errors.telephone = 'Le téléphone doit contenir 10 chiffres.';
     }
     if (!data.ville.trim()) {
         errors.ville = 'La ville est obligatoire.';
@@ -127,8 +125,6 @@ export const validateFormTechnicien = (data, setValidationErrors) => {
     }
     if (!data.contact.trim()) {
         errors.contact = 'Le contact est obligatoire.';
-    } else if (!/^\d{10}$/.test(data.contact)) {
-        errors.contact = 'Le contact doit contenir 10 chiffres.';
     }
     setValidationErrors(errors);
     return Object.keys(errors).length === 0;
