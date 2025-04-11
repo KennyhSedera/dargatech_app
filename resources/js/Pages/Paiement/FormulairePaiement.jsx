@@ -32,7 +32,7 @@ const FormulairePaiement = () => {
 
     const { data, setData, errors, reset } = useForm({
         type: 'recu',
-        numero: 'R/1_TEST',
+        numero: 'R1_TEST',
         date_creation: new Date().toISOString().split('T')[0],
         date: new Date().toISOString().split('T')[0],
         lieu_creation: 'Atakpamé',
