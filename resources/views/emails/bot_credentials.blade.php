@@ -118,7 +118,7 @@
 <body>
     <div class="container">
         <div class="header">
-            <img src="{{ 'images/logo.png' }}" alt="Logo" class="logo">
+            <img src="{{ public_path('images/titre.png') }}" alt="Logo" class="logo">
             <h1>Bienvenue sur notre plateforme !</h1>
         </div>
         

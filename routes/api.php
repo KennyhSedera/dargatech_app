@@ -14,6 +14,7 @@ use App\Http\Controllers\TypePaiementController;
 use App\Http\Controllers\UserRoleController;
 use App\Http\Controllers\UserController;
 use App\Http\Controllers\PartenaireController;
+use App\Http\Controllers\PaiementPdfController;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Route;
 
@@ -141,4 +142,6 @@ Route::group(['prefix' => 'api'], function () {
         Route::put('/{id}', [PartenaireController::class, 'update'])->name('update');
         Route::delete('/{id}', [PartenaireController::class, 'destroy'])->name('destroy');
     });
+
+    Route::post('/paiement/generate-and-send-pdf', [PaiementPdfController::class, 'generateAndSendPdf']);
 });

@@ -149,7 +149,7 @@ const FichierPaiementPdf = forwardRef(({ data }, ref) => {
       </div>
 
       {/* Informations de paiement */}
-      <div className="border border-blue-500 mb-8">
+      <div className="border border-blue-500 mb-6">
         <table className="w-full">
           <tbody>
             <tr>
@@ -173,23 +173,20 @@ const FichierPaiementPdf = forwardRef(({ data }, ref) => {
           </tbody>
         </table>
       </div>
-
+      
       {/* Signature */}
       <div className="text-left">
         <div className="mb-2 text-blue-500">Nom du vendeur</div>
         <div className="font-bold">{data.nom_vendeur}</div>
       </div>
 
+      {/* Pied de page avec informations DARGATECH */}
+      <div className="text-center text-xs mt-8 border-t border-gray-300 pb-2">
+        <div>DARGATECH TOGO, SARL - TG-LRL-01-2024-B12-00008</div>
+        <div>KARA, TOGO - Tel : +228 93 18 96 06 -</div>
+        <div>www.dargatech.com</div>
+      </div>
 
-      {/* <div className='grid grid-cols-3 items-start justify-between w-screen px-4 absolute bottom-4 bg-red-700 text-xs'>
-        <div>N° {data.numero}</div>
-        <div className='flex flex-col items-center justify-center'>
-          <span>DARGATECH TOGO, SARL - TG-LRL-01-2024-B12-00008</span>
-          <span>KARA, TOGO - Tel : +228 93 18 96 06 -</span>
-          <span>www.dargatech.com</span>
-        </div>
-        <div>Facturation en ligne sur VosFactures.fr</div>
-      </div> */}
     </div>
   );
 });

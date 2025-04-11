@@ -18,6 +18,7 @@ import Snackbar from '@/Components/Snackbar';
 import html2pdf from 'html2pdf.js';
 import FichierPaiementPdf from '@/Components/paiements/FichierPaiementPdf';
 import moment from 'moment';
+import { sendPdfByEmail } from '@/Services/envoyePdfEmail';
 
 const FormulairePaiement = () => {
     const { theme, setTheme } = useTheme();
@@ -68,6 +69,7 @@ const FormulairePaiement = () => {
         message: '',
         type: 'success'
     });
+    const [email, setEmail] = useState('');
 
     const getType = async () => {
         try {
@@ -80,6 +82,7 @@ const FormulairePaiement = () => {
                 pays: el.localisation.pays,
                 village: el.localisation.village,
                 quartier: el.localisation.quartier,
+                email: el.email,
             })));
             setTypePaiement(type.type?.map(el => ({ id: el.id, nom: el.name })));
         } catch (error) {
@@ -100,7 +103,9 @@ const FormulairePaiement = () => {
             setData('ville_acheteur', cli.ville);
             setData('pays_acheteur', cli.pays);
             setData('num_rue_acheteur', cli.village || cli.quartier);
-            setData('civilite_acheteur', cli.genre ==='Homme'?'Mr.':'Mme.')
+            setData('civilite_acheteur', cli.genre ==='Homme'?'Mr.':'Mme.');
+            setEmail(cli.email);
+            console.log(cli);
         }
     };
 
@@ -139,6 +144,7 @@ const FormulairePaiement = () => {
             // Générer le PDF après un court délai pour permettre le rendu
             setTimeout(() => {
                 generatePDF();
+                sendPdfByEmail(data, email);    
                 setShowPdf(false);
                 // reset();
             }, 500);
