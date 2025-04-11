@@ -105,7 +105,7 @@ const PartenaireCard = ({ partenaire }) => {
               <img 
                 src={logo} 
                 alt={`Logo ${name}`} 
-                className="w-full h-full object-cover rounded-full"
+                className="w-full h-full object-cover rounded-lg"
               />
             ) : (
               <div className="w-full h-full rounded-lg border-2 border-gray-200 bg-gradient-to-br from-gray-100 to-gray-300 dark:from-gray-600 dark:to-gray-800 flex items-center justify-center">

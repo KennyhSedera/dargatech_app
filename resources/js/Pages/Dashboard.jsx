@@ -132,10 +132,7 @@ export default function Dashboard() {
                     className="col-span-2"
                 />
             </div>
-            <GeolocationComponent />
-            <GeolocationMultipleComponents />
-            {/* <MapComponent /> */}
-            {/* <DashboardComponent /> */}
+            {/* <GeolocationComponent /> */}
         </AuthenticatedLayout>
     );
 }

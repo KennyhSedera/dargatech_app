@@ -63,7 +63,7 @@ export default function AuthenticatedLayout({ setId = () => { }, children }) {
 
                             <div className="flex items-center">
                                 <ThemeDropdown />
-                                <div className="hidden sm:flex sm:items-center gap-2">
+                                <div className="hidden sm:flex sm:items-center gap-2 ml-3">
                                     {/* <Link
                                         href='telegram'
                                         type="button"
@@ -71,7 +71,7 @@ export default function AuthenticatedLayout({ setId = () => { }, children }) {
                                     >
                                         <FaTelegramPlane />
                                     </Link> */}
-                                    <NotificationDropdown />
+                                    {/* <NotificationDropdown />s */}
                                     <UserDropdown />
                                 </div>
                                 <div className="-me-2 flex items-center gap-2 sm:hidden">

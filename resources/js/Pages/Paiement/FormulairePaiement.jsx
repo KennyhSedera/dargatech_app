@@ -146,7 +146,7 @@ const FormulairePaiement = () => {
             setShowPdf(false);
             reset();
             window.history.back();
-            // Générer le PDF après un court délai pour permettre le rendu
+            
             setTimeout(() => {
                 sendPdfByEmail(data, email);
             }, 500);
@@ -251,7 +251,7 @@ const FormulairePaiement = () => {
                     validationErrors={validationErrors}
                 />
                 <div className='mt-8 flex items-center justify-end'>
-                    <button className='bg-blue-500 text-white px-4 py-2 rounded-md' onClick={generatePDF}>Télécharger le PDF</button>
+                    {/* <button className='bg-blue-500 text-white px-4 py-1 mr-2 rounded-md' onClick={generatePDF}>Télécharger le PDF</button> */}
                     <PrimaryButton className='px-10' onClick={handleSubmit}>Enregistrer</PrimaryButton>
                 </div>
             </div>
