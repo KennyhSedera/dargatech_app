@@ -27,8 +27,8 @@
     .logo {
       width: 120px;
       height: 120px;
-      background-color: #5e35b1;
-      border-radius: 50%;
+      background-color: #5e35b15a;
+      border-radius: 10px;
       display: flex;
       align-items: center;
       justify-content: center;
@@ -67,6 +67,7 @@
     }
     .btn:hover {
       background-color: #4527a0;
+      color: white;
     }
     .footer {
       margin-top: 30px;
@@ -105,7 +106,7 @@
 <body>
   <div class="email-container">
     <div class="header">
-  <img src="<?php echo e(public_path('images/titre.png')); ?>" alt="DARGATECH TOGO" class="logo">
+        <img src="<?php echo e(public_path('images/titre.png')); ?>" alt="DARGATECH TOGO" class="logo">
             <h2>Réinitialisation de Mot de Passe</h2>
     </div>
     

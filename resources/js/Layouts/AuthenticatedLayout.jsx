@@ -38,7 +38,7 @@ export default function AuthenticatedLayout({ setId = () => { }, children }) {
     return (
         <div className="min-h-screen w-full bg-gray-100 dark:bg-gray-900 dark:text-white flex">
             <div className='hidden sm:flex sm:flex-col w-16 border-r py-1 items-center h-screen sticky top-0 border-gray-100 bg-white dark:border-gray-700 dark:bg-gray-800 z-40'>
-                <img src={logo} alt="logo" className='w-12' />
+                <a href={'https://dargatech.com'} target='_blank' rel='noreferrer'><img src={logo} alt="logo" className='w-12' /></a>
                 <div className='flex flex-col gap-2 mt-6 justify-center bg-red'>
                     {link.map((item, i) => (
                         <NavLinkIcon
@@ -57,21 +57,13 @@ export default function AuthenticatedLayout({ setId = () => { }, children }) {
                         <div className="flex h-14 justify-between">
                             <div className="flex">
                                 <div className="flex shrink-0 items-center">
-                                    <img src={titre} alt="logo" className='h-10' />
+                                    <a href={'https://dargatech.com'} target='_blank' rel='noreferrer'><img src={titre} alt="logo" className='h-10' /></a>
                                 </div>
                             </div>
 
                             <div className="flex items-center">
                                 <ThemeDropdown />
                                 <div className="hidden sm:flex sm:items-center gap-2 ml-3">
-                                    {/* <Link
-                                        href='telegram'
-                                        type="button"
-                                        className="w-9 h-9 inline-flex items-center justify-center rounded-md p-2 text-gray-400 transition duration-150 ease-in-out hover:bg-gray-100 hover:text-gray-500 focus:bg-gray-100 focus:text-gray-500 focus:outline-none dark:text-gray-500 dark:hover:bg-gray-900 dark:hover:text-gray-400 dark:focus:bg-gray-900 dark:focus:text-gray-400"
-                                    >
-                                        <FaTelegramPlane />
-                                    </Link> */}
-                                    {/* <NotificationDropdown />s */}
                                     <UserDropdown />
                                 </div>
                                 <div className="-me-2 flex items-center gap-2 sm:hidden">
