@@ -1,23 +1,33 @@
 import ConfirmDialog from '@/Components/ConfirmDialog'
-import DataTable from '@/Components/DataTable'
 import HeaderPage from '@/Components/HeaderPage'
 import Snackbar from '@/Components/Snackbar'
+import TechnicienCard from '@/Components/technicien/TechnicienCard'
 import TechnicienFormulaire from '@/Components/technicien/TechnicienFormulaire'
 import { nodata2 } from '@/constant'
 import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout'
 import { deleteTechniciens, getTechniciens } from '@/Services/technicienService'
 import { Head } from '@inertiajs/react'
 import React, { useEffect, useState } from 'react'
-import { FaEye } from 'react-icons/fa'
-import { GoTrash } from 'react-icons/go'
+
+
+const EmptyState = () => (
+  <div className="flex flex-col items-center justify-center py-12 bg-white rounded-xl shadow-sm border border-dashed border-gray-300 mt-4">
+    <img src={nodata2} alt="Aucune donnée" className="w-64 opacity-60 mb-6" />
+    <h3 className="text-xl font-semibold text-gray-600 mb-2">Aucun technicien trouvé</h3>
+    <p className="text-gray-500 text-center max-w-md">
+      Il n'y a pas de techniciens correspondant à votre recherche. Essayez de modifier vos critères ou ajoutez un nouveau technicien.
+    </p>
+  </div>
+);
 
 const Technicien = () => {
     const [search, setSearch] = useState('');
     const [open, setopen] = useState(false);
-    const [currentPage, setCurrentPage] = useState(1);
     const [techniciens, setTechniciens] = useState([]);
     const [filteredData, setFilteredData] = useState([]);
     const [isLoading, setIsLoading] = useState(true);
+    const [currentPage, setCurrentPage] = useState(1);
+    const [itemsPerPage] = useState(8);
     const [suppression, setSuppression] = useState({
         open: false,
         message: '',
@@ -29,31 +39,6 @@ const Technicien = () => {
         type: 'success'
     });
 
-    const headers = [
-        { key: 'id', label: 'ID' },
-        { key: 'name', label: 'Nom technichien' },
-        { key: 'email', label: 'Adresse email' },
-        { key: 'genre', label: 'Sexe' },
-        { key: 'contact', label: 'Contact' },
-        { key: 'adress', label: 'Adresse local' },
-        { key: 'speciality', label: 'Spécialité' },
-    ];
-
-    const actions = [
-        {
-            label: <FaEye className="text-base" />,
-            color: 'text-green-500',
-            hoverColor: 'text-green-600',
-            handler: (row) => showDetail(row.id),
-        },
-        {
-            label: <GoTrash className="text-base" />,
-            color: 'text-red-500',
-            hoverColor: 'text-red-600',
-            handler: (row) => handleDelete(row),
-        },
-    ];
-
     const fetchTechnicien = async () => {
         setIsLoading(true);
         const { data } = await getTechniciens();
@@ -62,10 +47,11 @@ const Technicien = () => {
             id: el.technicien.id,
             name: el.name,
             email: el.email,
-            genre: el.genre,
+            genre: el.technicien.genre,
             contact: el.technicien.contact,
             adress: el.technicien.adress,
             speciality: el.technicien.speciality,
+            photo: el.technicien.photo,
         }));
 
         setTechniciens(technichien);
@@ -82,7 +68,9 @@ const Technicien = () => {
         setCurrentPage(1);
 
         const data = techniciens.filter(el =>
-            el.name.toLowerCase().includes(value.toLowerCase())
+            el.name.toLowerCase().includes(value.toLowerCase()) ||
+            el.email.toLowerCase().includes(value.toLowerCase()) ||
+            el.speciality.toLowerCase().includes(value.toLowerCase())
         );
 
         setFilteredData(data);
@@ -92,6 +80,11 @@ const Technicien = () => {
         fetchTechnicien();
         message && setAlert({ ...alert, message, open: true });
     }
+
+    const showDetail = (id) => {
+        // Handle view detail functionality
+        console.log("View details for ID:", id);
+    };
 
     const handleDelete = (item) => {
         setSuppression({
@@ -109,15 +102,42 @@ const Technicien = () => {
         setCurrentPage(1);
     };
 
+    // Pagination
+    const indexOfLastItem = currentPage * itemsPerPage;
+    const indexOfFirstItem = indexOfLastItem - itemsPerPage;
+    const currentItems = filteredData.slice(indexOfFirstItem, indexOfLastItem);
+    const totalPages = Math.ceil(filteredData.length / itemsPerPage);
+
+    const pageNumbers = [];
+    const maxPagesToShow = 5;
+    
+    // Calculate start and end page numbers
+    let startPage = Math.max(1, currentPage - Math.floor(maxPagesToShow / 2));
+    let endPage = startPage + maxPagesToShow - 1;
+    
+    if (endPage > totalPages) {
+        endPage = totalPages;
+        startPage = Math.max(1, endPage - maxPagesToShow + 1);
+    }
+    
+    for (let i = startPage; i <= endPage; i++) {
+        pageNumbers.push(i);
+    }
+    
+    // Filter count
+    const filterCount = filteredData.length !== techniciens.length ? 
+        `(${filteredData.length}/${techniciens.length})` : '';
+
     return (
         <AuthenticatedLayout>
             <Head title='Technicien' />
             <HeaderPage
                 handleClick={() => setopen(true)}
-                title='Liste des Techniciens'
+                title={`Liste des Techniciens ${filterCount}`}
                 search={search}
                 onSearch={onFiltered}
             />
+            
             <TechnicienFormulaire
                 open={open}
                 setOpen={setopen}
@@ -140,28 +160,104 @@ const Technicien = () => {
                 close={() => setSuppression({ ...suppression, open: false })}
                 accept={confirmDelete}
             />
+            
             {isLoading ? (
-        <div className="flex justify-center items-center h-64">
-          <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-blue-500"></div>
-        </div>
-      ) : (
-            <div>
-                {filteredData.length > 0 ?
-                    <DataTable
-                        headers={headers}
-                        rows={filteredData}
-                        itemsPerPage={10}
-                        actions={actions}
-                        className="mt-4"
-                        currentPage={currentPage}
-                        onPageChange={setCurrentPage}
-                        masqueColumns={['client_id']}
-                    /> :
-                    <div className='flex justify-center'>
-                        <img src={nodata2} alt="no data" className='max-w-md opacity-50 mt-2' />
-                    </div>
-                }
-            </div>
+                <div className="flex flex-col justify-center items-center h-64 rounded-xl p-8">
+                    <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-indigo-500 mb-4"></div>
+                </div>
+            ) : (
+                <>
+                    {filteredData.length > 0 ? (
+                        <div className='mt-4'>
+                            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
+                                {currentItems.map((technician) => (
+                                    <TechnicienCard
+                                        key={technician.id}
+                                        technician={technician}
+                                        onDelete={handleDelete}
+                                        onView={showDetail}
+                                    />
+                                ))}
+                            </div>
+                            
+                            {/* Enhanced Pagination Controls */}
+                            {totalPages > 1 && (
+                                <div className="flex justify-center mt-8">
+                                    <nav className="flex items-center bg-white rounded-lg shadow-sm px-2 py-2 border border-gray-200">
+                                        <button
+                                            onClick={() => setCurrentPage(1)}
+                                            disabled={currentPage === 1}
+                                            className={`mx-1 p-2 rounded-md ${
+                                                currentPage === 1 
+                                                ? 'text-gray-400 cursor-not-allowed' 
+                                                : 'text-gray-700 hover:bg-indigo-50'
+                                            }`}
+                                            title="Première page"
+                                        >
+                                            &laquo;
+                                        </button>
+                                        
+                                        <button
+                                            onClick={() => setCurrentPage(prev => Math.max(prev - 1, 1))}
+                                            disabled={currentPage === 1}
+                                            className={`mx-1 p-2 rounded-md ${
+                                                currentPage === 1 
+                                                ? 'text-gray-400 cursor-not-allowed' 
+                                                : 'text-gray-700 hover:bg-indigo-50'
+                                            }`}
+                                            title="Page précédente"
+                                        >
+                                            &lsaquo;
+                                        </button>
+                                        
+                                        {/* Page numbers */}
+                                        {pageNumbers.map(number => (
+                                            <button
+                                                key={number}
+                                                onClick={() => setCurrentPage(number)}
+                                                className={`mx-1 w-9 h-9 flex items-center justify-center rounded-md ${
+                                                    currentPage === number
+                                                    ? 'bg-indigo-600 text-white font-medium' 
+                                                    : 'text-gray-700 hover:bg-indigo-50'
+                                                }`}
+                                            >
+                                                {number}
+                                            </button>
+                                        ))}
+                                        
+                                        <button
+                                            onClick={() => setCurrentPage(prev => Math.min(prev + 1, totalPages))}
+                                            disabled={currentPage === totalPages}
+                                            className={`mx-1 p-2 rounded-md ${
+                                                currentPage === totalPages 
+                                                ? 'text-gray-400 cursor-not-allowed' 
+                                                : 'text-gray-700 hover:bg-indigo-50'
+                                            }`}
+                                            title="Page suivante"
+                                        >
+                                            &rsaquo;
+                                        </button>
+                                        
+                                        <button
+                                            onClick={() => setCurrentPage(totalPages)}
+                                            disabled={currentPage === totalPages}
+                                            className={`mx-1 p-2 rounded-md ${
+                                                currentPage === totalPages 
+                                                ? 'text-gray-400 cursor-not-allowed' 
+                                                : 'text-gray-700 hover:bg-indigo-50'
+                                            }`}
+                                            title="Dernière page"
+                                        >
+                                            &raquo;
+                                        </button>
+                                    </nav>
+                                </div>
+                            )}
+                        </div>
+                    ) : (
+                        <EmptyState />
+                    )}
+                </>
             )}
         </AuthenticatedLayout>
     )

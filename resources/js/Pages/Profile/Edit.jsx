@@ -27,6 +27,12 @@ export default function Edit({ mustVerifyEmail, status }) {
     const parallaxStyle = {
         transform: `translateY(${scrollY * 0.5}px)`,
     };
+    
+    const submit = (e) => {
+        e.preventDefault();
+
+        post(route('verification.send'));
+    };
 
     return (
         <AuthenticatedLayout>

@@ -1,16 +1,31 @@
 import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout'
 import React, { useEffect, useState } from 'react'
-import { getUsers } from '@/Services/userService'
+import { deleteUser, getUsers } from '@/Services/userService'
 import { Head } from '@inertiajs/react'
-import { FaUserCircle, FaEnvelope, FaPhone, FaTrash, FaEllipsisV, FaMapMarkerAlt } from 'react-icons/fa'
+import { FaUserCircle, FaEnvelope, FaPhone, FaTrash, FaMapMarkerAlt } from 'react-icons/fa'
 import HeaderPage from '@/Components/HeaderPage'
 import { nodata2 } from '@/constant'
+import Snackbar from '@/Components/Snackbar'
+import ConfirmDialog from '@/Components/ConfirmDialog'
+
 
 const UsersPage = () => {
   const [users, setUsers] = useState([]);
   const [filteredUsers, setFilteredUsers] = useState([]);
   const [isLoading, setIsLoading] = useState(true);
   const [search, setSearch] = useState('');
+  const [deleteForm, setDeleteForm] = useState({
+    open: false,
+    message: '',
+    btnAcceptName: '',
+    title: '',
+    btnAcceptColor: '',
+  });
+  const [alert, setAlert] = useState({
+    open: false,
+    message: '',
+    type: 'success'
+  });
 
   useEffect(() => {
     const fetchUsers = async () => {
@@ -53,6 +68,25 @@ const UsersPage = () => {
     e.target.src = '/path/to/default-avatar.png'
   }
 
+  const handleDelete = (id) => {
+    setDeleteForm({
+      open: true,
+      message: 'Voulez-vous vraiment supprimer cet utilisateur ?',
+      btnAcceptName: 'Supprimer',
+      title: 'Suppression',
+      btnAcceptColor: 'bg-red-500 text-white',
+      close: () => setDeleteForm({ ...deleteForm, open: false }),
+      accept: () => deleteUser(id).then(response => {
+        if (response.success) {
+          setAlert({ ...alert, open: true, message: 'Utilisateur supprimé avec succès', type: 'success' });
+          setDeleteForm({ ...deleteForm, open: false });
+        } else {
+          setAlert({ ...alert, open: true, message: response.message, type: 'error' });
+        }
+      })  
+    })
+  }
+  
   return (
     <AuthenticatedLayout>
       <Head title="Users" />
@@ -61,6 +95,21 @@ const UsersPage = () => {
         onSearch={handleSearch}
         search={search}
         btn={false}
+      />
+      <ConfirmDialog
+        open={deleteForm.open}
+        message={deleteForm.message}
+        btnAcceptName={deleteForm.btnAcceptName}
+        title={deleteForm.title}
+        btnAcceptColor={deleteForm.btnAcceptColor}
+        close={deleteForm.close}
+        accept={deleteForm.accept}
+      />
+      <Snackbar
+        open={alert.open}
+        message={alert.message}
+        type={alert.type}
+        onClose={() => setAlert({ ...alert, open: false })}
       />
       <div className="py-8">
         <div className="max-w-7xl mx-auto sm:px-6 lg:px-8">
@@ -82,7 +131,7 @@ const UsersPage = () => {
                     <div className="relative pt-4 pb-14 px-6 flex justify-between items-start">
                       <h3 className="text-xl font-bold text-white">{user.name}</h3>
                       <div className="relative">
-                        <button className="p-2 text-white hover:bg-red-50 dark:hover:bg-gray-700 rounded-full transition-colors">
+                        <button onClick={() => handleDelete(user.id)} className="p-2 text-white hover:bg-red-50 dark:hover:bg-gray-700 rounded-full transition-colors">
                           <FaTrash />
                         </button>
                       </div>

@@ -21,12 +21,12 @@ const Welcome = () => {
     }, [user]);
 
     const Components = [
-        { component: <Login canResetPassword />, title: 'Log In', id: 0 },
-        { component: <Register />, title: 'Register', id: 1 },
-        { component: <ForgotPassword />, title: 'Forgot Password', id: 2 },
-        { component: <ConfirmPassword />, title: 'Confirm Password', id: 3 },
-        { component: <ResetPassword />, title: 'Reset Password', id: 4 },
-        { component: <VerifyEmail />, title: 'Verify Email', id: 5 }
+        { component: <Login canResetPassword setTitle={setTitle} />, title: 'Log In', id: 0 },
+        { component: <Register setTitle={setTitle} />, title: 'Register', id: 1 },
+        { component: <ForgotPassword setTitle={setTitle} />, title: 'Forgot Password', id: 2 },
+        { component: <ConfirmPassword setTitle={setTitle} />, title: 'Confirm Password', id: 3 },
+        { component: <ResetPassword setTitle={setTitle} />, title: 'Reset Password', id: 4 },
+        { component: <VerifyEmail setTitle={setTitle} />, title: 'Verify Email', id: 5 }
     ];
 
 

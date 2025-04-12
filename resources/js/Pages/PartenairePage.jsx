@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import HeaderPage from '@/Components/HeaderPage';
 import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout';
 import { Head } from '@inertiajs/react';
-import PartenaireCard from '@/Components/PartenaireCard';
+import PartenaireCard from '@/Components/partenaire/PartenaireCard';
 import { getPartenaires } from '@/Services/partenaireService';
 import PartenaireFormulaire from '@/Components/partenaire/PartenaireFormulaire';
 import Snackbar from '@/Components/Snackbar';
@@ -11,6 +11,7 @@ import { nodata2 } from '@/constant';
 const PartenairePage = () => {
   const [searchTerm, setSearchTerm] = useState('');
   const [partenaires, setPartenaires] = useState([]);
+  const [filteredPartenaires, setFilteredPartenaires] = useState([]);
   const [isLoading, setIsLoading] = useState(true);
   const [open, setOpen] = useState(false);
   const [alert, setAlert] = useState({
@@ -19,14 +20,33 @@ const PartenairePage = () => {
     open: false,
   });
 
-  useEffect(() => {
-    getPartenaires().then(setPartenaires).finally(() => setIsLoading(false));
-  }, []);
+  const findAllPartenaires = async () => {
+    const response = await getPartenaires();
+    const data = response.map(partenaire => ({
+      id: partenaire.id,
+      name: partenaire.user.name,
+      logo: partenaire.logo,
+      email: partenaire.user.email,
+      adresse: partenaire.adresse,
+      ville: partenaire.ville,
+      pays: partenaire.pays,
+      telephone: partenaire.telephone,
+      siteWeb: partenaire.site_web,
+      categorie: partenaire.categorie,
+      description: partenaire.description,
+      highlighted: partenaire.highlighted,
+      user_id: partenaire.user_id,
+      created_at: partenaire.created_at,
+      updated_at: partenaire.updated_at,
+    }));
+    setPartenaires(data);
+    setFilteredPartenaires(data);
+    setIsLoading(false);
+  }
 
-  console.log(partenaires);
-  const handleSearch = (e) => {
-    setSearchTerm(e.target.value);
-  };
+  useEffect(() => {
+    findAllPartenaires();
+  }, []);
 
   const handleAlert = (message, type) => {
     setAlert({
@@ -37,39 +57,32 @@ const PartenairePage = () => {
   };
 
   const onCloseFormulaire = (message) => {
+    setOpen(false);
     if (message) {
       handleAlert(message, 'success');
     }
-    setOpen(false);
+    findAllPartenaires();
   };
 
-  const data = partenaires.map(partenaire => ({
-    id: partenaire.id,
-    name: partenaire.user.name,
-    logo: partenaire.logo,
-    email: partenaire.user.email,
-    adresse: partenaire.adresse,
-    ville: partenaire.ville,
-    pays: partenaire.pays,
-    telephone: partenaire.telephone,
-    siteWeb: partenaire.site_web,
-    categorie: partenaire.categorie,
-    description: partenaire.description,
-    highlighted: partenaire.highlighted,
-  }));
-
   // Filtrer les partenaires en fonction du terme de recherche
-  const filteredPartenaires = data.filter(partenaire =>
-    partenaire.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
-    partenaire.email.toLowerCase().includes(searchTerm.toLowerCase()) ||
-    partenaire.categorie.toLowerCase().includes(searchTerm.toLowerCase()) ||
-    partenaire.description.toLowerCase().includes(searchTerm.toLowerCase()) ||
-    partenaire.adresse.toLowerCase().includes(searchTerm.toLowerCase()) ||
-    partenaire.ville.toLowerCase().includes(searchTerm.toLowerCase()) ||
-    partenaire.pays.toLowerCase().includes(searchTerm.toLowerCase()) ||
-    partenaire.telephone.toLowerCase().includes(searchTerm.toLowerCase()) ||
-    partenaire.siteWeb.toLowerCase().includes(searchTerm.toLowerCase())
-  );
+  const onFiltredData = (value) => {
+    setSearchTerm(value);
+
+    const filteredData = partenaires.filter(
+        (el) =>
+            el.name.toLowerCase().includes(value.toLowerCase()) ||
+            el.email.toLowerCase().includes(value.toLowerCase()) ||
+            el.categorie.toLowerCase().includes(value.toLowerCase()) ||
+            el.description.toLowerCase().includes(value.toLowerCase()) ||
+            el.adresse.toLowerCase().includes(value.toLowerCase()) ||
+            el.ville.toLowerCase().includes(value.toLowerCase()) ||
+            el.pays.toLowerCase().includes(value.toLowerCase()) ||
+            el.telephone.toLowerCase().includes(value.toLowerCase()) ||
+            el.siteWeb.toLowerCase().includes(value.toLowerCase())
+    );
+
+    setFilteredPartenaires(filteredData);
+};
 
   return (
     <AuthenticatedLayout>
@@ -77,7 +90,7 @@ const PartenairePage = () => {
       <HeaderPage
         title='Liste des partenaires'
         handleClick={() => setOpen(true)}
-        onSearch={handleSearch}
+        onSearch={onFiltredData}
         search={searchTerm}
       />
 

@@ -1,3 +1,4 @@
+import { usePage } from '@inertiajs/react';
 import React from 'react';
 
 export default function DataTable({
@@ -13,6 +14,7 @@ export default function DataTable({
     const indexOfLastItem = currentPage * itemsPerPage;
     const indexOfFirstItem = indexOfLastItem - itemsPerPage;
     const currentRows = rows.slice(indexOfFirstItem, indexOfLastItem);
+    const user = usePage().props.auth.user;
 
     const totalPages = Math.ceil(rows.length / itemsPerPage);
 
@@ -36,7 +38,7 @@ export default function DataTable({
                                     </th>
                                 )
                             ))}
-                            {actions.length > 0 && (
+                            {actions.length > 0 && user.user_role?.name !== 'partenaire' && (
                                 <th className="px-6 py-3 text-xs font-medium tracking-wider text-center text-gray-500 uppercase dark:text-gray-300">
                                     Actions
                                 </th>
@@ -54,7 +56,7 @@ export default function DataTable({
                                         </td>
                                     )
                                 ))}
-                                {actions.length > 0 && (
+                                {actions.length > 0 && user.user_role?.name !== 'partenaire' && (
                                     <td className="px-4 py-2 text-sm text-gray-900 whitespace-nowrap dark:text-gray-200">
                                         <div className="flex flex-wrap justify-center gap-2">
                                             {actions.map((action, index) => (

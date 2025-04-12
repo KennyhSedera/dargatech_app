@@ -55,7 +55,7 @@
     .button {
       display: inline-block;
       background-color: #4A6FDE;
-      color: white;
+      color: white !important;
       text-decoration: none;
       padding: 12px 25px;
       border-radius: 4px;
@@ -90,7 +90,7 @@
 <body>
   <div class="container">
     <div class="header">
-      <img src="<?php echo e('images/logo.png'); ?>" alt="Dargatech Logo" class="logo">
+      <img src="<?php echo e(public_path('images/titre.png')); ?>" alt="Dargatech Logo" class="logo">
       <h1>Bienvenue chez Dargatech</h1>
     </div>
     

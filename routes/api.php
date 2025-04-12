@@ -132,7 +132,8 @@ Route::group(['prefix' => 'api'], function () {
     })->middleware('auth');
 
     Route::get('/users', [UserController::class, 'index'])->name('users.index');
-
+    Route::delete('/users/{id}', [UserController::class, 'destroy'])->name('users.destroy');
+    
     Route::get('/rapport/maintenance/{maintenance_id}', [RapportController::class, 'showByMaintenanceId']);
 
     Route::group(['prefix' => 'partenaire', 'as' => 'partenaire.', 'middleware' => 'auth'], function () {

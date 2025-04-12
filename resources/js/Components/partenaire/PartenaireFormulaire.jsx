@@ -81,8 +81,8 @@ const PartenaireFormulaire = ({
   
     try {
       const response = await createPartenaire(formData);
-      if (response.status === 200) {
-        onClose(response.data.message);
+      if (response.success) {
+        onClose(response.message);
         clearform();
       }
     } catch (error) {

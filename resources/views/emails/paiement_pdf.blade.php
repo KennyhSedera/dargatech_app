@@ -50,7 +50,7 @@
 <body>
     <div class="container">
         <div class="header">
-            <img src="{{ asset('images/titre.png') }}" alt="DARGATECH TOGO" class="logo">
+            <img src="{{ public_path('images/titre.png') }}" alt="DARGATECH TOGO" class="logo">
             <h2>Reçu de Paiement N°{{ $pdfData['numero'] }}</h2>
         </div>
         

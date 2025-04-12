@@ -9,6 +9,8 @@ const HeaderPage = ({
     title = 'title',
     btn = true
 }) => {
+    const user = usePage().props.auth.user;
+    btn = user.user_role?.name === 'partenaire' ? false : true;
     return (
         <div className='w-full h-auto bg-white dark:bg-gray-800 rounded-md flex flex-row flex-wrap sm:flex-nowrap items-center justify-between px-4 py-2 gap-2 sm:gap-0 shadow-sm'>
            {btn ? <button

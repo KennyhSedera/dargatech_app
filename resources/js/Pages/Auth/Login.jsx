@@ -7,7 +7,7 @@ import { useForm } from '@inertiajs/react';
 import React, { useState } from 'react';
 import { validateFormLogin } from '@/Components/validateForm';
 
-export default function Login({ status, canResetPassword }) {
+export default function Login({ status, canResetPassword, setTitle }) {
     const { data, setData, post, processing, errors, reset } = useForm({
         email: '',
         password: '',
@@ -93,7 +93,8 @@ export default function Login({ status, canResetPassword }) {
                 </div>
 
                 <div
-                    className="mt-4 text-sm text-gray-600 underline rounded-md hover:text-gray-900 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 dark:text-gray-400 dark:hover:text-gray-100 dark:focus:ring-offset-gray-800"
+                    onClick={() => setTitle('Forgot Password')}
+                    className="mt-4 text-sm cursor-pointer text-gray-600 underline rounded-md hover:text-gray-900 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 dark:text-gray-400 dark:hover:text-gray-100 dark:focus:ring-offset-gray-800"
                 >
                     Mot de passe oublié?
                 </div>
