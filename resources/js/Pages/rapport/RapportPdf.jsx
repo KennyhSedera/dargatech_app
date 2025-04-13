@@ -120,7 +120,7 @@ const RapportPdf = forwardRef(({ data }, ref) => {
         </section>
 
         {/* Footer */}
-        <p className="text-sm text-gray-500 text-center mt-8">Rapport généré le {new Date(data.created_at).toLocaleDateString()}</p>
+        <p className="text-sm text-gray-500 text-center mt-8">Rapport généré le {new Date(data.created_at).toLocaleDateString()} par {data?.technicien?.user?.name}</p>
       </div>
     </div>
   );

@@ -89,52 +89,5 @@ Route::get('/partenaires', function () {
     return Inertia::render('PartenairePage');
 })->middleware(['auth', 'verified'])->name('partenaires');
 
-Route::get('/paiement/pdf', function () {
-    return view('pdf.paiement', [
-        'data' => [
-            'numero' => '1234567890',
-            'date' => '2023-01-01',
-            'montant' => 100000,
-            'nom_vendeur' => 'John Doe',
-            'ville_vendeur' => 'Paris',
-            'pays_vendeur' => 'France',
-            'nom_acheteur' => 'Jane Smith',
-            'ville_acheteur' => 'Paris',
-            'pays_acheteur' => 'France',
-            'produits' => [
-                [
-                    'designation' => 'Produit 1',
-                    'quantite' => 1,
-                    'prix_unitaire' => 100000,
-                    'tva' => 20,
-                    'reference' => '1234567890',
-                    'total_ht' => 100000,
-                    'total_ttc' => 120000,
-                    'total_tva' => 20000,
-                    'montant_tva' => 20000,
-                ]
-            ],
-            'a_payer' => 100000,
-            'montant_paye' => 100000,
-            'mode_paiement' => 'Espèce',
-            'banque' => 'Banque de France',
-            'iban' => 'FR7610001000000000000000000',
-            'lieu_creation' => 'Paris',
-            'date_creation' => '2023-01-01',
-            'periode_couverte' => '2023-01-01',
-            'civilite_acheteur' => 'Monsieur',
-            'nom_acheteur' => 'John Doe',
-            'ville_acheteur' => 'Paris',
-            'pays_acheteur' => 'France',
-            'nom_vendeur' => 'John Doe',
-            'ville_vendeur' => 'Paris',
-            'pays_vendeur' => 'France',
-            'total_ht' => 100000,
-            'total_tva' => 20000,
-            'total_ttc' => 120000,
-        ]
-    ]);
-})->middleware(['auth', 'verified'])->name('paiement.pdf');
-
 require __DIR__ . '/auth.php';
 require __DIR__ . '/api.php';

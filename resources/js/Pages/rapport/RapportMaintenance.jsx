@@ -38,6 +38,8 @@ const RapportMaintenance = ({ intervention_id }) => {
       }
     };
 
+    console.log(rapport)
+
     if (intervention_id) {
       fetchRapport();
     }
@@ -242,12 +244,6 @@ const RapportMaintenance = ({ intervention_id }) => {
                 </div>
 
                 <div className="space-y-6">
-                  {/* <div>
-                    <h3 className="text-lg font-medium mb-3">Symptômes signalés</h3>
-                    <div className={`bg-slate-50 dark:bg-slate-700/40 rounded-lg p-4 border-l-4 border-red-500 ${isPrinting ? 'print-card' : ''}`}>
-                      {rapport?.maintenance?.description_probleme || 'Non spécifié'}
-                    </div>
-                  </div> */}
 
                   <div>
                     <h3 className="text-lg font-medium mb-3">Problèmes rapportés</h3>

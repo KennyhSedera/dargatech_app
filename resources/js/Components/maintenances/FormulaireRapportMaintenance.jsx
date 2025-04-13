@@ -20,7 +20,7 @@ const FormulaireRapportMaintenance = ({
 
     const { data, setData, errors, reset } = useForm({
         clientId: 0,
-        technicienId: idTechnicien || 1,
+        technicienId: idTechnicien,
         maintenanceId: 0,
         description_probleme: '',
         photo_probleme: null,
@@ -109,6 +109,8 @@ const FormulaireRapportMaintenance = ({
         if (!validateForm()) {
             return;
         }
+
+        data.technicienId = idTechnicien;
 
         try {
             setload(true);
