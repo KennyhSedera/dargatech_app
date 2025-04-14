@@ -16,8 +16,9 @@ class Paiement extends Model
         'periode_couverte',
         'echeance',
         'statut_paiement',
-        'observation',
+        'description',
         'receipt_path',
+        'observation',
     ];
 
     public function client()
@@ -25,5 +26,9 @@ class Paiement extends Model
         return $this->belongsTo(Client::class, 'client_id');
     }
 
+    public function produits()
+    {
+        return $this->hasMany(Products::class);
+    }
 
 }

@@ -11,6 +11,7 @@ import { createmaintenances, updatemaintenances } from '@/Services/maintenanceSe
 import SelectInput from '../inputs/SelectInput';
 import { validateFormMaintenance } from '../validateForm';
 import { getTechniciens } from '@/Services/technicienService';
+import TextArea from '../inputs/TextArea';
 
 const FormulaireMaintenance = ({
     open = true,
@@ -112,11 +113,11 @@ const FormulaireMaintenance = ({
     // };
 
     return (
-        <Modal show={open} closeable={false} onClose={onClose} maxWidth='xl'>
+        <Modal show={open} closeable={false} onClose={onClose} maxWidth='lg'>
             <div className='text-2xl font-semibold text-center'>
                 {dataModify.nom ? 'Modifier une Intervention' : 'Ajouter une Intervention'}
             </div>
-            <form className='grid w-full grid-cols-1 gap-4 my-6 sm:grid-cols-2'>
+            <form className='grid w-full grid-cols-1 gap-4 my-6 px-6'>
                 <div>
                     <InputLabel htmlFor="installation_id" value="Code d'instalation" />
                     <InputAutocomplete
@@ -149,7 +150,7 @@ const FormulaireMaintenance = ({
                 </div>
                 <div>
                     <InputLabel htmlFor="description_probleme" value="Description du problème" />
-                    <TextInput
+                    <TextArea
                         id="description_probleme"
                         name="description_probleme"
                         value={data.description_probleme}
@@ -157,6 +158,7 @@ const FormulaireMaintenance = ({
                         autoComplete="description_probleme"
                         onChange={(e) => setData('description_probleme', e.target.value)}
                         required
+                        rows={4}
                         onFocus={() => setValidationErrors({ ...validationErrors, 'description_probleme': '' })}
                     />
                     <InputError message={validationErrors.description_probleme || errors.description_probleme} className="mt-2" />
@@ -177,7 +179,7 @@ const FormulaireMaintenance = ({
                     <InputError message={validationErrors.date_intervention || errors.date_intervention} className="mt-2" />
                 </div>
             </form>
-            <div className='flex items-center justify-end gap-4 px-1'>
+            <div className='flex items-center justify-end gap-4 px-6'>
                 <button type="button" className='px-4 py-1 text-red-500 rounded-md bg-red-400/10' onClick={() => onClose('')}>
                     Fermer
                 </button>

@@ -2,12 +2,15 @@ import { forwardRef, useEffect, useImperativeHandle, useRef, useState } from 're
 import { Eye, EyeOff } from 'lucide-react';
 
 export default forwardRef(function TextInput(
-    { type = 'text', className = '', isFocused = false, ...props },
+    { type = 'text', className = '', isFocused = false, value, ...props },
     ref,
 ) {
     const localRef = useRef(null);
     const [showPassword, setShowPassword] = useState(false);
     const isPassword = type === 'password';
+    
+    // Handle null/undefined values
+    const safeValue = value === null || value === undefined ? '' : value;
 
     useImperativeHandle(ref, () => ({
         focus: () => localRef.current?.focus(),
@@ -29,6 +32,7 @@ export default forwardRef(function TextInput(
         <div className="relative flex items-center">
             <input
                 {...props}
+                value={safeValue}
                 type={inputType}
                 className={
                     'rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 dark:border-gray-700 dark:bg-gray-900 dark:text-gray-300 dark:focus:border-indigo-600 dark:focus:ring-indigo-600 ' +

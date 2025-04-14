@@ -10,6 +10,8 @@ import React, { useEffect, useState } from 'react'
 import { GoTrash } from 'react-icons/go'
 import TypePaiement from './TypePaiement'
 import HeaderPage from '@/Components/HeaderPage'
+import { TbEdit } from 'react-icons/tb'
+
 const PaiementPage = () => {
     const [search, setsearch] = useState('');
     const [dataToModify, setDataToModify] = useState({});
@@ -43,6 +45,12 @@ const PaiementPage = () => {
     ];
 
     const actions = [
+        {
+            label: <TbEdit className="text-lg" />,
+            color: 'text-blue-500',
+            hoverColor: 'text-blue-600',
+            handler: (row) => editItem(row),
+        },
         {
             label: <GoTrash className="text-base" />,
             color: 'text-red-500',
@@ -129,7 +137,7 @@ const PaiementPage = () => {
             ...item,
             date_paiement: parsedate(paiementDate)
         });
-        setOpen(true);
+        router.visit('/form/paiement?id=' + item.id);
     };
 
     return (

@@ -50,7 +50,7 @@
 <body>
     <div class="container">
         <div class="header">
-            <img src="<?php echo e(asset('images/titre.png')); ?>" alt="DARGATECH TOGO" class="logo">
+            <img src="<?php echo e(public_path('images/titre.png')); ?>" alt="DARGATECH TOGO" class="logo">
             <h2>Reçu de Paiement N°<?php echo e($pdfData['numero']); ?></h2>
         </div>
         

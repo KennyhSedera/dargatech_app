@@ -1,12 +1,20 @@
 import React, { useState, useEffect } from 'react';
 import InputLabel from '../inputs/InputLabel';
 import TextInput from '../inputs/TextInput';
+import TextArea from '../inputs/TextArea';
 
 const DesignationComponent = ({ data, setData }) => {
     const [products, setProducts] = useState([
         { designation: "", reference: "", quantite: 1, unite: "", tva: 0, prix_unitaire: 0, total_ht: 0, total_ttc: 0 }
     ]);
-
+    
+    // Initialize products from props only once or when data.produits changes its reference
+    useEffect(() => {
+        if (data.produits && data.produits.length > 0) {
+            setProducts(data.produits);
+        }
+    }, [data.produits]);
+    
     // Fonction pour recalculer les totaux HT et TTC
     const calculateTotals = (product) => {
         const quantite = parseFloat(product.quantite) || 0;
@@ -31,31 +39,90 @@ const DesignationComponent = ({ data, setData }) => {
         }
 
         setProducts(newProducts);
+        
+        // Update parent data with the new products
+        const updatedData = {
+            produits: newProducts,
+            description: data.description || '',
+            montant_paye: calculateGlobalTotals(newProducts).totalTTCGlobal.toFixed(2)
+        };
+        
+        setData(prev => ({
+            ...prev,
+            ...updatedData
+        }));
     };
+
+    // Calculate global totals
+    const calculateGlobalTotals = (productsList) => {
+        const ensureNumber = (value) => {
+            const num = parseFloat(value);
+            return isNaN(num) ? 0 : num;
+        };
+        
+        const totalHTGlobal = productsList.reduce((sum, product) => sum + ensureNumber(product.total_ht), 0);
+        const totalTTCGlobal = productsList.reduce((sum, product) => sum + ensureNumber(product.total_ttc), 0);
+        const totalTVAGlobal = productsList.reduce((sum, product) => {
+            const tva = ensureNumber(product.tva);
+            const total_ht = ensureNumber(product.total_ht);
+            return sum + (total_ht * tva / 100);
+        }, 0);
+        
+        return {
+            totalHTGlobal: parseFloat(totalHTGlobal.toFixed(2)),
+            totalTTCGlobal: parseFloat(totalTTCGlobal.toFixed(2)),
+            totalTVAGlobal: parseFloat(totalTVAGlobal.toFixed(2))
+        };
+    };
+    
+    // Get the current totals for display
+    const { totalHTGlobal, totalTTCGlobal, totalTVAGlobal } = calculateGlobalTotals(products);
 
     // Ajouter un produit
     const addProduct = () => {
-        setProducts([
+        const newProducts = [
             ...products,
             { designation: "", reference: "", quantite: 1, unite: "", tva: 0, prix_unitaire: 0, total_ht: 0, total_ttc: 0 }
-        ]);
+        ];
+        
+        setProducts(newProducts);
+        
+        // Update parent data with the new products array
+        setData(prev => ({
+            ...prev,
+            produits: newProducts
+        }));
     };
 
     // Supprimer un produit
     const removeProduct = (index) => {
-        setProducts(products.filter((_, i) => i !== index));
+        const newProducts = products.filter((_, i) => i !== index);
+        setProducts(newProducts);
+        
+        // Update parent data with the new products array
+        const totals = calculateGlobalTotals(newProducts);
+        setData(prev => ({
+            ...prev,
+            produits: newProducts,
+            montant_paye: totals.totalTTCGlobal.toFixed(2)
+        }));
     };
 
-    // Calcul des totaux globaux
-    const totalHTGlobal = products.reduce((sum, product) => sum + product.total_ht, 0);
-    const totalTTCGlobal = products.reduce((sum, product) => sum + product.total_ttc, 0);
-    const totalTVAGlobal = products.reduce((sum, product) => sum + parseFloat(product.tva), 0);
+    // Handle description change
+    const handleDescriptionChange = (event) => {
+        const newDescription = event.target.value;
+        
+        setData(prev => ({
+            ...prev,
+            description: newDescription
+        }));
+    };
 
-    useEffect(() => {
-        setData('montant_paye', totalTTCGlobal.toFixed(2));
-        setData('produits', products);
-        setData('description', data.description);
-    }, [totalTTCGlobal])
+    // Helper function to safely format numbers
+    const formatNumber = (value) => {
+        const num = parseFloat(value);
+        return isNaN(num) ? "0.00" : num.toFixed(2);
+    };
 
     return (
         <div>
@@ -166,7 +233,7 @@ const DesignationComponent = ({ data, setData }) => {
                         <TextInput
                             id={`total_ht-${index}`}
                             name="total_ht"
-                            value={product.total_ht.toFixed(2)}
+                            value={formatNumber(product.total_ht)}
                             className="block w-full mt-1"
                             autoComplete="total_ht"
                             readOnly
@@ -176,7 +243,7 @@ const DesignationComponent = ({ data, setData }) => {
                         <TextInput
                             id={`total_ttc-${index}`}
                             name="total_ttc"
-                            value={product.total_ttc.toFixed(2)}
+                            value={formatNumber(product.total_ttc)}
                             className="block w-full mt-1"
                             autoComplete="total_ttc"
                             readOnly
@@ -195,14 +262,14 @@ const DesignationComponent = ({ data, setData }) => {
                 </div>
             ))}
 
-            <textarea
+            <TextArea
                 name="description"
-                value={data.description}
+                value={data.description || ''}
                 placeholder='Description'
-                onChange={(text) => setData('description', text.target.value)}
+                onChange={handleDescriptionChange}
                 rows="2"
                 className='rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 dark:border-gray-700 dark:bg-gray-900 dark:text-gray-300 dark:focus:border-indigo-600 dark:focus:ring-indigo-600 w-full'
-            ></textarea>
+            />
 
             <button className="bg-blue-500 text-white px-4 py-1 mt-3 rounded" onClick={addProduct}>
                 + Produit

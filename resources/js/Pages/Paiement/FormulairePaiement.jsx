@@ -1,5 +1,5 @@
 import React, { useEffect, useState, useRef } from 'react'
-import { Head, useForm } from '@inertiajs/react'
+import { Head, useForm, usePage } from '@inertiajs/react'
 import InputLabel from '@/Components/inputs/InputLabel';
 import TextInput from '@/Components/inputs/TextInput';
 import InputError from '@/Components/inputs/InputError';
@@ -13,22 +13,26 @@ import InfoPaiement from '@/Components/Paiement/InfoPaiement';
 import InfoMaraicher from '@/Components/Paiement/InfoMaraicher';
 import InfoVendeur from '@/Components/Paiement/InfoVendeur';
 import PaiementFooter from '@/Components/Paiement/PaiementFooter';
-import { createPaiement } from '@/Services/PaiementService';
+import { createPaiement, getPaiement, updatePaiement } from '@/Services/PaiementService';
 import Snackbar from '@/Components/Snackbar';
 import html2pdf from 'html2pdf.js';
 import FichierPaiementPdf from '@/Components/paiements/FichierPaiementPdf';
 import moment from 'moment';
 import { sendPdfByEmail } from '@/Services/envoyePdfEmail';
-
+import { extractDateRange } from '@/utils/getTwoDateUtils';
 const FormulairePaiement = () => {
     const { theme, setTheme } = useTheme();
     const contentRef = useRef(null);
-    const [showPdf, setShowPdf] = useState(false);
+    const [showPdf, setShowPdf] = useState(true);
     const [paiementData, setPaiementData] = useState(null);
+    const [isEditing, setIsEditing] = useState(false);
+    // Extract the ID from the URL
+    const getIdFromUrl = () => {
+        const urlParams = new URLSearchParams(window.location.search);
+        return urlParams.get('id');
+    };
 
-    useEffect(() => {
-        setTheme(theme || 'light')
-    }, [theme])
+    const paiementId = getIdFromUrl();
 
     const { data, setData, errors, reset } = useForm({
         type: 'recu',
@@ -59,6 +63,7 @@ const FormulairePaiement = () => {
         objet: '',
         description: '',
         produits: [],
+        client_id: '',
     });
 
     const [validationErrors, setValidationErrors] = useState({});
@@ -93,9 +98,69 @@ const FormulairePaiement = () => {
         }
     }
 
+    // Fetch payment data if ID is provided
+    const fetchPaiementData = async (id) => {
+        try {
+            const response = await getPaiement(id);
+            if (response) {
+                const paiement = response;
+
+                const client = clients.find(c => c.id === paiement.client_id);
+                const dateRange = extractDateRange(paiement.periode_couverte);
+                data.periode_couverte = dateRange.startDate.original + " au " + dateRange.endDate.original;
+
+                if (client) {
+                    setData({
+                        ...data,
+                        nom_acheteur: client.nom_famille,
+                        prenom_acheteur: client.nom,
+                        civilite_acheteur: client.genre === 'Homme' ? 'Mr.' : 'Mme.',
+                        ville_acheteur: client.ville,
+                        pays_acheteur: client.pays,
+                        num_rue_acheteur: client.village || client.quartier,
+                        client_id: client.id,
+                        objet: paiement.observation,
+                        description: paiement.description,
+                        produits: paiement.produits,
+                        mode_paiement: paiement.mode_paiement,
+                        date_echeance: paiement.echeance,
+                        statut_paiement: paiement.statut_paiement,
+                        produits: paiement.produits.map(el => ({
+                            ...el,
+                            designation: el.designation,
+                            prix_unitaire: el.prix_unitaire,
+                            quantite: el.quantite,
+                            unite: el.unite
+                        })),
+                        montant_paye: parseInt(paiement.montant).toFixed(2),
+                        date_creation: dateRange.startDate.original,
+                        date: dateRange.endDate.original,
+                    });
+                    setEmail(client.email);
+                }
+
+                setIsEditing(true);
+            }
+        } catch (error) {
+            console.error('Error fetching payment data:', error);
+            setAlert({
+                open: true,
+                message: 'Erreur lors du chargement du paiement',
+                type: 'error'
+            });
+        }
+    };
+
     useEffect(() => {
+        setTheme(theme || 'light');
         getType();
-    }, []);
+    }, [theme]);
+
+    useEffect(() => {
+        if (clients.length > 0 && paiementId) {
+            fetchPaiementData(paiementId);
+        }
+    }, [clients, paiementId]);
 
     const handleSelect = (item) => {
         const cli = clients.find(el => el.id === item.id);
@@ -129,27 +194,37 @@ const FormulairePaiement = () => {
     const handleSubmit = async () => {
         data.periode_couverte = moment(data.date_creation).format('DD/MM/YYYY') + " au " + moment(data.date).format('DD/MM/YYYY');
         data.date_paiement = data.date_paiement ? new Date(data.date_paiement).toISOString().split('T')[0] : new Date().toISOString().split('T')[0];
-        data.observation = data.description;
+        data.observation = data.objet;
         data.echeance = data.date_echeance;
         data.statut_paiement = data.etat_paiment;
         data.montant_paye = data.montant_paye || "0";
         data.montant = data.montant_paye || "0";
+
+        // If editing, add the ID to the data
+        if (isEditing && paiementId) {
+            data.id = paiementId;
+        }
+
         try {
-            const response = await createPaiement(data);
-            setPaiementData(data);
-            setShowPdf(true);
+            let response;
+            if (isEditing) {
+                response = await updatePaiement(paiementId, data);
+            } else {
+                response = await createPaiement(data);
+            }
+
             setAlert({
                 open: true,
                 message: response.message,
-                type: 'success'
+                type: response.success ? 'success' : 'error'
             });
-            setShowPdf(false);
-            reset();
-            window.history.back();
-            
-            setTimeout(() => {
+            if (response.success) {
+                setTimeout(() => {
+                    reset();
+                    window.history.back();
+                }, 3000);
                 sendPdfByEmail(data, email);
-            }, 500);
+            }
         } catch (error) {
             console.error('Error submitting payment:', error);
             setAlert({
@@ -162,7 +237,7 @@ const FormulairePaiement = () => {
 
     return (
         <div className='bg-gray-100 dark:bg-gray-900 dark:text-white p-10'>
-            <Head title='Formulaire Paiement' />
+            <Head title={isEditing ? 'Modifier Paiement' : 'Formulaire Paiement'} />
             <Snackbar
                 message={alert.message}
                 type={alert.type}
@@ -176,7 +251,9 @@ const FormulairePaiement = () => {
                     onClick={() => window.history.back()}
                     className='absolute capitalize'
                 >Retour</DangerButton>
-                <div className='text-center text-2xl font-bold'>Formulaire de Paiement</div>
+                <div className='text-center text-2xl font-bold'>
+                    {isEditing ? 'Modifier Paiement' : 'Formulaire de Paiement'}
+                </div>
 
                 {/* en tete */}
                 <InfoPaiement
@@ -251,8 +328,9 @@ const FormulairePaiement = () => {
                     validationErrors={validationErrors}
                 />
                 <div className='mt-8 flex items-center justify-end'>
-                    {/* <button className='bg-blue-500 text-white px-4 py-1 mr-2 rounded-md' onClick={generatePDF}>Télécharger le PDF</button> */}
-                    <PrimaryButton className='px-10' onClick={handleSubmit}>Enregistrer</PrimaryButton>
+                    <PrimaryButton className='px-10' onClick={handleSubmit}>
+                        {isEditing ? 'Mettre à jour' : 'Enregistrer'}
+                    </PrimaryButton>
                 </div>
             </div>
 
