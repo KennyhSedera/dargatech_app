@@ -1,12 +1,12 @@
 import ConfirmDialog from '@/Components/ConfirmDialog';
-import DataTable from '@/Components/DataTable';
-import HeaderPage from '@/Components/HeaderPage'
+import HeaderPage from '@/Components/HeaderPage';
 import FormulaireTypePaiement from '@/Components/Paiement/FormulaireTypePaiement';
 import Snackbar from '@/Components/Snackbar';
 import { deleteType_paiement, getType_paiements } from '@/Services/TypePaiementService';
-import React, { useEffect, useState } from 'react'
+import React, { useEffect, useState } from 'react';
 import { GoTrash } from 'react-icons/go';
 import EmptyState from '@/Components/EmptyState';
+import TypePaimentCard from '@/Components/TypePaimentCard';
 
 const TypePaiement = () => {
     const [search, setsearch] = useState('');
@@ -25,24 +25,7 @@ const TypePaiement = () => {
         message: '',
         type: 'success'
     });
-    const headers = [
-        { key: 'id', label: 'ID' },
-        { key: 'name', label: 'Nom' },
-        {
-            key: 'logo_path', label: 'logo', customRender: (value) => (
-                <img src={value} alt="logo type" className="w-10 h-10 object-cover rounded-md" />
-            )
-        },
-    ];
 
-    const actions = [
-        {
-            label: <GoTrash className="text-base" />,
-            color: 'text-red-500',
-            hoverColor: 'text-red-600',
-            handler: (row) => handleDelete(row),
-        },
-    ];
     const getTypePaiementDB = async () => {
         setIsLoading(true);
         try {
@@ -98,6 +81,40 @@ const TypePaiement = () => {
 
         setFilteredData(filteredData);
     }
+
+    // Pagination logic
+    const itemsPerPage = 8;
+    const indexOfLastItem = currentPage * itemsPerPage;
+    const indexOfFirstItem = indexOfLastItem - itemsPerPage;
+    const currentItems = filteredData.slice(indexOfFirstItem, indexOfLastItem);
+    const totalPages = Math.ceil(filteredData.length / itemsPerPage);
+
+    const Pagination = () => {
+        return (
+            <div className="flex justify-center mt-8">
+                <button
+                    onClick={() => setCurrentPage(prev => Math.max(prev - 1, 1))}
+                    disabled={currentPage === 1}
+                    className="px-4 py-2 mx-1 rounded-full border border-gray-300 bg-white text-gray-700 hover:bg-gray-50 disabled:opacity-50 transition-colors"
+                >
+                    Précédent
+                </button>
+                <div className="flex items-center mx-4">
+                    <span className="text-gray-700">
+                        Page {currentPage} sur {totalPages || 1}
+                    </span>
+                </div>
+                <button
+                    onClick={() => setCurrentPage(prev => Math.min(prev + 1, totalPages))}
+                    disabled={currentPage === totalPages || totalPages === 0}
+                    className="px-4 py-2 mx-1 rounded-full border border-gray-300 bg-white text-gray-700 hover:bg-gray-50 disabled:opacity-50 transition-colors"
+                >
+                    Suivant
+                </button>
+            </div>
+        );
+    };
+
     return (
         <div>
             <HeaderPage
@@ -124,29 +141,37 @@ const TypePaiement = () => {
                 accept={confirmDelete}
             />
             {isLoading ? (
-        <div className="flex justify-center items-center h-64">
-          <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-blue-500"></div>
-        </div>
-      ) : (
-            <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
-                <div className="sm:col-span-2">
-                    {filteredData.length > 0 ?
-                        <DataTable
-                            headers={headers}
-                            rows={filteredData}
-                            itemsPerPage={10}
-                            actions={actions}
-                            className="mt-4"
-                            currentPage={currentPage}
-                            onPageChange={setCurrentPage}
-                        /> :
-                        <EmptyState nom='type de paiement' search={search} />
-                    }
+                <div className="flex justify-center items-center h-64">
+                    <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-blue-500"></div>
                 </div>
-                <div className="sm:col-span-1">
-                    <FormulaireTypePaiement reload={() => getTypePaiementDB()} />
+            ) : (
+                <div className="grid grid-cols-1 sm:grid-cols-3 gap-6">
+                    <div className="sm:col-span-2">
+                        {filteredData.length > 0 ? (
+                            <div>
+                                <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-3 gap-4 mt-6">
+                                    {currentItems.map((item) => (
+                                        <TypePaimentCard
+                                            key={item.id}
+                                            item={item}
+                                            onDelete={handleDelete}
+                                        />
+                                    ))}
+                                </div>
+                                {totalPages > 1 && <Pagination />}
+                            </div>
+                        ) : (
+                            <EmptyState nom='type de paiement' search={search} />
+                        )}
+                    </div>
+                    <div className="sm:col-span-1">
+                        <FormulaireTypePaiement
+                            reload={() => getTypePaiementDB()}
+                            dataToModify={dataToModify}
+                            setDataToModify={setDataToModify}
+                        />
+                    </div>
                 </div>
-            </div>
             )}
         </div>
     )
