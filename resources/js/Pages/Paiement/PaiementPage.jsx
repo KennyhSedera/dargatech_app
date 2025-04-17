@@ -2,7 +2,7 @@ import ConfirmDialog from '@/Components/ConfirmDialog'
 import DataTable from '@/Components/DataTable'
 import PaiementFormulaire from '@/Components/Paiement/PaiementFormulaire'
 import Snackbar from '@/Components/Snackbar'
-import { formatdate, nodata2, parsedate } from '@/constant'
+import { formatdate,  parsedate } from '@/constant'
 import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout'
 import { deletePaiement, getPaiements } from '@/Services/PaiementService'
 import { Head, router } from '@inertiajs/react'
@@ -11,7 +11,7 @@ import { GoTrash } from 'react-icons/go'
 import TypePaiement from './TypePaiement'
 import HeaderPage from '@/Components/HeaderPage'
 import { TbEdit } from 'react-icons/tb'
-
+import EmptyState from '@/Components/EmptyState'
 const PaiementPage = () => {
     const [search, setsearch] = useState('');
     const [dataToModify, setDataToModify] = useState({});
@@ -205,9 +205,7 @@ const PaiementPage = () => {
                                     onPageChange={setCurrentPage}
                                     masqueColumns={['client_id']}
                                 /> :
-                                <div className='flex justify-center'>
-                                    <img src={nodata2} alt="no data" className='max-w-md mt-2 opacity-50' />
-                                </div>
+                                <EmptyState nom='paiement' search={search} />
                             }
                         </div>
                     )}

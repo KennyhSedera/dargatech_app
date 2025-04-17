@@ -118,14 +118,13 @@
 <body>
     <div class="container">
         <div class="header">
-            <img src="{{ public_path('images/titre.png') }}" alt="Logo" class="logo">
             <h1>Bienvenue sur notre plateforme !</h1>
         </div>
         
         <div class="content">
             <p class="welcome-message">Bonjour <strong class="important">{{ $name }}</strong>,</p>
 
-            <p>Nous sommes ravis de vous accueillir parmi nous. Voici vos identifiants pour vous connecter :</p>
+            <p>Nous sommes ravis de vous accueillir parmi nos techniciens. Voici vos identifiants pour vous connecter à notre plateforme :</p>
             
             <div class="credentials-box">
                 <p style="margin-bottom: 5px;"><strong>Mot de passe :</strong></p>

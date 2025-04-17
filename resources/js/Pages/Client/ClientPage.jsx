@@ -1,9 +1,9 @@
 import FormulaireClient from '@/Components/clients/FormulaireClient';
 import ConfirmDialog from '@/Components/ConfirmDialog';
 import DataTable from '@/Components/DataTable';
+import EmptyState from '@/Components/EmptyState';
 import HeaderPage from '@/Components/HeaderPage';
 import Snackbar from '@/Components/Snackbar';
-import { nodata2 } from '@/constant';
 import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout';
 import { deleteClients, getClients } from '@/Services/clientService';
 import { Head, router } from '@inertiajs/react';
@@ -188,13 +188,10 @@ const ClientPage = () => {
                         currentPage={currentPage}
                         onPageChange={setCurrentPage}
                     /> :
-                    <div className='flex justify-center'>
-                        <img src={nodata2} alt="no data" className='max-w-md mt-2 opacity-50' />
-                    </div>
+                    <EmptyState nom='maraîcher' search={search} />
                 }
             </div>
             )}
-            {/* <LocationSearch /> */}
         </AuthenticatedLayout>
     );
 };

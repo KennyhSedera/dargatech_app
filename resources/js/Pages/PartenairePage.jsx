@@ -6,7 +6,7 @@ import PartenaireCard from '@/Components/partenaire/PartenaireCard';
 import { getPartenaires } from '@/Services/partenaireService';
 import PartenaireFormulaire from '@/Components/partenaire/PartenaireFormulaire';
 import Snackbar from '@/Components/Snackbar';
-import { nodata2 } from '@/constant';
+import EmptyState from '@/Components/EmptyState';
 
 const PartenairePage = () => {
   const [searchTerm, setSearchTerm] = useState('');
@@ -122,9 +122,7 @@ const PartenairePage = () => {
               ))}
             </div>
           ) : (
-            <div className='flex justify-center items-center w-full'>
-              <img src={nodata2} alt="no data" className='max-w-md mt-2 opacity-50' />
-            </div>
+            <EmptyState nom='partenaire' search={searchTerm} />
           )}
         </div>
       )}

@@ -38,7 +38,7 @@ export default function AuthenticatedLayout({ setId = () => { }, children }) {
     return (
         <div className="min-h-screen w-full bg-gray-100 dark:bg-gray-900 dark:text-white flex">
             <div className='hidden sm:flex sm:flex-col w-16 border-r py-1 items-center h-screen sticky top-0 border-gray-100 bg-white dark:border-gray-700 dark:bg-gray-800 z-40'>
-                <a href={'https://dargatech.com'} target='_blank' rel='noreferrer'><img src={logo} alt="logo" className='w-12' /></a>
+                <a href={'https://dargatech.com'} target='_blank' rel='noreferrer'><img src={logo} alt="logo" className='w-12 mt-2' /></a>
                 <div className='flex flex-col gap-2 mt-6 justify-center bg-red'>
                     {link.map((item, i) => (
                         <NavLinkIcon
@@ -53,11 +53,13 @@ export default function AuthenticatedLayout({ setId = () => { }, children }) {
             </div>
             <div className='w-full'>
                 <nav className="border-b border-gray-100 bg-white dark:border-gray-700 dark:bg-gray-800 sticky top-0 z-40">
-                    <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
+                    <div className="mx-auto max-w-7xl px-2 sm:px-4 lg:px-6">
                         <div className="flex h-14 justify-between">
                             <div className="flex">
                                 <div className="flex shrink-0 items-center">
-                                    <a href={'https://dargatech.com'} target='_blank' rel='noreferrer'><img src={titre} alt="logo" className='h-10' /></a>
+                                    <a href={'https://dargatech.com'} target='_blank' rel='noreferrer'>
+                                        <img src={titre} alt="logo" className='h-8' />
+                                    </a>
                                 </div>
                             </div>
 

@@ -3,14 +3,14 @@ import DataTable from '@/Components/DataTable'
 import HeaderPage from '@/Components/HeaderPage'
 import FormulaireInstallation from '@/Components/installations/FormulaireInstallation'
 import Snackbar from '@/Components/Snackbar'
-import { formatdate, nodata2, parsedate } from '@/constant'
+import { formatdate, parsedate } from '@/constant'
 import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout'
 import { deleteinstallations, getinstallations } from '@/Services/installationService'
 import { Head } from '@inertiajs/react'
 import React, { useEffect, useState } from 'react'
-import { FaEye } from 'react-icons/fa'
 import { GoTrash } from 'react-icons/go'
 import { TbEdit } from 'react-icons/tb'
+import EmptyState from '@/Components/EmptyState'
 
 const InstallationPage = () => {
     const [search, setSearch] = useState("");
@@ -49,12 +49,6 @@ const InstallationPage = () => {
     ];
 
     const actions = [
-        // {
-        //     label: <FaEye className="text-base" />,
-        //     color: 'text-green-500',
-        //     hoverColor: 'text-green-600',
-        //     handler: (row) => showDetail(row.id),
-        // },
         {
             label: <TbEdit className="text-lg" />,
             color: 'text-blue-500',
@@ -193,9 +187,7 @@ const InstallationPage = () => {
                         onPageChange={setCurrentPage}
                         masqueColumns={['client_id']}
                     /> :
-                    <div className='flex justify-center'>
-                        <img src={nodata2} alt="no data" className='max-w-md opacity-50 mt-2' />
-                    </div>
+                    <EmptyState nom='installation' search={search} />
                 }
                 </div>
             )}

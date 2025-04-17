@@ -90,7 +90,6 @@
 <body>
   <div class="container">
     <div class="header">
-      <img src="{{ public_path('images/titre.png') }}" alt="Dargatech Logo" class="logo">
       <h1>Bienvenue chez Dargatech</h1>
     </div>
     
@@ -101,7 +100,7 @@
       
       <p>Bonjour,</p>
       
-      <p>Nous sommes ravis de vous accueillir sur notre plateforme. Voici vos informations de connexion:</p>
+      <p>Nous sommes ravis de vous accueillir sur notre plateforme en tant que partenaire. Voici vos informations de connexion:</p>
       
       <p><strong>Votre mot de passe temporaire:</strong></p>
       <div class="password-box">

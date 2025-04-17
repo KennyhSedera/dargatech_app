@@ -1,24 +1,13 @@
 import ConfirmDialog from '@/Components/ConfirmDialog'
+import EmptyState from '@/Components/EmptyState'
 import HeaderPage from '@/Components/HeaderPage'
 import Snackbar from '@/Components/Snackbar'
 import TechnicienCard from '@/Components/technicien/TechnicienCard'
 import TechnicienFormulaire from '@/Components/technicien/TechnicienFormulaire'
-import { nodata2 } from '@/constant'
 import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout'
 import { deleteTechniciens, getTechniciens } from '@/Services/technicienService'
 import { Head } from '@inertiajs/react'
 import React, { useEffect, useState } from 'react'
-
-
-const EmptyState = () => (
-  <div className="flex flex-col items-center justify-center py-12 bg-white rounded-xl shadow-sm border border-dashed border-gray-300 mt-4">
-    <img src={nodata2} alt="Aucune donnée" className="w-64 opacity-60 mb-6" />
-    <h3 className="text-xl font-semibold text-gray-600 mb-2">Aucun technicien trouvé</h3>
-    <p className="text-gray-500 text-center max-w-md">
-      Il n'y a pas de techniciens correspondant à votre recherche. Essayez de modifier vos critères ou ajoutez un nouveau technicien.
-    </p>
-  </div>
-);
 
 const Technicien = () => {
     const [search, setSearch] = useState('');
@@ -255,7 +244,7 @@ const Technicien = () => {
                             )}
                         </div>
                     ) : (
-                        <EmptyState />
+                        <EmptyState nom='technicien' search={search} />
                     )}
                 </>
             )}

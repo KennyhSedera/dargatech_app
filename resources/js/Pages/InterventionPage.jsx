@@ -1,10 +1,11 @@
 import ConfirmDialog from '@/Components/ConfirmDialog';
 import DataTable from '@/Components/DataTable';
+import EmptyState from '@/Components/EmptyState';
 import HeaderPage from '@/Components/HeaderPage'
 import FormulaireMaintenance from '@/Components/maintenances/FormulaireMaintenance';
 import FormulaireRapportMaintenance from '@/Components/maintenances/FormulaireRapportMaintenance';
 import Snackbar from '@/Components/Snackbar';
-import { formatdate, nodata2, parsedate } from '@/constant';
+import { formatdate, parsedate } from '@/constant';
 import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout'
 import { deletemaintenances, getmaintenances } from '@/Services/maintenanceService';
 import { Head, router, usePage } from '@inertiajs/react';
@@ -221,9 +222,7 @@ const InterventionPage = () => {
                         onPageChange={setCurrentPage}
                         masqueColumns={['client_id']}
                     /> :
-                    <div className='flex justify-center'>
-                        <img src={nodata2} alt="no data" className='max-w-md mt-2 opacity-50' />
-                    </div>
+                    <EmptyState nom='intervention' search={search} />
                 }
                 </div>
             )}

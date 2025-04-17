@@ -55,7 +55,7 @@ const TechnicienCard = ({ technician, onDelete, onView }) => {
           
           <div className="flex items-center px-3 py-2 bg-gray-100 dark:bg-gray-700 rounded-lg">
             <FaMapMarkerAlt className="text-gray-500 dark:text-gray-400 mr-3" />
-            <span className="text-gray-700 dark:text-gray-300 text-sm">{technician.address}</span>
+            <span className="text-gray-700 dark:text-gray-300 text-sm">{technician.adress}</span>
           </div>
         </div>
       </div>

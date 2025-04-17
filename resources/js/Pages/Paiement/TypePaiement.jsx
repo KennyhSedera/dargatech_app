@@ -3,10 +3,10 @@ import DataTable from '@/Components/DataTable';
 import HeaderPage from '@/Components/HeaderPage'
 import FormulaireTypePaiement from '@/Components/Paiement/FormulaireTypePaiement';
 import Snackbar from '@/Components/Snackbar';
-import { nodata2 } from '@/constant';
 import { deleteType_paiement, getType_paiements } from '@/Services/TypePaiementService';
 import React, { useEffect, useState } from 'react'
 import { GoTrash } from 'react-icons/go';
+import EmptyState from '@/Components/EmptyState';
 
 const TypePaiement = () => {
     const [search, setsearch] = useState('');
@@ -140,9 +140,7 @@ const TypePaiement = () => {
                             currentPage={currentPage}
                             onPageChange={setCurrentPage}
                         /> :
-                        <div className='flex justify-center'>
-                            <img src={nodata2} alt="no data" className='max-w-md opacity-50 mt-2' />
-                        </div>
+                        <EmptyState nom='type de paiement' search={search} />
                     }
                 </div>
                 <div className="sm:col-span-1">

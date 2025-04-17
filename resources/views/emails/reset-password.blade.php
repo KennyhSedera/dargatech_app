@@ -56,7 +56,7 @@
     .btn {
       display: inline-block;
       background-color: #5e35b1;
-      color: white;
+      color: #fff !important;
       text-decoration: none;
       padding: 12px 24px;
       border-radius: 4px;
@@ -67,7 +67,7 @@
     }
     .btn:hover {
       background-color: #4527a0;
-      color: white;
+      color: #fff !important;
     }
     .footer {
       margin-top: 30px;
@@ -106,8 +106,7 @@
 <body>
   <div class="email-container">
     <div class="header">
-        <img src="{{ public_path('images/titre.png') }}" alt="DARGATECH TOGO" class="logo">
-            <h2>Réinitialisation de Mot de Passe</h2>
+        <h2>Réinitialisation de Mot de Passe</h2>
     </div>
     
     <p>Bonjour <strong>{{ $name }}</strong>,</p>
