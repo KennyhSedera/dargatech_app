@@ -90,7 +90,7 @@ Route::group(['prefix' => 'api'], function () {
 
     Route::group(['prefix' => 'rapport', 'as' => 'rapport.', 'middleware' => 'auth'], function () {
         Route::get('/', [RapportController::class, 'index'])->name('index');
-        Route::get('/{id}', [RapportController::class, 'show'])->name('show');
+        // Route::get('/{id}', [RapportController::class, 'show'])->name('show');
         Route::post('/', [RapportController::class, 'store'])->name('store');
         Route::put('/{id}', [RapportController::class, 'update'])->name('update');
         Route::delete('/{id}', [RapportController::class, 'destroy'])->name('destroy');

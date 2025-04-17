@@ -11,15 +11,7 @@ class TypePaiementController extends Controller
     {
         $typePaiements = Type_paiements::all();
 
-        $images = $typePaiements->map(function ($item) {
-            return [
-                'id'        => $item->id,
-                'name'      => $item->name,
-                'logo_path' => $item->logo_path ? asset('storage/' . $item->logo_path) : null,
-            ];
-        });
-
-        return response()->json(['type' => $images], 200);
+        return response()->json(['type' => $typePaiements], 200);
     }
 
     public function store(Request $request)
@@ -28,11 +20,16 @@ class TypePaiementController extends Controller
             'name' => 'required|string|max:255',
         ]);
 
-        $imagePath = $request->file('logo_path')->store('logos', 'public');
+        $logoPath = null;
+        if ($request->hasFile('logo_path')) {
+            $logoName = time() . '-' . $request->logo_path->getClientOriginalName();
+            $request->logo_path->move(public_path('logos'), $logoName);
+            $logoPath = 'logos/' . $logoName;
+        }
 
         Type_paiements::create([
             'name'      => $validate['name'],
-            'logo_path' => $imagePath,
+            'logo_path' => $logoPath,
         ]);
 
         return response()->json([
