@@ -13,8 +13,8 @@ return new class extends Migration
     {
         Schema::create('clients', function (Blueprint $table) {
             $table->id();
-            $table->string('nom')->after('id');
-            $table->string('prenom')->after('nom');
+            $table->string('nom');
+            $table->string('prenom');
             $table->string('telephone');
             $table->string('localisation');
             $table->string('genre')->nullable();
