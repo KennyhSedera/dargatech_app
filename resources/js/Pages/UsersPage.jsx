@@ -52,10 +52,8 @@ const UsersPage = () => {
       user.user_role.name.toLowerCase().includes(value.toLowerCase()) ||
       user.profile?.adress.toLowerCase().includes(value.toLowerCase()) ||
       user.profile?.contact.toLowerCase().includes(value.toLowerCase()) ||
-      user.partenaire?.name.toLowerCase().includes(value.toLowerCase()) ||
-      user.partenaire?.email.toLowerCase().includes(value.toLowerCase()) ||
       user.partenaire?.telephone.toLowerCase().includes(value.toLowerCase()) ||
-      user.partenaire?.adress.toLowerCase().includes(value.toLowerCase()) ||
+      user.partenaire?.adresse.toLowerCase().includes(value.toLowerCase()) ||
       user.partenaire?.site_web.toLowerCase().includes(value.toLowerCase())
     );
     setFilteredUsers(filtered);
