@@ -1,37 +1,30 @@
 import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout';
-import { Head, usePage } from '@inertiajs/react';
+import { Head, useForm, usePage } from '@inertiajs/react';
 import DeleteUserForm from './Partials/DeleteUserForm';
 import UpdatePasswordForm from './Partials/UpdatePasswordForm';
 import UpdateProfileInformationForm from './Partials/UpdateProfileInformationForm';
-import { TbPointFilled, TbUser, TbMail, TbBriefcase, TbPhone, TbMapPin, TbStar, TbCalendar, TbEdit, TbLock, TbTrash, TbX } from 'react-icons/tb';
+import { TbPointFilled, TbUser, TbMail, TbBriefcase, TbPhone, TbMapPin, TbStar, TbCalendar, TbEdit, TbLock, TbTrash, TbX, TbWorld, TbBuildingStore, TbFlag } from 'react-icons/tb';
 import { getInitials } from '@/hooks/letterInWord';
-import { useState, useEffect } from 'react';
-
+import { useState } from 'react';
+import { toast } from 'react-toastify';
 export default function Edit({ mustVerifyEmail, status }) {
     const user = usePage().props.auth.user;
     const profile = user.profile || {};
     const technicien = user.technicien || {};
     const userRole = user.user_role || {};
-    const partenaire = user.partenaire || {};   
+    const partenaire = user.partenaire || {};
     const [activeTab, setActiveTab] = useState('profile');
     const [isEditing, setIsEditing] = useState(false);
+    const { post } = useForm();
 
-    useEffect(() => {
-        const handleScroll = () => {
-            setScrollY(window.scrollY);
-        };
-        window.addEventListener('scroll', handleScroll);
-        return () => window.removeEventListener('scroll', handleScroll);
-    }, []);
-
-    const parallaxStyle = {
-        transform: `translateY(${scrollY * 0.5}px)`,
-    };
-    
     const submit = (e) => {
         e.preventDefault();
 
-        post(route('verification.send'));
+        post(route('verification.send'), {
+            onSuccess: () => {
+                toast.success('Email de vérification envoyé');
+            }
+        });
     };
 
     return (
@@ -42,9 +35,8 @@ export default function Edit({ mustVerifyEmail, status }) {
                 <div className="relative">
                     {/* Bannière avec effet parallaxe */}
                     <div className="h-96 overflow-hidden relative">
-                        <div 
+                        <div
                             className="absolute inset-0 bg-gradient-to-br from-orange-400 via-pink-500 to-purple-600 dark:from-indigo-600 dark:via-purple-600 dark:to-blue-700"
-                            style={parallaxStyle}
                         >
                             <div className="absolute inset-0 bg-[url('/img/grid.svg')] opacity-30"></div>
                             <div className="absolute inset-0 bg-gradient-to-t from-gray-50 dark:from-gray-900"></div>
@@ -87,7 +79,7 @@ export default function Edit({ mustVerifyEmail, status }) {
                             </div>
                         </div>
                     </div>
-                    </div>
+                </div>
 
                 {/* Navigation des sections */}
                 <div className="sticky top-0 z-10 bg-white/80 dark:bg-gray-800/80 backdrop-blur-lg border-b border-gray-200 dark:border-gray-700 mt-72">
@@ -95,7 +87,7 @@ export default function Edit({ mustVerifyEmail, status }) {
                         <div className="flex justify-center space-x-8">
                             <button
                                 onClick={() => setActiveTab('profile')}
-                                className={'py-4 px-4 inline-flex items-center gap-2 border-b-2 text-sm font-medium transition-all duration-300 ' + 
+                                className={'py-4 px-4 inline-flex items-center gap-2 border-b-2 text-sm font-medium transition-all duration-300 ' +
                                     (activeTab === 'profile'
                                         ? 'border-orange-500 text-orange-600 dark:border-indigo-500 dark:text-indigo-400'
                                         : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300 dark:text-gray-400 dark:hover:text-gray-300'
@@ -106,7 +98,7 @@ export default function Edit({ mustVerifyEmail, status }) {
                             </button>
                             <button
                                 onClick={() => setActiveTab('security')}
-                                className={'py-4 px-4 inline-flex items-center gap-2 border-b-2 text-sm font-medium transition-all duration-300 ' + 
+                                className={'py-4 px-4 inline-flex items-center gap-2 border-b-2 text-sm font-medium transition-all duration-300 ' +
                                     (activeTab === 'security'
                                         ? 'border-orange-500 text-orange-600 dark:border-indigo-500 dark:text-indigo-400'
                                         : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300 dark:text-gray-400 dark:hover:text-gray-300'
@@ -185,6 +177,7 @@ export default function Edit({ mustVerifyEmail, status }) {
                                             </h3>
                                         </div>
                                         <dl className="space-y-4">
+                                            {/* Pour tous les utilisateurs */}
                                             <div className="flex items-center justify-between p-3 rounded-lg bg-gray-50 dark:bg-gray-900 transition-colors duration-300 hover:bg-gray-100 dark:hover:bg-gray-700">
                                                 <dt className="flex items-center gap-2">
                                                     <TbMapPin className="w-5 h-5 text-gray-400" />
@@ -192,13 +185,66 @@ export default function Edit({ mustVerifyEmail, status }) {
                                                 </dt>
                                                 <dd className="text-sm font-semibold text-gray-900 dark:text-gray-100">{profile.adress || technicien.adress || partenaire.adresse || 'Non définie'}</dd>
                                             </div>
-                                            {user.user_role.name === 'technicien' && <div className="flex items-center justify-between p-3 rounded-lg bg-gray-50 dark:bg-gray-900 transition-colors duration-300 hover:bg-gray-100 dark:hover:bg-gray-700">
-                                                <dt className="flex items-center gap-2">
-                                                    <TbStar className="w-5 h-5 text-gray-400" />
-                                                    <span className="text-sm font-medium text-gray-500 dark:text-gray-400">Spécialité</span>
-                                                </dt>
-                                                <dd className="text-sm font-semibold text-gray-900 dark:text-gray-100">{profile.speciality || technicien.speciality || partenaire.speciality || 'Non définie'}</dd>
-                                            </div>}
+
+                                            {/* Champs spécifiques pour les techniciens */}
+                                            {user.user_role.name === 'technicien' && (
+                                                <div className="flex items-center justify-between p-3 rounded-lg bg-gray-50 dark:bg-gray-900 transition-colors duration-300 hover:bg-gray-100 dark:hover:bg-gray-700">
+                                                    <dt className="flex items-center gap-2">
+                                                        <TbStar className="w-5 h-5 text-gray-400" />
+                                                        <span className="text-sm font-medium text-gray-500 dark:text-gray-400">Spécialité</span>
+                                                    </dt>
+                                                    <dd className="text-sm font-semibold text-gray-900 dark:text-gray-100">{technicien.speciality || 'Non définie'}</dd>
+                                                </div>
+                                            )}
+
+                                            {/* Champs spécifiques pour les partenaires */}
+                                            {user.user_role.name === 'partenaire' && (
+                                                <>
+                                                    <div className="flex items-center justify-between p-3 rounded-lg bg-gray-50 dark:bg-gray-900 transition-colors duration-300 hover:bg-gray-100 dark:hover:bg-gray-700">
+                                                        <dt className="flex items-center gap-2">
+                                                            <TbFlag className="w-5 h-5 text-gray-400" />
+                                                            <span className="text-sm font-medium text-gray-500 dark:text-gray-400">Ville/Pays</span>
+                                                        </dt>
+                                                        <dd className="text-sm font-semibold text-gray-900 dark:text-gray-100">
+                                                            {partenaire.ville && partenaire.pays ?
+                                                                `${partenaire.ville}, ${partenaire.pays}` :
+                                                                partenaire.ville || partenaire.pays || 'Non définis'}
+                                                        </dd>
+                                                    </div>
+                                                    <div className="flex items-center justify-between p-3 rounded-lg bg-gray-50 dark:bg-gray-900 transition-colors duration-300 hover:bg-gray-100 dark:hover:bg-gray-700">
+                                                        <dt className="flex items-center gap-2">
+                                                            <TbWorld className="w-5 h-5 text-gray-400" />
+                                                            <span className="text-sm font-medium text-gray-500 dark:text-gray-400">Site web</span>
+                                                        </dt>
+                                                        <dd className="text-sm font-semibold text-gray-900 dark:text-gray-100">
+                                                            {partenaire.site_web ? (
+                                                                <a href={partenaire.site_web} target="_blank" rel="noopener noreferrer"
+                                                                    className="text-orange-500 dark:text-indigo-400 hover:underline">
+                                                                    {partenaire.site_web}
+                                                                </a>
+                                                            ) : 'Non défini'}
+                                                        </dd>
+                                                    </div>
+                                                    <div className="flex items-center justify-between p-3 rounded-lg bg-gray-50 dark:bg-gray-900 transition-colors duration-300 hover:bg-gray-100 dark:hover:bg-gray-700">
+                                                        <dt className="flex items-center gap-2">
+                                                            <TbBuildingStore className="w-5 h-5 text-gray-400" />
+                                                            <span className="text-sm font-medium text-gray-500 dark:text-gray-400">Catégorie</span>
+                                                        </dt>
+                                                        <dd className="text-sm font-semibold text-gray-900 dark:text-gray-100">
+                                                            {partenaire.categorie || 'Non définie'}
+                                                        </dd>
+                                                    </div>
+                                                    {partenaire.highlighted && (
+                                                        <div className="mt-4 p-3 rounded-lg bg-yellow-50 dark:bg-yellow-900/20 border border-yellow-200 dark:border-yellow-800">
+                                                            <span className="flex items-center gap-2 text-sm font-medium text-yellow-600 dark:text-yellow-400">
+                                                                <TbStar className="w-5 h-5" />
+                                                                Partenaire mis en avant
+                                                            </span>
+                                                        </div>
+                                                    )}
+                                                </>
+                                            )}
+
                                             <div className="flex items-center justify-between p-3 rounded-lg bg-gray-50 dark:bg-gray-900 transition-colors duration-300 hover:bg-gray-100 dark:hover:bg-gray-700">
                                                 <dt className="flex items-center gap-2">
                                                     <TbCalendar className="w-5 h-5 text-gray-400" />
@@ -214,6 +260,25 @@ export default function Edit({ mustVerifyEmail, status }) {
                                             </div>
                                         </dl>
                                     </div>
+
+                                    {/* Description du partenaire (si c'est un partenaire et qu'il a une description) */}
+                                    {user.user_role.name === 'partenaire' && partenaire.description && (
+                                        <div className="col-span-1 md:col-span-2 group bg-white dark:bg-gray-800 rounded-2xl p-8 shadow-lg transition-all duration-300 hover:shadow-xl hover:-translate-y-1">
+                                            <div className="flex items-center gap-4 mb-6">
+                                                <div className="p-3 rounded-xl bg-orange-100 dark:bg-indigo-900 text-orange-600 dark:text-indigo-400 group-hover:scale-110 transition-transform duration-300">
+                                                    <TbEdit className="w-6 h-6" />
+                                                </div>
+                                                <h3 className="text-xl font-semibold text-gray-900 dark:text-gray-100">
+                                                    Description
+                                                </h3>
+                                            </div>
+                                            <div className="p-4 bg-gray-50 dark:bg-gray-900 rounded-xl">
+                                                <p className="text-gray-700 dark:text-gray-300 whitespace-pre-line">
+                                                    {partenaire.description}
+                                                </p>
+                                            </div>
+                                        </div>
+                                    )}
                                 </div>
                             ) : (
                                 /* Formulaire de modification du profil */
@@ -226,7 +291,7 @@ export default function Edit({ mustVerifyEmail, status }) {
                                             Modifier le profil
                                         </h3>
                                     </div>
-                                
+
                                     <UpdateProfileInformationForm
                                         mustVerifyEmail={mustVerifyEmail}
                                         status={status}
@@ -251,18 +316,41 @@ export default function Edit({ mustVerifyEmail, status }) {
                                 <UpdatePasswordForm />
                             </div>
 
-                            {/* Suppression du compte */}
-                            <div className="bg-white dark:bg-gray-800 rounded-2xl shadow-lg p-8 h-fit">
-                                <div className="flex items-center gap-4 mb-6">
-                                    <div className="p-3 rounded-xl bg-red-100 dark:bg-red-900/30 text-red-600 dark:text-red-400">
-                                        <TbTrash className="w-6 h-6" />
+                            <div className="flex flex-col gap-4">
+                                {/* Verification email */}
+                                <div className="flex flex-col bg-white dark:bg-gray-800 rounded-2xl shadow-lg p-8 h-fit">
+                                    <div className="flex items-center gap-4 mb-6">
+                                        <div className="p-3 rounded-xl bg-red-100 dark:bg-red-900/30 text-red-600 dark:text-red-400">
+                                            <TbMail className="w-6 h-6" />
+                                        </div>
+                                        <h3 className="text-xl font-semibold text-gray-900 dark:text-gray-100">
+                                            Verification email
+                                        </h3>
                                     </div>
-                                    <h3 className="text-xl font-semibold text-gray-900 dark:text-gray-100">
-                                        Zone dangereuse
-                                    </h3>
+                                    <span className="text-sm text-gray-500 dark:text-gray-400">
+                                        Vous pouvez vérifier votre email en cliquant sur le bouton ci-dessous
+                                    </span>
+                                    <div className="flex justify-start mt-4">
+                                        <button onClick={submit} className="bg-gradient-to-r from-orange-500 to-pink-500 text-white px-4 py-2 rounded-md">
+                                            Vérifier mon email
+                                        </button>
+                                    </div>
                                 </div>
-                                <DeleteUserForm />
+
+                                {/* Suppression du compte */}
+                                <div className="bg-white dark:bg-gray-800 rounded-2xl shadow-lg p-8 h-fit">
+                                    <div className="flex items-center gap-4 mb-6">
+                                        <div className="p-3 rounded-xl bg-red-100 dark:bg-red-900/30 text-red-600 dark:text-red-400">
+                                            <TbTrash className="w-6 h-6" />
+                                        </div>
+                                        <h3 className="text-xl font-semibold text-gray-900 dark:text-gray-100">
+                                            Zone dangereuse
+                                        </h3>
+                                    </div>
+                                    <DeleteUserForm />
+                                </div>
                             </div>
+
                         </div>
                     )}
                 </div>

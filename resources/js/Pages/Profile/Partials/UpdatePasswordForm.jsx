@@ -56,7 +56,7 @@ export default function UpdatePasswordForm({ className = '' }) {
 
                 <form onSubmit={updatePassword} className="space-y-6">
                     <div className="grid gap-6 md:grid-cols-2">
-                        <div>
+                        <div className="md:col-span-2">
                             <InputLabel
                                 htmlFor="current_password"
                                 value="Mot de passe actuel"
@@ -102,7 +102,7 @@ export default function UpdatePasswordForm({ className = '' }) {
                             <InputError message={errors.password} className="mt-2" />
                         </div>
 
-                        <div className="md:col-span-2">
+                        <div>
                             <InputLabel
                                 htmlFor="password_confirmation"
                                 value="Confirmer le nouveau mot de passe"

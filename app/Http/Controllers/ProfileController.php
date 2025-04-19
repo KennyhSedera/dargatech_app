@@ -51,6 +51,23 @@ class ProfileController extends Controller
             'speciality' => 'nullable|string|max:255',
         ]);
 
+        $partenaireData = $request->validate([
+            'ville' => 'nullable|string|max:255',
+            'pays' => 'nullable|string|max:255',
+            'site_web' => 'nullable|string|max:255',
+            'description' => 'nullable|string|max:255',
+            'highlighted' => 'nullable|boolean',
+            'categorie' => 'nullable|string|max:255',
+        ]);
+
+        if ($request->user()->partenaire) {
+            $request->user()->partenaire->update($partenaireData);
+        }
+
+        if ($request->user()->technicien) {
+            $request->user()->technicien->update($profileData);
+        }
+
         // Mise à jour ou création du profil
         if ($request->user()->profile) {
             $request->user()->profile->update($profileData);
@@ -85,7 +102,6 @@ class ProfileController extends Controller
         
         // Delete old photo if exists
         if ($user->profile && $user->profile->photo) {
-            // Supprimer l'ancienne photo du dossier public
             $oldPhotoPath = public_path($user->profile->photo);
             if (file_exists($oldPhotoPath)) {
                 unlink($oldPhotoPath);
@@ -93,7 +109,6 @@ class ProfileController extends Controller
         }
         
         if ($user->technicien && $user->technicien->photo) {
-            // Supprimer l'ancienne photo du dossier public
             $oldPhotoPath = public_path($user->technicien->photo);
             if (file_exists($oldPhotoPath)) {
                 unlink($oldPhotoPath);
@@ -101,7 +116,6 @@ class ProfileController extends Controller
         }
 
         if ($user->partenaire && $user->partenaire->logo) {
-            // Supprimer l'ancienne photo du dossier public
             $oldPhotoPath = public_path($user->partenaire->logo);
             if (file_exists($oldPhotoPath)) {
                 unlink($oldPhotoPath);
@@ -113,14 +127,12 @@ class ProfileController extends Controller
         $image->move(public_path('uploads/profile-photos'), $imageName);
         $photoPath = 'uploads/profile-photos/' . $imageName;
         
-        // Update or create profile with new photo
         if ($user->profile) {
             $user->profile->update(['photo' => $photoPath]);
         } else {
             $user->profile()->create(['photo' => $photoPath]);
         }
         
-        // Update technicien photo if exists
         if ($user->technicien) {
             $user->technicien->update(['photo' => $photoPath]);
         }
