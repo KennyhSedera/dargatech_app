@@ -331,7 +331,7 @@ export default function Edit({ mustVerifyEmail, status }) {
                                         Vous pouvez vérifier votre email en cliquant sur le bouton ci-dessous
                                     </span>
                                     <div className="flex justify-start mt-4">
-                                        <button onClick={submit} className="bg-gradient-to-r from-orange-500 to-pink-500 text-white px-4 py-2 rounded-md">
+                                        <button onClick={submit} className="bg-gradient-to-r from-orange-500 to-pink-500 dark:from-indigo-500 dark:to-purple-500 text-white px-6 py-2 rounded-lg shadow-lg hover:shadow-xl transition-all duration-300 hover:-translate-y-0.5">
                                             Vérifier mon email
                                         </button>
                                     </div>

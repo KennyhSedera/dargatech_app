@@ -9,7 +9,7 @@ export const sendPdfByEmail = async (pdfData, email) => {
     });
     
     if (response.data.success) {
-      alert('PDF envoyé avec succès à ' + email);
+      alert('Reçu envoyé avec succès à ' + email);
     }
     
     return response.data;
