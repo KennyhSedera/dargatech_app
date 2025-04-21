@@ -125,7 +125,7 @@ class ProfileController extends Controller
         $image = $request->file('photo');
         $imageName = time() . '.' . $image->getClientOriginalExtension();
         $image->move(public_path('uploads/profile-photos'), $imageName);
-        $photoPath = 'uploads/profile-photos/' . $imageName;
+        $photoPath = '/uploads/profile-photos/' . $imageName;
         
         if ($user->profile) {
             $user->profile->update(['photo' => $photoPath]);

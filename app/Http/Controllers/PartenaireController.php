@@ -92,7 +92,7 @@ class PartenaireController extends Controller
         if ($request->hasFile('logo')) {
             $logoName = time() . '-' . $request->logo->getClientOriginalName();
             $request->logo->move(public_path('logos'), $logoName);
-            $logoPath = 'logos/' . $logoName;
+            $logoPath = '/logos/' . $logoName;
         }
         
         $partenaire = Partenaire::create([

@@ -1,5 +1,4 @@
 import NavLinkIcon from '@/Components/nav/NavLinkIcon';
-import NotificationDropdown from '@/Components/nav/NotificationDropdown';
 import ResponsiveNavLink from '@/Components/nav/ResponsiveNavLink';
 import ThemeDropdown from '@/Components/nav/ThemeDropdown';
 import UserDropdown from '@/Components/nav/UserDropdown';
@@ -107,11 +106,11 @@ export default function AuthenticatedLayout({ setId = () => { }, children }) {
                         <div className="border-t border-gray-200 pb-1 pt-4 dark:border-gray-600">
                             <div className='p-2 flex items-center gap-2'>
                                 <div className='w-8 h-8 bg-gray-500 ring-1 ring-gray-300 rounded-full flex items-center justify-center'>
-                                {profile.photo || technicien.photo || partenaire.logo ? (
-                                            <img src={profile.photo || technicien.photo || partenaire.logo} alt="Photo de profil" className="w-full h-full object-cover" />
-                                        ) : (
-                                            <span className="text-lg font-bold">{getInitials(user.name)}</span>
-                                        )}
+                                    {profile.photo || technicien.photo || partenaire.logo ? (
+                                        <img src={profile.photo || technicien.photo || partenaire.logo} alt="Photo de profil" className="w-full h-full rounded-full object-cover" />
+                                    ) : (
+                                        <span className="text-lg font-bold">{getInitials(user.name)}</span>
+                                    )}
                                 </div>
                                 <div>
                                     <div className='flex'><span className='line-clamp-1'>{user.name}</span> <TbPointFilled className='text-green-500' /></div>

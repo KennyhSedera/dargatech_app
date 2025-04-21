@@ -20,20 +20,20 @@ const UserDropdown = () => {
                         className="w-9 h-9 flex items-center rounded-full justify-center bg-gray-200 dark:bg-gray-900 border border-orange-500 dark:border-indigo-500"
                     >
                         {profile.photo || technicien.photo || partenaire.logo ? (
-                                            <img src={profile.photo || technicien.photo || partenaire.logo} alt="Photo de profil" className="w-full h-full object-cover rounded-full" />
-                                        ) : (
-                                            <span className="text-lg font-bold">{getInitials(user.name)}</span>
-                                        )}
+                            <img src={profile.photo || technicien.photo || partenaire.logo} alt="Photo de profil" className="w-full h-full object-cover rounded-full" />
+                        ) : (
+                            <span className="text-lg font-bold">{getInitials(user.name)}</span>
+                        )}
                     </button>
                 </Dropdown.Trigger>
 
                 <Dropdown.Content width='xl' contentClasses=' border border-gray-400/20'>
                     <div className='p-2 flex items-center gap-2 border-b border-b-gray-500/20'>
-                        <div className='w-12 h-12 bg-gray-500 ring-1 ring-gray-300 rounded-full flex items-center justify-center overflow-hidden'>
-                            {(profile?.photo || technicien?.photo || partenaire?.logo) ? (
-                                <img 
-                                    src={profile?.photo || technicien?.photo || partenaire?.logo} 
-                                    alt="Photo de profil" 
+                        <div className='w-12 h-12 ring-1 ring-gray-300 rounded-full flex items-center justify-center overflow-hidden'>
+                            {profile?.photo || technicien?.photo || partenaire?.logo ? (
+                                <img
+                                    src={profile?.photo || technicien?.photo || partenaire?.logo}
+                                    alt="Photo de profil"
                                     className="w-12 h-12 object-cover rounded-full"
                                     onError={(e) => {
                                         e.target.style.display = 'none';
