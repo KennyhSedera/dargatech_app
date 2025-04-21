@@ -318,7 +318,7 @@ export default function Edit({ mustVerifyEmail, status }) {
 
                             <div className="flex flex-col gap-4">
                                 {/* Verification email */}
-                                <div className="flex flex-col bg-white dark:bg-gray-800 rounded-2xl shadow-lg p-8 h-fit">
+                                {!user.email_verified_at && (<div className="flex flex-col bg-white dark:bg-gray-800 rounded-2xl shadow-lg p-8 h-fit">
                                     <div className="flex items-center gap-4 mb-6">
                                         <div className="p-3 rounded-xl bg-red-100 dark:bg-red-900/30 text-red-600 dark:text-red-400">
                                             <TbMail className="w-6 h-6" />
@@ -335,7 +335,7 @@ export default function Edit({ mustVerifyEmail, status }) {
                                             Vérifier mon email
                                         </button>
                                     </div>
-                                </div>
+                                </div>)}
 
                                 {/* Suppression du compte */}
                                 <div className="bg-white dark:bg-gray-800 rounded-2xl shadow-lg p-8 h-fit">

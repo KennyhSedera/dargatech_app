@@ -1,0 +1,1 @@
+import{d as a}from"./app-DOGVYUEV.js";const r="/api",o=a.create({baseURL:r,headers:{"Content-Type":"application/json"}});o.interceptors.request.use(e=>{const t=localStorage.getItem("token");return t&&(e.headers.Authorization=`Bearer ${t}`),e.data instanceof FormData&&delete e.headers["Content-Type"],e},e=>Promise.reject(e));export{o as a,r as u};

@@ -1,1 +1,48 @@
-s
+s[2025-04-21 07:53:29] local.ERROR: rename(E:\dargatech_app\bootstrap\cache\pac3E59.tmp,E:\dargatech_app\bootstrap\cache\packages.php): Accès refusé (code: 5) {"exception":"[object] (ErrorException(code: 0): rename(E:\\dargatech_app\\bootstrap\\cache\\pac3E59.tmp,E:\\dargatech_app\\bootstrap\\cache\\packages.php): Accès refusé (code: 5) at E:\\dargatech_app\\vendor\\laravel\\framework\\src\\Illuminate\\Filesystem\\Filesystem.php:233)
+[stacktrace]
+#0 E:\\dargatech_app\\vendor\\laravel\\framework\\src\\Illuminate\\Foundation\\Bootstrap\\HandleExceptions.php(256): Illuminate\\Foundation\\Bootstrap\\HandleExceptions->handleError(2, 'rename(E:\\\\darga...', 'E:\\\\dargatech_ap...', 233)
+#1 [internal function]: Illuminate\\Foundation\\Bootstrap\\HandleExceptions->Illuminate\\Foundation\\Bootstrap\\{closure}(2, 'rename(E:\\\\darga...', 'E:\\\\dargatech_ap...', 233)
+#2 E:\\dargatech_app\\vendor\\laravel\\framework\\src\\Illuminate\\Filesystem\\Filesystem.php(233): rename('E:\\\\dargatech_ap...', 'E:\\\\dargatech_ap...')
+#3 E:\\dargatech_app\\vendor\\laravel\\framework\\src\\Illuminate\\Foundation\\PackageManifest.php(182): Illuminate\\Filesystem\\Filesystem->replace('E:\\\\dargatech_ap...', '<?php return ar...')
+#4 E:\\dargatech_app\\vendor\\laravel\\framework\\src\\Illuminate\\Foundation\\PackageManifest.php(132): Illuminate\\Foundation\\PackageManifest->write(Array)
+#5 E:\\dargatech_app\\vendor\\laravel\\framework\\src\\Illuminate\\Foundation\\PackageManifest.php(108): Illuminate\\Foundation\\PackageManifest->build()
+#6 E:\\dargatech_app\\vendor\\laravel\\framework\\src\\Illuminate\\Foundation\\PackageManifest.php(91): Illuminate\\Foundation\\PackageManifest->getManifest()
+#7 E:\\dargatech_app\\vendor\\laravel\\framework\\src\\Illuminate\\Foundation\\PackageManifest.php(80): Illuminate\\Foundation\\PackageManifest->config('aliases')
+#8 E:\\dargatech_app\\vendor\\laravel\\framework\\src\\Illuminate\\Foundation\\Bootstrap\\RegisterFacades.php(26): Illuminate\\Foundation\\PackageManifest->aliases()
+#9 E:\\dargatech_app\\vendor\\laravel\\framework\\src\\Illuminate\\Foundation\\Application.php(342): Illuminate\\Foundation\\Bootstrap\\RegisterFacades->bootstrap(Object(Illuminate\\Foundation\\Application))
+#10 E:\\dargatech_app\\vendor\\laravel\\framework\\src\\Illuminate\\Foundation\\Console\\Kernel.php(474): Illuminate\\Foundation\\Application->bootstrapWith(Array)
+#11 E:\\dargatech_app\\vendor\\laravel\\framework\\src\\Illuminate\\Foundation\\Console\\Kernel.php(196): Illuminate\\Foundation\\Console\\Kernel->bootstrap()
+#12 E:\\dargatech_app\\vendor\\laravel\\framework\\src\\Illuminate\\Foundation\\Application.php(1235): Illuminate\\Foundation\\Console\\Kernel->handle(Object(Symfony\\Component\\Console\\Input\\ArgvInput), Object(Symfony\\Component\\Console\\Output\\ConsoleOutput))
+#13 E:\\dargatech_app\\artisan(13): Illuminate\\Foundation\\Application->handleCommand(Object(Symfony\\Component\\Console\\Input\\ArgvInput))
+#14 {main}
+"} 
+[2025-04-21 07:54:08] local.ERROR: No arguments expected for "lang:publish" command, got "fr". {"exception":"[object] (Symfony\\Component\\Console\\Exception\\RuntimeException(code: 0): No arguments expected for \"lang:publish\" command, got \"fr\". at E:\\dargatech_app\\vendor\\symfony\\console\\Input\\ArgvInput.php:199)
+[stacktrace]
+#0 E:\\dargatech_app\\vendor\\symfony\\console\\Input\\ArgvInput.php(92): Symfony\\Component\\Console\\Input\\ArgvInput->parseArgument('fr')
+#1 E:\\dargatech_app\\vendor\\symfony\\console\\Input\\ArgvInput.php(77): Symfony\\Component\\Console\\Input\\ArgvInput->parseToken('fr', true)
+#2 E:\\dargatech_app\\vendor\\symfony\\console\\Input\\Input.php(53): Symfony\\Component\\Console\\Input\\ArgvInput->parse()
+#3 E:\\dargatech_app\\vendor\\symfony\\console\\Command\\Command.php(238): Symfony\\Component\\Console\\Input\\Input->bind(Object(Symfony\\Component\\Console\\Input\\InputDefinition))
+#4 E:\\dargatech_app\\vendor\\laravel\\framework\\src\\Illuminate\\Console\\Command.php(182): Symfony\\Component\\Console\\Command\\Command->run(Object(Symfony\\Component\\Console\\Input\\ArgvInput), Object(Illuminate\\Console\\OutputStyle))
+#5 E:\\dargatech_app\\vendor\\symfony\\console\\Application.php(1094): Illuminate\\Console\\Command->run(Object(Symfony\\Component\\Console\\Input\\ArgvInput), Object(Symfony\\Component\\Console\\Output\\ConsoleOutput))
+#6 E:\\dargatech_app\\vendor\\symfony\\console\\Application.php(342): Symfony\\Component\\Console\\Application->doRunCommand(Object(Illuminate\\Foundation\\Console\\LangPublishCommand), Object(Symfony\\Component\\Console\\Input\\ArgvInput), Object(Symfony\\Component\\Console\\Output\\ConsoleOutput))
+#7 E:\\dargatech_app\\vendor\\symfony\\console\\Application.php(193): Symfony\\Component\\Console\\Application->doRun(Object(Symfony\\Component\\Console\\Input\\ArgvInput), Object(Symfony\\Component\\Console\\Output\\ConsoleOutput))
+#8 E:\\dargatech_app\\vendor\\laravel\\framework\\src\\Illuminate\\Foundation\\Console\\Kernel.php(198): Symfony\\Component\\Console\\Application->run(Object(Symfony\\Component\\Console\\Input\\ArgvInput), Object(Symfony\\Component\\Console\\Output\\ConsoleOutput))
+#9 E:\\dargatech_app\\vendor\\laravel\\framework\\src\\Illuminate\\Foundation\\Application.php(1235): Illuminate\\Foundation\\Console\\Kernel->handle(Object(Symfony\\Component\\Console\\Input\\ArgvInput), Object(Symfony\\Component\\Console\\Output\\ConsoleOutput))
+#10 E:\\dargatech_app\\artisan(13): Illuminate\\Foundation\\Application->handleCommand(Object(Symfony\\Component\\Console\\Input\\ArgvInput))
+#11 {main}
+"} 
+[2025-04-21 07:57:57] local.ERROR: No arguments expected for "lang:publish" command, got "fr". {"exception":"[object] (Symfony\\Component\\Console\\Exception\\RuntimeException(code: 0): No arguments expected for \"lang:publish\" command, got \"fr\". at E:\\dargatech_app\\vendor\\symfony\\console\\Input\\ArgvInput.php:199)
+[stacktrace]
+#0 E:\\dargatech_app\\vendor\\symfony\\console\\Input\\ArgvInput.php(92): Symfony\\Component\\Console\\Input\\ArgvInput->parseArgument('fr')
+#1 E:\\dargatech_app\\vendor\\symfony\\console\\Input\\ArgvInput.php(77): Symfony\\Component\\Console\\Input\\ArgvInput->parseToken('fr', true)
+#2 E:\\dargatech_app\\vendor\\symfony\\console\\Input\\Input.php(53): Symfony\\Component\\Console\\Input\\ArgvInput->parse()
+#3 E:\\dargatech_app\\vendor\\symfony\\console\\Command\\Command.php(238): Symfony\\Component\\Console\\Input\\Input->bind(Object(Symfony\\Component\\Console\\Input\\InputDefinition))
+#4 E:\\dargatech_app\\vendor\\laravel\\framework\\src\\Illuminate\\Console\\Command.php(182): Symfony\\Component\\Console\\Command\\Command->run(Object(Symfony\\Component\\Console\\Input\\ArgvInput), Object(Illuminate\\Console\\OutputStyle))
+#5 E:\\dargatech_app\\vendor\\symfony\\console\\Application.php(1094): Illuminate\\Console\\Command->run(Object(Symfony\\Component\\Console\\Input\\ArgvInput), Object(Symfony\\Component\\Console\\Output\\ConsoleOutput))
+#6 E:\\dargatech_app\\vendor\\symfony\\console\\Application.php(342): Symfony\\Component\\Console\\Application->doRunCommand(Object(Illuminate\\Foundation\\Console\\LangPublishCommand), Object(Symfony\\Component\\Console\\Input\\ArgvInput), Object(Symfony\\Component\\Console\\Output\\ConsoleOutput))
+#7 E:\\dargatech_app\\vendor\\symfony\\console\\Application.php(193): Symfony\\Component\\Console\\Application->doRun(Object(Symfony\\Component\\Console\\Input\\ArgvInput), Object(Symfony\\Component\\Console\\Output\\ConsoleOutput))
+#8 E:\\dargatech_app\\vendor\\laravel\\framework\\src\\Illuminate\\Foundation\\Console\\Kernel.php(198): Symfony\\Component\\Console\\Application->run(Object(Symfony\\Component\\Console\\Input\\ArgvInput), Object(Symfony\\Component\\Console\\Output\\ConsoleOutput))
+#9 E:\\dargatech_app\\vendor\\laravel\\framework\\src\\Illuminate\\Foundation\\Application.php(1235): Illuminate\\Foundation\\Console\\Kernel->handle(Object(Symfony\\Component\\Console\\Input\\ArgvInput), Object(Symfony\\Component\\Console\\Output\\ConsoleOutput))
+#10 E:\\dargatech_app\\artisan(13): Illuminate\\Foundation\\Application->handleCommand(Object(Symfony\\Component\\Console\\Input\\ArgvInput))
+#11 {main}
+"} 
