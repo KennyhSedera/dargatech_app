@@ -7,7 +7,6 @@ import { useForm } from '@inertiajs/react';
 import { createClients, updateClients } from '@/Services/clientService';
 import { validateFormClient } from '../validateForm';
 import SelectInput from '../inputs/SelectInput';
-import { getCoordinates } from '../localisations/localisation';
 
 const FormulaireClient = ({
     open = true,
@@ -109,12 +108,12 @@ const FormulaireClient = ({
             show={open}
             closeable={false}
             onClose={onClose}
-            maxWidth='xl'
+            maxWidth='2xl'
         >
             <div className='text-center font-semibold text-2xl'>
                 {dataModify.id ? 'Modifier un Maraîcher' : 'Ajouter un Maraîcher'}
             </div>
-            <form className='w-full my-6 grid grid-cols-1 sm:grid-cols-2 gap-4'>
+            <form className='w-full my-6 grid grid-cols-1 sm:grid-cols-3 gap-4'>
                 <div>
                     <InputLabel htmlFor="nom" value="Nom" />
                     <TextInput
