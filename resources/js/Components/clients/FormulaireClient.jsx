@@ -84,15 +84,10 @@ const FormulaireClient = ({
         setBtnTitle(dataModify.id ? "Modification..." : "Enregistrement...");
 
         try {
-            const { lat, lon } = await getCoordinates(data.ville, data.pays, data.village, data.quartier);
             
             const clientData = {
                 ...data,
-                latitude: lat,
-                longitude: lon,
-                localisation: `${data.pays} ${data.ville}${data.village ? ` ${data.village}` : ''}${data.quartier ? ` ${data.quartier}` : ''}`,
-                quartier: data.quartier || 'Non spécifié',
-                village: data.village || 'Non spécifié'
+                localisation: `${data.pays} ${data.ville} : ''}`,
             };
 
             if (dataModify.id) {
@@ -238,30 +233,34 @@ const FormulaireClient = ({
                     <InputError message={validationErrors.ville || errors.ville} className="mt-2" />
                 </div>
                 <div>
-                    <InputLabel htmlFor="village" value="Village" />
+                    <InputLabel htmlFor="latitude" value="Latitude" />
                     <TextInput
-                        id="village"
-                        name="village"
-                        value={data.village}
+                        id="latitude"
+                        name="latitude"
+                        value={data.latitude}
                         className="mt-1 block w-full"
-                        autoComplete="village"
-                        onChange={(e) => setData('village', e.target.value)}
-                        onFocus={() => setValidationErrors({ ...validationErrors, 'village': '' })}
+                        autoComplete="latitude"
+                        type='number'
+                        min='0'
+                        onChange={(e) => setData('latitude', e.target.value)}
+                        onFocus={() => setValidationErrors({ ...validationErrors, 'latitude': '' })}
                     />
-                    <InputError message={validationErrors.village || errors.village} className="mt-2" />
+                    <InputError message={validationErrors.latitude || errors.latitude} className="mt-2" />
                 </div>
                 <div>
-                    <InputLabel htmlFor="quartier" value="Quartier" />
+                    <InputLabel htmlFor="longitude" value="Longitude" />
                     <TextInput
-                        id="quartier"
-                        name="quartier"
-                        value={data.quartier}
+                        id="longitude"
+                        name="longitude"
+                        value={data.longitude}
                         className="mt-1 block w-full"
-                        autoComplete="quartier"
-                        onChange={(e) => setData('quartier', e.target.value)}
-                        onFocus={() => setValidationErrors({ ...validationErrors, 'quartier': '' })}
+                        autoComplete="longitude"
+                        type='number'
+                        min='0'
+                        onChange={(e) => setData('longitude', e.target.value)}
+                        onFocus={() => setValidationErrors({ ...validationErrors, 'longitude': '' })}
                     />
-                    <InputError message={validationErrors.quartier || errors.quartier} className="mt-2" />
+                    <InputError message={validationErrors.longitude || errors.longitude} className="mt-2" />
                 </div>
                 </> : null}
                 <div>

@@ -61,9 +61,9 @@ export const GeolocationTogoComponent = () => {
   }, []);  
 
   return (
-    <div className="mt-4">
-      <h2>Carte des Quartiers - Togo</h2>
-      <MapContainer center={[8.6195, 0.8248]} zoom={7} style={{ height: "500px", width: "100%" }}>
+    <div className="mt-4 bg-white dark:bg-gray-800 p-4 rounded-md shadow-md">
+      <h2 className="font-bold text-lg pb-2">Carte pour localisation des maraîchers (Togo)</h2>
+      <MapContainer center={[8.6195, 0.8248]} zoom={7} style={{ height: "500px", width: "100%", borderRadius: 6 }}>
         <TileLayer
           url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
           attribution="&copy; OpenStreetMap contributors"
@@ -76,6 +76,7 @@ export const GeolocationTogoComponent = () => {
               weight: 2,
               color: "black",
               fillOpacity: 0,
+              zIndex: 80,
             }}
           />
         )}
