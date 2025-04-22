@@ -47,10 +47,13 @@ export const validateFormInstalation = (data, setValidationErrors) => {
     } else if (isNaN(data.debit_nominal) || data.debit_nominal <= 0) {
         errors.debit_nominal = 'Le débit nominal doit être un nombre positif.';
     }
-    if (!data.surface_panneaux.trim()) {
-        errors.surface_panneaux = 'La surface du panneaux solaires est obligatoire.';
-    } else if (isNaN(data.surface_panneaux) || data.surface_panneaux <= 0) {
-        errors.surface_panneaux = 'La surface du panneaux solaires doit être un nombre positif.';
+    if (!data.numero_serie.trim()) {
+        errors.numero_serie = 'Numéro de série de la pompe est obligatoire.';
+    }
+    if (!data.hmt.trim()) {
+        errors.hmt = 'HMT est obligatoire.';
+    } else if (isNaN(data.hmt) || data.hmt <= 0) {
+        errors.hmt = 'HMT doit être un nombre positif.';
     }
 
     setValidationErrors(errors);

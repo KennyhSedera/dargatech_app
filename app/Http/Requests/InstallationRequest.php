@@ -27,7 +27,9 @@ class InstallationRequest extends FormRequest
             'puissance_pompe'   => 'required|numeric',
             'profondeur_forage' => 'required|numeric',
             'debit_nominal'     => 'required|numeric',
-            'surface_panneaux'  => 'required|numeric',
+            'numero_serie'  => 'required|string',
+            'source_eau'  => 'required|string',
+            'hmt'  => 'required|numeric',
         ];
     }
 }

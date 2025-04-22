@@ -16,6 +16,7 @@ import moment from 'moment';
 import "moment/locale/fr";
 import { GeolocationComponent, GeolocationMultipleComponents } from '@/Components/GeolocationComponent';
 import MapComponent from '@/Components/MapComponent';
+import {GeolocationTogoComponent} from '@/Components/GeolocationTogoComponent';
 
 export default function Dashboard() {
     const [data, setData] = useState({});
@@ -74,7 +75,7 @@ export default function Dashboard() {
         { label: 'Maraîchers', value: data?.client ?? 0, color: 'from-orange-400 dark:to-orange-800 to-orange-600', icon: <HiMiniUsers />, route: 'clients' },
         { label: 'Installations', value: data?.installation ?? 0, color: 'from-red-400 dark:to-red-800 to-orange-600', icon: <IoBuild />, route: 'installations' },
         { label: 'Maintenances', value: data?.maintenance ?? 0, color: 'from-blue-400 dark:to-blue-800 to-orange-600', icon: <ImCogs />, route: 'interventions' },
-        { label: 'Total Solde', value: `${data?.soldtotal ?? 0} €`, color: 'from-green-400 dark:to-green-800 to-orange-600', icon: <GrMoney />, route: 'paiements' },
+        { label: 'Total Solde', value: `${data?.soldtotal ?? 0} CFA`, color: 'from-green-400 dark:to-green-800 to-orange-600', icon: <GrMoney />, route: 'paiements' },
     ];
 
     const chartOptions = {
@@ -132,7 +133,7 @@ export default function Dashboard() {
                     className="col-span-2"
                 />
             </div>
-            {/* <GeolocationComponent /> */}
+            <GeolocationTogoComponent />
         </AuthenticatedLayout>
     );
 }

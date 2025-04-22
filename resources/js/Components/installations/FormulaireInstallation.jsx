@@ -9,6 +9,7 @@ import { createinstallations, getinstallations, updateinstallations } from '@/Se
 import InputAutocomplete from '../inputs/InputAutocomplete ';
 import { getClients } from '@/Services/clientService';
 import { formatDate, incrementCodeInstallation } from '@/constant';
+import SelectInput from '../inputs/SelectInput';
 
 const FormulaireInstallation = ({
     open = true,
@@ -26,8 +27,10 @@ const FormulaireInstallation = ({
         puissance_pompe: '',
         profondeur_forage: '',
         debit_nominal: '',
-        surface_panneaux: '',
+        numero_serie: '',
         code_installation: '',
+        source_eau: 'Puits',
+        hmt: '',
     });
 
     const getClient = async () => {
@@ -64,8 +67,10 @@ const FormulaireInstallation = ({
             puissance_pompe: '',
             profondeur_forage: '',
             debit_nominal: '',
-            surface_panneaux: '',
+            numero_serie: '',
             code_installation: 'I0001',
+            source_eau:'Puits',
+            hmt:''
         });
         setLoad(false);
         setBtnTitle('Enregistrer');
@@ -81,8 +86,10 @@ const FormulaireInstallation = ({
                 puissance_pompe: dataModify.puissance_pompe || '',
                 profondeur_forage: dataModify.profondeur_forage || '',
                 debit_nominal: dataModify.debit_nominal || '',
-                surface_panneaux: dataModify.surface_panneaux || '',
+                numero_serie: dataModify.numero_serie || '',
                 code_installation: dataModify.code_installation || '',
+                source_eau: dataModify.source_eau || '',
+                hmt: dataModify.hmt || '',
             });
             setBtnTitle('Modifier');
         } else {
@@ -136,22 +143,56 @@ const FormulaireInstallation = ({
                     <InputError message={validationErrors.client_id || errors.client_id} className="mt-2" />
                 </div>
                 <div>
-                    <InputLabel htmlFor="puissance_pompe" value="Puissance du pompe (W)" />
+                    <InputLabel htmlFor="numero_serie" value="Numéro de série de la pompe" />
                     <TextInput
-                        id="puissance_pompe"
-                        name="puissance_pompe"
-                        value={data.puissance_pompe ?? 0}
+                        id="numero_serie"
+                        name="numero_serie"
+                        value={data.numero_serie}
                         className="block w-full mt-1"
-                        autoComplete="puissance_pompe"
-                        onChange={(e) => setData('puissance_pompe', e.target.value)}
+                        autoComplete="numero_serie"
+                        onChange={(e) => setData('numero_serie', e.target.value)}
                         required
-                        type='number'
-                        onFocus={() => setValidationErrors({ ...validationErrors, 'puissance_pompe': '' })}
+                        onFocus={() => setValidationErrors({ ...validationErrors, 'numero_serie': '' })}
                     />
-                    <InputError message={validationErrors.puissance_pompe || errors.puissance_pompe} className="mt-2" />
+                    <InputError message={validationErrors.numero_serie || errors.numero_serie} className="mt-2" />
                 </div>
                 <div>
-                    <InputLabel htmlFor="profondeur_forage" value="Profondeur du forage (m)" />
+                    <InputLabel htmlFor="source_eau" value="Source d'eau" />
+                    <SelectInput
+                        id="source_eau"
+                        type="source_eau"
+                        name="source_eau"
+                        value={data.source_eau}
+                        className="block w-full mt-1"
+                        autoComplete="source_eau"
+                        onChange={(e) => setData('source_eau', e.target.value)}
+                        required
+                    >
+                        <option value="Puits">Puits</option>
+                        <option value="Forage">Forage</option>
+                        <option value="Etang">Etang</option>
+                        <option value="Barrage">Barrage</option>
+                        <option value="Puits">Rivière</option>
+                    </SelectInput>
+                    <InputError message={validationErrors.source_eau || errors.source_eau} className="mt-2" />
+                </div>
+                <div>
+                    <InputLabel htmlFor="hmt" value="HMT (m)" />
+                    <TextInput
+                        id="hmt"
+                        name="hmt"
+                        value={data.hmt}
+                        className="block w-full mt-1"
+                        autoComplete="hmt"
+                        onChange={(e) => setData('hmt', e.target.value)}
+                        required
+                        type='number'
+                        onFocus={() => setValidationErrors({ ...validationErrors, 'hmt': '' })}
+                    />
+                    <InputError message={validationErrors.hmt || errors.hmt} className="mt-2" />
+                </div>
+                <div>
+                    <InputLabel htmlFor="profondeur_forage" value="Distance maximale pompe champ PV (m)" />
                     <TextInput
                         id="profondeur_forage"
                         name="profondeur_forage"
@@ -181,22 +222,22 @@ const FormulaireInstallation = ({
                     <InputError message={validationErrors.debit_nominal || errors.debit_nominal} className="mt-2" />
                 </div>
                 <div>
-                    <InputLabel htmlFor="surface_panneaux" value="Surface des panneaux solaires (m²)" />
+                    <InputLabel htmlFor="puissance_pompe" value="Puissance crête installé (W)" />
                     <TextInput
-                        id="surface_panneaux"
-                        name="surface_panneaux"
-                        value={data.surface_panneaux}
+                        id="puissance_pompe"
+                        name="puissance_pompe"
+                        value={data.puissance_pompe ?? 0}
                         className="block w-full mt-1"
-                        autoComplete="surface_panneaux"
-                        onChange={(e) => setData('surface_panneaux', e.target.value)}
+                        autoComplete="puissance_pompe"
+                        onChange={(e) => setData('puissance_pompe', e.target.value)}
                         required
                         type='number'
-                        onFocus={() => setValidationErrors({ ...validationErrors, 'surface_panneaux': '' })}
+                        onFocus={() => setValidationErrors({ ...validationErrors, 'puissance_pompe': '' })}
                     />
-                    <InputError message={validationErrors.surface_panneaux || errors.surface_panneaux} className="mt-2" />
+                    <InputError message={validationErrors.puissance_pompe || errors.puissance_pompe} className="mt-2" />
                 </div>
                 <div>
-                    <InputLabel htmlFor="date_installation" value="Date d'installation" />
+                    <InputLabel htmlFor="date_installation" value="Date de l'installation" />
                     <TextInput
                         id="date_installation"
                         name="date_installation"

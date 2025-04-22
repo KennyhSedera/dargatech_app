@@ -39,6 +39,7 @@ export const nodata = '/images/nodata.webp';
 export const nodata1 = '/images/nodata1.png';
 export const nodata2 = '/images/nodata2.png';
 export const togo = '/images/togo.png';
+export const markerIcon = '/images/marker-icon.png';
 export const formatdate = (date) => {
     if (!date || moment(date).isValid()) {
         return moment(date).format('DD/MM/YYYY');

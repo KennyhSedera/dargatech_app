@@ -34,11 +34,13 @@ const InstallationPage = () => {
     const headers = [
         { key: 'code_installation', label: 'Code' },
         { key: 'nom', label: 'Nom client' },
-        { key: 'puissance_pompe', label: 'Puissance du pompe (W)' },
-        { key: 'profondeur_forage', label: 'Profondeur du forage (m)' },
+        { key: 'numero_serie', label: 'Numéro de série de la pompe' },
+        { key: 'puissance_pompe', label: 'Puissance crête installé (W)' },
+        { key: 'profondeur_forage', label: 'Distance maximale pompe champ PV (m)' },
         { key: 'debit_nominal', label: 'Débit nominal (m³/h)' },
-        { key: 'surface_panneaux', label: 'Surface des panneaux solaires (m²)' },
-        { key: 'date_installation', label: 'Date d\'installation' },
+        { key: 'source_eau', label: 'Source d\'eau' },
+        { key: 'hmt', label: 'HMT (m)' },
+        { key: 'date_installation', label: 'Date de l\'installation' },
         {
             key: 'statuts', label: 'Statuts', customRender: (value) => (
                 <span className={`px-2 py-1 rounded-full text-white flex text-nowrap cursor-pointer ${value === 'installée' ? 'bg-green-500/50' : value === 'en cours' ? 'bg-blue-500/50' : 'bg-red-500/50'}`}>
@@ -79,7 +81,9 @@ const InstallationPage = () => {
             puissance_pompe: el.puissance_pompe,
             profondeur_forage: el.profondeur_forage,
             debit_nominal: el.debit_nominal,
-            surface_panneaux: el.surface_panneaux,
+            numero_serie: el.numero_serie,
+            source_eau: el.source_eau,
+            hmt: el.hmt,
             date_installation: formatdate(el.date_installation),
             statuts: el.statuts,
         }));

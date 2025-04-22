@@ -18,7 +18,7 @@ class Installation extends Model
         'date_installation',
         'puissance_pompe',
         'profondeur_forage',
-        'surface_panneaux',
+        'numero_serie',
         'debit_nominal',
         'code_installation',
         'type',
@@ -26,6 +26,8 @@ class Installation extends Model
         'garantie',
         'fournisseur',
         'statuts',
+        'source_eau',
+        'hmt'
     ];
 
     public function client()
