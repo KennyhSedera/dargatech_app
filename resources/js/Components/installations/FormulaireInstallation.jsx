@@ -98,7 +98,7 @@ const FormulaireInstallation = ({
     }, [dataModify, setData]);
 
     const submit = async () => {
-        if (!validateFormInstalation(data, setValidationErrors)) {
+        if (btnTitle ==='Enregistrer' && !validateFormInstalation(data, setValidationErrors)) {
             return;
         }
 
