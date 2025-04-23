@@ -23,7 +23,6 @@ class Client extends Model
         'localisation',
         'date_contrat',
         'surface_cultivee',
-        'localisation_id',
         'type_activite_agricole',
     ];
 
@@ -42,8 +41,4 @@ class Client extends Model
         return $this->hasMany(Alerts::class);
     }
 
-    public function localisation()
-    {
-        return $this->belongsTo(Localisation::class, 'localisation_id');
-    }
 }

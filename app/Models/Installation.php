@@ -13,6 +13,7 @@ class Installation extends Model
      *
      * @var array
      */
+    // In your Installation model
     protected $fillable = [
         'client_id',
         'date_installation',
@@ -21,11 +22,8 @@ class Installation extends Model
         'numero_serie',
         'debit_nominal',
         'code_installation',
-        'type',
-        'modele',
-        'garantie',
-        'fournisseur',
         'statuts',
+        'localisation_id',
         'source_eau',
         'hmt'
     ];
@@ -45,4 +43,8 @@ class Installation extends Model
         return $this->hasMany(Alerts::class);
     }
 
+    public function localisation()
+    {
+        return $this->belongsTo(Localisation::class, 'localisation_id');
+    }
 }

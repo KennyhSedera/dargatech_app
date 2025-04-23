@@ -121,7 +121,6 @@ const FormulairePaiement = () => {
                         client_id: client.id,
                         objet: paiement.observation,
                         description: paiement.description,
-                        produits: paiement.produits,
                         mode_paiement: paiement.mode_paiement,
                         date_echeance: paiement.echeance,
                         statut_paiement: paiement.statut_paiement,

@@ -16,7 +16,7 @@ class ClientController extends Controller
      */
     public function index()
     {
-        $clients = Client::with('localisation')->get();
+        $clients = Client::all();
         return response()->json(['clients' => $clients]);
     }
 
@@ -34,7 +34,7 @@ class ClientController extends Controller
      */
     public function show($id)
     {
-        $client = Client::with(['installations', 'paiement', 'localisation'])->find($id);
+        $client = Client::with(['installations', 'paiement'])->find($id);
 
         if (!$client) {
             return response()->json([
@@ -62,16 +62,6 @@ class ClientController extends Controller
             
             $validatedData = $request->validated();
 
-            // Créer la localisation
-            $localisation = Localisation::create([
-                'latitude' => $validatedData['latitude'] ?? 0,
-                'longitude' => $validatedData['longitude'] ?? 0,
-                'pays' => $validatedData['pays'],
-                'ville' => $validatedData['ville'],
-                'quartier' => $validatedData['quartier'] ?? 'Non spécifié',
-                'village' => $validatedData['village'] ?? 'Non spécifié'
-            ]);
-
             // Créer le client
             $client = Client::create([
                 'nom' => $validatedData['nom'],
@@ -81,7 +71,6 @@ class ClientController extends Controller
                 'email' => $validatedData['email'] ?? null,
                 'telephone' => $validatedData['telephone'],
                 'localisation' => $validatedData['localisation'],
-                'localisation_id' => $localisation->id,
                 'surface_cultivee' => $validatedData['surface_cultivee'],
                 'type_activite_agricole' => $validatedData['type_activite_agricole'],
                 'date_contrat' => Carbon::now(),
@@ -91,7 +80,6 @@ class ClientController extends Controller
 
             return response()->json([
                 'message' => 'Client créé avec succès !',
-                'client' => $client->load('localisation'),
                 'success' => true,
             ], 201);
 
@@ -137,6 +125,7 @@ class ClientController extends Controller
                 'genre' => $validatedData['genre'] ?? $client->genre,
                 'email' => $validatedData['email'] ?? $client->email,
                 'telephone' => $validatedData['telephone'],
+                'localisation' => $validatedData['localisation'],
                 'surface_cultivee' => $validatedData['surface_cultivee'],
                 'type_activite_agricole' => $validatedData['type_activite_agricole']
             ]);
@@ -145,7 +134,6 @@ class ClientController extends Controller
 
             return response()->json([
                 'message' => 'Client mis à jour avec succès !',
-                'client' => $client->load('localisation'),
                 'success' => true
             ]);
 

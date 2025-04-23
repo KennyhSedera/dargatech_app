@@ -8,8 +8,8 @@ import {
   useMapEvents
 } from "react-leaflet";
 import "leaflet/dist/leaflet.css";
-import { getClients } from "@/Services/clientService";
 import L from "leaflet";
+import { getinstallations } from "@/Services/installationService";
 
 // Icône personnalisée
 const customIcon = new L.Icon({
@@ -35,13 +35,14 @@ export const GeolocationTogoComponent = () => {
   const [clickedPosition, setClickedPosition] = useState(null);
 
   const findClient = async () => {
-    const { clients } = await getClients();
-    const cli = clients.map((el) => ({
-      name: el.nom + " " + el.prenom,
+    const {data} = await getinstallations();
+    
+    const inst = data.map((el) => ({
+      name: `${el.code_installation} (${el.numero_serie})`,
       lon: el.localisation.longitude,
       lat: el.localisation.latitude,
     }));
-    setNeighborhoods(cli);
+    setNeighborhoods(inst);
   };
 
   useEffect(() => {

@@ -41,7 +41,7 @@ const ClientPage = () => {
             CIN: el.CIN,
             email: el.email,
             telephone: el.telephone,
-            localisation: el.localisation.pays + ' ' + el.localisation.ville,
+            localisation: el.localisation,
             surface_cultivee: el.surface_cultivee,
             type_activite_agricole: el.type_activite_agricole
         }));

@@ -27,13 +27,9 @@ const FormulaireClient = ({
         telephone: '',
         pays: 'Togo',
         ville: 'Kara',
-        latitude: '',
-        longitude: '',
         localisation: '',
         surface_cultivee: '',
         type_activite_agricole: '',
-        quartier: '',
-        village: '',
     });
 
     const onClose = (message) => {
@@ -62,9 +58,7 @@ const FormulaireClient = ({
                 ville: dataModify.localisation?.ville || 'Kara',
                 quartier: dataModify.localisation?.quartier || '',
                 village: dataModify.localisation?.village || '',
-                latitude: dataModify.localisation?.latitude || '',
-                longitude: dataModify.localisation?.longitude || '',
-                localisation: dataModify.localisation?.localisation || '',
+                localisation: dataModify?.localisation || '',
                 surface_cultivee: dataModify.surface_cultivee || '',
                 type_activite_agricole: dataModify.type_activite_agricole || '',
             });
@@ -83,18 +77,13 @@ const FormulaireClient = ({
         setBtnTitle(dataModify.id ? "Modification..." : "Enregistrement...");
 
         try {
-            
-            const clientData = {
-                ...data,
-                localisation: `${data.pays} ${data.ville} : ''}`,
-            };
 
             if (dataModify.id) {
-                await updateClients(dataModify.id, clientData);
+                await updateClients(dataModify.id, data);
                 onClose('Client modifié avec succès !');
             } else {
-                await createClients(clientData);
-            onClose('Client créé avec succès !');
+                await createClients(data);
+                onClose('Client créé avec succès !');
             }
         } catch (error) {
             console.error("Erreur:", error);
@@ -108,7 +97,7 @@ const FormulaireClient = ({
             show={open}
             closeable={false}
             onClose={onClose}
-            maxWidth='2xl'
+            maxWidth='3xl'
         >
             <div className='text-center font-semibold text-2xl'>
                 {dataModify.id ? 'Modifier un Maraîcher' : 'Ajouter un Maraîcher'}
@@ -201,67 +190,20 @@ const FormulaireClient = ({
                     />
                     <InputError message={validationErrors.telephone || errors.telephone} className="mt-2" />
                 </div>
-
-                {!dataModify.id ? <>
                 <div>
-                    <InputLabel htmlFor="pays" value="Pays" />
+                    <InputLabel htmlFor="localisation" value="Localisation ou adresse" />
                     <TextInput
-                        id="pays"
-                        name="pays"
-                        value={data.pays}
+                        id="localisation"
+                        name="localisation"
+                        value={data.localisation}
                         className="mt-1 block w-full"
-                        autoComplete="pays"
-                        onChange={(e) => setData('pays', e.target.value)}
+                        autoComplete="localisation"
+                        onChange={(e) => setData('localisation', e.target.value)}
                         required
-                        onFocus={() => setValidationErrors({ ...validationErrors, 'pays': '' })}
+                        onFocus={() => setValidationErrors({ ...validationErrors, 'localisation': '' })}
                     />
-                    <InputError message={validationErrors.pays || errors.pays} className="mt-2" />
+                    <InputError message={validationErrors.localisation || errors.localisation} className="mt-2" />
                 </div>
-                <div>
-                    <InputLabel htmlFor="ville" value="Ville" />
-                    <TextInput
-                        id="ville"
-                        name="ville"
-                        value={data.ville}
-                        className="mt-1 block w-full"
-                        autoComplete="ville"
-                        onChange={(e) => setData('ville', e.target.value)}
-                        required
-                        onFocus={() => setValidationErrors({ ...validationErrors, 'ville': '' })}
-                    />
-                    <InputError message={validationErrors.ville || errors.ville} className="mt-2" />
-                </div>
-                <div>
-                    <InputLabel htmlFor="latitude" value="Latitude" />
-                    <TextInput
-                        id="latitude"
-                        name="latitude"
-                        value={data.latitude}
-                        className="mt-1 block w-full"
-                        autoComplete="latitude"
-                        type='number'
-                        min='0'
-                        onChange={(e) => setData('latitude', e.target.value)}
-                        onFocus={() => setValidationErrors({ ...validationErrors, 'latitude': '' })}
-                    />
-                    <InputError message={validationErrors.latitude || errors.latitude} className="mt-2" />
-                </div>
-                <div>
-                    <InputLabel htmlFor="longitude" value="Longitude" />
-                    <TextInput
-                        id="longitude"
-                        name="longitude"
-                        value={data.longitude}
-                        className="mt-1 block w-full"
-                        autoComplete="longitude"
-                        type='number'
-                        min='0'
-                        onChange={(e) => setData('longitude', e.target.value)}
-                        onFocus={() => setValidationErrors({ ...validationErrors, 'longitude': '' })}
-                    />
-                    <InputError message={validationErrors.longitude || errors.longitude} className="mt-2" />
-                </div>
-                </> : null}
                 <div>
                     <InputLabel htmlFor="type_activite_agricole" value="Type activité agricole" />
                     <TextInput

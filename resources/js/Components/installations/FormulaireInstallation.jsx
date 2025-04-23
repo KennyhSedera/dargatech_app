@@ -31,6 +31,11 @@ const FormulaireInstallation = ({
         code_installation: '',
         source_eau: 'Puits',
         hmt: '',
+        latitude: '',
+        longitude: '',
+        pays: 'Togo',
+        ville: 'Kara',
+        statuts: 'installée'
     });
 
     const getClient = async () => {
@@ -69,8 +74,12 @@ const FormulaireInstallation = ({
             debit_nominal: '',
             numero_serie: '',
             code_installation: 'I0001',
-            source_eau:'Puits',
-            hmt:''
+            source_eau: 'Puits',
+            hmt: '',
+            latitude: '',
+            longitude: '',
+            pays: 'Togo',
+            ville: 'Kara',
         });
         setLoad(false);
         setBtnTitle('Enregistrer');
@@ -90,6 +99,10 @@ const FormulaireInstallation = ({
                 code_installation: dataModify.code_installation || '',
                 source_eau: dataModify.source_eau || '',
                 hmt: dataModify.hmt || '',
+                latitude: dataModify.localisation?.latitude || '',
+                longitude: dataModify.localisation?.longitude || '',
+                ville: dataModify.localisation?.ville || 'Kara',
+                pays: dataModify.localisation?.pays || 'Togo',
             });
             setBtnTitle('Modifier');
         } else {
@@ -98,13 +111,13 @@ const FormulaireInstallation = ({
     }, [dataModify, setData]);
 
     const submit = async () => {
-        if (btnTitle ==='Enregistrer' && !validateFormInstalation(data, setValidationErrors)) {
+        if (btnTitle === 'Enregistrer' && !validateFormInstalation(data, setValidationErrors)) {
             return;
         }
-
+    
         setLoad(true);
         setBtnTitle('Chargement...');
-
+    
         try {
             let message;
             if (btnTitle === 'Enregistrer') {
@@ -113,10 +126,17 @@ const FormulaireInstallation = ({
                 ({ message } = await updateinstallations(dataModify.id, data));
             }
             onClose(message);
+            
         } catch (error) {
-            console.error('Error submitting payment:', error);
+            console.error('Error submitting installation:', error);
+            
+            if (error.response && error.response.data) {
+                console.log('Validation errors:', error.response.data.errors);
+                setValidationErrors(error.response.data.errors || {});
+            }
         } finally {
-            clearForm();
+            setLoad(false);
+            setBtnTitle(dataModify.id ? 'Modifier' : 'Enregistrer');
         }
     };
 
@@ -125,11 +145,11 @@ const FormulaireInstallation = ({
     };
 
     return (
-        <Modal show={open} closeable={false} onClose={onClose} maxWidth='xl'>
+        <Modal show={open} closeable={false} onClose={onClose} maxWidth='4xl'>
             <div className='text-2xl font-semibold text-center'>
                 {dataModify.nom ? 'Modifier une Installation' : 'Ajouter une Installation'}
             </div>
-            <form className='grid w-full grid-cols-1 gap-4 my-6 sm:grid-cols-2'>
+            <form className='grid w-full grid-cols-1 gap-4 my-6 sm:grid-cols-3'>
                 <div>
                     <InputLabel htmlFor="client_id" value="Nom client" />
                     <InputAutocomplete
@@ -235,6 +255,66 @@ const FormulaireInstallation = ({
                     />
                     <InputError message={validationErrors.puissance_pompe || errors.puissance_pompe} className="mt-2" />
                 </div>
+                {!dataModify.id ? <>
+                    <div>
+                        <InputLabel htmlFor="pays" value="Pays" />
+                        <TextInput
+                            id="pays"
+                            name="pays"
+                            value={data.pays}
+                            className="mt-1 block w-full"
+                            autoComplete="pays"
+                            onChange={(e) => setData('pays', e.target.value)}
+                            required
+                            onFocus={() => setValidationErrors({ ...validationErrors, 'pays': '' })}
+                        />
+                        <InputError message={validationErrors.pays || errors.pays} className="mt-2" />
+                    </div>
+                    <div>
+                        <InputLabel htmlFor="ville" value="Ville" />
+                        <TextInput
+                            id="ville"
+                            name="ville"
+                            value={data.ville}
+                            className="mt-1 block w-full"
+                            autoComplete="ville"
+                            onChange={(e) => setData('ville', e.target.value)}
+                            required
+                            onFocus={() => setValidationErrors({ ...validationErrors, 'ville': '' })}
+                        />
+                        <InputError message={validationErrors.ville || errors.ville} className="mt-2" />
+                    </div>
+                    <div>
+                        <InputLabel htmlFor="latitude" value="Latitude" />
+                        <TextInput
+                            id="latitude"
+                            name="latitude"
+                            value={data.latitude}
+                            className="mt-1 block w-full"
+                            autoComplete="latitude"
+                            type='number'
+                            min='0'
+                            onChange={(e) => setData('latitude', e.target.value)}
+                            onFocus={() => setValidationErrors({ ...validationErrors, 'latitude': '' })}
+                        />
+                        <InputError message={validationErrors.latitude || errors.latitude} className="mt-2" />
+                    </div>
+                    <div>
+                        <InputLabel htmlFor="longitude" value="Longitude" />
+                        <TextInput
+                            id="longitude"
+                            name="longitude"
+                            value={data.longitude}
+                            className="mt-1 block w-full"
+                            autoComplete="longitude"
+                            type='number'
+                            min='0'
+                            onChange={(e) => setData('longitude', e.target.value)}
+                            onFocus={() => setValidationErrors({ ...validationErrors, 'longitude': '' })}
+                        />
+                        <InputError message={validationErrors.longitude || errors.longitude} className="mt-2" />
+                    </div>
+                </> : null}
                 <div>
                     <InputLabel htmlFor="date_installation" value="Date de l'installation" />
                     <TextInput

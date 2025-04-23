@@ -27,9 +27,13 @@ class InstallationRequest extends FormRequest
             'puissance_pompe'   => 'required|numeric',
             'profondeur_forage' => 'required|numeric',
             'debit_nominal'     => 'required|numeric',
-            'numero_serie'  => 'required|string',
-            'source_eau'  => 'required|string',
-            'hmt'  => 'required|numeric',
+            'numero_serie'      => 'required|string',
+            'source_eau'        => 'required|string',
+            'hmt'               => 'required|numeric',
+            'latitude'          => 'required|numeric',
+            'longitude'         => 'required|numeric',
+            'pays'              => 'nullable|string',
+            'ville'             => 'nullable|string',
         ];
     }
 }
