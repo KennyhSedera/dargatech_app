@@ -24,6 +24,7 @@ const InputAutocomplete = forwardRef(
         useEffect(() => {
             if (isFocused) {
                 autocompleteRef.current?.focus();
+                setShowSuggestions(true);
             }
         }, [isFocused]);
 
@@ -75,17 +76,30 @@ const InputAutocomplete = forwardRef(
                     ref={autocompleteRef}
                     onFocus={() => (setShowSuggestions(true), onFocus())}
                 />
-                {showSuggestions && filteredData.length > 0 && (
-                    <ul className="absolute z-50 mt-1 w-full bg-white dark:bg-gray-800 border border-gray-300 dark:border-gray-700 rounded-md shadow-lg max-h-48 overflow-y-auto">
-                        {filteredData.map((item) => (
-                            <li
-                                key={item.id}
-                                className="px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-700 cursor-pointer"
-                                onMouseDown={() => handleSelect(item)}
-                            >
-                                {item.nom || item.title}
+                {showSuggestions && (
+                    <ul
+                        role="listbox"
+                        className="absolute z-50 mt-1 w-full bg-white dark:bg-gray-800 border border-gray-300 dark:border-gray-700 rounded-md shadow-lg max-h-48 overflow-y-auto"
+                    >
+                        {filteredData.length > 0 ? (
+                            filteredData.map((item) => (
+                                <li
+                                    key={item.id}
+                                    className="px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-700 cursor-pointer"
+                                    onMouseDown={() => handleSelect(item)}
+                                >
+                                    {item.nom || item.title}
+                                </li>
+                            ))
+                        ) : inputValue ? (
+                            <li className="px-4 py-2 text-gray-500 cursor-default">
+                                Aucune donnée ne correspond à votre recherche.
                             </li>
-                        ))}
+                        ) : (
+                            <li className="px-4 py-2 text-gray-500 cursor-default">
+                                Faites votre recherche ...
+                            </li>
+                        )}
                     </ul>
                 )}
             </div>

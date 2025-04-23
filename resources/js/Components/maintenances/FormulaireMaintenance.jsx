@@ -124,7 +124,6 @@ const FormulaireMaintenance = ({
                         data={installation}
                         className="block w-full mt-1"
                         onSelect={handleSelect}
-                        isFocused={true}
                         defaultValue={data.installation_id}
                         readOnly={dataModify.id}
                         onFocus={() => setValidationErrors({ ...validationErrors, 'installation_id': '' })}

@@ -30,7 +30,7 @@ const InfoMaraicher = ({ clients, data, setData, errors, validationErrors, setVa
                     </div>
                     <div className='col-span-2'>
                         <InputLabel htmlFor="prenom_acheteur" value="Prénom" />
-                        <InputAutocomplete data={clients} isFocused={true} className="block w-full mt-1" onSelect={handleSelect} defaultValue={data.client_id} onFocus={() => setValidationErrors({ ...validationErrors, 'client_id': '' })} />
+                        <InputAutocomplete data={clients} className="block w-full mt-1" onSelect={handleSelect} defaultValue={data.client_id} onFocus={() => setValidationErrors({ ...validationErrors, 'client_id': '' })} />
                         <InputError message={validationErrors.prenom_acheteur || errors.prenom_acheteur} className="mt-2" />
                     </div>
                     <div className='col-span-2'>

@@ -102,37 +102,37 @@ const PartenaireFormulaire = ({
       <form className='grid w-full grid-cols-1 gap-4 my-6 sm:grid-cols-2'>
         <div>
           <InputLabel htmlFor="name" value="Nom" />
-          <TextInput id="name" name="name" value={data.name} className="block w-full mt-1" autoComplete="name" onChange={(e) => setData('name', e.target.value)} required placeholder="Nom du partenaire" onFocus={() => setValidationErrors({ ...validationErrors, 'name': '' })} />
+          <TextInput id="name" name="name" value={data.name} className="block w-full mt-1" autoComplete="name" onChange={(e) => setData('name', e.target.value)} required onFocus={() => setValidationErrors({ ...validationErrors, 'name': '' })} />
           <InputError message={validationErrors.name || errors.name} className="mt-2" />
         </div>
         <div>
           <InputLabel htmlFor="email" value="Email" />
-          <TextInput id="email" name="email" value={data.email} className="block w-full mt-1" autoComplete="email" onChange={(e) => setData('email', e.target.value)} required placeholder="Email du partenaire" onFocus={() => setValidationErrors({ ...validationErrors, 'email': '' })} />
+          <TextInput id="email" name="email" value={data.email} className="block w-full mt-1" autoComplete="email" onChange={(e) => setData('email', e.target.value)} required onFocus={() => setValidationErrors({ ...validationErrors, 'email': '' })} />
           <InputError message={validationErrors.email || errors.email} className="mt-2" />
         </div>
         <div>
           <InputLabel htmlFor="telephone" value="Téléphone" />
-          <TextInput id="telephone" name="telephone" value={data.telephone} className="block w-full mt-1" autoComplete="telephone" onChange={(e) => setData('telephone', e.target.value)} required placeholder="Téléphone du partenaire" onFocus={() => setValidationErrors({ ...validationErrors, 'telephone': '' })} />
+          <TextInput id="telephone" name="telephone" value={data.telephone} className="block w-full mt-1" autoComplete="telephone" onChange={(e) => setData('telephone', e.target.value)} required onFocus={() => setValidationErrors({ ...validationErrors, 'telephone': '' })} />
           <InputError message={validationErrors.telephone || errors.telephone} className="mt-2" />
         </div>
         <div>
           <InputLabel htmlFor="adresse" value="Adresse" />
-          <TextInput id="adresse" name="adresse" value={data.adresse} className="block w-full mt-1" autoComplete="adresse" onChange={(e) => setData('adresse', e.target.value)} required placeholder="Adresse du partenaire" onFocus={() => setValidationErrors({ ...validationErrors, 'adresse': '' })} />
+          <TextInput id="adresse" name="adresse" value={data.adresse} className="block w-full mt-1" autoComplete="adresse" onChange={(e) => setData('adresse', e.target.value)} required onFocus={() => setValidationErrors({ ...validationErrors, 'adresse': '' })} />
           <InputError message={validationErrors.adresse || errors.adresse} className="mt-2" />
         </div>
         <div>
           <InputLabel htmlFor="ville" value="Ville" />
-          <TextInput id="ville" name="ville" value={data.ville} className="block w-full mt-1" autoComplete="ville" onChange={(e) => setData('ville', e.target.value)} required placeholder="Ville du partenaire" onFocus={() => setValidationErrors({ ...validationErrors, 'ville': '' })} />
+          <TextInput id="ville" name="ville" value={data.ville} className="block w-full mt-1" autoComplete="ville" onChange={(e) => setData('ville', e.target.value)} required onFocus={() => setValidationErrors({ ...validationErrors, 'ville': '' })} />
           <InputError message={validationErrors.ville || errors.ville} className="mt-2" />
         </div>
         <div>
           <InputLabel htmlFor="pays" value="Pays" />
-          <TextInput id="pays" name="pays" value={data.pays} className="block w-full mt-1" autoComplete="pays" onChange={(e) => setData('pays', e.target.value)} required placeholder="Pays du partenaire" onFocus={() => setValidationErrors({ ...validationErrors, 'pays': '' })} />
+          <TextInput id="pays" name="pays" value={data.pays} className="block w-full mt-1" autoComplete="pays" onChange={(e) => setData('pays', e.target.value)} required onFocus={() => setValidationErrors({ ...validationErrors, 'pays': '' })} />
           <InputError message={validationErrors.pays || errors.pays} className="mt-2" />
         </div>
         <div>
           <InputLabel htmlFor="site_web" value="Site web" />
-          <TextInput id="site_web" name="site_web" value={data.site_web} className="block w-full mt-1" autoComplete="site_web" onChange={(e) => setData('site_web', e.target.value)} required placeholder="Site web du partenaire" onFocus={() => setValidationErrors({ ...validationErrors, 'site_web': '' })} />
+          <TextInput id="site_web" name="site_web" value={data.site_web} placeholder='www.example.com' className="block w-full mt-1" autoComplete="site_web" onChange={(e) => setData('site_web', e.target.value)} required onFocus={() => setValidationErrors({ ...validationErrors, 'site_web': '' })} />
           <InputError message={validationErrors.site_web || errors.site_web} className="mt-2" />
         </div>
         <div>
@@ -156,7 +156,7 @@ const PartenaireFormulaire = ({
         </div>
         <div>
           <InputLabel htmlFor="description" value="Description" />
-          <TextInput id="description" name="description" value={data.description} className="block w-full mt-1" autoComplete="description" onChange={(e) => setData('description', e.target.value)} required placeholder="Description du partenaire" onFocus={() => setValidationErrors({ ...validationErrors, 'description': '' })} />
+          <TextInput id="description" name="description" value={data.description} className="block w-full mt-1" autoComplete="description" onChange={(e) => setData('description', e.target.value)} required onFocus={() => setValidationErrors({ ...validationErrors, 'description': '' })} />
           <InputError message={validationErrors.description || errors.description} className="mt-2" />
         </div>
         <div>
