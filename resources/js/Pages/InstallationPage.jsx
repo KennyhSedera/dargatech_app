@@ -120,7 +120,7 @@ const InstallationPage = () => {
     const handleDelete = (item) => {
         setSuppression({
             open: true,
-            message: `Êtes-vous sûr de vouloir supprimer l'installation du ${item.nom} le ${item.date_installation} ?`,
+            message: `Êtes-vous sûr de vouloir supprimer l'installation numéro ${item.code_installation} du ${item.nom} le ${item.date_installation} ?`,
             id: item.id
         });
     };

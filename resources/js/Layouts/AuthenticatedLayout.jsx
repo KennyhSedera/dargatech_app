@@ -1,3 +1,4 @@
+import AnimatedSolarText from '@/Components/AnimatedSolarText';
 import NavLinkIcon from '@/Components/nav/NavLinkIcon';
 import ResponsiveNavLink from '@/Components/nav/ResponsiveNavLink';
 import ThemeDropdown from '@/Components/nav/ThemeDropdown';
@@ -36,6 +37,7 @@ export default function AuthenticatedLayout({ setId = () => { }, children }) {
 
     return (
         <div className="min-h-screen w-full bg-gray-100 dark:bg-gray-900 dark:text-white flex">
+            {/* Drawer */}
             <div className='hidden sm:flex sm:flex-col w-16 border-r py-1 items-center h-screen sticky top-0 border-gray-100 bg-white dark:border-gray-700 dark:bg-gray-800 z-40'>
                 <a href={'https://dargatech.com'} target='_blank' rel='noreferrer'><img src={logo} alt="logo" className='w-12 mt-2' /></a>
                 <div className='flex flex-col gap-2 mt-6 justify-center bg-red'>
@@ -50,6 +52,8 @@ export default function AuthenticatedLayout({ setId = () => { }, children }) {
                     ))}
                 </div>
             </div>
+
+            {/* Navbar */}
             <div className='w-full'>
                 <nav className="border-b border-gray-100 bg-white dark:border-gray-700 dark:bg-gray-800 sticky top-0 z-40">
                     <div className="mx-auto max-w-7xl px-2 sm:px-4 lg:px-6">
@@ -61,6 +65,10 @@ export default function AuthenticatedLayout({ setId = () => { }, children }) {
                                     </a>
                                 </div>
                             </div>
+
+                            {/* <div className='hidden sm:flex justify-center text-orange-600 dark:text-indigo-600 items-center font-black text-2xl '>EXIGEZ LE MEILLEUR DU SOLAIRE</div> */}
+
+                            <AnimatedSolarText />
 
                             <div className="flex items-center">
                                 <ThemeDropdown />

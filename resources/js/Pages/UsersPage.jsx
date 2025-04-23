@@ -16,9 +16,7 @@ const UsersPage = () => {
   const [deleteForm, setDeleteForm] = useState({
     open: false,
     message: '',
-    btnAcceptName: '',
-    title: '',
-    btnAcceptColor: '',
+    id: 0,
   });
   const [alert, setAlert] = useState({
     open: false,
@@ -26,19 +24,19 @@ const UsersPage = () => {
     type: 'success'
   });
 
-  useEffect(() => {
-    const fetchUsers = async () => {
-      try {
-        const data = await getUsers()
-        setUsers(data);
-        setFilteredUsers(data);
-      } catch (error) {
-        console.error("Failed to fetch users:", error)
-      } finally {
-        setIsLoading(false)
-      }
+  const fetchUsers = async () => {
+    try {
+      const data = await getUsers()
+      setUsers(data);
+      setFilteredUsers(data);
+    } catch (error) {
+      console.error("Failed to fetch users:", error)
+    } finally {
+      setIsLoading(false)
     }
+  }
 
+  useEffect(() => {
     fetchUsers()
   }, [])
 
@@ -69,19 +67,19 @@ const UsersPage = () => {
     setDeleteForm({
       open: true,
       message: 'Voulez-vous vraiment supprimer cet utilisateur ?',
-      btnAcceptName: 'Supprimer',
-      title: 'Suppression',
-      btnAcceptColor: 'bg-red-500 text-white',
+      id: id
     });
-    deleteUser(id).then(response => {
-      if (response.success) {
-        setAlert({ ...alert, open: true, message: 'Utilisateur supprimé avec succès', type: 'success' });
-        setDeleteForm({ ...deleteForm, open: false });
-        fetchUsers();
-      } else {
-        setAlert({ ...alert, open: true, message: response.message, type: 'error' });
-      }
-    })
+  }
+
+  const confirmDeleteUser = async () => {
+    const response = await deleteUser(deleteForm.id);
+    if (response.success) {
+      setAlert({ ...alert, open: true, message: 'Utilisateur supprimé avec succès', type: 'success' });
+      setDeleteForm({ ...deleteForm, open: false });
+      fetchUsers();
+    } else {
+      setAlert({ ...alert, open: true, message: response.message, type: 'error' });
+    }
   }
 
   return (
@@ -96,17 +94,20 @@ const UsersPage = () => {
       <ConfirmDialog
         open={deleteForm.open}
         message={deleteForm.message}
-        btnAcceptName={deleteForm.btnAcceptName}
-        title={deleteForm.title}
-        btnAcceptColor={deleteForm.btnAcceptColor}
-        close={deleteForm.close}
-        accept={deleteForm.accept}
+        btnAcceptName='Supprimer'
+        title='Suppression'
+        btnAcceptColor='bg-red-500 text-white'
+        accept={confirmDeleteUser}
+        close={() => setDeleteForm({ ...deleteForm, open: false, id: 0 })}
       />
+
       <Snackbar
-        open={alert.open}
         message={alert.message}
         type={alert.type}
-        onClose={() => setAlert({ ...alert, open: false })}
+        duration={3000}
+        position="top-right"
+        show={alert.open}
+        onClose={() => setAlert({ ...alert, message: '', open: false })}
       />
       <div className="py-8">
         <div className="max-w-7xl mx-auto sm:px-6 lg:px-8">
