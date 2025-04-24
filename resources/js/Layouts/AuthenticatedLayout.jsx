@@ -65,9 +65,7 @@ export default function AuthenticatedLayout({ setId = () => { }, children }) {
                                     </a>
                                 </div>
                             </div>
-
-                            {/* <div className='hidden sm:flex justify-center text-orange-600 dark:text-indigo-600 items-center font-black text-2xl '>EXIGEZ LE MEILLEUR DU SOLAIRE</div> */}
-
+                            
                             <AnimatedSolarText />
 
                             <div className="flex items-center">

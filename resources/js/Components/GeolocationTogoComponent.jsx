@@ -10,11 +10,20 @@ import {
 import "leaflet/dist/leaflet.css";
 import L from "leaflet";
 import { getinstallations } from "@/Services/installationService";
+import { marker } from "@/constant";
+
+// Icône personnalisée
+const customIcon2 = new L.Icon({
+  iconUrl: "https://cdn-icons-png.flaticon.com/512/684/684908.png",
+  iconSize: [32, 32],
+  iconAnchor: [16, 32],
+  popupAnchor: [0, -32],
+});
 
 // Icône personnalisée
 const customIcon = new L.Icon({
-  iconUrl: "https://cdn-icons-png.flaticon.com/512/684/684908.png",
-  iconSize: [32, 32],
+  iconUrl: marker,
+  iconSize: [45, 45],
   iconAnchor: [16, 32],
   popupAnchor: [0, -32],
 });
@@ -89,7 +98,7 @@ export const GeolocationTogoComponent = () => {
         ))}
 
         {clickedPosition && (
-          <Marker position={[clickedPosition.lat, clickedPosition.lng]}>
+          <Marker position={[clickedPosition.lat, clickedPosition.lng]} icon={customIcon2}>
             <Popup>Position sélectionnée : {clickedPosition.lat}, {clickedPosition.lng}</Popup>
           </Marker>
         )}
