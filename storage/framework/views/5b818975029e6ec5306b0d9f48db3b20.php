@@ -122,19 +122,19 @@
         </div>
         
         <div class="content">
-            <p class="welcome-message">Bonjour <strong class="important">{{ $name }}</strong>,</p>
+            <p class="welcome-message">Bonjour <strong class="important"><?php echo e($name); ?></strong>,</p>
 
             <p>Nous sommes ravis de vous accueillir parmi nous. Voici vos identifiants pour vous connecter à notre plateforme :</p>
             
             <div class="credentials-box">
                 <p style="margin-bottom: 5px;"><strong>Mot de passe :</strong></p>
-                <p style="font-family: monospace; font-size: 18px; background: #e9ecef; padding: 10px; border-radius: 4px; text-align: center;">{{ $password }}</p>
+                <p style="font-family: monospace; font-size: 18px; background: #e9ecef; padding: 10px; border-radius: 4px; text-align: center;"><?php echo e($password); ?></p>
             </div>
 
             <p>Pour accéder à votre compte, veuillez cliquer sur le bouton ci-dessous :</p>
             
             <div style="text-align: center;">
-                <a href="{{ $appLink }}" class="site-link">Accéder à mon compte</a>
+                <a href="<?php echo e($appLink); ?>" class="site-link">Accéder à mon compte</a>
             </div>
 
             <p>Nous vous remercions de votre confiance et sommes impatients de vous accompagner dans votre expérience.</p>
@@ -148,4 +148,4 @@
         </div>
     </div>
 </body>
-</html>
+</html><?php /**PATH E:\dargatech_app\resources\views/emails/bot_credentials.blade.php ENDPATH**/ ?>

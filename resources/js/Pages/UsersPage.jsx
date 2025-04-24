@@ -7,6 +7,7 @@ import Snackbar from '@/Components/Snackbar'
 import ConfirmDialog from '@/Components/ConfirmDialog'
 import UserCard from '@/Components/UserCard'
 import EmptyState from '@/Components/EmptyState'
+import AdminFormulaire from '@/Components/users/AdminFormulaire'
 
 const UsersPage = () => {
   const [users, setUsers] = useState([]);
@@ -23,6 +24,7 @@ const UsersPage = () => {
     message: '',
     type: 'success'
   });
+  const [open, setopen] = useState(false)
 
   const fetchUsers = async () => {
     try {
@@ -57,6 +59,18 @@ const UsersPage = () => {
     setFilteredUsers(filtered);
   };
 
+  const closeForm = (mess)=> {
+    if (mess) {
+      setAlert({
+        open:true,
+        message: mess,
+        type:'success'
+      });
+    }
+    setopen(false);
+    fetchUsers();
+  }
+
   // Function to handle image errors and provide fallback
   const handleImageError = (e) => {
     e.target.onerror = null
@@ -89,7 +103,7 @@ const UsersPage = () => {
         title="Liste des utilisateurs"
         onSearch={handleSearch}
         search={search}
-        btn={false}
+        handleClick={()=> setopen(true)}
       />
       <ConfirmDialog
         open={deleteForm.open}
@@ -100,7 +114,10 @@ const UsersPage = () => {
         accept={confirmDeleteUser}
         close={() => setDeleteForm({ ...deleteForm, open: false, id: 0 })}
       />
-
+      <AdminFormulaire
+      closeForm={closeForm}
+      open={open}
+       />
       <Snackbar
         message={alert.message}
         type={alert.type}
