@@ -9,7 +9,7 @@ use Illuminate\Mail\Mailables\Content;
 use Illuminate\Mail\Mailables\Envelope;
 use Illuminate\Queue\SerializesModels;
 
-class PartenaireEmail extends Mailable
+class AdminRegistered extends Mailable
 {
     use Queueable, SerializesModels;
 
@@ -23,10 +23,10 @@ class PartenaireEmail extends Mailable
      */
     public function __construct($password, $appLink, $name, $email)
     {
-        $this->password = $password;
-        $this->appLink = $appLink;
-        $this->name = $name;
-        $this->email = $email;
+        $this->password    = $password;
+        $this->appLink     = $appLink;
+        $this->name        = $name;
+        $this->email        = $email;
     }
 
     /**
@@ -35,7 +35,7 @@ class PartenaireEmail extends Mailable
     public function envelope(): Envelope
     {
         return new Envelope(
-            subject: 'Vos identifiants de connexion en tant que Partenaire',
+            subject: 'Vos identifiants de connexion en tant que Administrateur',
         );
     }
 
@@ -45,12 +45,7 @@ class PartenaireEmail extends Mailable
     public function content(): Content
     {
         return new Content(
-            view: 'emails.partenaire_email',
-            with: [
-                'password' => $this->password,
-                'appLink' => $this->appLink,
-                'name' => $this->name,
-            ],
+            view: 'emails.admin_email',
         );
     }
 

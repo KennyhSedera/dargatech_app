@@ -3,7 +3,7 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
-use App\Mail\BotCredentialsMail;
+use App\Mail\AdminRegistered;
 use App\Models\User;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Hash;
@@ -43,11 +43,11 @@ class AdminController extends Controller
 
             try {
                 $appLink = config('app.url') . '/login';
-                Mail::to($request->email)->send(new BotCredentialsMail(
+                Mail::to($request->email)->send(new AdminRegistered(
                     $password,
-                    $request->email,
                     $appLink,
-                    $request->name
+                    $request->name,
+                    $request->email
                 ));
             } catch (\Exception $emailError) {
                 Log::error('Erreur lors de l\'envoi de l\'email au admin: ' . $emailError->getMessage());

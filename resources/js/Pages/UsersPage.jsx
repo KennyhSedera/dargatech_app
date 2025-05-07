@@ -5,7 +5,7 @@ import { Head } from '@inertiajs/react'
 import HeaderPage from '@/Components/HeaderPage'
 import Snackbar from '@/Components/Snackbar'
 import ConfirmDialog from '@/Components/ConfirmDialog'
-import UserCard from '@/Components/UserCard'
+import UserCard from '@/Components/users/UserCard'
 import EmptyState from '@/Components/EmptyState'
 import AdminFormulaire from '@/Components/users/AdminFormulaire'
 
@@ -71,7 +71,6 @@ const UsersPage = () => {
     fetchUsers();
   }
 
-  // Function to handle image errors and provide fallback
   const handleImageError = (e) => {
     e.target.onerror = null
     e.target.src = '/path/to/default-avatar.png'

@@ -3,147 +3,121 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Vos identifiants de connexion</title>
+    <title>Vos identifiants de connexion SISAM</title>
     <style>
         body {
-            font-family: 'Segoe UI', Arial, sans-serif;
-            background-color: #f5f7fa;
-            margin: 0;
-            padding: 0;
-            color: #333;
-            line-height: 1.6;
+        font-family: Arial, sans-serif;
+        line-height: 1.6;
+        color: #333;
+        max-width: 600px;
+        margin: 0 auto;
+        padding: 10px;
         }
         .container {
-            max-width: 600px;
-            margin: 20px auto;
-            background-color: #ffffff;
-            padding: 0;
-            border-radius: 10px;
-            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
-            overflow: hidden;
+        background-color: #ffffff;
+        margin: 0;
+        padding: 0;
         }
         .header {
-            background-color: #4A6FDE;
+            background: linear-gradient(90deg, #f8a01c 0%, #3da6e1 100%);
             color: white;
-            padding: 25px;
+            padding: 15px;
             text-align: center;
-        }
-        .content {
-            padding: 30px;
         }
         h1 {
             margin: 0;
-            font-size: 24px;
-            font-weight: 600;
-            color: white;
+            font-size: 22px;
+            font-weight: bold;
         }
-        .welcome-message {
-            font-size: 18px;
-            margin-bottom: 25px;
+        .tagline {
+            color: #fff;
+            font-style: italic;
+            margin-top: 5px;
+            font-size: 14px;
+        }
+        .content {
+            padding: 20px 0;
         }
         p {
-            font-size: 16px;
-            color: #4a4a4a;
             margin-bottom: 15px;
         }
-        a {
-            color: #4A6FDE;
+        .credentials {
+            margin: 15px 0;
+            padding: 10px;
+            border-left: 3px solid #3da6e1;
+            background-color: #f9f9f9;
+        }
+        .button {
+            display: inline-block;
+            background: linear-gradient(90deg, #f8a01c 0%, #3da6e1 100%);
+            color: #fff !important;
             text-decoration: none;
+            padding: 10px 20px;
+            border-radius: 3px;
+            margin: 10px 0;
             font-weight: 500;
         }
-        a:hover {
-            text-decoration: underline;
-        }
-        .important {
-            font-weight: bold;
-            color: #333;
-        }
-        .credentials-box {
-            background-color: #f8f9fc;
-            border-left: 4px solid #4A6FDE;
-            padding: 15px 20px;
-            margin: 20px 0;
-            border-radius: 5px;
-        }
-        .telegram-button {
-            display: inline-block;
-            padding: 12px 25px;
-            margin: 20px 0;
-            background-color: #0088cc;
-            color: white !important;
-            text-align: center;
-            border-radius: 5px;
-            text-decoration: none;
-            font-weight: 600;
-            transition: background-color 0.2s ease;
-        }
-        .telegram-button:hover {
-            background-color: #006699;
-            text-decoration: none;
-        }
-        .site-link {
-            display: inline-block;
-            padding: 12px 25px;
+        ul {
             margin: 10px 0;
-            background-color: #4A6FDE;
-            color: white !important;
-            text-align: center;
-            border-radius: 5px;
-            text-decoration: none;
-            font-weight: 600;
-            transition: background-color 0.2s ease;
+            padding-left: 25px;
         }
-        .site-link:hover {
-            background-color: #3a5ec7;
-            text-decoration: none;
+        li {
+            margin-bottom: 5px;
         }
         .footer {
-            background-color: #f5f7fa;
-            text-align: center;
-            font-size: 13px;
-            color: #6c757d;
-            padding: 15px;
-            border-top: 1px solid #eaeaea;
-        }
-        .logo {
-            height: 50px;
-            margin-bottom: 15px;
-        }
-        .divider {
-            border-top: 1px solid #eaeaea;
-            margin: 25px 0;
+            margin-top: 20px;
+            padding-top: 15px;
+            border-top: 1px solid #eee;
+            font-size: 12px;
+            color: #666;
         }
     </style>
 </head>
 <body>
     <div class="container">
         <div class="header">
-            <h1>Bienvenue sur notre plateforme !</h1>
+            <h1>Bienvenue sur notre plateforme SISAM</h1>
+            <div class="tagline">Solution d'Irrigation Solaire Améliorée</div>
+            <div class="tagline">« Avec le soleil, récolter des revenus »</div>
         </div>
         
         <div class="content">
-            <p class="welcome-message">Bonjour <strong class="important">{{ $name }}</strong>,</p>
+            <p><strong>Cher technicien, chère technicienne {{ $name }},</strong></p>
 
-            <p>Nous sommes ravis de vous accueillir parmi nous. Voici vos identifiants pour vous connecter à notre plateforme :</p>
+            <p>Bienvenue sur la plateforme SISAM, votre nouvel outil professionnel pour la gestion et le suivi des interventions de maintenance sur les systèmes de pompage solaire.</p>
             
-            <div class="credentials-box">
-                <p style="margin-bottom: 5px;"><strong>Mot de passe :</strong></p>
-                <p style="font-family: monospace; font-size: 18px; background: #e9ecef; padding: 10px; border-radius: 4px; text-align: center;">{{ $password }}</p>
+            <div class="credentials">
+                <p><strong>Identifiant :</strong> {{ $email }}</p>
+                <p><strong>Mot de passe :</strong> {{ $password }}</p>
             </div>
 
-            <p>Pour accéder à votre compte, veuillez cliquer sur le bouton ci-dessous :</p>
+            <p>Pour vous connecter, cliquez simplement sur le bouton ci-dessous :</p>
             
             <div style="text-align: center;">
-                <a href="{{ $appLink }}" class="site-link">Accéder à mon compte</a>
+                <a href="{{ $appLink }}" class="button">Accéder à mon compte</a>
             </div>
 
-            <p>Nous vous remercions de votre confiance et sommes impatients de vous accompagner dans votre expérience.</p>
+            <p>Cette plateforme a été spécialement conçue pour vous permettre de :</p>
+            <ul>
+                <li>Consulter le calendrier des interventions planifiées</li>
+                <li>Accéder aux fiches techniques de chaque installation</li>
+                <li>Signaler et documenter les interventions réalisées</li>
+                <li>Suivre l'historique de maintenance de chaque équipement</li>
+                <li>Accéder aux manuels techniques et procédures d'intervention</li>
+                <li>Communiquer avec l'équipe support DARGATECH</li>
+            </ul>
+
+            <p>Grâce à cet outil, vous pourrez optimiser vos déplacements, préparer efficacement vos interventions et assurer une traçabilité complète des opérations de maintenance.</p>
             
-            <p>Cordialement,<br>L'équipe support</p>
+            <p>Les informations que vous enregistrerez sur la plateforme contribueront directement à l'amélioration continue de nos systèmes et à la satisfaction des maraîchers utilisateurs.</p>
+            
+            <p>Pour toute question sur l'utilisation de cette plateforme, n'hésitez pas à contacter votre superviseur technique.</p>
+            
+            <p>Cordialement,<br><strong>L'équipe support DARGATECH SARL</strong></p>
         </div>
         
         <div class="footer">
-            <p>Ceci est un e-mail automatique, merci de ne pas y répondre.</p>
+            <p>Systèmes de pompage solaire Dargatech SARL</p>
             <p>© 2025 - Tous droits réservés</p>
         </div>
     </div>

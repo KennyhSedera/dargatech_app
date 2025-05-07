@@ -6,6 +6,7 @@ import { Transition } from '@headlessui/react';
 import { useForm } from '@inertiajs/react';
 import { useRef } from 'react';
 import { TbLock, TbShieldLock, TbKey } from 'react-icons/tb';
+import { set } from 'lodash';
 
 export default function UpdatePasswordForm({ className = '' }) {
     const passwordInput = useRef();
@@ -19,6 +20,7 @@ export default function UpdatePasswordForm({ className = '' }) {
         reset,
         processing,
         recentlySuccessful,
+        setErrors,
     } = useForm({
         current_password: '',
         password: '',
@@ -75,6 +77,7 @@ export default function UpdatePasswordForm({ className = '' }) {
                                     type="password"
                                     className="pl-10 block w-full"
                                     autoComplete="current-password"
+                                    onFocus={() => setErrors({...errors, current_password: ""})}
                                 />
                             </div>
                             <InputError

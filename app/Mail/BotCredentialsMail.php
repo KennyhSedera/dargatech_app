@@ -15,13 +15,15 @@ class BotCredentialsMail extends Mailable
     public $botUsername;
     public $appLink;
     public $name;
+    public $email;
 
-    public function __construct($password, $botUsername, $appLink, $name)
+    public function __construct($password, $botUsername, $appLink, $name, $email)
     {
         $this->password    = $password;
         $this->botUsername = $botUsername;
         $this->appLink     = $appLink;
         $this->name        = $name;
+        $this->email        = $email;
     }
 
     /**
@@ -30,7 +32,7 @@ class BotCredentialsMail extends Mailable
     public function envelope(): Envelope
     {
         return new Envelope(
-            subject: 'Vos identifiants de connexion',
+            subject: 'Vos identifiants de connexion en tant que Technicien',
         );
     }
 

@@ -73,7 +73,8 @@ class PartenaireController extends Controller
         Mail::to($request->email)->send(new PartenaireEmail(
             $password,
             $appLink,
-            $request->name
+            $request->name,
+            $request->email
         ));
 
         return response()->json([

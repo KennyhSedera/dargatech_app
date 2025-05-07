@@ -42,13 +42,12 @@ class TechnicienController extends Controller
                     $request->password,
                     'dargatech_bot',
                     $appLink,
-                    $request->name
+                    $request->name,
+                    $request->email
                 ));
             } catch (\Exception $emailError) {
-                // Log l'erreur d'envoi d'email mais ne pas échouer la création
                 Log::error('Erreur lors de l\'envoi de l\'email au technicien: ' . $emailError->getMessage());
                 
-                // Retourner succès avec avertissement
                 return response()->json([
                     'message' => 'Technicien créé avec succès, mais l\'email n\'a pas pu être envoyé',
                     'user' => $user->load('technicien'),
