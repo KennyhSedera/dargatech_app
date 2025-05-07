@@ -20,7 +20,7 @@
     }
     .header {
       background: linear-gradient(90deg, #f8a01c 0%, #3da6e1 100%);
-      color: "#fff";
+      color: #fff;
       padding: 15px;
       text-align: center;
       margin-bottom: 20px;

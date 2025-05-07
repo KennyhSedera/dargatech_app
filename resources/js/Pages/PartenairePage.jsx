@@ -64,6 +64,14 @@ const PartenairePage = () => {
     findAllPartenaires();
   };
 
+  const onClose  = (message) => {
+    setOpen(false);
+    if (message) {
+      handleAlert(message, 'success');
+    }
+    findAllPartenaires();
+  };
+
   // Filtrer les partenaires en fonction du terme de recherche
   const onFiltredData = (value) => {
     setSearchTerm(value);
@@ -118,7 +126,7 @@ const PartenairePage = () => {
           {filteredPartenaires.length > 0 ? (
             <div className='w-full h-full grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 p-4 gap-12'>
               {filteredPartenaires.map(partenaire => (
-                <PartenaireCard key={partenaire.id} partenaire={partenaire} />
+                <PartenaireCard key={partenaire.id} partenaire={partenaire} onClose={onClose} />
               ))}
             </div>
           ) : (

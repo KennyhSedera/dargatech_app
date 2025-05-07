@@ -3,7 +3,7 @@ import { FaEnvelope, FaMapMarkerAlt, FaPhone, FaGlobe, FaEllipsisV, FaEdit, FaTr
 import { deleteUser } from '../../Services/userService';
 import Snackbar from '../Snackbar';
 import ConfirmDialog from '../ConfirmDialog';
-const PartenaireCard = ({ partenaire }) => {
+const PartenaireCard = ({ partenaire, onClose }) => {
   const {
     id,
     user_id,
@@ -23,11 +23,6 @@ const PartenaireCard = ({ partenaire }) => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [isHovered, setIsHovered] = useState(false);
   const [open, setOpen] = useState(false);
-  const [alert, setAlert] = useState({
-    open: false,
-    message: '',
-    type: 'success'
-  });
 
 
   // Générer une couleur de fond en fonction de la catégorie
@@ -61,9 +56,9 @@ const PartenaireCard = ({ partenaire }) => {
   const confirmDelete = () => {
     deleteUser(user_id).then(response => {
       if (response.success) {
-        setAlert({ ...alert, open: true, message: 'Partenaire supprimé avec succès', type: 'success' });
+        onClose('Partenaire supprimé avec succès');
       } else {
-        setAlert({ ...alert, open: true, message: response.message, type: 'error' });
+        console.log(response.message);
       }
     });
   }
@@ -86,14 +81,6 @@ const PartenaireCard = ({ partenaire }) => {
         btnAcceptColor='bg-red-500 text-white'
         close={() => setOpen(false)}
         accept={confirmDelete}
-      />
-
-      {/* Snackbar de confirmation */}
-      <Snackbar
-        show={alert.open}
-        message="Partenaire supprimé avec succès"
-        type='success'
-        onClose={() => setAlert({ ...alert, open: false })}
       />
 
       {/* Indicateur partenaire en vedette */}
