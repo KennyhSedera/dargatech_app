@@ -83,6 +83,7 @@ Route::group(['prefix' => 'api'], function () {
     Route::group(['prefix' => 'paiement', 'as' => 'paiement.', 'middleware' => 'auth'], function () {
         Route::get('/', [PaiementController::class, 'index'])->name('index');
         Route::get('/{id}', [PaiementController::class, 'show'])->name('show');
+        Route::get('/last/id', [PaiementController::class, 'findLastPaiement'])->name('findLastPaiement');
         Route::post('/', [PaiementController::class, 'store'])->name('store');
         Route::put('/{id}', [PaiementController::class, 'update'])->name('update');
         Route::delete('/{id}', [PaiementController::class, 'destroy'])->name('destroy');

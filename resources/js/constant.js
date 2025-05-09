@@ -82,3 +82,13 @@ export function incrementCodeInstallation(code) {
     const newNumber = (number + 1).toString().padStart(4, '0');
     return `${prefix}${newNumber}`;
 }
+
+export function incrementRecuNumber(current) {
+    const parts = current.split('_');
+    const numberStr = parts[2];
+    const number = parseInt(numberStr, 10) + 1;
+
+    const newNumberStr = number.toString().padStart(numberStr.length, '0');
+
+    return `${parts[0]}_${parts[1]}_${newNumberStr}`;
+}

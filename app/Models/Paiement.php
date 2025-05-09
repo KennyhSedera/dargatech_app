@@ -9,6 +9,7 @@ class Paiement extends Model
     use HasFactory;
 
     protected $fillable = [
+        'numero',
         'client_id',
         'montant',
         'date_paiement',
@@ -19,6 +20,16 @@ class Paiement extends Model
         'description',
         'receipt_path',
         'observation',
+        'date',
+        'lieu_creation',
+        'date_additionnel',
+        'nom_vendeur',
+        'nom_vendeurs',
+        'select1',
+        'num_tva',
+        'nom_rue_vendeur',
+        'ville_vendeur',
+        'pays_vendeur',
     ];
 
     public function client()

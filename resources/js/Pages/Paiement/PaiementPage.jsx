@@ -35,6 +35,7 @@ const PaiementPage = () => {
 
     const headers = [
         { key: 'id', label: 'ID' },
+        { key: 'numero', label: 'Numero' },
         { key: 'nom', label: 'Nom client' },
         { key: 'montant', label: 'Montant ($)' },
         { key: 'mode_paiement', label: 'Mode de paiement' },
@@ -69,6 +70,7 @@ const PaiementPage = () => {
             const { data } = await getPaiements();
             const datas = data.map(el => ({
                 id: el.id,
+                numero: el.numero,
                 client_id: el.client_id,
                 nom: `${el.client.nom} ${el.client.prenom}`,
                 montant: el.montant,

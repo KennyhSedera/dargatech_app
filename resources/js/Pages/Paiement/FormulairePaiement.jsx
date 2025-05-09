@@ -13,13 +13,14 @@ import InfoPaiement from '@/Components/Paiement/InfoPaiement';
 import InfoMaraicher from '@/Components/Paiement/InfoMaraicher';
 import InfoVendeur from '@/Components/Paiement/InfoVendeur';
 import PaiementFooter from '@/Components/Paiement/PaiementFooter';
-import { createPaiement, getPaiement, updatePaiement } from '@/Services/PaiementService';
+import { createPaiement, getLastPaiements, getPaiement, updatePaiement } from '@/Services/PaiementService';
 import Snackbar from '@/Components/Snackbar';
 import html2pdf from 'html2pdf.js';
 import FichierPaiementPdf from '@/Components/paiements/FichierPaiementPdf';
 import moment from 'moment';
 import { sendPdfByEmail } from '@/Services/envoyePdfEmail';
 import { extractDateRange } from '@/utils/getTwoDateUtils';
+import { incrementCodeInstallation, incrementRecuNumber } from '@/constant';
 const FormulairePaiement = () => {
     const { theme, setTheme } = useTheme();
     const contentRef = useRef(null);
@@ -36,7 +37,7 @@ const FormulairePaiement = () => {
 
     const { data, setData, errors, reset } = useForm({
         type: 'recu',
-        numero: 'R1_TEST',
+        numero: 'RECU_N_0001',
         date_creation: new Date().toISOString().split('T')[0],
         date: new Date().toISOString().split('T')[0],
         lieu_creation: 'Atakpamé',
@@ -83,14 +84,14 @@ const FormulairePaiement = () => {
                 id: el.id,
                 nom: el.prenom,
                 nom_famille: el.nom,
-                ville: el.localisation.ville,
-                pays: el.localisation.pays,
-                village: el.localisation.village,
-                quartier: el.localisation.quartier,
+                ville: el.localisation,
+                pays: 'Togo',
+                village: el.localisation,
+                quartier: el.localisation,
                 email: el.email,
                 genre: el.genre,
                 telephone: el.telephone,
-                localisation: el.localisation.pays + ' ' + el.localisation.ville
+                localisation: el.localisation
             })));
             setTypePaiement(type.type?.map(el => ({ id: el.id, nom: el.name })));
         } catch (error) {
@@ -112,6 +113,7 @@ const FormulairePaiement = () => {
                 if (client) {
                     setData({
                         ...data,
+                        numero: paiement.numero,
                         nom_acheteur: client.nom_famille,
                         prenom_acheteur: client.nom,
                         civilite_acheteur: client.genre === 'Homme' ? 'Mr.' : 'Mme.',
@@ -131,9 +133,18 @@ const FormulairePaiement = () => {
                             quantite: el.quantite,
                             unite: el.unite
                         })),
-                        montant_paye: parseInt(paiement.montant).toFixed(2),
-                        date_creation: dateRange.startDate.original,
-                        date: dateRange.endDate.original,
+                        montant_paye: parseFloat(paiement.montant).toFixed(2),
+                        date_creation: paiement.date_creation || dateRange.startDate.original,
+                        date: paiement.date || dateRange.endDate.original,
+                        lieu_creation: paiement.lieu_creation,
+                        date_additionnel: paiement.date_additionnel,
+                        nom_vendeur: paiement.nom_vendeur,
+                        nom_vendeurs: paiement.nom_vendeurs,
+                        select1: paiement.select1,
+                        num_tva: paiement.num_tva,
+                        nom_rue_vendeur: paiement.nom_rue_vendeur,
+                        ville_vendeur: paiement.ville_vendeur,
+                        pays_vendeur: paiement.pays_vendeur,
                     });
                     setEmail(client.email);
                 }
@@ -161,6 +172,19 @@ const FormulairePaiement = () => {
         }
     }, [clients, paiementId]);
 
+    const getLastNumero = async () => {
+        const { data } = await getLastPaiements();
+        if (data) {
+            setData('numero', incrementRecuNumber(data.numero));
+        }
+    }
+
+    useEffect(() => {
+        if (!paiementId) {
+            getLastNumero()
+        }
+    }, [paiementId])
+
     const handleSelect = (item) => {
         const cli = clients.find(el => el.id === item.id);
         if (cli) {
@@ -173,21 +197,6 @@ const FormulairePaiement = () => {
             setData('civilite_acheteur', cli.genre === 'Homme' ? 'Mr.' : 'Mme.');
             setEmail(cli.email);
         }
-    };
-
-    const generatePDF = () => {
-        const element = contentRef.current;
-        if (!element) return;
-
-        const opt = {
-            margin: 0.5,
-            filename: `${data.type === 'recu' ? 'recu' : 'facture'}-${data.numero}.pdf`,
-            image: { type: 'jpeg', quality: 0.98 },
-            html2canvas: { scale: 2 },
-            jsPDF: { unit: 'in', format: 'a4', orientation: 'portrait' }
-        };
-
-        html2pdf().from(element).set(opt).save();
     };
 
     const handleSubmit = async () => {

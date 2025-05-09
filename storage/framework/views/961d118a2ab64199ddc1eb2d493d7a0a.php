@@ -73,29 +73,32 @@
 </head>
 <body>
     <div class="header">
-        <h2>Reçu de Paiement N°{{ $pdfData['numero'] }}</h2>
+        <h2>Reçu de Paiement N°<?php echo e($pdfData['numero']); ?></h2>
         <p>Solution de Gestion Immobilière</p>
         <p>« Votre confiance, notre priorité »</p>
     </div>
     
     <div class="container">
         <div class="content">
-            <p>Cher/Chère {{ $pdfData['civilite_acheteur'] }} {{ $pdfData['nom_acheteur'] }},</p>
+            <p>Cher/Chère <?php echo e($pdfData['civilite_acheteur']); ?> <?php echo e($pdfData['nom_acheteur']); ?>,</p>
             
-            <p>Bienvenue sur votre espace de gestion locative. Veuillez trouver ci-dessous votre reçu de paiement pour le versement du loyer de la période du {{ $pdfData['periode_couverte'] }}.</p>
+            <p>Bienvenue sur votre espace de gestion locative. Veuillez trouver ci-dessous votre reçu de paiement pour le versement du loyer de la période du <?php echo e($pdfData['periode_couverte']); ?>.</p>
             
             <div class="info-block">
                 <div class="info-item">
-                    <span class="info-label">Numéro de reçu :</span> {{ $pdfData['numero'] }}
+                    <span class="info-label">Numéro de reçu :</span> <?php echo e($pdfData['numero']); ?>
+
                 </div>
                 <div class="info-item">
-                    <span class="info-label">Date :</span> {{ date('d/m/Y', strtotime($pdfData['date'])) }}
+                    <span class="info-label">Date :</span> <?php echo e(date('d/m/Y', strtotime($pdfData['date']))); ?>
+
                 </div>
                 <div class="info-item">
-                    <span class="info-label">Montant payé :</span> {{ $pdfData['montant_paye'] }} Franc CFA
+                    <span class="info-label">Montant payé :</span> <?php echo e($pdfData['montant_paye']); ?> Franc CFA
                 </div>
                 <div class="info-item">
-                    <span class="info-label">Mode de règlement :</span> {{ $pdfData['mode_paiement'] }}
+                    <span class="info-label">Mode de règlement :</span> <?php echo e($pdfData['mode_paiement']); ?>
+
                 </div>
             </div>
             
@@ -109,7 +112,7 @@
             <p>Nous vous remercions pour votre confiance.</p>
             
             <p>Cordialement,<br>
-            {{ $pdfData['nom_vendeur'] }}<br>
+            <?php echo e($pdfData['nom_vendeur']); ?><br>
             DARGATECH TOGO</p>
         </div>
         
@@ -120,4 +123,4 @@
         </div>
     </div>
 </body>
-</html>
+</html><?php /**PATH E:\dargatech_app\resources\views/emails/paiement_pdf.blade.php ENDPATH**/ ?>

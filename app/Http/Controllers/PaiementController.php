@@ -19,6 +19,7 @@ class PaiementController extends Controller
     {
         try {
             $validator = Validator::make($request->all(), [
+                'numero' => 'required|string',
                 'client_id' => 'required|exists:clients,id',
                 'montant' => 'required|numeric|min:0',
                 'date_paiement' => 'required|date',
@@ -33,6 +34,17 @@ class PaiementController extends Controller
                 'produits.*.prix_unitaire' => 'required|numeric|min:0',
                 'produits.*.quantite' => 'required|integer|min:1',
                 'produits.*.unite' => 'nullable|string',
+                'date_creation' => 'nullable|date',
+                'date' => 'nullable|date',
+                'lieu_creation' => 'nullable|string',
+                'date_additionnel' => 'nullable|string',
+                'nom_vendeur' => 'nullable|string',
+                'nom_vendeurs' => 'nullable|string',
+                'select1' => 'nullable|string',
+                'num_tva' => 'nullable|string',
+                'nom_rue_vendeur' => 'nullable|string',
+                'ville_vendeur' => 'nullable|string',
+                'pays_vendeur' => 'nullable|string',
             ]);
     
             if ($validator->fails()) {
@@ -76,6 +88,13 @@ class PaiementController extends Controller
         }
     }
 
+    public function findLastPaiement() 
+    {
+        $data = Paiement::with('client')->latest()->first();
+
+        return response()->json(['data' => $data], 200);
+    }
+
     public function show($id)
     {
         $data = Paiement::with(['client', 'produits'])->find($id);
@@ -116,6 +135,17 @@ class PaiementController extends Controller
                 'produits.*.prix_unitaire' => 'required|numeric|min:0',
                 'produits.*.quantite' => 'required|integer|min:1',
                 'produits.*.unite' => 'nullable|string',
+                'date_creation' => 'nullable|date',
+                'date' => 'nullable|date',
+                'lieu_creation' => 'nullable|string',
+                'date_additionnel' => 'nullable|string',
+                'nom_vendeur' => 'nullable|string',
+                'nom_vendeurs' => 'nullable|string',
+                'select1' => 'nullable|string',
+                'num_tva' => 'nullable|string',
+                'nom_rue_vendeur' => 'nullable|string',
+                'ville_vendeur' => 'nullable|string',
+                'pays_vendeur' => 'nullable|string',
             ]);
 
             if ($validator->fails()) {

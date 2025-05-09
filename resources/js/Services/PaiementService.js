@@ -10,6 +10,16 @@ export const getPaiements = async () => {
     }
 };
 
+export const getLastPaiements = async () => {
+    try {
+        const response = await api.get("/paiement/last/id");
+        return response.data;
+    } catch (error) {
+        console.error("Erreur lors de la récupération du dernier paiement", error);
+        throw error;
+    }
+};
+
 export const createPaiement = async (data) => {
     try {
         const response = await api.post("/paiement", data);
