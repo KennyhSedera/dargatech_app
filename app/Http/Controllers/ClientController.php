@@ -74,6 +74,7 @@ class ClientController extends Controller
                 'surface_cultivee' => $validatedData['surface_cultivee'],
                 'type_activite_agricole' => $validatedData['type_activite_agricole'],
                 'date_contrat' => Carbon::now(),
+                'localisation_id' => 1,
             ]);
 
             DB::commit();
