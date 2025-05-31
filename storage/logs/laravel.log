@@ -197,3 +197,6 @@ DETAIL:  Failing row contains (7, dsfds, fbfdv, 232424, dfgrdf, Homme, kennyhsed
 #36 D:\\Stage\\dargatech_app\\artisan(13): Illuminate\\Foundation\\Application->handleCommand(Object(Symfony\\Component\\Console\\Input\\ArgvInput))
 #37 {main}
 "} 
+[2025-05-31 21:29:01] local.ERROR: Erreur création client: SQLSTATE[42703]: Undefined column: 7 ERROR:  column "localisation_id" of relation "clients" does not exist
+LINE 1: ...tivee", "type_activite_agricole", "date_contrat", "localisat...
+                                                             ^ (Connection: pgsql, SQL: insert into "clients" ("nom", "prenom", "CIN", "genre", "email", "telephone", "localisation", "surface_cultivee", "type_activite_agricole", "date_contrat", "localisation_id", "updated_at", "created_at") values (vc, fd, 34, Homme, sederakenys@gmail.com, 342, f, 4, re, 2025-05-31 21:29:00, 1, 2025-05-31 21:29:00, 2025-05-31 21:29:00) returning "id")  
