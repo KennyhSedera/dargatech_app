@@ -21,4 +21,4 @@
         <?php if (!isset($__inertiaSsrDispatched)) { $__inertiaSsrDispatched = true; $__inertiaSsrResponse = app(\Inertia\Ssr\Gateway::class)->dispatch($page); }  if ($__inertiaSsrResponse) { echo $__inertiaSsrResponse->body; } else { ?><div id="app" data-page="<?php echo e(json_encode($page)); ?>"></div><?php } ?>
     </body>
 </html>
-<?php /**PATH E:\dargatech_app\resources\views/app.blade.php ENDPATH**/ ?>
+<?php /**PATH D:\dargatech_app\resources\views/app.blade.php ENDPATH**/ ?>
