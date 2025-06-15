@@ -34,6 +34,8 @@ const InstallationPage = () => {
     const headers = [
         { key: 'code_installation', label: 'Code' },
         { key: 'nom', label: 'Nom client' },
+        { key: 'latitude', label: '' },
+        { key: 'longitude', label: '' },
         { key: 'numero_serie', label: 'Numéro de série de la pompe' },
         { key: 'puissance_pompe', label: 'Puissance crête installé (W)' },
         { key: 'profondeur_forage', label: 'Distance maximale pompe champ PV (m)' },
@@ -86,7 +88,12 @@ const InstallationPage = () => {
             hmt: el.hmt,
             date_installation: formatdate(el.date_installation),
             statuts: el.statuts,
+            latitude: el.localisation.latitude,
+            longitude: el.localisation.longitude
         }));
+
+        console.log(data);
+
 
         setInstallations(Installation);
         setFilteredData(Installation);
@@ -175,10 +182,10 @@ const InstallationPage = () => {
                 accept={confirmDelete}
             />
             {isLoading ? (
-        <div className="flex justify-center items-center h-64">
-          <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-blue-500"></div>
+        <div className="flex items-center justify-center h-64">
+          <div className="w-12 h-12 border-t-2 border-b-2 border-blue-500 rounded-full animate-spin"></div>
         </div>
-      ) : ( 
+      ) : (
             <div>
                 {filteredData.length > 0 ?
                     <DataTable
