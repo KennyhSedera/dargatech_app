@@ -34,8 +34,6 @@ const InstallationPage = () => {
     const headers = [
         { key: 'code_installation', label: 'Code' },
         { key: 'nom', label: 'Nom client' },
-        { key: 'latitude', label: '' },
-        { key: 'longitude', label: '' },
         { key: 'numero_serie', label: 'Numéro de série de la pompe' },
         { key: 'puissance_pompe', label: 'Puissance crête installé (W)' },
         { key: 'profondeur_forage', label: 'Distance maximale pompe champ PV (m)' },
@@ -91,9 +89,6 @@ const InstallationPage = () => {
             latitude: el.localisation.latitude,
             longitude: el.localisation.longitude
         }));
-
-        console.log(data);
-
 
         setInstallations(Installation);
         setFilteredData(Installation);
@@ -182,24 +177,24 @@ const InstallationPage = () => {
                 accept={confirmDelete}
             />
             {isLoading ? (
-        <div className="flex items-center justify-center h-64">
-          <div className="w-12 h-12 border-t-2 border-b-2 border-blue-500 rounded-full animate-spin"></div>
-        </div>
-      ) : (
-            <div>
-                {filteredData.length > 0 ?
-                    <DataTable
-                        headers={headers}
-                        rows={filteredData}
-                        itemsPerPage={10}
-                        actions={actions}
-                        className="mt-4"
-                        currentPage={currentPage}
-                        onPageChange={setCurrentPage}
-                        masqueColumns={['client_id']}
-                    /> :
-                    <EmptyState nom='installation' search={search} />
-                }
+                <div className="flex items-center justify-center h-64">
+                    <div className="w-12 h-12 border-t-2 border-b-2 border-blue-500 rounded-full animate-spin"></div>
+                </div>
+            ) : (
+                <div>
+                    {filteredData.length > 0 ?
+                        <DataTable
+                            headers={headers}
+                            rows={filteredData}
+                            itemsPerPage={10}
+                            actions={actions}
+                            className="mt-4"
+                            currentPage={currentPage}
+                            onPageChange={setCurrentPage}
+                            masqueColumns={['client_id', 'latitude', 'longitude']}
+                        /> :
+                        <EmptyState nom='installation' search={search} />
+                    }
                 </div>
             )}
         </AuthenticatedLayout>
