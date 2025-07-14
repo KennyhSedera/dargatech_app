@@ -1,0 +1,1 @@
+import{j as t,$ as r}from"./app-aLckg_Lc.js";import{A as e}from"./AuthenticatedLayout-CJuN6Xw1.js";import"./transition-DDNWLEKc.js";import"./iconBase-h1gACPcP.js";import"./useTheme-xIG_PlD7.js";import"./index-DvDH6ep7.js";import"./index-CECjaDJM.js";import"./constant-hVELMu8D.js";const x=()=>t.jsxs(e,{children:[t.jsx(r,{title:"Paramètres"}),"SettingPage"]});export{x as default};

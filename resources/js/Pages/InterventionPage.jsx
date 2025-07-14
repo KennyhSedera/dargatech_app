@@ -41,7 +41,20 @@ const InterventionPage = () => {
         { key: 'code_installation', label: 'Installation' },
         { key: 'nom', label: 'Client' },
         { key: 'type_intervention', label: 'Type' },
-        { key: 'description_probleme', label: 'Problème' },
+        {
+            key: 'description_probleme',
+            label: 'Problème',
+            customRender: (value) => (
+                <div className="relative max-w-md group">
+                    <span className="line-clamp-2">{value}</span>
+
+                    <div className="absolute bottom-0 left-0 z-50 hidden max-w-md p-2 mt-2 text-sm text-gray-800 bg-white border border-gray-300 rounded shadow-md group-hover:block">
+                        {value}
+                    </div>
+                </div>
+            )
+
+        },
         { key: 'date_intervention', label: 'Date d\'intervenir' },
         {
             key: 'status_intervention', label: 'Statuts', customRender: (value) => (
@@ -52,10 +65,10 @@ const InterventionPage = () => {
         },
         {
             key: 'status_intervention', label: 'Rapport', customRender: (value, row) => (
-                <span onClick={() => value === 'terminée' ? router.visit('/rapport', { data: { intervention_id: row.id } }) : user.user_role?.name === 'partenaire' ? null :  handleNewRapport(row)}
-                        className={`px-2 py-1 rounded-full flex text-nowrap ${user.user_role?.name === 'partenaire' && value !== 'terminée' ? 'cursor-default' : 'cursor-pointer'} ${value === 'terminée' ? 'text-green-500' :user.user_role?.name === 'partenaire' ? 'text-gray-300' :  'text-blue-500'}`}>
-                        {value === 'terminée' ?  'Consulter' : user.user_role?.name === 'partenaire' ? 'En attente' : 'Ajouter'}
-                    </span>
+                <span onClick={() => value === 'terminée' ? router.visit('/rapport', { data: { intervention_id: row.id } }) : user.user_role?.name === 'partenaire' ? null : handleNewRapport(row)}
+                    className={`px-2 py-1 rounded-full flex text-nowrap ${user.user_role?.name === 'partenaire' && value !== 'terminée' ? 'cursor-default' : 'cursor-pointer'} ${value === 'terminée' ? 'text-green-500' : user.user_role?.name === 'partenaire' ? 'text-gray-300' : 'text-blue-500'}`}>
+                    {value === 'terminée' ? 'Consulter' : user.user_role?.name === 'partenaire' ? 'En attente' : 'Ajouter'}
+                </span>
             )
         },
     ];
@@ -80,9 +93,9 @@ const InterventionPage = () => {
     }
 
     const handleNewRapport = (data) => {
-        if(user.user_role?.name === 'partenaire'){
+        if (user.user_role?.name === 'partenaire') {
             router.visit('/rapport', { data: { intervention_id: data.id } });
-        }else{
+        } else {
             setOpenRapport(true);
             setDataRapport(data);
         }
@@ -206,24 +219,24 @@ const InterventionPage = () => {
                 idTechnicien={id}
             />
             {isLoading ? (
-        <div className="flex justify-center items-center h-64">
-          <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-blue-500"></div>
-        </div>
-      ) : (
-            <div>
-                {filteredData.length > 0 ?
-                    <DataTable
-                        headers={headers}
-                        rows={filteredData}
-                        itemsPerPage={6}
-                        actions={actions}
-                        className="mt-4"
-                        currentPage={currentPage}
-                        onPageChange={setCurrentPage}
-                        masqueColumns={['client_id']}
-                    /> :
-                    <EmptyState nom='intervention' search={search} />
-                }
+                <div className="flex items-center justify-center h-64">
+                    <div className="w-12 h-12 border-t-2 border-b-2 border-blue-500 rounded-full animate-spin"></div>
+                </div>
+            ) : (
+                <div>
+                    {filteredData.length > 0 ?
+                        <DataTable
+                            headers={headers}
+                            rows={filteredData}
+                            itemsPerPage={6}
+                            actions={actions}
+                            className="mt-4"
+                            currentPage={currentPage}
+                            onPageChange={setCurrentPage}
+                            masqueColumns={['client_id']}
+                        /> :
+                        <EmptyState nom='intervention' search={search} />
+                    }
                 </div>
             )}
         </AuthenticatedLayout>

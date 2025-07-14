@@ -6,17 +6,13 @@ import { HiMiniUsers } from 'react-icons/hi2';
 import { ImCogs } from 'react-icons/im';
 import { IoBuild } from 'react-icons/io5';
 import { GrMoney } from "react-icons/gr";
-// import LineChart from '@/Components/charts/LineChart';
 import BarChart from '@/Components/charts/BarChart';
 import CircleChart from '@/Components/charts/CircleChart';
 import AreaChart from '@/Components/charts/AreaChart';
-// import DashboardComponent from '@/Components/DashboardComponent';
 import RapportQuotidient from '@/Components/dashboard/RapportQuotidient';
 import moment from 'moment';
 import "moment/locale/fr";
-import { GeolocationComponent, GeolocationMultipleComponents } from '@/Components/GeolocationComponent';
-import MapComponent from '@/Components/MapComponent';
-import {GeolocationTogoComponent} from '@/Components/GeolocationTogoComponent';
+import { GeolocationTogoComponent } from '@/Components/GeolocationTogoComponent';
 
 export default function Dashboard() {
     const [data, setData] = useState({});
@@ -88,29 +84,29 @@ export default function Dashboard() {
     return (
         <AuthenticatedLayout>
             <Head title="Tableau de bord" />
-            <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 p-4 pb-6">
+            <div className="grid grid-cols-1 gap-4 p-4 pb-6 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4">
                 {stats.map((stat, index) => (
                     <Link
                         key={index}
                         href={stat.route}
                         className={`group relative cursor-pointer bg-gradient-to-tr ${stat.color} text-white rounded-xl shadow-lg p-6 flex items-center justify-between overflow-hidden transition-transform transform hover:scale-105 hover:shadow-2xl z-10`}
                     >
-                        <div className="absolute inset-0 bg-gradient-to-bl opacity-0 group-hover:opacity-100 transition-opacity duration-1000"></div>
+                        <div className="absolute inset-0 transition-opacity duration-1000 opacity-0 bg-gradient-to-bl group-hover:opacity-100"></div>
 
                         <div className="relative z-10">
                             <h3 className="text-lg font-medium">{stat.label}</h3>
                             <p className="text-3xl font-extrabold">{stat.value}</p>
                         </div>
 
-                        <div className="opacity-40 text-6xl relative z-10 transform group-hover:rotate-12 transition-transform duration-300">
+                        <div className="relative z-10 text-6xl transition-transform duration-300 transform opacity-40 group-hover:rotate-12">
                             {stat.icon}
                         </div>
 
-                        <div className="absolute inset-0 bg-gradient-to-tr opacity-0 group-hover:opacity-30 transition-opacity duration-500"></div>
+                        <div className="absolute inset-0 transition-opacity duration-500 opacity-0 bg-gradient-to-tr group-hover:opacity-30"></div>
                     </Link>
                 ))}
             </div>
-            <div className='grid grid-cols-1 md:grid-cols-3 gap-2 mt-2'>
+            <div className='grid grid-cols-1 gap-2 mt-2 md:grid-cols-3'>
                 <BarChart
                     className="col-span-2"
                     categories={categories}
@@ -120,7 +116,7 @@ export default function Dashboard() {
                 />
                 <RapportQuotidient data={data} />
             </div>
-            <div className='grid grid-cols-1 md:grid-cols-3 gap-2 mt-2'>
+            <div className='grid grid-cols-1 gap-2 mt-2 md:grid-cols-3'>
                 <CircleChart
                     value={percentenpanne || 0}
                     title="Installation en panne"

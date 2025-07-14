@@ -8,12 +8,6 @@ class Installation extends Model
 {
     use HasFactory;
 
-    /**
-     * Les champs qui peuvent être remplis massivement.
-     *
-     * @var array
-     */
-    // In your Installation model
     protected $fillable = [
         'client_id',
         'date_installation',

@@ -9,11 +9,6 @@ use Illuminate\Support\Facades\DB;
 
 class ClientController extends Controller
 {
-    /**
-     * Afficher la liste des clients.
-     *
-     * @return \Illuminate\Http\Response
-     */
     public function index()
     {
         $clients = Client::all();
@@ -26,12 +21,6 @@ class ClientController extends Controller
         return response()->json(['clients' => $clients]);
     }
 
-    /**
-     * Afficher les détails d'un client spécifique.
-     *
-     * @param  int  $id
-     * @return \Illuminate\Http\Response
-     */
     public function show($id)
     {
         $client = Client::with(['installations', 'paiement'])->find($id);
@@ -49,20 +38,13 @@ class ClientController extends Controller
         ]);
     }
 
-    /**
-     * Stocker un nouveau client dans la base de données.
-     *
-     * @param  \Illuminate\Http\Request  $request
-     * @return \Illuminate\Http\Response
-     */
     public function store(ClientRequest $request)
     {
         try {
             DB::beginTransaction();
-            
+
             $validatedData = $request->validated();
 
-            // Créer le client
             $client = Client::create([
                 'nom' => $validatedData['nom'],
                 'prenom' => $validatedData['prenom'],
@@ -86,7 +68,7 @@ class ClientController extends Controller
         } catch (\Exception $e) {
             DB::rollBack();
             \Log::error('Erreur création client: ' . $e->getMessage());
-            
+
             return response()->json([
                 'message' => 'Erreur lors de la création du client',
                 'error' => $e->getMessage(),
@@ -139,7 +121,7 @@ class ClientController extends Controller
 
         } catch (\Exception $e) {
             DB::rollBack();
-            
+
             return response()->json([
                 'message' => 'Erreur lors de la mise à jour du client',
                 'error' => $e->getMessage(),
@@ -172,7 +154,7 @@ class ClientController extends Controller
                 'message' => 'Client supprimé avec succès !',
                 'success' => true
             ]);
-            
+
         } catch (\Exception $e) {
             return response()->json([
                 'message' => 'Erreur lors de la suppression du client',

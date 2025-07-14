@@ -1,0 +1,2 @@
+Broadcasting: Intent { act=com.android.emulator.multidisplay.START flg=0x400000 pkg==420tmpAdbCmdsadbcommandfd1b4a31-b38d-4271-b545-6fc6c7d9cbce cmp=com.android.emulator.multidisplay/.MultiDisplayServiceReceiver }
+Broadcast completed: result=0
