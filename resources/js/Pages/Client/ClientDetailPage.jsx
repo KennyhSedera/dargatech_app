@@ -24,6 +24,8 @@ const ClientDetailPage = ({ client }) => {
             const data = await getClient(id);
             if (data) {
                 setinstallation(data.client?.installations || []);
+                console.log(data.client?.installations || []);
+
                 setpaiement(data.client?.paiement || []);
                 setclients(data.client);
             }
@@ -233,6 +235,14 @@ const ClientDetailPage = ({ client }) => {
                                                         </p>
                                                     </div>
                                                     <div className="grid grid-cols-2 gap-4">
+                                                        <div>
+                                                            <p className="text-sm text-gray-500 dark:text-gray-400">Pays</p>
+                                                            <p className="font-medium text-gray-900 dark:text-white">{inst.localisation.pays}</p>
+                                                        </div>
+                                                        <div>
+                                                            <p className="text-sm text-gray-500 dark:text-gray-400">Ville</p>
+                                                            <p className="font-medium text-gray-900 dark:text-white">{inst.localisation.ville}</p>
+                                                        </div>
                                                         <div>
                                                             <p className="text-sm text-gray-500 dark:text-gray-400">Débit nominal</p>
                                                             <p className="font-medium text-gray-900 dark:text-white">{inst.debit_nominal} m³/h</p>

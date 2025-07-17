@@ -186,7 +186,7 @@ const InstallationPage = () => {
                         <DataTable
                             headers={headers}
                             rows={filteredData}
-                            itemsPerPage={10}
+                            itemsPerPage={6}
                             actions={actions}
                             className="mt-4"
                             currentPage={currentPage}

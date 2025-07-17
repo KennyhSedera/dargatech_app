@@ -23,7 +23,7 @@ class ClientController extends Controller
 
     public function show($id)
     {
-        $client = Client::with(['installations', 'paiement'])->find($id);
+        $client = Client::with(['installations', 'installations.localisation', 'paiement'])->find($id);
 
         if (!$client) {
             return response()->json([

@@ -37,9 +37,9 @@ const InterventionPage = () => {
     const user = usePage().props.auth.user;
 
     const headers = [
-        { key: 'id', label: 'ID' },
-        { key: 'code_installation', label: 'Installation' },
-        { key: 'nom', label: 'Client' },
+        { key: 'id', label: 'ID', sortable: true },
+        { key: 'code_installation', label: 'Installation', sortable: true },
+        { key: 'nom', label: 'Client', sortable: true },
         { key: 'type_intervention', label: 'Type' },
         {
             key: 'description_probleme',
@@ -55,7 +55,7 @@ const InterventionPage = () => {
             )
 
         },
-        { key: 'date_intervention', label: 'Date d\'intervenir' },
+        { key: 'date_intervention', label: 'Date d\'intervenir', sortable: true },
         {
             key: 'status_intervention', label: 'Statuts', customRender: (value) => (
                 <span className={`px-2 py-1 rounded-full text-white flex text-nowrap ${value === 'terminée' ? 'bg-green-500/50' : value === 'en attente' ? 'bg-blue-500/50' : 'bg-red-500/50'}`}>
@@ -64,7 +64,7 @@ const InterventionPage = () => {
             )
         },
         {
-            key: 'status_intervention', label: 'Rapport', customRender: (value, row) => (
+            key: 'status_intervention', label: 'Rapport', sortable: true, customRender: (value, row) => (
                 <span onClick={() => value === 'terminée' ? router.visit('/rapport', { data: { intervention_id: row.id } }) : user.user_role?.name === 'partenaire' ? null : handleNewRapport(row)}
                     className={`px-2 py-1 rounded-full flex text-nowrap ${user.user_role?.name === 'partenaire' && value !== 'terminée' ? 'cursor-default' : 'cursor-pointer'} ${value === 'terminée' ? 'text-green-500' : user.user_role?.name === 'partenaire' ? 'text-gray-300' : 'text-blue-500'}`}>
                     {value === 'terminée' ? 'Consulter' : user.user_role?.name === 'partenaire' ? 'En attente' : 'Ajouter'}

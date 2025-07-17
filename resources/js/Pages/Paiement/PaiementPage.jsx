@@ -2,7 +2,7 @@ import ConfirmDialog from '@/Components/ConfirmDialog'
 import DataTable from '@/Components/DataTable'
 import PaiementFormulaire from '@/Components/Paiement/PaiementFormulaire'
 import Snackbar from '@/Components/Snackbar'
-import { formatdate,  parsedate } from '@/constant'
+import { formatdate, parsedate } from '@/constant'
 import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout'
 import { deletePaiement, getPaiements } from '@/Services/PaiementService'
 import { Head, router } from '@inertiajs/react'
@@ -34,14 +34,18 @@ const PaiementPage = () => {
     const [id, setId] = useState(false);
 
     const headers = [
-        { key: 'id', label: 'ID' },
-        { key: 'numero', label: 'Numero' },
-        { key: 'nom', label: 'Nom client' },
+        { key: 'id', label: 'ID', sortable: true },
+        { key: 'numero', label: 'Numero', sortable: true },
+        { key: 'nom', label: 'Nom client', sortable: true },
         { key: 'montant', label: 'Montant ($)' },
         { key: 'mode_paiement', label: 'Mode de paiement' },
         { key: 'periode_couverte', label: 'Periode couverte' },
-        { key: 'date_paiement', label: 'Date de paiement' },
-        { key: 'statut_paiement', label: 'Statut' },
+        { key: 'date_paiement', label: 'Date de paiement', sortable: true },
+        {
+            key: 'statut_paiement', label: 'Statut', sortable: true, customRender: (value, row) => (
+                <span className={`px-2 py-1 rounded-full flex text-nowrap cursor-pointer text-white ${value === 'En attente' ? 'bg-yellow-500/50' : value === 'Payé' ? 'bg-green-500/50' : 'bg-red-500/50'}`}>{value}</span>
+            )
+        },
         { key: 'observation', label: 'Observation' },
     ];
 
@@ -191,8 +195,8 @@ const PaiementPage = () => {
                         onSearch={onFilteredData}
                     />
                     {isLoading ? (
-                        <div className="flex justify-center items-center h-64">
-                            <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-blue-500"></div>
+                        <div className="flex items-center justify-center h-64">
+                            <div className="w-12 h-12 border-t-2 border-b-2 border-blue-500 rounded-full animate-spin"></div>
                         </div>
                     ) : (
                         <div>

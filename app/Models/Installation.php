@@ -39,6 +39,6 @@ class Installation extends Model
 
     public function localisation()
     {
-        return $this->belongsTo(Localisation::class, 'localisation_id');
+        return $this->belongsTo(Localisation::class, foreignKey: 'localisation_id');
     }
 }
