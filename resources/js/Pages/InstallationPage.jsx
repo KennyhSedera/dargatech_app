@@ -32,15 +32,15 @@ const InstallationPage = () => {
     });
 
     const headers = [
-        { key: 'code_installation', label: 'Code' },
-        { key: 'nom', label: 'Nom client' },
-        { key: 'numero_serie', label: 'Numéro de série de la pompe' },
+        { key: 'code_installation', label: 'Code', sortable: true },
+        { key: 'nom', label: 'Nom client', sortable: true },
+        { key: 'numero_serie', label: 'Numéro de série de la pompe', sortable: true },
         { key: 'puissance_pompe', label: 'Puissance crête installé (W)' },
         { key: 'profondeur_forage', label: 'Distance maximale pompe champ PV (m)' },
         { key: 'debit_nominal', label: 'Débit nominal (m³/h)' },
         { key: 'source_eau', label: 'Source d\'eau' },
         { key: 'hmt', label: 'HMT (m)' },
-        { key: 'date_installation', label: 'Date de l\'installation' },
+        { key: 'date_installation', label: 'Date de l\'installation', sortable: true },
         {
             key: 'statuts', label: 'Statuts', customRender: (value) => (
                 <span className={`px-2 py-1 rounded-full text-white flex text-nowrap cursor-pointer ${value === 'installée' ? 'bg-green-500/50' : value === 'en cours' ? 'bg-blue-500/50' : 'bg-red-500/50'}`}>

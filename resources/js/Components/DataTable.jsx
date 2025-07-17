@@ -23,6 +23,11 @@ export default function DataTable({
         setSortConfig({ key, direction });
     };
 
+    // Fonction pour vérifier si une colonne est triable
+    const isSortable = (header) => {
+        return header.sortable === true; // Par défaut non triable sauf si explicitement activé
+    };
+
     // Tri des données
     const sortedRows = useMemo(() => {
         if (!sortConfig.key) return rows;
@@ -106,12 +111,15 @@ export default function DataTable({
                                 !masqueColumns.includes(header.key) && (
                                     <th
                                         key={index}
-                                        className="px-4 py-3 text-xs font-medium tracking-wider text-left text-gray-500 uppercase cursor-pointer select-none hover:bg-gray-100 dark:text-gray-300 dark:hover:bg-gray-600"
-                                        onClick={() => handleSort(header.key)}
+                                        className={`px-4 py-3 text-xs font-medium tracking-wider text-left text-gray-500 uppercase dark:text-gray-300 ${isSortable(header)
+                                            ? 'cursor-pointer hover:bg-gray-100 dark:hover:bg-gray-600 select-none'
+                                            : ''
+                                            }`}
+                                        onClick={isSortable(header) ? () => handleSort(header.key) : undefined}
                                     >
                                         <div className="flex items-center">
                                             {header.label}
-                                            {getSortIcon(header.key)}
+                                            {isSortable(header) && getSortIcon(header.key)}
                                         </div>
                                     </th>
                                 )

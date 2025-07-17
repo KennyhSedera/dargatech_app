@@ -77,14 +77,14 @@ const ClientPage = () => {
     };
 
     const headers = [
-        { key: 'id', label: 'ID' },
-        { key: 'nom', label: 'Nom' },
-        { key: 'prenom', label: 'Prénom' },
+        { key: 'id', label: 'ID', sortable: true },
+        { key: 'nom', label: 'Nom', sortable: true },
+        { key: 'prenom', label: 'Prénom', sortable: true },
         { key: 'CIN', label: 'CIN' },
-        { key: 'email', label: 'Email' },
+        { key: 'email', label: 'Email', sortable: true },
         { key: 'telephone', label: 'Téléphone' },
-        { key: 'localisation', label: 'Localisation' },
-        { key: 'surface_cultivee', label: 'Surface cultivée (ha)' },
+        { key: 'localisation', label: 'Localisation', sortable: true },
+        { key: 'surface_cultivee', label: 'Surface cultivée (ha)', sortable: true },
         { key: 'type_activite_agricole', label: 'Type d\'activité agricole' },
     ];
 
@@ -173,24 +173,24 @@ const ClientPage = () => {
                 accept={confirmDelete}
             />
             {isLoading ? (
-        <div className="flex justify-center items-center h-64">
-          <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-blue-500"></div>
-        </div>
-      ) : (
-            <div>
-                {filteredData.length > 0 ?
-                    <DataTable
-                        headers={headers}
-                        rows={filteredData}
-                        itemsPerPage={10}
-                        actions={actions}
-                        className="mt-4"
-                        currentPage={currentPage}
-                        onPageChange={setCurrentPage}
-                    /> :
-                    <EmptyState nom='maraîcher' search={search} />
-                }
-            </div>
+                <div className="flex items-center justify-center h-64">
+                    <div className="w-12 h-12 border-t-2 border-b-2 border-blue-500 rounded-full animate-spin"></div>
+                </div>
+            ) : (
+                <div>
+                    {filteredData.length > 0 ?
+                        <DataTable
+                            headers={headers}
+                            rows={filteredData}
+                            itemsPerPage={10}
+                            actions={actions}
+                            className="mt-4"
+                            currentPage={currentPage}
+                            onPageChange={setCurrentPage}
+                        /> :
+                        <EmptyState nom='maraîcher' search={search} />
+                    }
+                </div>
             )}
         </AuthenticatedLayout>
     );
