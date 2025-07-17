@@ -14,13 +14,13 @@ return new class extends Migration
         Schema::create('paiements', function (Blueprint $table) {
             $table->id();
             $table->foreignId('client_id')->constrained()->onDelete('cascade');
-            $table->float('montant');
+            $table->float(column: 'montant');
             $table->date('date_paiement');
             $table->string('mode_paiement');
             $table->string('periode_couverte');
-            $table->string('echeance')->nullable();
-            $table->string('statut_paiement')->nullable();
-            $table->string('observation')->nullable();
+            $table->string(column: 'echeance')->nullable();
+            $table->string(column: 'statut_paiement')->nullable();
+            $table->string(column: 'observation')->nullable();
             $table->timestamps();
         });
     }

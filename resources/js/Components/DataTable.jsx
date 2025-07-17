@@ -1,5 +1,5 @@
 import { usePage } from '@inertiajs/react';
-import React from 'react';
+import React, { useState, useMemo } from 'react';
 
 export default function DataTable({
     headers,
@@ -11,15 +11,89 @@ export default function DataTable({
     onPageChange = () => { },
     masqueColumns = [],
 }) {
-    const indexOfLastItem = currentPage * itemsPerPage;
-    const indexOfFirstItem = indexOfLastItem - itemsPerPage;
-    const currentRows = rows.slice(indexOfFirstItem, indexOfLastItem);
+    const [sortConfig, setSortConfig] = useState({ key: null, direction: 'asc' });
     const user = usePage().props.auth.user;
 
-    const totalPages = Math.ceil(rows.length / itemsPerPage);
+    // Fonction pour gérer le tri
+    const handleSort = (key) => {
+        let direction = 'asc';
+        if (sortConfig.key === key && sortConfig.direction === 'asc') {
+            direction = 'desc';
+        }
+        setSortConfig({ key, direction });
+    };
+
+    // Tri des données
+    const sortedRows = useMemo(() => {
+        if (!sortConfig.key) return rows;
+
+        return [...rows].sort((a, b) => {
+            const aValue = a[sortConfig.key];
+            const bValue = b[sortConfig.key];
+
+            // Gestion des valeurs null/undefined
+            if (aValue === null || aValue === undefined) return 1;
+            if (bValue === null || bValue === undefined) return -1;
+
+            // Tri numérique si les valeurs sont des nombres
+            if (typeof aValue === 'number' && typeof bValue === 'number') {
+                return sortConfig.direction === 'asc' ? aValue - bValue : bValue - aValue;
+            }
+
+            // Tri par date si les valeurs ressemblent à des dates
+            const aDate = new Date(aValue);
+            const bDate = new Date(bValue);
+            if (!isNaN(aDate) && !isNaN(bDate) && aValue.toString().includes('-')) {
+                return sortConfig.direction === 'asc' ? aDate - bDate : bDate - aDate;
+            }
+
+            // Tri alphabétique par défaut
+            const aString = aValue.toString().toLowerCase();
+            const bString = bValue.toString().toLowerCase();
+
+            if (aString < bString) {
+                return sortConfig.direction === 'asc' ? -1 : 1;
+            }
+            if (aString > bString) {
+                return sortConfig.direction === 'asc' ? 1 : -1;
+            }
+            return 0;
+        });
+    }, [rows, sortConfig]);
+
+    const indexOfLastItem = currentPage * itemsPerPage;
+    const indexOfFirstItem = indexOfLastItem - itemsPerPage;
+    const currentRows = sortedRows.slice(indexOfFirstItem, indexOfLastItem);
+
+    const totalPages = Math.ceil(sortedRows.length / itemsPerPage);
 
     const paginate = (pageNumber) => {
         onPageChange(pageNumber);
+    };
+
+    // Icône de tri
+    const getSortIcon = (headerKey) => {
+        if (sortConfig.key !== headerKey) {
+            return (
+                <svg className="w-4 h-4 ml-1 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 9l4-4 4 4m0 6l-4 4-4-4" />
+                </svg>
+            );
+        }
+
+        if (sortConfig.direction === 'asc') {
+            return (
+                <svg className="w-4 h-4 ml-1 text-gray-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 15l7-7 7 7" />
+                </svg>
+            );
+        } else {
+            return (
+                <svg className="w-4 h-4 ml-1 text-gray-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
+                </svg>
+            );
+        }
     };
 
     return (
@@ -32,9 +106,13 @@ export default function DataTable({
                                 !masqueColumns.includes(header.key) && (
                                     <th
                                         key={index}
-                                        className="px-4 py-3 text-xs font-medium tracking-wider text-left text-gray-500 uppercase dark:text-gray-300"
+                                        className="px-4 py-3 text-xs font-medium tracking-wider text-left text-gray-500 uppercase cursor-pointer select-none hover:bg-gray-100 dark:text-gray-300 dark:hover:bg-gray-600"
+                                        onClick={() => handleSort(header.key)}
                                     >
-                                        {header.label}
+                                        <div className="flex items-center">
+                                            {header.label}
+                                            {getSortIcon(header.key)}
+                                        </div>
                                     </th>
                                 )
                             ))}

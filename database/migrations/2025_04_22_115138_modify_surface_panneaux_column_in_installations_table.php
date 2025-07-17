@@ -11,7 +11,7 @@ return new class extends Migration
         Schema::table('installations', function (Blueprint $table) {
             $table->dropColumn('surface_panneaux');
             $table->string('numero_serie')->after('debit_nominal');
-            $table->string('source_eau')->after('debit_nominal');
+            $table->string(column: 'source_eau')->after(column: 'debit_nominal');
             $table->integer('hmt')->after('debit_nominal');
         });
     }

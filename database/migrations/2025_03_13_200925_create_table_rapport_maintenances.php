@@ -16,12 +16,12 @@ return new class extends Migration
             $table->foreignId('clientId');
             $table->foreignId('technicienId');
             $table->foreignId('maintenanceId');
-            $table->json('description_panne');
-            $table->json('diagnostic_initial');
+            $table->json(column: 'description_panne');
+            $table->json(column: 'diagnostic_initial');
             $table->json('cause_identifiee');
             $table->json('intervention_realisee');
             $table->json('verification_fonctionnement');
-            $table->json('recommandation_client');
+            $table->json(column: 'recommandation_client');
             $table->timestamps();
         });
     }

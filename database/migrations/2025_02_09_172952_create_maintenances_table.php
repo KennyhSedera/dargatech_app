@@ -14,9 +14,9 @@ return new class extends Migration
         Schema::create('maintenances', function (Blueprint $table) {
             $table->id();
             $table->foreignId('installation_id')->constrained()->onDelete('cascade');
-            $table->string('type_intervention');
+            $table->string(column: 'type_intervention');
             $table->text('description_probleme');
-            $table->date('date_intervention');
+            $table->date(column: 'date_intervention');
             $table->string('status_intervention')->default('en attente');
             $table->timestamps();
         });

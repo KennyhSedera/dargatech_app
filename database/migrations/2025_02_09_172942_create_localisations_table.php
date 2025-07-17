@@ -14,9 +14,9 @@
         {
             Schema::create('localisations', function (Blueprint $table) {
                 $table->id();
-                $table->float('latitude');
+                $table->float(column: 'latitude');
                 $table->float('longitude');
-                $table->string('pays');
+                $table->string(column: 'pays');
                 $table->string('ville');
                 $table->timestamps();
             });

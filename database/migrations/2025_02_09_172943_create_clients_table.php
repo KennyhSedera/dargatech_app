@@ -21,8 +21,8 @@ return new class extends Migration
             $table->string('email')->nullable();
             $table->string('CIN')->nullable();
             $table->date('date_contrat')->nullable();
-            $table->string('type_activite_agricole');
-            $table->float('surface_cultivee');
+            $table->string(column: 'type_activite_agricole');
+            $table->float(column: 'surface_cultivee');
             $table->foreignId('localisation_id')->constrained('localisations')->onDelete('cascade')->default(1);
             $table->timestamps();
         });

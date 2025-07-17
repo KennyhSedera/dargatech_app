@@ -19,12 +19,6 @@ use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Route;
 
 Route::group(['prefix' => 'api'], function () {
-    Route::get('/test', function() {
-        return response()->json([
-            'message' => 'API is working!',
-            'status' => 'success'
-        ]);
-    });
 
     Route::group(['prefix' => 'clients', 'as' => 'clients.', 'middleware' => 'auth'], function () {
         Route::get('/', [ClientController::class, 'index'])->name('index');
@@ -134,7 +128,7 @@ Route::group(['prefix' => 'api'], function () {
 
     Route::get('/users', [UserController::class, 'index'])->name('users.index');
     Route::delete('/users/{id}', [UserController::class, 'destroy'])->name('users.destroy');
-    
+
     Route::get('/rapport/maintenance/{maintenance_id}', [RapportController::class, 'showByMaintenanceId']);
 
     Route::group(['prefix' => 'partenaire', 'as' => 'partenaire.', 'middleware' => 'auth'], function () {

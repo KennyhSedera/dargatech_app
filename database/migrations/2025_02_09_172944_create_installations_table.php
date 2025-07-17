@@ -13,13 +13,13 @@ return new class extends Migration
     {
         Schema::create('installations', function (Blueprint $table) {
             $table->id();
-            $table->string('code_installation')->unique()->default('I0001');
+            $table->string(column: 'code_installation')->unique()->default('I0001');
             $table->foreignId('client_id')->constrained()->onDelete('cascade');
-            $table->date('date_installation');
-            $table->float('puissance_pompe');
-            $table->float('profondeur_forage');
-            $table->float('debit_nominal');
-            $table->float('surface_panneaux');
+            $table->date(column: 'date_installation');
+            $table->float(column: 'puissance_pompe');
+            $table->float(column: 'profondeur_forage');
+            $table->float(column: 'debit_nominal');
+            $table->float(column: 'surface_panneaux');
             $table->string('statuts')->default('installée');
             $table->timestamps();
         });

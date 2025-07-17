@@ -13,12 +13,12 @@ class CreateProductsTable extends Migration
     {
         Schema::create('products', function (Blueprint $table) {
             $table->id();
-            $table->string('designation');
+            $table->string(column: 'designation');
             $table->string('reference')->nullable();
-            $table->integer('quantite')->default(1);
-            $table->string('unite')->nullable();
+            $table->integer(column: 'quantite')->default(1);
+            $table->string(column: 'unite')->nullable();
             $table->float('tva')->default(0);
-            $table->float('prix_unitaire')->default(0);
+            $table->float(column: 'prix_unitaire')->default(0);
             $table->float('total_ht')->default(0);
             $table->float('total_ttc')->default(0);
             $table->timestamps();
