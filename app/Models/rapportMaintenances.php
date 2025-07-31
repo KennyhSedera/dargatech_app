@@ -9,7 +9,7 @@ class rapportMaintenances extends Model
     use HasFactory;
 
     protected $table = 'rapport_maintenances';
-    
+
     protected $fillable = [
         'clientId',
         'technicienId',

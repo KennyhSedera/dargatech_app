@@ -18,16 +18,6 @@ class RapportController extends Controller
         return response()->json([$data], 200);
     }
 
-    public function store(RapportRequest $request)
-    {
-        Rapports::create($request->validate());
-
-        return response()->json([
-            'message' => 'Rapport ajouté avec succès !',
-            'success' => true,
-        ], 200);
-    }
-
     public function storeRapportMaintenance(Request $request)
     {
         $validatedData = $request->validate([
@@ -35,7 +25,8 @@ class RapportController extends Controller
             'technicienId' => 'required|integer',
             'maintenanceId' => 'required|integer',
             'description_probleme' => 'required|string',
-            'photo_probleme' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048',
+            'photo_probleme' => 'nullable|array',
+            'photo_probleme.*' => 'image|mimes:jpeg,png,jpg,gif|max:2048',
             'verifications_preliminaires' => 'required|string',
             'resultat_diagnostic' => 'required|string',
             'actions_correctives' => 'required|string',
@@ -44,22 +35,23 @@ class RapportController extends Controller
             'date_intervention' => 'required|date',
         ]);
 
-        // Traitement de l'image si elle est fournie
-        $photoPath = null;
+        // Traitement des images
+        $photoPaths = [];
+
         if ($request->hasFile('photo_probleme')) {
-            $image = $request->file('photo_probleme');
-            $imageName = time() . '.' . $image->getClientOriginalExtension();
-            $image->move(public_path('uploads/rapports'), $imageName);
-            $photoPath = 'uploads/rapports/' . $imageName;
+            foreach ($request->file('photo_probleme') as $image) {
+                $imageName = time() . '_' . uniqid() . '.' . $image->getClientOriginalExtension();
+                $image->move(public_path('uploads/rapports'), $imageName);
+                $photoPaths[] = 'uploads/rapports/' . $imageName;
+            }
         }
 
-        // Adapter les noms des champs à ceux de la base de données
         $dbData = [
             'clientId' => $validatedData['clientId'],
             'technicienId' => $validatedData['technicienId'],
             'maintenanceId' => $validatedData['maintenanceId'],
             'description_panne' => $validatedData['description_probleme'],
-            'photo_probleme' => $photoPath,
+            'photo_probleme' => json_encode($photoPaths), // 💡 Stocké en JSON
             'diagnostic_initial' => $validatedData['verifications_preliminaires'],
             'cause_identifiee' => $validatedData['resultat_diagnostic'],
             'intervention_realisee' => $validatedData['actions_correctives'],
@@ -71,14 +63,11 @@ class RapportController extends Controller
         DB::beginTransaction();
 
         try {
-            // Création du rapport de maintenance
             $rapport = rapportMaintenances::create($dbData);
 
-            // Mise à jour du statut de la maintenance
             $maintenance = Maintenance::find($validatedData['maintenanceId']);
             $maintenance->update(['status_intervention' => 'terminée']);
 
-            // Mise à jour du statut de l'installation
             $installation = Installation::find($maintenance->installation_id);
             $installation->update(['statuts' => 'installée']);
 
@@ -91,6 +80,7 @@ class RapportController extends Controller
             ], 200);
         } catch (\Exception $e) {
             DB::rollBack();
+
             return response()->json([
                 'message' => 'Erreur lors de la création du rapport',
                 'error' => $e->getMessage(),

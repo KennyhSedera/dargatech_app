@@ -6,6 +6,7 @@ use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\InstallationController;
 use App\Http\Controllers\LocalisationController;
 use App\Http\Controllers\MaintenanceController;
+use App\Http\Controllers\MaintenancePdfController;
 use App\Http\Controllers\MaterielController;
 use App\Http\Controllers\PaiementController;
 use App\Http\Controllers\RapportController;
@@ -15,6 +16,7 @@ use App\Http\Controllers\UserRoleController;
 use App\Http\Controllers\UserController;
 use App\Http\Controllers\PartenaireController;
 use App\Http\Controllers\PaiementPdfController;
+use App\Http\Controllers\RapportPdfController;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Route;
 
@@ -140,4 +142,5 @@ Route::group(['prefix' => 'api'], function () {
     });
 
     Route::post('/paiement/generate-and-send-pdf', [PaiementPdfController::class, 'generateAndSendPdf']);
+
 });

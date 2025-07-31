@@ -77,13 +77,6 @@ class ClientController extends Controller
         }
     }
 
-    /**
-     * Mettre à jour un client existant.
-     *
-     * @param  \Illuminate\Http\Request  $request
-     * @param  int  $id
-     * @return \Illuminate\Http\Response
-     */
     public function update(ClientRequest $request, $id)
     {
         try {
@@ -130,12 +123,6 @@ class ClientController extends Controller
         }
     }
 
-    /**
-     * Supprimer un client.
-     *
-     * @param  int  $id
-     * @return \Illuminate\Http\Response
-     */
     public function destroy($id)
     {
         try {

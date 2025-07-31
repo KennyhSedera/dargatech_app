@@ -55,7 +55,10 @@ export const createRapportMaintenance = async (data) => {
         const response = await api.post("/rapport-maintenances", data);
         return response.data;
     } catch (error) {
-        console.error("Erreur lors de la création du rapport de maintenance", error);
+        console.error(
+            "Erreur lors de la création du rapport de maintenance",
+            error
+        );
         throw error;
     }
 };

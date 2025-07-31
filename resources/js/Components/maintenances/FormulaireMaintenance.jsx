@@ -24,7 +24,6 @@ const FormulaireMaintenance = ({
     const [load, setLoad] = useState(false);
     const [validationErrors, setValidationErrors] = useState({});
     const [installation, setInstallation] = useState([]);
-    const [technicien, settechnicien] = useState([]);
     const { data, setData, errors, reset } = useForm({
         installation_id: 0,
         date_intervention: new Date().toISOString().split('T')[0],
@@ -37,10 +36,12 @@ const FormulaireMaintenance = ({
 
     const getInstallation = async () => {
         const [{ data }] = await Promise.all([getinstallations()]);
-        const installationFormat = data.map(el => ({
-            id: el.id,
-            nom: el.code_installation,
-        }));
+        const installationFormat = data
+            .filter(el => el.statuts !== 'en panne')
+            .map(el => ({
+                id: el.id,
+                nom: el.code_installation,
+            }));
         setInstallation(installationFormat);
     }
 
@@ -117,7 +118,7 @@ const FormulaireMaintenance = ({
             <div className='text-2xl font-semibold text-center'>
                 {dataModify.nom ? 'Modifier une Intervention' : 'Ajouter une Intervention'}
             </div>
-            <form className='grid w-full grid-cols-1 gap-4 my-6 px-6'>
+            <form className='grid w-full grid-cols-1 gap-4 px-6 my-6'>
                 <div>
                     <InputLabel htmlFor="installation_id" value="Code d'instalation" />
                     <InputAutocomplete

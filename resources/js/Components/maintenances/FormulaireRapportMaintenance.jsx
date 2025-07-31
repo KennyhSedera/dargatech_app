@@ -8,6 +8,7 @@ import InputImage from '../inputs/InputImage';
 import { useForm } from '@inertiajs/react';
 import { createRapportMaintenance } from '@/Services/maintenanceService';
 import Snackbar from '@/Components/Snackbar';
+
 const FormulaireRapportMaintenance = ({
     open = true,
     setOpen,
@@ -23,7 +24,7 @@ const FormulaireRapportMaintenance = ({
         technicienId: idTechnicien,
         maintenanceId: 0,
         description_probleme: '',
-        photo_probleme: null,
+        photo_probleme: [],
         verifications_preliminaires: '',
         resultat_diagnostic: '',
         actions_correctives: '',
@@ -31,6 +32,7 @@ const FormulaireRapportMaintenance = ({
         recommandations: '',
         date_intervention: today,
     });
+
     const [load, setload] = useState(false);
     const [formErrors, setFormErrors] = useState({});
     const [snackbar, setSnackbar] = useState({ show: false, message: '', type: 'info' });
@@ -53,7 +55,7 @@ const FormulaireRapportMaintenance = ({
             technicienId: idTechnicien || 1,
             maintenanceId: 0,
             description_probleme: '',
-            photo_probleme: null,
+            photo_probleme: [],
             verifications_preliminaires: '',
             resultat_diagnostic: '',
             actions_correctives: '',
@@ -64,12 +66,13 @@ const FormulaireRapportMaintenance = ({
         onCloseFormulaire(message);
     };
 
-    const onLoadFile = (file) => {
-        setData('photo_probleme', file);
+    const onLoadFile = (files) => {
+        console.log(files);
+        setData('photo_probleme', files);
         if (validationErrors.photo_probleme) {
             setValidationErrors({
                 ...validationErrors,
-                photo_probleme: ''
+                photo_probleme: '',
             });
         }
     };
@@ -114,28 +117,56 @@ const FormulaireRapportMaintenance = ({
 
         try {
             setload(true);
+
+            // Vérifier la taille des fichiers avant l'envoi
+            if (data.photo_probleme && Array.isArray(data.photo_probleme)) {
+                for (const file of data.photo_probleme) {
+                    if (file.size > 5 * 1024 * 1024) { // 5MB
+                        setSnackbar({
+                            show: true,
+                            message: `Le fichier ${file.name} est trop volumineux (max 5MB)`,
+                            type: 'error'
+                        });
+                        return;
+                    }
+                }
+            }
+
             const formData = new FormData();
             formData.append('clientId', data.clientId);
             formData.append('technicienId', data.technicienId);
             formData.append('maintenanceId', data.maintenanceId);
             formData.append('description_probleme', data.description_probleme);
-            if (data.photo_probleme) {
-                formData.append('photo_probleme', data.photo_probleme);
+
+            // Gestion correcte des photos
+            if (data.photo_probleme && Array.isArray(data.photo_probleme) && data.photo_probleme.length > 0) {
+                data.photo_probleme.forEach((file, index) => {
+                    formData.append(`photo_probleme[${index}]`, file);
+                });
             }
+
             formData.append('verifications_preliminaires', data.verifications_preliminaires);
             formData.append('resultat_diagnostic', data.resultat_diagnostic);
             formData.append('actions_correctives', data.actions_correctives);
             formData.append('verification_fonctionnement', data.verification_fonctionnement);
-            formData.append('recommandations', data.recommandations);
+            formData.append('recommandations', data.recommandations || '');
             formData.append('date_intervention', data.date_intervention);
+
+            console.log('Data object:', data);
 
             const res = await createRapportMaintenance(formData);
             onClose(res.message);
+            console.log(res.data);
+
         } catch (error) {
             console.error('Erreur lors de la création du rapport:', error);
+
+            let errorMessage = 'Une erreur est survenue lors de la création du rapport';
+
+
             setSnackbar({
                 show: true,
-                message: 'Une erreur est survenue lors de la création du rapport',
+                message: errorMessage,
                 type: 'error'
             });
         } finally {
@@ -239,7 +270,12 @@ const FormulaireRapportMaintenance = ({
                 </div>
                 <div>
                     <InputLabel htmlFor="photo_probleme" value="Photo du problème (optionnel)" />
-                    <InputImage ref={fileInputRef} selectedFile={data.photo_probleme} onLoadFile={onLoadFile} onFocus={() => setValidationErrors({ ...validationErrors, photo_probleme: '' })} />
+                    <InputImage
+                        ref={fileInputRef}
+                        selectedFiles={data.photo_probleme} // Correction: selectedFiles au lieu de selectedFile
+                        onLoadFile={onLoadFile}
+                        onFocus={() => setValidationErrors({ ...validationErrors, photo_probleme: '' })}
+                    />
                 </div>
                 <div>
                     <InputLabel htmlFor="date_intervention" value="Date de l'intervention *" />
@@ -252,7 +288,6 @@ const FormulaireRapportMaintenance = ({
                         onChange={(e) => setData('date_intervention', e.target.value)}
                         type="date"
                         required
-                        readOnly={true}
                         onFocus={() => setFormErrors({ ...formErrors, date_intervention: '' })}
                     />
                     <InputError message={formErrors.date_intervention || errors.date_intervention} className="mt-2" />
@@ -276,4 +311,4 @@ const FormulaireRapportMaintenance = ({
     );
 };
 
-export default FormulaireRapportMaintenance; 
+export default FormulaireRapportMaintenance;

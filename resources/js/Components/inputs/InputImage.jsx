@@ -1,62 +1,65 @@
 import { forwardRef, useEffect, useImperativeHandle, useRef, useState } from 'react';
 
-const InputImage = forwardRef(({ className = '', isFocused = false, selectedFile, onLoadFile, onFocus, ...props }, ref) => {
-    const inputRef = useRef(null);
-    const [filename, setFilename] = useState('Sélectionner une image');
+const InputImage = forwardRef(
+    ({ className = '', isFocused = false, selectedFiles = [], onLoadFile, onFocus, multiple = true, ...props }, ref) => {
+        const inputRef = useRef(null);
+        const [filenames, setFilenames] = useState(['Sélectionner des images']);
 
-    useImperativeHandle(ref, () => ({
-        focus: () => inputRef.current?.focus(),
-        click: () => inputRef.current?.click(),
-        getFiles: () => inputRef.current?.files,
-    }));
+        useImperativeHandle(ref, () => ({
+            focus: () => inputRef.current?.focus(),
+            click: () => inputRef.current?.click(),
+            getFiles: () => inputRef.current?.files,
+        }));
 
-    useEffect(() => {
-        if (isFocused) {
-            inputRef.current?.focus();
-        }
-    }, [isFocused]);
+        useEffect(() => {
+            if (isFocused) {
+                inputRef.current?.focus();
+            }
+        }, [isFocused]);
 
-    useEffect(() => {
-        if (!selectedFile) {
-            setFilename('Sélectionner une image');
-        }
-    }, [selectedFile]);
+        useEffect(() => {
+            if (!selectedFiles || selectedFiles.length === 0) {
+                setFilenames(['Sélectionner des images']);
+            }
+        }, [selectedFiles]);
 
-    const handleClick = () => {
-        inputRef.current?.click();
-        onFocus();
-    };
+        const handleClick = () => {
+            inputRef.current?.click();
+            onFocus?.();
+        };
 
-    const handleFileChange = () => {
-        const file = inputRef.current?.files?.[0];
-        if (file) {
-            setFilename(file.name);
-            onLoadFile(file);
-        }
-    };
+        const handleFileChange = () => {
+            const files = Array.from(inputRef.current?.files || []);
+            if (files.length > 0) {
+                setFilenames(files.map(file => file.name));
+                onLoadFile(files);
+            }
+        };
 
-    return (
-        <div>
-            <div
-                onClick={handleClick}
-                className={`rounded-md line-clamp-1 px-2 py-2 border border-gray-300 shadow-sm
-                    focus:border-indigo-500 focus:ring-indigo-500 dark:border-gray-700
-                    dark:bg-gray-900 dark:text-gray-300 dark:focus:border-indigo-600
-                    dark:focus:ring-indigo-600 cursor-pointer
-                    ${selectedFile ? '' : 'text-gray-500'} ${className}`}
-            >
-                {filename}
+        return (
+            <div>
+                <div
+                    onClick={handleClick}
+                    className={`rounded-md px-2 py-2 border border-gray-300 shadow-sm
+                        focus:border-indigo-500 focus:ring-indigo-500 dark:border-gray-700
+                        dark:bg-gray-900 dark:text-gray-300 dark:focus:border-indigo-600
+                        dark:focus:ring-indigo-600 cursor-pointer text-sm
+                        ${selectedFiles.length > 0 ? '' : 'text-gray-500'} ${className}`}
+                >
+                    {filenames.join(', ')}
+                </div>
+                <input
+                    {...props}
+                    type="file"
+                    ref={inputRef}
+                    accept="image/*"
+                    multiple={multiple}
+                    className="hidden"
+                    onChange={handleFileChange}
+                />
             </div>
-            <input
-                {...props}
-                type="file"
-                ref={inputRef}
-                accept="image/*"
-                className="hidden"
-                onChange={handleFileChange}
-            />
-        </div>
-    );
-});
+        );
+    }
+);
 
 export default InputImage;
