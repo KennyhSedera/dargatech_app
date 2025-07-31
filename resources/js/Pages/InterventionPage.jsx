@@ -184,7 +184,7 @@ const InterventionPage = () => {
             <HeaderPage
                 search={search}
                 onSearch={onFiltredData}
-                title='Liste des interventions'
+                title={`Liste des interventions ( Total: ${maintenances.length} )`}
                 handleClick={handleNewIntervention}
             />
             <Snackbar

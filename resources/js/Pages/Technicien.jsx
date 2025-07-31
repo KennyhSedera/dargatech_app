@@ -99,34 +99,31 @@ const Technicien = () => {
 
     const pageNumbers = [];
     const maxPagesToShow = 5;
-    
+
     // Calculate start and end page numbers
     let startPage = Math.max(1, currentPage - Math.floor(maxPagesToShow / 2));
     let endPage = startPage + maxPagesToShow - 1;
-    
+
     if (endPage > totalPages) {
         endPage = totalPages;
         startPage = Math.max(1, endPage - maxPagesToShow + 1);
     }
-    
+
     for (let i = startPage; i <= endPage; i++) {
         pageNumbers.push(i);
     }
-    
-    // Filter count
-    const filterCount = filteredData.length !== techniciens.length ? 
-        `(${filteredData.length}/${techniciens.length})` : '';
+
 
     return (
         <AuthenticatedLayout>
             <Head title='Technicien' />
             <HeaderPage
                 handleClick={() => setopen(true)}
-                title={`Liste des Techniciens ${filterCount}`}
+                title={`Liste des Techniciens ( Total: ${techniciens.length} )`}
                 search={search}
                 onSearch={onFiltered}
             />
-            
+
             <TechnicienFormulaire
                 open={open}
                 setOpen={setopen}
@@ -149,16 +146,16 @@ const Technicien = () => {
                 close={() => setSuppression({ ...suppression, open: false })}
                 accept={confirmDelete}
             />
-            
+
             {isLoading ? (
-                <div className="flex flex-col justify-center items-center h-64 rounded-xl p-8">
-                    <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-indigo-500 mb-4"></div>
+                <div className="flex flex-col items-center justify-center h-64 p-8 rounded-xl">
+                    <div className="w-12 h-12 mb-4 border-t-2 border-b-2 border-indigo-500 rounded-full animate-spin"></div>
                 </div>
             ) : (
                 <>
                     {filteredData.length > 0 ? (
                         <div className='mt-4'>
-                            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
+                            <div className="grid grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
                                 {currentItems.map((technician) => (
                                     <TechnicienCard
                                         key={technician.id}
@@ -168,73 +165,68 @@ const Technicien = () => {
                                     />
                                 ))}
                             </div>
-                            
+
                             {/* Enhanced Pagination Controls */}
                             {totalPages > 1 && (
                                 <div className="flex justify-center mt-8">
-                                    <nav className="flex items-center bg-white rounded-lg shadow-sm px-2 py-2 border border-gray-200">
+                                    <nav className="flex items-center px-2 py-2 bg-white border border-gray-200 rounded-lg shadow-sm">
                                         <button
                                             onClick={() => setCurrentPage(1)}
                                             disabled={currentPage === 1}
-                                            className={`mx-1 p-2 rounded-md ${
-                                                currentPage === 1 
-                                                ? 'text-gray-400 cursor-not-allowed' 
+                                            className={`mx-1 p-2 rounded-md ${currentPage === 1
+                                                ? 'text-gray-400 cursor-not-allowed'
                                                 : 'text-gray-700 hover:bg-indigo-50'
-                                            }`}
+                                                }`}
                                             title="Première page"
                                         >
                                             &laquo;
                                         </button>
-                                        
+
                                         <button
                                             onClick={() => setCurrentPage(prev => Math.max(prev - 1, 1))}
                                             disabled={currentPage === 1}
-                                            className={`mx-1 p-2 rounded-md ${
-                                                currentPage === 1 
-                                                ? 'text-gray-400 cursor-not-allowed' 
+                                            className={`mx-1 p-2 rounded-md ${currentPage === 1
+                                                ? 'text-gray-400 cursor-not-allowed'
                                                 : 'text-gray-700 hover:bg-indigo-50'
-                                            }`}
+                                                }`}
                                             title="Page précédente"
                                         >
                                             &lsaquo;
                                         </button>
-                                        
+
                                         {/* Page numbers */}
                                         {pageNumbers.map(number => (
                                             <button
                                                 key={number}
                                                 onClick={() => setCurrentPage(number)}
-                                                className={`mx-1 w-9 h-9 flex items-center justify-center rounded-md ${
-                                                    currentPage === number
-                                                    ? 'bg-indigo-600 text-white font-medium' 
+                                                className={`mx-1 w-9 h-9 flex items-center justify-center rounded-md ${currentPage === number
+                                                    ? 'bg-indigo-600 text-white font-medium'
                                                     : 'text-gray-700 hover:bg-indigo-50'
-                                                }`}
+                                                    }`}
                                             >
                                                 {number}
                                             </button>
                                         ))}
-                                        
+
                                         <button
                                             onClick={() => setCurrentPage(prev => Math.min(prev + 1, totalPages))}
                                             disabled={currentPage === totalPages}
-                                            className={`mx-1 p-2 rounded-md ${
-                                                currentPage === totalPages 
-                                                ? 'text-gray-400 cursor-not-allowed' 
+                                            className={`mx-1 p-2 rounded-md ${currentPage === totalPages
+                                                ? 'text-gray-400 cursor-not-allowed'
                                                 : 'text-gray-700 hover:bg-indigo-50'
-                                            }`}
+                                                }`}
                                             title="Page suivante"
                                         >
                                             &rsaquo;
                                         </button>
-                                        
+
                                         <button
                                             onClick={() => setCurrentPage(totalPages)}
                                             disabled={currentPage === totalPages}
-                                            className={`mx-1 p-2 rounded-md ${
-                                                currentPage === totalPages 
-                                                ? 'text-gray-400 cursor-not-allowed' 
+                                            className={`mx-1 p-2 rounded-md ${currentPage === totalPages
+                                                ? 'text-gray-400 cursor-not-allowed'
                                                 : 'text-gray-700 hover:bg-indigo-50'
-                                            }`}
+                                                }`}
                                             title="Dernière page"
                                         >
                                             &raquo;

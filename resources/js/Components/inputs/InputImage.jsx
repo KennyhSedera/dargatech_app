@@ -40,13 +40,13 @@ const InputImage = forwardRef(
             <div>
                 <div
                     onClick={handleClick}
-                    className={`rounded-md px-2 py-2 border border-gray-300 shadow-sm
+                    className={`rounded-md h-11 flex items-center mt-1 border border-gray-300 shadow-sm
                         focus:border-indigo-500 focus:ring-indigo-500 dark:border-gray-700
                         dark:bg-gray-900 dark:text-gray-300 dark:focus:border-indigo-600
                         dark:focus:ring-indigo-600 cursor-pointer text-sm
                         ${selectedFiles.length > 0 ? '' : 'text-gray-500'} ${className}`}
                 >
-                    {filenames.join(', ')}
+                    <span className='px-2 truncate'>{filenames.join(', ')}</span>
                 </div>
                 <input
                     {...props}

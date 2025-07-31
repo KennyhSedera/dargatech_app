@@ -148,7 +148,7 @@ const InstallationPage = () => {
         <AuthenticatedLayout>
             <Head title='Installations' />
             <HeaderPage
-                title='Liste des Installations'
+                title={`Liste des Installations ( Total: ${installations.length} )`}
                 handleClick={handleNewInstallation}
                 onSearch={onFiltredData}
                 search={search}
