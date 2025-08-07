@@ -106,6 +106,9 @@ const InstallationPage = () => {
         const filteredData = installations.filter(
             (el) =>
                 el.nom.toLowerCase().includes(value.toLowerCase()) ||
+                el.code_installation.toLowerCase().includes(value.toLowerCase()) ||
+                el.numero_serie.toLowerCase().includes(value.toLowerCase()) ||
+                el.source_eau.toLowerCase().includes(value.toLowerCase()) ||
                 el.statuts.toLowerCase().includes(value.toLowerCase()) ||
                 el.date_installation.toString().toLowerCase().includes(value.toLowerCase())
         );
