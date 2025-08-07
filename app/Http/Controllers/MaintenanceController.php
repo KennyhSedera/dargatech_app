@@ -24,7 +24,9 @@ class MaintenanceController extends Controller
         DB::beginTransaction();
 
         try {
-            $installation->update(['statuts' => 'en panne']);
+            if ($validatedData['type_intervention'] == 'préventive') {
+                $installation->update(['statuts' => 'en panne']);
+            }
 
             $maintenance = Maintenance::create([
                 'installation_id'      => $validatedData['installation_id'],

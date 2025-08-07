@@ -6,17 +6,16 @@ use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\InstallationController;
 use App\Http\Controllers\LocalisationController;
 use App\Http\Controllers\MaintenanceController;
-use App\Http\Controllers\MaintenancePdfController;
 use App\Http\Controllers\MaterielController;
 use App\Http\Controllers\PaiementController;
 use App\Http\Controllers\RapportController;
 use App\Http\Controllers\TechnicienController;
+use App\Http\Controllers\TelegramBotController;
 use App\Http\Controllers\TypePaiementController;
 use App\Http\Controllers\UserRoleController;
 use App\Http\Controllers\UserController;
 use App\Http\Controllers\PartenaireController;
 use App\Http\Controllers\PaiementPdfController;
-use App\Http\Controllers\RapportPdfController;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Route;
 
@@ -143,4 +142,8 @@ Route::group(['prefix' => 'api'], function () {
 
     Route::post('/paiement/generate-and-send-pdf', [PaiementPdfController::class, 'generateAndSendPdf']);
 
+    Route::post('/telegram/webhook', [TelegramBotController::class, 'webhook']);
+    Route::get('/telegram/set-webhook', [TelegramBotController::class, 'setWebhook']);
+    Route::get('/telegram/webhook-info', [TelegramBotController::class, 'getWebhookInfo']);
+    Route::get('/telegram/delete-webhook', [TelegramBotController::class, 'deleteWebhook']);
 });

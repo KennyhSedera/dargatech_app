@@ -67,7 +67,6 @@ const FormulaireRapportMaintenance = ({
     };
 
     const onLoadFile = (files) => {
-        console.log(files);
         setData('photo_probleme', files);
         if (validationErrors.photo_probleme) {
             setValidationErrors({
@@ -152,11 +151,8 @@ const FormulaireRapportMaintenance = ({
             formData.append('recommandations', data.recommandations || '');
             formData.append('date_intervention', data.date_intervention);
 
-            console.log('Data object:', data);
-
             const res = await createRapportMaintenance(formData);
             onClose(res.message);
-            console.log(res.data);
 
         } catch (error) {
             console.error('Erreur lors de la création du rapport:', error);

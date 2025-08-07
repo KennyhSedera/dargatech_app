@@ -14,7 +14,7 @@ class TelegramCommand extends Command
     {
         $message = $this->argument('message');
         Telegram::sendMessage([
-            'chat_id' => env('TELEGRAM_ADMIN_CHAT_ID'),
+            'chat_id' => env('TELEGRAM_CHAT_ID'),
             'text' => $message
         ]);
         $this->info("Message envoyé : $message");

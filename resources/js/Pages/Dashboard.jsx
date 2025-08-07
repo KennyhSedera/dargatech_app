@@ -13,17 +13,66 @@ import RapportQuotidient from '@/Components/dashboard/RapportQuotidient';
 import moment from 'moment';
 import "moment/locale/fr";
 import { GeolocationTogoComponent } from '@/Components/GeolocationTogoComponent';
+import Calendar from '@/Components/Calendar';
+import { getmaintenances } from '@/Services/maintenanceService';
+import { m } from 'framer-motion';
+import { all } from 'axios';
+import { getinstallations } from '@/Services/installationService';
 
 export default function Dashboard() {
     const [data, setData] = useState({});
+    const [events, setEvents] = useState([]);
+    const [percentenpanne, setPercentenpanne] = useState(0);
 
     const getDataDB = async () => {
         const { data } = await getCount();
         setData(data);
     }
 
+    const getColor = (color) => {
+        switch (color) {
+            case 'erreur':
+                return 'red-500';
+            case 'en panne':
+                return 'red-500';
+            case "terminée":
+                return 'green-500';
+            case "installée":
+                return 'green-500';
+            default:
+                return 'blue-500';
+        }
+    }
+
+    const getEvenement = async () => {
+        const [installation, maintenance] = await all([getinstallations(), getmaintenances()]);
+
+        const installationEvents = installation.data.map((d) => ({
+            id: d.id,
+            title: `Installation ${d.code_installation}`,
+            date: d.date_installation,
+            color: getColor(d.statuts),
+            description: `Maraicher : ${d.client.nom} ${d.client.prenom}, Num série : ${d.numero_serie}, Puissance crête installée : ${d.puissance_pompe}W, Profondeur forage : ${d.profondeur_forage}m, Débit nominal : ${d.debit_nominal}m³/h, Source eau : ${d.source_eau}`,
+            status: d.statuts,
+        }));
+
+        const maintenanceEvents = maintenance.data.map((d) => ({
+            id: d.id,
+            title: `Intervention ${d.type_intervention} (${d.installation.code_installation})`,
+            date: d.date_intervention,
+            color: getColor(d.status_intervention),
+            status: d.status_intervention,
+            description: d.description_probleme,
+        }));
+
+        const datas = [...installationEvents, ...maintenanceEvents];
+
+        setEvents(datas);
+    };
+
     useEffect(() => {
         getDataDB();
+        getEvenement();
     }, []);
 
     const alertcount = data?.alertcount ?? [];
@@ -50,15 +99,17 @@ export default function Dashboard() {
 
     const series = [
         { name: "Installations", data: transformData(installationcount) },
-        { name: "Alertes", data: transformData(alertcount) },
+        // { name: "Alertes", data: transformData(alertcount) },
         { name: "Interventions", data: transformData(interventioncount) },
     ];
 
     const categories = allDatesFormated;
 
-    const percentenpanne = data?.installation > 0
-        ? parseFloat(((data?.enpanne * 100) / data?.installation).toFixed(2))
-        : 0;
+    useEffect(() => {
+        setPercentenpanne(data?.installation > 0
+            ? parseFloat(((data?.enpanne * 100) / data?.installation).toFixed(2))
+            : 0);
+    }, [data]);
 
     const transformDataArea = (data) =>
         allDates.map((date) => {
@@ -116,6 +167,7 @@ export default function Dashboard() {
                 />
                 <RapportQuotidient data={data} />
             </div>
+            <Calendar className="mt-2" events={events} />
             <div className='grid grid-cols-1 gap-2 mt-2 md:grid-cols-3'>
                 <CircleChart
                     value={percentenpanne || 0}

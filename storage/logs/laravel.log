@@ -1,0 +1,41 @@
+[2025-08-07 17:32:16] local.INFO: Step: nom  
+[2025-08-07 17:32:16] local.INFO: Message Text: ken  
+[2025-08-07 17:32:16] local.INFO: Data: {"nom":"ken"}  
+[2025-08-07 17:32:16] local.INFO: Next Step: prenom  
+[2025-08-07 17:32:23] local.INFO: Step: prenom  
+[2025-08-07 17:32:23] local.INFO: Message Text: sedy  
+[2025-08-07 17:32:23] local.INFO: Data: {"nom":"ken","prenom":"sedy"}  
+[2025-08-07 17:32:23] local.INFO: Next Step: telephone  
+[2025-08-07 17:32:37] local.INFO: Step: telephone  
+[2025-08-07 17:32:37] local.INFO: Message Text: 238472  
+[2025-08-07 17:32:37] local.INFO: Data: {"nom":"ken","prenom":"sedy","telephone":"238472"}  
+[2025-08-07 17:32:37] local.INFO: Next Step: localisation  
+[2025-08-07 17:32:50] local.INFO: Step: localisation  
+[2025-08-07 17:32:50] local.INFO: Message Text: fianara  
+[2025-08-07 17:32:50] local.INFO: Data: {"nom":"ken","prenom":"sedy","telephone":"238472","localisation":"fianara"}  
+[2025-08-07 17:32:50] local.INFO: Next Step: genre  
+[2025-08-07 17:33:00] local.INFO: Step: genre  
+[2025-08-07 17:33:00] local.INFO: Message Text: Homme  
+[2025-08-07 17:33:00] local.INFO: Data: {"nom":"ken","prenom":"sedy","telephone":"238472","localisation":"fianara","genre":"Homme"}  
+[2025-08-07 17:33:00] local.INFO: Next Step: email  
+[2025-08-07 17:33:26] local.INFO: Step: email  
+[2025-08-07 17:33:26] local.INFO: Message Text: ken@gmail.com  
+[2025-08-07 17:33:26] local.INFO: Data: {"nom":"ken","prenom":"sedy","telephone":"238472","localisation":"fianara","genre":"Homme","email":"ken@gmail.com"}  
+[2025-08-07 17:33:26] local.INFO: Next Step: CIN  
+[2025-08-07 17:33:33] local.INFO: Step: CIN  
+[2025-08-07 17:33:33] local.INFO: Message Text: 34045  
+[2025-08-07 17:33:33] local.INFO: Data: {"nom":"ken","prenom":"sedy","telephone":"238472","localisation":"fianara","genre":"Homme","email":"ken@gmail.com","CIN":"34045"}  
+[2025-08-07 17:33:33] local.INFO: Next Step: date_contrat  
+[2025-08-07 17:33:59] local.INFO: Step: date_contrat  
+[2025-08-07 17:33:59] local.INFO: Message Text: 2025-05-20  
+[2025-08-07 17:33:59] local.INFO: Data: {"nom":"ken","prenom":"sedy","telephone":"238472","localisation":"fianara","genre":"Homme","email":"ken@gmail.com","CIN":"34045","date_contrat":"2025-05-20"}  
+[2025-08-07 17:33:59] local.INFO: Next Step: type_activite_agricole  
+[2025-08-07 17:34:08] local.INFO: Step: type_activite_agricole  
+[2025-08-07 17:34:08] local.INFO: Message Text: tomate  
+[2025-08-07 17:34:08] local.INFO: Data: {"nom":"ken","prenom":"sedy","telephone":"238472","localisation":"fianara","genre":"Homme","email":"ken@gmail.com","CIN":"34045","date_contrat":"2025-05-20","type_activite_agricole":"tomate"}  
+[2025-08-07 17:34:08] local.INFO: Next Step: surface_cultivee  
+[2025-08-07 17:34:16] local.INFO: Step: surface_cultivee  
+[2025-08-07 17:34:16] local.INFO: Message Text: 1  
+[2025-08-07 17:34:16] local.INFO: Data: {"nom":"ken","prenom":"sedy","telephone":"238472","localisation":"fianara","genre":"Homme","email":"ken@gmail.com","CIN":"34045","date_contrat":"2025-05-20","type_activite_agricole":"tomate","surface_cultivee":"1"}  
+[2025-08-07 17:34:16] local.INFO: Next Step:   
+[2025-08-07 17:35:33] local.INFO: Liste des Maraîchers affichée avec succès {"total_maraichers":4,"user_id":7724180317} 
