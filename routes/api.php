@@ -16,8 +16,11 @@ use App\Http\Controllers\UserRoleController;
 use App\Http\Controllers\UserController;
 use App\Http\Controllers\PartenaireController;
 use App\Http\Controllers\PaiementPdfController;
+use App\Services\ListInstallationService;
+use App\Services\LocationService;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Route;
+use PhpParser\Node\Expr\List_;
 
 Route::group(['prefix' => 'api'], function () {
 
@@ -146,4 +149,15 @@ Route::group(['prefix' => 'api'], function () {
     Route::get('/telegram/set-webhook', [TelegramBotController::class, 'setWebhook']);
     Route::get('/telegram/webhook-info', [TelegramBotController::class, 'getWebhookInfo']);
     Route::get('/telegram/delete-webhook', [TelegramBotController::class, 'deleteWebhook']);
+});
+
+// Usage basique
+
+
+Route::get('/test', function (Request $request) {
+    $installation = new ListInstallationService();
+
+    $location = $installation->getInstallations();
+
+    return response()->json(data: $location);
 });

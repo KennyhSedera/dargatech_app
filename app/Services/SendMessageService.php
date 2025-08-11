@@ -22,16 +22,26 @@ class SendMessageService
             'parse_mode' => $parseMode,
         ]);
     }
-
-    public function sendMessageWithKeyboard($chatId, $text, Keyboard $keyboard, $parseMode = null)
+    public function sendMessageWithKeyboard($chatId, $message, $keyboard, $parseMode = null)
     {
-        return $this->telegram->sendMessage([
-            'chat_id' => $chatId,
-            'text' => $text,
-            'parse_mode' => $parseMode,
-            'reply_markup' => $keyboard,
-        ]);
+        try {
+            $params = [
+                'chat_id' => $chatId,
+                'text' => $message,
+                'reply_markup' => $keyboard->toJson(),
+            ];
+
+            if ($parseMode) {
+                $params['parse_mode'] = $parseMode;
+            }
+
+            return $this->telegram->sendMessage($params);
+        } catch (\Exception $e) {
+            \Log::error('SendMessageWithKeyboard error: ' . $e->getMessage());
+            throw $e;
+        }
     }
+
 
     public function editMessage($chatId, $messageId, $text, $parseMode = null, Keyboard $keyboard = null)
     {

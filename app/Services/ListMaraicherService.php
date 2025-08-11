@@ -14,9 +14,6 @@ class ListMaraicherService
         $this->sendMessage = $sendMessage;
     }
 
-    /**
-     * Afficher la liste complète des maraîchers
-     */
     public function showFullList($chatId)
     {
         try {
@@ -31,7 +28,7 @@ class ListMaraicherService
                 return;
             }
 
-            if ($maraichers->count() > 10) {
+            if ($maraichers->count() > 5) {
                 $this->showPaginatedList($chatId, $maraichers, 1);
             } else {
                 $this->showSimpleList($chatId, $maraichers);
@@ -46,95 +43,55 @@ class ListMaraicherService
         }
     }
 
-    /**
-     * Afficher une liste simple (≤ 10 éléments)
-     */
     private function showSimpleList($chatId, $maraichers)
     {
-        $message = "📋 *Liste des Maraîchers*\n";
+        $message = "🌾 *Vos Maraîchers* • SISAM\n";
         $message .= "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━\n\n";
 
         foreach ($maraichers as $index => $maraicher) {
             $numero = $index + 1;
-            $message .= "👨‍🌾 *#{$numero} {$maraicher->prenom} {$maraicher->nom}*\n";
-            $message .= "📍 {$maraicher->localisation} | 📞 {$maraicher->telephone}\n";
-            $message .= "🌱 {$maraicher->type_activite_agricole} | 📐 {$maraicher->surface_cultivee}ha\n";
-            $message .= "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━\n\n";
+            $statusIcon = $this->getStatusIcon($maraicher);
+
+            $message .= "{$statusIcon} *#{$numero} {$maraicher->prenom} {$maraicher->nom}*\n";
+            $message .= "📍 {$maraicher->localisation}\n";
+            $message .= "📞 {$maraicher->telephone}\n";
+            $message .= "🌱 {$maraicher->type_activite_agricole}\n";
+            $message .= "📐 Surface: {$maraicher->surface_cultivee}ha\n";
+            $message .= "📅 Depuis: " . date('M Y', strtotime($maraicher->date_contrat)) . "\n";
+            $message .= "┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈\n\n";
         }
 
         $total = $maraichers->count();
-        $message .= "📊 *Total:* {$total} maraîcher(s)\n\n";
+        $message .= "📊 *Total: {$total} maraîcher(s) actif(s)*\n";
+        $message .= "🕐 *Mise à jour:* " . date('d/m/Y à H:i') . "\n\n";
 
-        // Ajouter le clavier de navigation
+        // Keyboard amélioré
         $keyboard = Keyboard::make()
             ->row([
                 Keyboard::inlineButton(['text' => '👁️ Vue Détaillée', 'callback_data' => 'list_detailed']),
-                Keyboard::inlineButton(['text' => '🔍 Rechercher', 'callback_data' => 'search_maraicher'])
+                Keyboard::inlineButton(['text' => '📊 Statistiques', 'callback_data' => 'list_summary'])
             ])
             ->row([
-                Keyboard::inlineButton(['text' => '➕ Nouveau', 'callback_data' => 'new_maraicher']),
-                Keyboard::inlineButton(['text' => '🏠 Menu', 'callback_data' => 'main_menu'])
+                Keyboard::inlineButton(['text' => '🔍 Rechercher', 'callback_data' => 'search_maraicher']),
+                Keyboard::inlineButton(['text' => '🌱 Ajouter', 'callback_data' => 'new_maraicher'])
+            ])
+            ->row([
+                Keyboard::inlineButton(['text' => '🏠 Accueil', 'callback_data' => 'main_menu'])
             ]);
 
         $this->sendMessage->sendMessageWithKeyboard($chatId, $message, $keyboard, 'Markdown');
     }
 
-    /**
-     * Afficher une liste paginée (> 10 éléments)
-     */
-    public function showPaginatedList($chatId, $maraichers, $page = 1)
+    private function getStatusIcon($maraicher)
     {
-        $perPage = 5;
-        $total = $maraichers->count();
-        $totalPages = ceil($total / $perPage);
-        $offset = ($page - 1) * $perPage;
-        $currentMaraichers = $maraichers->slice($offset, $perPage);
+        // Logique pour déterminer le statut (exemple)
+        $daysSinceContract = (time() - strtotime($maraicher->date_contrat)) / (60 * 60 * 24);
 
-        $message = "📋 *Liste des Maraîchers* (Page {$page}/{$totalPages})\n";
-        $message .= "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━\n\n";
-
-        foreach ($currentMaraichers as $index => $maraicher) {
-            $numero = $offset + $index + 1;
-            $message .= "👨‍🌾 *#{$numero} {$maraicher->prenom} {$maraicher->nom}*\n";
-            $message .= "📍 {$maraicher->localisation}\n";
-            $message .= "📞 {$maraicher->telephone}\n";
-            $message .= "🌱 {$maraicher->type_activite_agricole} ({$maraicher->surface_cultivee}ha)\n";
-            $message .= "📅 " . date('d/m/Y', strtotime($maraicher->date_contrat)) . "\n";
-            $message .= "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━\n\n";
-        }
-
-        $message .= "📊 *Total:* {$total} maraîcher(s) | Page {$page}/{$totalPages}";
-
-        // Créer les boutons de pagination
-        $keyboard = Keyboard::make();
-
-        $paginationButtons = [];
-        if ($page > 1) {
-            $paginationButtons[] = Keyboard::inlineButton(['text' => '⬅️ Précédent', 'callback_data' => 'list_page_' . ($page - 1)]);
-        }
-        if ($page < $totalPages) {
-            $paginationButtons[] = Keyboard::inlineButton(['text' => 'Suivant ➡️', 'callback_data' => 'list_page_' . ($page + 1)]);
-        }
-
-        if (!empty($paginationButtons)) {
-            $keyboard->row($paginationButtons);
-        }
-
-        $keyboard->row([
-            Keyboard::inlineButton(['text' => '👁️ Vue Résumé', 'callback_data' => 'list_summary']),
-            Keyboard::inlineButton(['text' => '🔍 Rechercher', 'callback_data' => 'search_maraicher'])
-        ])
-        ->row([
-            Keyboard::inlineButton(['text' => '➕ Nouveau', 'callback_data' => 'new_maraicher']),
-            Keyboard::inlineButton(['text' => '🏠 Menu', 'callback_data' => 'main_menu'])
-        ]);
-
-        $this->sendMessage->sendMessageWithKeyboard($chatId, $message, $keyboard, 'Markdown');
+        if ($daysSinceContract < 30) return "🌟"; // Nouveau
+        if ($daysSinceContract < 90) return "🌱"; // Récent
+        return "👨‍🌾"; // Établi
     }
 
-    /**
-     * Afficher un résumé statistique
-     */
     public function showSummary($chatId)
     {
         try {
@@ -161,28 +118,39 @@ class ListMaraicherService
                 ->limit(5)
                 ->get();
 
-            $message = "📊 *Résumé des Maraîchers*\n";
+            $message = "📈 *Tableau de Bord • SISAM Analytics*\n";
             $message .= "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━\n\n";
 
-            $message .= "👥 *Répartition par genre:*\n";
-            $message .= "• Hommes: {$stats->hommes}\n";
-            $message .= "• Femmes: {$stats->femmes}\n";
-            $message .= "• **Total: {$stats->total}**\n\n";
+            // Section démographique avec émojis et barres de progression
+            $message .= "👥 *Répartition Démographique*\n";
+            $hommesPct = $stats->total > 0 ? round(($stats->hommes / $stats->total) * 100) : 0;
+            $femmesPct = $stats->total > 0 ? round(($stats->femmes / $stats->total) * 100) : 0;
 
-            $message .= "📐 *Surfaces cultivées:*\n";
-            $message .= "• Surface totale: " . number_format($stats->surface_totale, 2) . " ha\n";
-            $message .= "• Surface moyenne: " . number_format($stats->surface_moyenne, 2) . " ha\n\n";
+            $message .= "👨‍🌾 Hommes: {$stats->hommes} ({$hommesPct}%)\n";
+            $message .= "👩‍🌾 Femmes: {$stats->femmes} ({$femmesPct}%)\n";
+            $message .= "🎯 **Total: {$stats->total} maraîcher(s)**\n\n";
 
-            $message .= "🌱 *Activités principales:*\n";
-            foreach ($activites->take(3) as $activite) {
-                $message .= "• {$activite->type_activite_agricole}: {$activite->count}\n";
+            // Section surfaces avec indicateurs visuels
+            $message .= "🌾 *Analyse des Surfaces*\n";
+            $message .= "📐 Surface totale: *" . number_format($stats->surface_totale, 1) . " ha*\n";
+            $message .= "📊 Surface moyenne: *" . number_format($stats->surface_moyenne, 1) . " ha/exploitation*\n\n";
+
+            // Top activités avec ranking
+            $message .= "🏆 *Top Activités Agricoles*\n";
+            foreach ($activites->take(3) as $index => $activite) {
+                $rank = ["🥇", "🥈", "🥉"][$index] ?? "🏅";
+                $message .= "{$rank} {$activite->type_activite_agricole}: *{$activite->count}*\n";
             }
             $message .= "\n";
 
-            $message .= "📍 *Top 5 localisations:*\n";
-            foreach ($localisations as $localisation) {
-                $message .= "• {$localisation->localisation}: {$localisation->count}\n";
+            // Localisation avec émojis de région
+            $message .= "🗺️ *Répartition Géographique*\n";
+            foreach ($localisations as $index => $localisation) {
+                $regionIcon =$localisation->localisation;
+                $message .= "{$regionIcon} {$localisation->localisation}: *{$localisation->count}*\n";
             }
+
+            $message .= "\n🕐 *Dernière mise à jour:* " . date('d/m/Y à H:i');
 
             $keyboard = Keyboard::make()
                 ->row([
@@ -190,8 +158,11 @@ class ListMaraicherService
                     Keyboard::inlineButton(['text' => '🔍 Rechercher', 'callback_data' => 'search_maraicher'])
                 ])
                 ->row([
-                    Keyboard::inlineButton(['text' => '➕ Nouveau', 'callback_data' => 'new_maraicher']),
-                    Keyboard::inlineButton(['text' => '🏠 Menu', 'callback_data' => 'main_menu'])
+                    Keyboard::inlineButton(['text' => '🌱 Nouveau Maraîcher', 'callback_data' => 'new_maraicher']),
+                    Keyboard::inlineButton(['text' => '📊 Rapports Avancés', 'callback_data' => 'advanced_reports'])
+                ])
+                ->row([
+                    Keyboard::inlineButton(['text' => '🏠 Accueil', 'callback_data' => 'main_menu'])
                 ]);
 
             $this->sendMessage->sendMessageWithKeyboard($chatId, $message, $keyboard, 'Markdown');
@@ -199,57 +170,67 @@ class ListMaraicherService
         } catch (\Exception $e) {
             $this->sendMessage->sendMessage(
                 $chatId,
-                "❌ *Erreur*\n\nImpossible de générer le résumé statistique.",
+                "⚠️ *Erreur de Chargement*\n\nImpossible de générer les statistiques actuellement.\n\n🔄 Veuillez réessayer dans quelques instants.",
                 'Markdown'
             );
         }
     }
 
-    /**
-     * Rechercher des maraîchers par nom/prénom/localisation
-     */
     public function searchMaraichers($chatId, $searchTerm)
     {
         try {
             $maraichers = DB::table('clients')
                 ->where(function($query) use ($searchTerm) {
                     $query->where('nom', 'like', '%' . $searchTerm . '%')
-                          ->orWhere('prenom', 'like', '%' . $searchTerm . '%')
-                          ->orWhere('localisation', 'like', '%' . $searchTerm . '%')
-                          ->orWhere('telephone', 'like', '%' . $searchTerm . '%');
+                        ->orWhere('prenom', 'like', '%' . $searchTerm . '%')
+                        ->orWhere('localisation', 'like', '%' . $searchTerm . '%')
+                        ->orWhere('telephone', 'like', '%' . $searchTerm . '%')
+                        ->orWhere('type_activite_agricole', 'like', '%' . $searchTerm . '%');
                 })
+                ->orderBy('created_at', 'desc')
                 ->get();
 
             if ($maraichers->isEmpty()) {
                 $this->sendMessage->sendMessage(
                     $chatId,
-                    "🔍 *Résultat de recherche*\n\n❌ Aucun maraîcher trouvé pour: *{$searchTerm}*\n\nEssayez avec un autre terme de recherche.",
+                    "🔍 *Résultat de Recherche*\n\n❌ Aucun résultat pour: *\"{$searchTerm}\"*\n\n💡 *Suggestions:*\n• Vérifiez l'orthographe\n• Utilisez des termes plus courts\n• Essayez le nom, prénom ou localisation\n\n🔄 Relancez une nouvelle recherche",
                     'Markdown'
                 );
                 return;
             }
 
-            $message = "🔍 *Résultat de recherche: \"{$searchTerm}\"*\n";
+            $message = "🎯 *Résultats pour: \"{$searchTerm}\"*\n";
             $message .= "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━\n\n";
 
             foreach ($maraichers as $index => $maraicher) {
                 $numero = $index + 1;
-                $message .= "👨‍🌾 *#{$numero} {$maraicher->prenom} {$maraicher->nom}*\n";
-                $message .= "📍 {$maraicher->localisation} | 📞 {$maraicher->telephone}\n";
-                $message .= "🌱 {$maraicher->type_activite_agricole}\n";
-                $message .= "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━\n\n";
+                $statusIcon = $this->getStatusIcon($maraicher);
+
+                // Mettre en évidence les termes trouvés
+                $nom = $this->highlightSearchTerm($maraicher->nom, $searchTerm);
+                $prenom = $this->highlightSearchTerm($maraicher->prenom, $searchTerm);
+                $localisation = $this->highlightSearchTerm($maraicher->localisation, $searchTerm);
+
+                $message .= "{$statusIcon} *#{$numero} {$prenom} {$nom}*\n";
+                $message .= "📍 {$localisation}\n";
+                $message .= "📱 {$maraicher->telephone}\n";
+                $message .= "🌾 {$maraicher->type_activite_agricole}\n";
+                $message .= "📐 {$maraicher->surface_cultivee}ha\n";
+                $message .= "┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈\n\n";
             }
 
             $total = $maraichers->count();
-            $message .= "📊 *{$total} résultat(s) trouvé(s)*";
+            $message .= "✅ *{$total} résultat(s) trouvé(s)*\n";
+            $message .= "🕐 Recherche effectuée à " . date('H:i');
 
             $keyboard = Keyboard::make()
                 ->row([
-                    Keyboard::inlineButton(['text' => '📋 Liste Complète', 'callback_data' => 'list_full']),
-                    Keyboard::inlineButton(['text' => '🔍 Nouvelle Recherche', 'callback_data' => 'search_maraicher'])
+                    Keyboard::inlineButton(['text' => '🔍 Nouvelle Recherche', 'callback_data' => 'search_maraicher']),
+                    Keyboard::inlineButton(['text' => '📋 Tous les Maraîchers', 'callback_data' => 'list_full'])
                 ])
                 ->row([
-                    Keyboard::inlineButton(['text' => '🏠 Menu Principal', 'callback_data' => 'main_menu'])
+                    Keyboard::inlineButton(['text' => '📊 Statistiques', 'callback_data' => 'list_summary']),
+                    Keyboard::inlineButton(['text' => '🏠 Accueil', 'callback_data' => 'main_menu'])
                 ]);
 
             $this->sendMessage->sendMessageWithKeyboard($chatId, $message, $keyboard, 'Markdown');
@@ -257,9 +238,83 @@ class ListMaraicherService
         } catch (\Exception $e) {
             $this->sendMessage->sendMessage(
                 $chatId,
-                "❌ *Erreur de recherche*\n\nUne erreur s'est produite lors de la recherche.",
+                "⚠️ *Erreur de Recherche*\n\nUne erreur s'est produite lors de la recherche.\n\n🔄 Veuillez réessayer ou contactez le support.",
                 'Markdown'
             );
         }
+    }
+
+    private function highlightSearchTerm($text, $searchTerm)
+    {
+        if (stripos($text, $searchTerm) !== false) {
+            return str_ireplace($searchTerm, "*{$searchTerm}*", $text);
+        }
+        return $text;
+    }
+
+    public function showPaginatedList($chatId, $maraichers, $page = 1)
+    {
+        $perPage = 5;
+        $total = $maraichers->count();
+        $totalPages = ceil($total / $perPage);
+        $offset = ($page - 1) * $perPage;
+        $currentMaraichers = $maraichers->slice($offset, $perPage);
+
+        $message = "📋 *Liste des Maraîchers* (Page {$page}/{$totalPages})\n";
+        $message .= "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━\n\n";
+
+        foreach ($currentMaraichers as $index => $maraicher) {
+            $numero = $offset + $index + 1;
+            $message .= "👨‍🌾 *#{$numero} {$maraicher->prenom} {$maraicher->nom}*\n";
+            $message .= "📍 {$maraicher->localisation}\n";
+            $message .= "📞 {$maraicher->telephone}\n";
+            $message .= "🌱 {$maraicher->type_activite_agricole} ({$maraicher->surface_cultivee}ha)\n";
+
+            if (isset($maraicher->date_contrat)) {
+                $message .= "📅 " . date('d/m/Y', strtotime($maraicher->date_contrat)) . "\n";
+            }
+
+            $message .= "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━\n\n";
+        }
+
+        $message .= "📊 *Total:* {$total} maraîcher(s) | Page {$page}/{$totalPages}";
+
+        $keyboard = Keyboard::make()->inline();
+
+        $paginationButtons = [];
+
+        if ($page > 1) {
+            $paginationButtons[] = Keyboard::inlineButton([
+                'text' => '⬅️ Précédent',
+                'callback_data' => 'list_page_' . ($page - 1)
+            ]);
+        }
+
+        $paginationButtons[] = Keyboard::inlineButton([
+            'text' => "📄 {$page}/{$totalPages}",
+            'callback_data' => 'page_info'
+        ]);
+
+        if ($page < $totalPages) {
+            $paginationButtons[] = Keyboard::inlineButton([
+                'text' => 'Suivant ➡️',
+                'callback_data' => 'list_page_' . ($page + 1)
+            ]);
+        }
+
+        if (!empty($paginationButtons)) {
+            $keyboard->row($paginationButtons);
+        }
+
+        $keyboard->row([
+            Keyboard::inlineButton(['text' => '➕ Nouveau', 'callback_data' => 'new_maraicher']),
+            Keyboard::inlineButton(['text' => '🔍 Rechercher', 'callback_data' => 'search_maraicher'])
+        ]);
+
+        $keyboard->row([
+            Keyboard::inlineButton(['text' => '🏠 Menu', 'callback_data' => 'main_menu'])
+        ]);
+
+        $this->sendMessage->sendMessageWithKeyboard($chatId, $message, $keyboard, 'Markdown');
     }
 }

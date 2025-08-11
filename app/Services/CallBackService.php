@@ -26,9 +26,14 @@ class CallBackService
         $this->maraicherCommand = $maraicherCommand;
     }
 
-    public function handleMaraicher($chatId )
+    public function handleCurrentPage($chatId)
     {
-        $this->maraicherCommand->sendMaraicherMenu( $this->telegram, $chatId);
+        return true;
+    }
+
+    public function handleMaraicher($chatId)
+    {
+        $this->maraicherCommand->sendMaraicherMenu($this->telegram, $chatId);
     }
 
     public function handleNewMaraicher($chatId, $userId)
@@ -66,81 +71,39 @@ class CallBackService
         );
     }
 
-    public function handleNewInstallation($chatId)
-    {
+    public function handleNewInstallations($chatId, $userId){
+        $existingSession = DB::table('telegram_sessions')
+            ->where('user_id', $userId)
+            ->where('command', 'new_installation')
+            ->where('completed', false)
+            ->first();
+
+        if (!$existingSession) {
+            DB::table('telegram_sessions')->insert([
+                'user_id' => $userId,
+                'chat_id' => $chatId,
+                'command' => 'new_installation',
+                'step' => 'client_id',
+                'data' => json_encode([]),
+                'completed' => false,
+                'created_at' => now(),
+                'updated_at' => now()
+            ]);
+
+            $this->sendMessage->sendMessage(
+                $chatId,
+                "🌱 *Enregistrement d'un nouveau installation*\n\nVeuillez entrer le *numero* du maraîcher :",
+                'Markdown'
+            );
+            return;
+        }
+
         $this->sendMessage->sendMessage(
             $chatId,
-            "🔧 *Nouvelle Installation*\n\nFonctionnalité en cours de développement...",
+            "⚠️ Vous avez déjà une session d'enregistrement en cours.\n\nVeuillez compléter la session actuelle ou tapez /cancel pour l'annuler.",
             'Markdown'
         );
     }
-
-
-    public function handleNewIntervention($chatId)
-    {
-        // Logique pour nouvelle intervention
-        $this->sendMessage->sendMessage(
-            $chatId,
-            "🛠️ *Nouvelle Intervention*\n\nFonctionnalité en cours de développement...",
-            'Markdown'
-        );
-    }
-
-    public function handleRapportMaintenance($chatId)
-    {
-        $this->sendMessage->sendMessage(
-            $chatId,
-            "📋 *Rapport de Maintenance*\n\nFonctionnalité en cours de développement...",
-            'Markdown'
-        );
-    }
-
-    public function handlePaiement($chatId)
-    {
-        $this->sendMessage->sendMessage(
-            $chatId,
-            "💳 *Paiement*\n\nFonctionnalité en cours de développement...",
-            'Markdown'
-        );
-    }
-
-    public function handleRecu($chatId)
-    {
-        $this->sendMessage->sendMessage(
-            $chatId,
-            "🧾 *Reçu*\n\nFonctionnalité en cours de développement...",
-            'Markdown'
-        );
-    }
-
-    public function handleHistorique($chatId)
-    {
-        $this->sendMessage->sendMessage(
-            $chatId,
-            "📚 *Historique*\n\nFonctionnalité en cours de développement...",
-            'Markdown'
-        );
-    }
-
-    public function handleRecherche($chatId)
-    {
-        $this->sendMessage->sendMessage(
-            $chatId,
-            "🔍 *Recherche*\n\nFonctionnalité en cours de développement...",
-            'Markdown'
-        );
-    }
-
-    public function handleAide($chatId)
-    {
-        // Logique pour aide
-        $this->sendMessage->sendMessage(
-            $chatId,
-            "❓ *Aide*\n\nFonctionnalité en cours de développement...",
-            'Markdown'
-        );
-    }
-
 
     public function handleListFull($chatId)
     {
@@ -154,13 +117,11 @@ class CallBackService
 
     public function handleListDetailed($chatId)
     {
-        // Pour une vue détaillée, on peut utiliser la même méthode mais avec plus d'infos
         $this->listMaraicherService->showFullList($chatId);
     }
 
     public function handleListPage($chatId, $page)
     {
-        // Récupérer tous les maraîchers et afficher la page demandée
         try {
             $maraichers = DB::table('clients')->orderBy('created_at', 'desc')->get();
             $this->listMaraicherService->showPaginatedList($chatId, $maraichers, (int)$page);
@@ -173,34 +134,8 @@ class CallBackService
         }
     }
 
-    public function handleSearchMaraicher($chatId, $userId)
-    {
-        // Créer une session de recherche
-        DB::table('telegram_sessions')->updateOrInsert(
-            [
-                'user_id' => $userId,
-                'command' => 'search_maraicher',
-                'completed' => false
-            ],
-            [
-                'chat_id' => $chatId,
-                'step' => 'awaiting_search_term',
-                'data' => json_encode([]),
-                'created_at' => now(),
-                'updated_at' => now()
-            ]
-        );
-
-        $this->sendMessage->sendMessage(
-            $chatId,
-            "🔍 *Recherche de Maraîcher*\n\nVeuillez entrer le terme à rechercher :\n\n• Nom ou prénom\n• Localisation\n• Numéro de téléphone\n\nTapez /cancel pour annuler la recherche.",
-            'Markdown'
-        );
-    }
-
     public function handleMainMenu($chatId)
     {
-        // Afficher le menu principal
         $keyboard = Keyboard::make()
             ->row([
                 Keyboard::inlineButton(['text' => '👨‍🌾 Nouveau Maraîcher', 'callback_data' => 'new_maraicher']),
@@ -236,4 +171,62 @@ class CallBackService
         );
     }
 
+    // Ajoutez cette méthode dans votre CallBackService pour tester
+    public function handleSearchMaraicher($chatId, $userId)
+    {
+        try {
+            $existingSession = DB::table('telegram_sessions')
+                ->where('user_id', $userId)
+                ->where('command', '=', 'search_maraicher')
+                ->where('completed', false)
+                ->first();
+
+            if (!$existingSession) {
+                DB::table('telegram_sessions')->insert([
+                    'user_id' => $userId,
+                    'chat_id' => $chatId,
+                    'command' => 'search_maraicher',
+                    'step' => 'awaiting_search_term',
+                    'data' => json_encode([]),
+                    'completed' => false,
+                    'created_at' => now(),
+                    'updated_at' => now()
+                ]);
+
+                $message = "🔍 **Recherche de Maraîchers**\n\n" .
+                        "Entrez les critères de recherche (nom, localisation, type de produits, etc.) :\n\n" .
+                        "Exemple : _tomates Antananarivo_ ou _légumes bio Toamasina_\n\n" .
+                        "Tapez /cancel pour annuler à tout moment.";
+
+                $this->sendMessage->sendMessage(
+                    $chatId,
+                    $message,
+                    'Markdown'
+                );
+                return;
+            }
+
+            $this->sendMessage->sendMessage(
+                $chatId,
+                "⚠️ **Session en cours**\n\n" .
+                "Vous avez déjà une session de recherche active.\n\n" .
+                "Veuillez compléter la session actuelle ou tapez /cancel pour l'annuler.",
+                'Markdown'
+            );
+
+        } catch (\Exception $e) {
+            \Log::error('Error in handleSearchMaraicher: ' . $e->getMessage(), [
+                'user_id' => $userId,
+                'chat_id' => $chatId,
+                'trace' => $e->getTraceAsString()
+            ]);
+
+            $this->sendMessage->sendMessage(
+                $chatId,
+                "❌ Une erreur est survenue lors de l'initialisation de la recherche.\n\nVeuillez réessayer plus tard.",
+                'Markdown'
+            );
+        }
+    }
 }
+

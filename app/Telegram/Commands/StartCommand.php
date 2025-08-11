@@ -1,6 +1,7 @@
 <?php
 namespace App\Telegram\Commands;
 
+use App\Services\SendMessageService;
 use Telegram\Bot\Commands\Command;
 use Telegram\Bot\Keyboard\Keyboard;
 
@@ -9,8 +10,13 @@ class StartCommand extends Command
     protected string $name = 'start';
     protected string $description = 'Afficher le menu principal';
 
+
+
     public function handle()
     {
+        $sendMessage = app(SendMessageService::class);
+        $chatId = $this->getUpdate()->getMessage()->getChat()->getId();
+
         $keyboard = Keyboard::make()
             ->inline()
             ->row([
@@ -34,10 +40,11 @@ class StartCommand extends Command
                 Keyboard::inlineButton(['text' => 'ℹ Aide', 'callback_data' => 'help']),
             ]);
 
-        $this->replyWithMessage([
-            'text' => '📋 <b>Menu Principal</b> — Choisissez une action :',
-            'reply_markup' => $keyboard,
-            'parse_mode' => 'HTML',
-        ]);
+        $sendMessage->sendMessageWithKeyboard(
+            $chatId,
+            "⚡ *SISAM - Système Avancé DargaTech*\n\n🎯 *Connexion établie avec succès !*\n\nVotre assistant intelligent est prêt.\n\n📋 *Menu principal* :",
+            $keyboard,
+            'Markdown'
+        );
     }
 }
