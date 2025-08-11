@@ -10,7 +10,8 @@ import { Head, router } from '@inertiajs/react';
 import React, { useEffect, useState } from 'react';
 import { FaEye } from 'react-icons/fa';
 import { GoTrash } from 'react-icons/go';
-import { TbEdit } from 'react-icons/tb';
+import { RiTelegramFill } from 'react-icons/ri';
+import { TbEdit, TbWorldCheck } from 'react-icons/tb';
 
 const ClientPage = () => {
     const [search, setSearch] = useState('');
@@ -43,7 +44,8 @@ const ClientPage = () => {
             telephone: el.telephone,
             localisation: el.localisation,
             surface_cultivee: el.surface_cultivee,
-            type_activite_agricole: el.type_activite_agricole
+            type_activite_agricole: el.type_activite_agricole,
+            created_via: el.created_via
         }));
 
         setClients(clients);
@@ -86,6 +88,13 @@ const ClientPage = () => {
         { key: 'localisation', label: 'Localisation', sortable: true },
         { key: 'surface_cultivee', label: 'Surface cultivée (ha)', sortable: true },
         { key: 'type_activite_agricole', label: 'Type d\'activité agricole' },
+        {
+            key: 'created_via', label: 'Via', customRender: (row) => (
+                <span className="text-xl font-medium text-gray-900 dark:text-white">
+                    {row === 'web' ? <TbWorldCheck /> : <RiTelegramFill className="text-blue-400" />}
+                </span>
+            )
+        },
     ];
 
     const actions = [

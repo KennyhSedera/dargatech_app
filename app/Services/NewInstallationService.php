@@ -52,23 +52,23 @@ class NewInstallationService
 
             $code_installation = $this->generateNextCodeInstallation();
 
-            // $id = DB::table('installations')->insertGetId([
-            //     'client_id' => $data['clientId'],
-            //     'code_installation' => $code_installation,
-            //     'puissance_pompe' => $data['puissance_pompe'],
-            //     'numero_serie' => $data['numero_serie'],
-            //     'debit_nominal' => $data['debit_nominal'],
-            //     'profondeur_forage' => $data['profondeur_forage'],
-            //     'source_eau' => $data['source_eau'],
-            //     'photos_installation' => $data['photo'],
-            //     'hmt' => $data['hmt'],
-            //     'localisation_id' => $localisation_id,
-            //     'date_installation' => $data['date_installation'],
-            //     'created_via' => 'telegram_bot',
-            //     'statuts' => 'terminée',
-            //     'created_at' => now(),
-            //     'updated_at' => now(),
-            // ]);
+            $id = DB::table('installations')->insertGetId([
+                'client_id' => $data['client_id'],
+                'code_installation' => $code_installation,
+                'puissance_pompe' => $data['puissance_pompe'],
+                'numero_serie' => $data['numero_serie'],
+                'debit_nominal' => $data['debit_nominal'],
+                'profondeur_forage' => $data['profondeur_forage'],
+                'source_eau' => $data['source_eau'],
+                'photos_installation' => json_encode([$data['photo']]),
+                'hmt' => $data['hmt'],
+                'localisation_id' => $localisation_id,
+                'date_installation' => $data['date_installation'],
+                'created_via' => 'telegram_bot',
+                'statuts' => 'installée',
+                'created_at' => now(),
+                'updated_at' => now(),
+            ]);
 
             DB::commit();
 
@@ -76,40 +76,12 @@ class NewInstallationService
                 ->where('user_id', $userId)
                 ->where('command', 'new_installation')
                 ->where('completed', false)
-                ->update(['completed' => true]);
+                ->delete();
 
-            $successMessage = "🎉 *Installation enregistrée avec succès !*\n\n";
-            $successMessage .= "📋 *Code installation :* `{$code_installation}`\n";
-            // $successMessage .= "🆔 *ID :* `{$id}`\n";
-
-            if ($pays) {
-                $successMessage .= "🌍 *Localisation :* {$pays}\n";
-            }
-
-            $successMessage .= "\n✅ L'installation a été enregistrée dans le système.";
+            $successMessage = "\n✅ L'installation *`{$code_installation}`* a été enregistrée dans le système.";
 
             $this->sendMessage->sendMessage($chatId, $successMessage, 'Markdown');
 
-            Log::info("Installation enregistrée avec succès", [
-                'user_id' => $userId,
-                'chat_id' => $chatId,
-                // 'installation_id' => $id,
-                'code_installation' => $code_installation,
-                'client_id' => $data['clientId'],
-                'puissance_pompe' => $data['puissance_pompe'],
-                'numero_serie' => $data['numero_serie'],
-                'debit_nominal' => $data['debit_nominal'],
-                'profondeur_forage' => $data['profondeur_forage'],
-                'source_eau' => $data['source_eau'],
-                'photos_installation' => $data['photo'],
-                'hmt' => $data['hmt'],
-                'localisation_id' => $localisation_id,
-                'date_installation' => $data['date_installation'],
-                'created_via' => 'telegram_bot',
-                'statuts' => 'terminée',
-                'created_at' => now(),
-                'updated_at' => now(),
-            ]);
 
         } catch (\Throwable $e) {
             DB::rollBack();

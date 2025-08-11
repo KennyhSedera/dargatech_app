@@ -11,13 +11,13 @@ use Illuminate\Support\Facades\Log;
 class SessionService
 {
     protected SendMessageService $sendMessage;
-    protected MaraicherService $maraicherService;
+    protected NewMaraicherService $maraicherService;
     protected ListMaraicherService $listMaraicherService;
     protected NewInstallationService $newInstallationService;
 
     public function __construct(
         SendMessageService $sendMessage,
-        MaraicherService $maraicherService,
+        NewMaraicherService $maraicherService,
         ListMaraicherService $listMaraicherService,
         NewInstallationService $newInstallationService
     ) {

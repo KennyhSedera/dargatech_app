@@ -3,16 +3,20 @@
 namespace App\Services;
 
 use DB;
+use Log;
+use Telegram\Bot\Api;
 
 class StepService
 {
     protected SendMessageService $sendMessage;
     protected array $stepConfigurations;
+    protected Api $telegram;
 
-    public function __construct(SendMessageService $sendMessage)
+    public function __construct(SendMessageService $sendMessage, Api $telegram)
     {
         $this->sendMessage = $sendMessage;
         $this->initializeStepConfigurations();
+        $this->telegram = $telegram;
     }
 
     private function initializeStepConfigurations()
@@ -45,10 +49,10 @@ class StepService
             ],
             'new_installation' => [
                 'steps' => [
-                    'clientId', 'numero_serie', 'debit_nominal', 'puissance_pompe', 'profondeur_forage', 'hmt', 'source_eau', 'photo', 'latitude', 'longitude', 'date_installation'
+                    'client_id', 'numero_serie', 'debit_nominal', 'puissance_pompe', 'profondeur_forage', 'hmt', 'source_eau', 'photo', 'latitude', 'longitude', 'date_installation'
                 ],
                 'prompts' => [
-                    'clientId' => "👤 Veuillez entrer le *nom* du client :",
+                    'client_id' => "👤 Veuillez entrer le *nom* du client :",
                     'numero_serie' => "📦 Entrez le *numéro de série* de la pompe :",
                     'debit_nominal' => "📏 Entrez le *debit nominal* de la pompe :",
                     'puissance_pompe' => "🔋 Entrez la *puissance de pompe* de la pompe :",
@@ -64,7 +68,9 @@ class StepService
                     'debit_nominal' => 'numeric',
                     'puissance_pompe' => 'numeric',
                     'profondeur_forage' => 'numeric',
-                    'hmt' => 'numeric'
+                    'hmt' => 'numeric',
+                    'date_installation' => 'date',
+                    'photo' => 'file_exists'
                 ]
             ],
             'new_intervention' => [
@@ -84,9 +90,50 @@ class StepService
         ];
     }
 
-    public function handleStep($step, $messageText, $data, $userId, $chatId, $command, $onComplete = null)
+    public function handleStep($step, $message, $data, $userId, $chatId, $command, $onComplete = null)
     {
-        $messageText = trim($messageText);
+        $messageText = null;
+        $filename = null;
+
+        if (!empty($message->photo)) {
+            $photos = $this->normalizePhotos($message->photo);
+
+            if (count($photos) === 0) {
+                $this->sendMessage->sendMessage($chatId, "❌ Photo introuvable, veuillez renvoyer une image.");
+                return;
+            }
+
+            $lastPhoto = $photos[count($photos) - 1];
+            $fileId = is_array($lastPhoto) ? ($lastPhoto['file_id'] ?? null) : ($lastPhoto->file_id ?? null);
+
+            if (!$fileId) {
+                $this->sendMessage->sendMessage($chatId, "❌ Impossible de lire la photo. Veuillez renvoyer une image valide.");
+                return;
+            }
+
+            $savedPath = $this->downloadTelegramFile($fileId);
+            if (!$savedPath) {
+                $this->sendMessage->sendMessage($chatId, "❌ Erreur lors du téléchargement de la photo. Veuillez réessayer.");
+                return;
+            }
+
+            $filename = 'storage/installation/'.$fileId . '.jpg';
+            $messageText = $savedPath;
+        }
+
+        elseif (!empty($message->document) && isset($message->document->file_id)) {
+            $fileId = $message->document->file_id;
+            $savedPath = $this->downloadTelegramFile($fileId);
+            if (!$savedPath) {
+                $this->sendMessage->sendMessage($chatId, "❌ Erreur lors du téléchargement du document. Veuillez réessayer.");
+                return;
+            }
+            $messageText = $savedPath;
+        }
+
+        else {
+            $messageText = trim($message->text ?? '');
+        }
 
         if (empty($messageText)) {
             $this->sendMessage->sendMessage($chatId, "❌ Ce champ est obligatoire. Veuillez fournir une valeur valide :");
@@ -97,7 +144,7 @@ class StepService
             return;
         }
 
-        $data[$step] = $messageText;
+        $data[$step] = $message->photo ? $filename : $messageText;
         $nextStep = $this->getNextStep($step, $command);
 
         if ($nextStep) {
@@ -105,10 +152,51 @@ class StepService
             $this->sendMessage->sendMessage($chatId, $this->getPromptForStep($nextStep, $command), 'Markdown');
         } else {
             $this->completeSession($userId, $command, $data);
-
             if ($onComplete && is_callable($onComplete)) {
                 $onComplete($data, $userId, $chatId);
             }
+        }
+    }
+
+    private function normalizePhotos($photos)
+    {
+        if (!is_array($photos)) {
+            if ($photos instanceof \Traversable) {
+                return iterator_to_array($photos);
+            } else {
+                return json_decode(json_encode($photos), true);
+            }
+        }
+        return $photos;
+    }
+
+    private function downloadTelegramFile(string $fileId): ?string
+    {
+        try {
+            $file = $this->telegram->getFile(['file_id' => $fileId]);
+            $filePath = $file->getFilePath();
+            $url = "https://api.telegram.org/file/bot" . env('TELEGRAM_BOT_TOKEN') . "/" . $filePath;
+
+            $content = file_get_contents($url);
+            if ($content === false) {
+                Log::error("Erreur téléchargement fichier Telegram pour file_id {$fileId}");
+                return null;
+            }
+
+            $saveDir = storage_path('app/public/installation');
+            if (!file_exists($saveDir)) {
+                mkdir($saveDir, 0755, true);
+            }
+
+            $fileName = $fileId . '.jpg';
+            $fullPath = $saveDir . DIRECTORY_SEPARATOR . $fileName;
+
+            file_put_contents($fullPath, $content);
+
+            return $fullPath;
+        } catch (\Exception $e) {
+            Log::error("Exception téléchargement fichier Telegram: " . $e->getMessage());
+            return null;
         }
     }
 
@@ -122,6 +210,13 @@ class StepService
 
         $validation = $validations[$step];
 
+        if ($validation === 'file_exists') {
+            if (!file_exists($value)) {
+                $this->sendMessage->sendMessage($chatId, "❌ Fichier image introuvable. Veuillez renvoyer une photo valide.");
+                return false;
+            }
+            return true;
+        }
         switch ($validation) {
             case 'email':
                 if (!filter_var($value, FILTER_VALIDATE_EMAIL)) {
@@ -151,6 +246,13 @@ class StepService
                 }
                 break;
 
+            case 'photo':
+                if (!preg_match('/^[A-Za-z0-9_-]+$/', $value)) {
+                    $this->sendMessage->sendMessage($chatId, "❌ Veuillez envoyer une photo valide.");
+                    return false;
+                }
+                break;
+
             default:
                 if (is_array($validation) && !in_array($value, $validation)) {
                     $options = implode(' / ', $validation);
@@ -162,13 +264,17 @@ class StepService
         return true;
     }
 
-    private function getNextStep($currentStep, $command)
-    {
-        $steps = $this->stepConfigurations[$command]['steps'] ?? [];
-        $index = array_search($currentStep, $steps);
+private function getNextStep($currentStep, $command)
+{
+    $steps = $this->stepConfigurations[$command]['steps'] ?? [];
+    $index = array_search($currentStep, $steps);
 
-        return $steps[$index + 1] ?? null;
+    if ($index === false) {
+        return null;
     }
+
+    return $steps[$index + 1] ?? null;
+}
 
     public function getPromptForStep($step, $command)
     {

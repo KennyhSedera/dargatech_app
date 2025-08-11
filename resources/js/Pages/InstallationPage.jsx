@@ -9,8 +9,9 @@ import { deleteinstallations, getinstallations } from '@/Services/installationSe
 import { Head } from '@inertiajs/react'
 import React, { useEffect, useState } from 'react'
 import { GoTrash } from 'react-icons/go'
-import { TbEdit } from 'react-icons/tb'
+import { TbEdit, TbWorldCheck } from 'react-icons/tb'
 import EmptyState from '@/Components/EmptyState'
+import { RiTelegramFill } from 'react-icons/ri'
 
 const InstallationPage = () => {
     const [search, setSearch] = useState("");
@@ -45,6 +46,13 @@ const InstallationPage = () => {
             key: 'statuts', label: 'Statuts', customRender: (value) => (
                 <span className={`px-2 py-1 rounded-full text-white flex text-nowrap cursor-pointer ${value === 'installée' ? 'bg-green-500/50' : value === 'en cours' ? 'bg-blue-500/50' : 'bg-red-500/50'}`}>
                     {value}
+                </span>
+            )
+        },
+        {
+            key: 'created_via', label: 'Via', customRender: (value) => (
+                <span className="text-xl font-medium text-gray-900 dark:text-white">
+                    {value === 'web' ? <TbWorldCheck /> : <RiTelegramFill className="text-blue-400 bg-white" />}
                 </span>
             )
         },
@@ -87,7 +95,8 @@ const InstallationPage = () => {
             date_installation: formatdate(el.date_installation),
             statuts: el.statuts,
             latitude: el.localisation.latitude,
-            longitude: el.localisation.longitude
+            longitude: el.localisation.longitude,
+            created_via: el.created_via
         }));
 
         setInstallations(Installation);

@@ -89,12 +89,12 @@ class TelegramBotController extends Controller
                 return response('Callback handled', 200);
             }
 
-            if ($update->getMessage() && $update->getMessage()->getText()) {
-                $messageText = $update->getMessage()->getText();
+            if ($update->getMessage()) {
+                $messageText = $update->getMessage();
                 $chatId = $update->getMessage()->getChat()->getId();
                 $userId = $update->getMessage()->getFrom()->getId();
 
-                if (!str_starts_with($messageText, '/')) {
+                if (!str_starts_with($messageText->getText(), '/')) {
                     $userId = $update->getMessage()->getFrom()->getId();
                     $chatId = $update->getMessage()->getChat()->getId();
 
@@ -112,7 +112,7 @@ class TelegramBotController extends Controller
                     }
                 }
 
-                if ($messageText === '👨‍🌾 Nouveau Maraîcher') {
+                if ($messageText->getText() === '👨‍🌾 Nouveau Maraîcher') {
                     $this->callBackService->handleNewMaraicher($chatId, $userId);
                 }
             }

@@ -4,7 +4,7 @@ namespace App\Telegram\Commands;
 
 use Telegram\Bot\Commands\Command;
 use Illuminate\Support\Facades\DB;
-use App\Services\MaraicherService;
+use App\Services\NewMaraicherService;
 
 class NewMaraicherCommand extends Command
 {
@@ -17,7 +17,7 @@ class NewMaraicherCommand extends Command
         $userId = $this->getUpdate()->getMessage()->getFrom()->getId();
         $messageText = $this->getUpdate()->getMessage()->getText();
 
-        $service = app(MaraicherService::class);
+        $service = app(NewMaraicherService::class);
 
         $existingSession = DB::table('telegram_sessions')
             ->where('user_id', $userId)

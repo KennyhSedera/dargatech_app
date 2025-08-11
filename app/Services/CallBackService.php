@@ -12,12 +12,12 @@ use Telegram\Bot\Keyboard\Keyboard;
 class CallBackService
 {
     protected Api $telegram;
-    protected MaraicherService $maraicherService;
+    protected NewMaraicherService $maraicherService;
     protected SendMessageService $sendMessage;
     protected ListMaraicherService $listMaraicherService;
     protected MaraicherCommand $maraicherCommand;
 
-    public function __construct(Api $telegram, MaraicherService $maraicherService, SendMessageService $sendMessageService, ListMaraicherService $listMaraicherService, MaraicherCommand $maraicherCommand)
+    public function __construct(Api $telegram, NewMaraicherService $maraicherService, SendMessageService $sendMessageService, ListMaraicherService $listMaraicherService, MaraicherCommand $maraicherCommand)
     {
         $this->telegram = $telegram;
         $this->maraicherService = $maraicherService;

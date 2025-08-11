@@ -89,5 +89,9 @@ Route::get('/partenaires', function () {
     return Inertia::render('PartenairePage');
 })->middleware(['auth', 'verified'])->name('partenaires');
 
+Route::get('/installation/{id}', function () {
+    return Inertia::render(component: 'Welcome');
+})->middleware(['auth', 'verified'])->name('welcome');
+
 require __DIR__ . '/auth.php';
 require __DIR__ . '/api.php';
