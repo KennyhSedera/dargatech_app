@@ -1,5 +1,6 @@
 <?php
 
+use App\Telegram\Commands\InstallationCommand;
 use App\Telegram\Commands\ListMaraicherCommand;
 use App\Telegram\Commands\MaraicherCommand;
 use App\Telegram\Commands\NewMaraicherCommand;
@@ -31,8 +32,8 @@ return [
         HelpCommand::class,
         StartCommand::class,
         MaraicherCommand::class,
-        NewMaraicherCommand::class,
-        ListMaraicherCommand::class,
+        InstallationCommand::class,
+        // ListMaraicherCommand::class,
     ],
 
     'command_groups' => [

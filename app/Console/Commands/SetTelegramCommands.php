@@ -30,8 +30,28 @@ class SetTelegramCommands extends Command
                 'description' => 'Obtenir de l’aide 🆘',
             ],
             [
-                'command' => 'new_maraicher',
-                'description' => 'Nouvelle maraicher 🚜',
+                'command' => 'maraicher',
+                'description' => 'Menu maraicher 👨‍🌾',
+            ],
+            [
+                'command' => 'installation',
+                'description' => 'Menu installation 🏭',
+            ],
+            [
+                'command' => 'intervention',
+                'description' => 'Menu intervention 📋',
+            ],
+            [
+                'command' => 'rapport_maintenance',
+                'description' => 'Rapport maintenance 📋',
+            ],
+            [
+                'command' => 'enregistrer_paiement',
+                'description' => 'Enregistrer paiement 💰',
+            ],
+            [
+                'command' => 'generer_recu',
+                'description' => 'Generer recu 📄',
             ],
         ];
 

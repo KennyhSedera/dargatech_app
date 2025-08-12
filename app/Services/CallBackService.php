@@ -4,9 +4,12 @@ namespace App\Services;
 
 use App\Services\MaraicherService;
 use App\Services\SendMessageService;
+use App\Telegram\Commands\InstallationCommand;
 use App\Telegram\Commands\MaraicherCommand;
 use DB;
+use Log;
 use Telegram\Bot\Api;
+use Telegram\Bot\Commands\HelpCommand;
 use Telegram\Bot\Keyboard\Keyboard;
 
 class CallBackService
@@ -16,14 +19,25 @@ class CallBackService
     protected SendMessageService $sendMessage;
     protected ListMaraicherService $listMaraicherService;
     protected MaraicherCommand $maraicherCommand;
+    protected HelpCommand $helpCommand;
+    protected InstallationCommand $installationCommand;
 
-    public function __construct(Api $telegram, NewMaraicherService $maraicherService, SendMessageService $sendMessageService, ListMaraicherService $listMaraicherService, MaraicherCommand $maraicherCommand)
-    {
+    public function __construct(
+        Api $telegram,
+        NewMaraicherService $maraicherService,
+        SendMessageService $sendMessageService,
+        ListMaraicherService $listMaraicherService,
+        MaraicherCommand $maraicherCommand,
+        HelpCommand $helpCommand,
+        InstallationCommand $installationCommand,
+    ) {
         $this->telegram = $telegram;
         $this->maraicherService = $maraicherService;
         $this->sendMessage = $sendMessageService;
         $this->listMaraicherService = $listMaraicherService;
         $this->maraicherCommand = $maraicherCommand;
+        $this->helpCommand = $helpCommand;
+        $this->installationCommand = $installationCommand;
     }
 
     public function handleCurrentPage($chatId)
@@ -71,7 +85,8 @@ class CallBackService
         );
     }
 
-    public function handleNewInstallations($chatId, $userId){
+    public function handleNewInstallations($chatId, $userId)
+    {
         $existingSession = DB::table('telegram_sessions')
             ->where('user_id', $userId)
             ->where('command', 'new_installation')
@@ -105,9 +120,24 @@ class CallBackService
         );
     }
 
+    public function handleInstallations($chatId)
+    {
+        $this->installationCommand->sendInstallationMenu($this->telegram, $chatId);
+    }
+
     public function handleListFull($chatId)
     {
         $this->listMaraicherService->showFullList($chatId);
+    }
+
+    public function handleHelp($chatId)
+    {
+        $command = $this->helpCommand->getAllCommandsText();
+        $this->sendMessage->sendMessage(
+            $chatId,
+            $command,
+            'Markdown'
+        );
     }
 
     public function handleListSummary($chatId)
@@ -124,7 +154,7 @@ class CallBackService
     {
         try {
             $maraichers = DB::table('clients')->orderBy('created_at', 'desc')->get();
-            $this->listMaraicherService->showPaginatedList($chatId, $maraichers, (int)$page);
+            $this->listMaraicherService->showPaginatedList($chatId, $maraichers, (int) $page);
         } catch (\Exception $e) {
             $this->sendMessage->sendMessage(
                 $chatId,
@@ -171,7 +201,6 @@ class CallBackService
         );
     }
 
-    // Ajoutez cette méthode dans votre CallBackService pour tester
     public function handleSearchMaraicher($chatId, $userId)
     {
         try {
@@ -194,9 +223,9 @@ class CallBackService
                 ]);
 
                 $message = "🔍 **Recherche de Maraîchers**\n\n" .
-                        "Entrez les critères de recherche (nom, localisation, type de produits, etc.) :\n\n" .
-                        "Exemple : _tomates Antananarivo_ ou _légumes bio Toamasina_\n\n" .
-                        "Tapez /cancel pour annuler à tout moment.";
+                    "Entrez les critères de recherche (nom, localisation, type de produits, etc.) :\n\n" .
+                    "Exemple : _tomates Antananarivo_ ou _légumes bio Toamasina_\n\n" .
+                    "Tapez /cancel pour annuler à tout moment.";
 
                 $this->sendMessage->sendMessage(
                     $chatId,

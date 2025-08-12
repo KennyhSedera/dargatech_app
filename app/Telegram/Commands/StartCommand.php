@@ -8,23 +8,28 @@ use Telegram\Bot\Keyboard\Keyboard;
 class StartCommand extends Command
 {
     protected string $name = 'start';
-    protected string $description = 'Afficher le menu principal';
+    protected string $description = 'Afficher le menu principal 🏠';
 
 
 
     public function handle()
     {
-        $sendMessage = app(SendMessageService::class);
         $chatId = $this->getUpdate()->getMessage()->getChat()->getId();
 
+        return $this->handleKeyboardMenu($chatId);
+    }
+
+    public function handleKeyboardMenu($chatId)
+    {
+        $sendMessage = app(SendMessageService::class);
         $keyboard = Keyboard::make()
             ->inline()
             ->row([
                 Keyboard::inlineButton(['text' => '👨‍🌾 Menu Maraîchers', 'callback_data' => 'maraicher']),
-                Keyboard::inlineButton(['text' => '🏭 Nouvelle Installation', 'callback_data' => 'new_installation']),
+                Keyboard::inlineButton(['text' => '🏭 Menu Installation', 'callback_data' => 'installation']),
             ])
             ->row([
-                Keyboard::inlineButton(['text' => '🔧 Nouvelle Intervention', 'callback_data' => 'new_intervention']),
+                Keyboard::inlineButton(['text' => '🔧 Menu Intervention', 'callback_data' => 'intervention']),
                 Keyboard::inlineButton(['text' => '📋 Rapport Maintenance', 'callback_data' => 'rapport_maintenance']),
             ])
             ->row([
@@ -36,8 +41,10 @@ class StartCommand extends Command
                 Keyboard::inlineButton(['text' => '🔍 Rechercher Installation', 'callback_data' => 'rechercher_installation']),
             ])
             ->row([
-                Keyboard::inlineButton(['text' => '🏠 Menu Principal', 'callback_data' => 'main_menu']),
-                Keyboard::inlineButton(['text' => 'ℹ Aide', 'callback_data' => 'help']),
+                Keyboard::inlineButton(['text' => 'ℹ Obtenir de l\'aide', 'callback_data' => 'help']),
+            ])
+            ->row([
+                Keyboard::inlineButton(['text' => '🏠 Menu Principal', 'callback_data' => 'menu']),
             ]);
 
         $sendMessage->sendMessageWithKeyboard(

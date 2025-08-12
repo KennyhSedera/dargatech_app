@@ -3,11 +3,14 @@
 namespace App\Http\Controllers;
 
 use App\Services\CallBackService;
+use App\Services\SendMessageService;
 use App\Services\SessionService;
+use App\Telegram\Commands\StartCommand;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
 use Telegram\Bot\Api;
+use Telegram\Bot\Commands\HelpCommand;
 use Telegram\Bot\Laravel\Facades\Telegram;
 
 class TelegramBotController extends Controller
@@ -15,12 +18,18 @@ class TelegramBotController extends Controller
     protected Api $telegram;
     protected CallBackService $callBackService;
     protected SessionService $sessionService;
+    protected StartCommand $startCommand;
 
-    public function __construct(Api $telegram, CallBackService $callBackService, SessionService $sessionService)
-    {
+    public function __construct(
+        Api $telegram,
+        CallBackService $callBackService,
+        SessionService $sessionService,
+        StartCommand $startCommand,
+    ) {
         $this->telegram = $telegram;
         $this->callBackService = $callBackService;
         $this->sessionService = $sessionService;
+        $this->startCommand = $startCommand;
     }
 
     public function webhook(Request $request)
@@ -36,7 +45,7 @@ class TelegramBotController extends Controller
                 $callbackId = $callback->getId();
 
                 if (preg_match('/^list_page_(\d+)$/', $data, $matches)) {
-                    $page = (int)$matches[1];
+                    $page = (int) $matches[1];
 
                     $this->callBackService->handleListPage($chatId, $page);
 
@@ -51,23 +60,25 @@ class TelegramBotController extends Controller
 
                 try {
                     $result = match ($data) {
-                        'maraicher'             => $this->callBackService->handleMaraicher($chatId),
-                        'new_maraicher'         => $this->callBackService->handleNewMaraicher($chatId, $userId),
-                        'new_installation'      => $this->callBackService->handleNewInstallations($chatId, $userId),
+                        'maraicher' => $this->callBackService->handleMaraicher($chatId),
+                        'new_maraicher' => $this->callBackService->handleNewMaraicher($chatId, $userId),
+                        'new_installation' => $this->callBackService->handleNewInstallations($chatId, $userId),
+                        'installation' => $this->callBackService->handleInstallations($chatId, $userId),
                         // 'new_intervention'      => $this->callBackService->handleNewIntervention($chatId),
                         // 'rapport_maintenance'   => $this->callBackService->handleRapportMaintenance($chatId),
                         // 'enregistrer_paiement'  => $this->callBackService->handlePaiement($chatId),
                         // 'generer_recu'          => $this->callBackService->handleRecu($chatId),
                         // 'mes_interventions'     => $this->callBackService->handleHistorique($chatId),
                         // 'rechercher_installation' => $this->callBackService->handleRecherche($chatId),
-                        // 'help'                  => $this->callBackService->handleAide($chatId),
-                        'list_full'             => $this->callBackService->handleListFull($chatId),
-                        'list_summary'          => $this->callBackService->handleListSummary($chatId),
-                        'list_detailed'         => $this->callBackService->handleListDetailed($chatId),
-                        'search_maraicher'      => $this->callBackService->handleSearchMaraicher($chatId, $userId),
-                        'main_menu'             => $this->callBackService->handleMainMenu($chatId),
-                        'current_page'          => $this->callBackService->handleCurrentPage($chatId),
-                        default                 => $this->callBackService->sendUnknownCommand($chatId),
+                        'help' => $this->callBackService->handleHelp($chatId),
+                        'list_full' => $this->callBackService->handleListFull($chatId),
+                        'list_summary' => $this->callBackService->handleListSummary($chatId),
+                        'list_detailed' => $this->callBackService->handleListDetailed($chatId),
+                        'search_maraicher' => $this->callBackService->handleSearchMaraicher($chatId, $userId),
+                        'main_menu' => $this->callBackService->handleMainMenu($chatId),
+                        'menu' => $this->startCommand->handleKeyboardMenu($chatId),
+                        'current_page' => $this->callBackService->handleCurrentPage($chatId),
+                        default => $this->callBackService->sendUnknownCommand($chatId),
                     };
 
                     $this->telegram->answerCallbackQuery([
