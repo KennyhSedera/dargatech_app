@@ -6,12 +6,13 @@ import Snackbar from '@/Components/Snackbar'
 import { formatdate, parsedate } from '@/constant'
 import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout'
 import { deleteinstallations, getinstallations } from '@/Services/installationService'
-import { Head } from '@inertiajs/react'
+import { Head, router } from '@inertiajs/react'
 import React, { useEffect, useState } from 'react'
 import { GoTrash } from 'react-icons/go'
 import { TbEdit, TbWorldCheck } from 'react-icons/tb'
 import EmptyState from '@/Components/EmptyState'
 import { RiTelegramFill } from 'react-icons/ri'
+import { FaEye } from 'react-icons/fa6'
 
 const InstallationPage = () => {
     const [search, setSearch] = useState("");
@@ -59,6 +60,12 @@ const InstallationPage = () => {
     ];
 
     const actions = [
+        {
+            label: <FaEye className="text-base" />,
+            color: 'text-green-500',
+            hoverColor: 'text-green-600',
+            handler: (row) => showItem(row.id),
+        },
         {
             label: <TbEdit className="text-lg" />,
             color: 'text-blue-500',
@@ -155,6 +162,10 @@ const InstallationPage = () => {
         });
         setOpen(true);
     };
+
+    const showItem = (id) => {
+        router.visit(`/installation/${id}`);
+    }
 
     return (
         <AuthenticatedLayout>
