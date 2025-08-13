@@ -264,7 +264,7 @@ class ListMaraicherService
             $message .= "✅ *{$total} résultat(s) trouvé(s)*\n\n";
             $message .= "🕐 Recherche effectuée à " . date('H:i');
 
-            $keyboard = Keyboard::make()
+            $keyboard = Keyboard::make()->inline()
                 ->row([
                     Keyboard::inlineButton(['text' => '🔍 Nouvelle Recherche', 'callback_data' => 'search_maraicher']),
                     Keyboard::inlineButton(['text' => '📋 Tous les Maraîchers', 'callback_data' => 'list_maraicher'])
