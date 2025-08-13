@@ -80,21 +80,27 @@
             <div class="tagline">Solution d'Irrigation Solaire Améliorée</div>
             <div class="tagline">« Avec le soleil, récolter des revenus »</div>
         </div>
-        
+
         <div class="content">
             <p><strong>Cher technicien, chère technicienne {{ $name }},</strong></p>
 
             <p>Bienvenue sur la plateforme SISAM, votre nouvel outil professionnel pour la gestion et le suivi des interventions de maintenance sur les systèmes de pompage solaire.</p>
-            
+
             <div class="credentials">
                 <p><strong>Identifiant :</strong> {{ $email }}</p>
                 <p><strong>Mot de passe :</strong> {{ $password }}</p>
             </div>
 
             <p>Pour vous connecter, cliquez simplement sur le bouton ci-dessous :</p>
-            
+
             <div style="text-align: center;">
                 <a href="{{ $appLink }}" class="button">Accéder à mon compte</a>
+            </div>
+
+            <p>Voici le lien pour accéder à notre bot Telegram :</p>
+
+            <div style="text-align: center;">
+                <a href="{{ $botLink }}" target="_blank" class="button">Ouvrir le bot</a>
             </div>
 
             <p>Cette plateforme a été spécialement conçue pour vous permettre de :</p>
@@ -108,14 +114,14 @@
             </ul>
 
             <p>Grâce à cet outil, vous pourrez optimiser vos déplacements, préparer efficacement vos interventions et assurer une traçabilité complète des opérations de maintenance.</p>
-            
+
             <p>Les informations que vous enregistrerez sur la plateforme contribueront directement à l'amélioration continue de nos systèmes et à la satisfaction des maraîchers utilisateurs.</p>
-            
+
             <p>Pour toute question sur l'utilisation de cette plateforme, n'hésitez pas à contacter votre superviseur technique.</p>
-            
+
             <p>Cordialement,<br><strong>L'équipe support DARGATECH SARL</strong></p>
         </div>
-        
+
         <div class="footer">
             <p>Systèmes de pompage solaire Dargatech SARL</p>
             <p>© 2025 - Tous droits réservés</p>

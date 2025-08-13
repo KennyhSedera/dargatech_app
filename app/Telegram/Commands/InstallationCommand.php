@@ -23,10 +23,10 @@ class InstallationCommand extends Command
             ->inline()
             ->row([
                 Keyboard::inlineButton(['text' => '➕ Nouveau Installation', 'callback_data' => 'new_installation']),
-                Keyboard::inlineButton(['text' => '🏭 Liste Installations', 'callback_data' => 'list_full']),
+                Keyboard::inlineButton(['text' => '🏭 Liste Installations', 'callback_data' => 'list_installation']),
             ])
             ->row([
-                Keyboard::inlineButton(['text' => '🔍 Rechercher', 'callback_data' => 'search_maraicher']),
+                Keyboard::inlineButton(['text' => '🔍 Rechercher', 'callback_data' => 'search_installation']),
             ]);
 
         $telegram->sendMessage([

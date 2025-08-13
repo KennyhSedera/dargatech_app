@@ -33,7 +33,6 @@ return [
         StartCommand::class,
         MaraicherCommand::class,
         InstallationCommand::class,
-        // ListMaraicherCommand::class,
     ],
 
     'command_groups' => [

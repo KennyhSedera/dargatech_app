@@ -44,10 +44,11 @@ class TelegramBotController extends Controller
                 $data = $callback->getData();
                 $callbackId = $callback->getId();
 
-                if (preg_match('/^list_page_(\d+)$/', $data, $matches)) {
-                    $page = (int) $matches[1];
+                if (preg_match('/^(\w+)_page_(\d+)$/', $data, $matches)) {
+                    $entityType = $matches[1];
+                    $page = (int) $matches[2];
 
-                    $this->callBackService->handleListPage($chatId, $page);
+                    $this->callBackService->handleEntityListPage($chatId, $entityType, $page);
 
                     $this->telegram->answerCallbackQuery([
                         'callback_query_id' => $callbackId,
@@ -63,7 +64,8 @@ class TelegramBotController extends Controller
                         'maraicher' => $this->callBackService->handleMaraicher($chatId),
                         'new_maraicher' => $this->callBackService->handleNewMaraicher($chatId, $userId),
                         'new_installation' => $this->callBackService->handleNewInstallations($chatId, $userId),
-                        'installation' => $this->callBackService->handleInstallations($chatId, $userId),
+                        'installation' => $this->callBackService->handleInstallations($chatId),
+                        'list_installation' => $this->callBackService->handleListInstallation($chatId),
                         // 'new_intervention'      => $this->callBackService->handleNewIntervention($chatId),
                         // 'rapport_maintenance'   => $this->callBackService->handleRapportMaintenance($chatId),
                         // 'enregistrer_paiement'  => $this->callBackService->handlePaiement($chatId),
@@ -71,11 +73,10 @@ class TelegramBotController extends Controller
                         // 'mes_interventions'     => $this->callBackService->handleHistorique($chatId),
                         // 'rechercher_installation' => $this->callBackService->handleRecherche($chatId),
                         'help' => $this->callBackService->handleHelp($chatId),
-                        'list_full' => $this->callBackService->handleListFull($chatId),
-                        'list_summary' => $this->callBackService->handleListSummary($chatId),
+                        'list_maraicher' => $this->callBackService->handleListFull($chatId),
                         'list_detailed' => $this->callBackService->handleListDetailed($chatId),
-                        'search_maraicher' => $this->callBackService->handleSearchMaraicher($chatId, $userId),
-                        'main_menu' => $this->callBackService->handleMainMenu($chatId),
+                        'search_maraicher' => $this->callBackService->handleSearch($chatId, $userId, 'search_maraicher', 'de Maraîcher'),
+                        'search_installation' => $this->callBackService->handleSearch($chatId, $userId, 'search_installation', 'd\'Installation'),
                         'menu' => $this->startCommand->handleKeyboardMenu($chatId),
                         'current_page' => $this->callBackService->handleCurrentPage($chatId),
                         default => $this->callBackService->sendUnknownCommand($chatId),
@@ -120,6 +121,7 @@ class TelegramBotController extends Controller
                         return response('Session handled', 200);
                     } else {
                         Log::info('No active session found for user ' . $userId);
+                        $this->cancelAllUserSessions($userId, $chatId);
                     }
                 }
 

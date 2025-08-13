@@ -48,7 +48,8 @@ class NewMaraicherService
                 'created_via' => 'telegram_bot'
             ]);
 
-            $this->sendMessage->sendMessage($chatId,
+            $this->sendMessage->sendMessage(
+                $chatId,
                 "🎉 *Maraîcher enregistré avec succès !*\n\n",
                 'Markdown'
             );
@@ -62,7 +63,8 @@ class NewMaraicherService
         } catch (\Exception $e) {
             Log::error("Erreur enregistrement maraîcher : " . $e->getMessage());
 
-            $this->sendMessage->sendMessage($chatId,
+            $this->sendMessage->sendMessage(
+                $chatId,
                 "❌ Une erreur s'est produite lors de l'enregistrement. Tapez /new_maraicher pour recommencer."
             );
 

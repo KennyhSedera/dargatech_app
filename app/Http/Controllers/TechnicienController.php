@@ -18,19 +18,19 @@ class TechnicienController extends Controller
         try {
             // Création de l'utilisateur
             $user = User::create([
-                'name'      => $request->name,
-                'email'     => $request->email,
-                'password'  => Hash::make($request->password),
+                'name' => $request->name,
+                'email' => $request->email,
+                'password' => Hash::make($request->password),
                 'user_role' => 2,
             ]);
 
             // Création du technicien
             $user->technicien()->create([
-                'contact'    => $request->contact,
-                'adress'     => $request->adress,
+                'contact' => $request->contact,
+                'adress' => $request->adress,
                 'speciality' => $request->speciality,
-                'genre'      => $request->genre,
-                'photo'      => $request->photo,
+                'genre' => $request->genre,
+                'photo' => $request->photo,
             ]);
 
             DB::commit();
@@ -38,16 +38,18 @@ class TechnicienController extends Controller
             // Envoi de l'email dans un try-catch séparé
             try {
                 $appLink = config('app.url') . '/login';
+                $botLink = 'https://t.me/dargatech_bot';
+
                 Mail::to($request->email)->send(new BotCredentialsMail(
                     $request->password,
-                    'dargatech_bot',
+                    $botLink,
                     $appLink,
                     $request->name,
                     $request->email
                 ));
             } catch (\Exception $emailError) {
                 Log::error('Erreur lors de l\'envoi de l\'email au technicien: ' . $emailError->getMessage());
-                
+
                 return response()->json([
                     'message' => 'Technicien créé avec succès, mais l\'email n\'a pas pu être envoyé',
                     'user' => $user->load('technicien'),
@@ -64,7 +66,7 @@ class TechnicienController extends Controller
         } catch (\Exception $e) {
             DB::rollBack();
             Log::error('Erreur lors de la création du technicien: ' . $e->getMessage());
-            
+
             return response()->json([
                 'message' => 'Erreur lors de la création du technicien',
                 'error' => $e->getMessage()
@@ -78,11 +80,11 @@ class TechnicienController extends Controller
             $data = User::with('technicien')
                 ->where('user_role', 2)
                 ->get();
-                
+
             return response()->json(['data' => $data], 200);
         } catch (\Exception $e) {
             Log::error('Erreur lors de la récupération des techniciens: ' . $e->getMessage());
-            
+
             return response()->json([
                 'message' => 'Erreur lors de la récupération des techniciens',
                 'error' => $e->getMessage()
@@ -96,11 +98,11 @@ class TechnicienController extends Controller
             $data = User::with('technicien')
                 ->where('user_role', 2)
                 ->findOrFail($id);
-                
+
             return response()->json(['data' => $data], 200);
         } catch (\Exception $e) {
             Log::error('Erreur lors de la récupération du technicien: ' . $e->getMessage());
-            
+
             return response()->json([
                 'message' => 'Erreur lors de la récupération du technicien',
                 'error' => $e->getMessage()
@@ -111,10 +113,10 @@ class TechnicienController extends Controller
     public function update(Request $request, $id)
     {
         DB::beginTransaction();
-        
+
         try {
             $user = User::findOrFail($id);
-            
+
             $user->update([
                 'name' => $request->name,
                 'email' => $request->email,
@@ -144,7 +146,7 @@ class TechnicienController extends Controller
         } catch (\Exception $e) {
             DB::rollBack();
             Log::error('Erreur lors de la mise à jour du technicien: ' . $e->getMessage());
-            
+
             return response()->json([
                 'message' => 'Erreur lors de la mise à jour',
                 'error' => $e->getMessage()
@@ -164,7 +166,7 @@ class TechnicienController extends Controller
             ], 200);
         } catch (\Exception $e) {
             Log::error('Erreur lors de la suppression du technicien: ' . $e->getMessage());
-            
+
             return response()->json([
                 'message' => 'Erreur lors de la suppression',
                 'error' => $e->getMessage()
@@ -172,34 +174,4 @@ class TechnicienController extends Controller
         }
     }
 
-    public function testEmail()
-    {
-        try {
-            $appLink = config('app.url') . '/login';
-            Mail::to('test@example.com')->send(new BotCredentialsMail(
-                'test123',
-                'dargatech_bot',
-                $appLink,
-                'Test User'
-            ));
-            
-            return response()->json([
-                'message' => 'Email de test envoyé avec succès'
-            ]);
-        } catch (\Exception $e) {
-            Log::error('Test email error: ' . $e->getMessage());
-            
-            return response()->json([
-                'message' => 'Erreur lors du test d\'envoi d\'email',
-                'error' => $e->getMessage(),
-                'smtp_settings' => [
-                    'host' => config('mail.mailers.smtp.host'),
-                    'port' => config('mail.mailers.smtp.port'),
-                    'encryption' => config('mail.mailers.smtp.encryption'),
-                    'username' => config('mail.mailers.smtp.username'),
-                    'from_address' => config('mail.from.address'),
-                ]
-            ], 500);
-        }
-    }
 }

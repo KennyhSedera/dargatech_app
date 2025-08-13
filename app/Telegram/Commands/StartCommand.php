@@ -37,14 +37,7 @@ class StartCommand extends Command
                 Keyboard::inlineButton(['text' => '📄 Générer Reçu', 'callback_data' => 'generer_recu']),
             ])
             ->row([
-                Keyboard::inlineButton(['text' => '📊 Mes Interventions', 'callback_data' => 'mes_interventions']),
-                Keyboard::inlineButton(['text' => '🔍 Rechercher Installation', 'callback_data' => 'rechercher_installation']),
-            ])
-            ->row([
                 Keyboard::inlineButton(['text' => 'ℹ Obtenir de l\'aide', 'callback_data' => 'help']),
-            ])
-            ->row([
-                Keyboard::inlineButton(['text' => '🏠 Menu Principal', 'callback_data' => 'menu']),
             ]);
 
         $sendMessage->sendMessageWithKeyboard(

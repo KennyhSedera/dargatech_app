@@ -12,18 +12,18 @@ class BotCredentialsMail extends Mailable
     use Queueable, SerializesModels;
 
     public $password;
-    public $botUsername;
+    public $botLink;
     public $appLink;
     public $name;
     public $email;
 
-    public function __construct($password, $botUsername, $appLink, $name, $email)
+    public function __construct($password, $botLink, $appLink, $name, $email)
     {
-        $this->password    = $password;
-        $this->botUsername = $botUsername;
-        $this->appLink     = $appLink;
-        $this->name        = $name;
-        $this->email        = $email;
+        $this->password = $password;
+        $this->botLink = $botLink;
+        $this->appLink = $appLink;
+        $this->name = $name;
+        $this->email = $email;
     }
 
     /**

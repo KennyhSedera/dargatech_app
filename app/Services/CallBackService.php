@@ -21,6 +21,7 @@ class CallBackService
     protected MaraicherCommand $maraicherCommand;
     protected HelpCommand $helpCommand;
     protected InstallationCommand $installationCommand;
+    protected ListInstallationService $listInstallationService;
 
     public function __construct(
         Api $telegram,
@@ -30,6 +31,7 @@ class CallBackService
         MaraicherCommand $maraicherCommand,
         HelpCommand $helpCommand,
         InstallationCommand $installationCommand,
+        ListInstallationService $listInstallationService,
     ) {
         $this->telegram = $telegram;
         $this->maraicherService = $maraicherService;
@@ -38,6 +40,7 @@ class CallBackService
         $this->maraicherCommand = $maraicherCommand;
         $this->helpCommand = $helpCommand;
         $this->installationCommand = $installationCommand;
+        $this->listInstallationService = $listInstallationService;
     }
 
     public function handleCurrentPage($chatId)
@@ -125,6 +128,11 @@ class CallBackService
         $this->installationCommand->sendInstallationMenu($this->telegram, $chatId);
     }
 
+    public function handleListInstallation($chatId)
+    {
+        $this->listInstallationService->showFullList($chatId);
+    }
+
     public function handleListFull($chatId)
     {
         $this->listMaraicherService->showFullList($chatId);
@@ -140,17 +148,12 @@ class CallBackService
         );
     }
 
-    public function handleListSummary($chatId)
-    {
-        $this->listMaraicherService->showSummary($chatId);
-    }
-
     public function handleListDetailed($chatId)
     {
         $this->listMaraicherService->showFullList($chatId);
     }
 
-    public function handleListPage($chatId, $page)
+    public function handleMaraicherListPage($chatId, $page)
     {
         try {
             $maraichers = DB::table('clients')->orderBy('created_at', 'desc')->get();
@@ -164,33 +167,6 @@ class CallBackService
         }
     }
 
-    public function handleMainMenu($chatId)
-    {
-        $keyboard = Keyboard::make()
-            ->row([
-                Keyboard::inlineButton(['text' => '👨‍🌾 Nouveau Maraîcher', 'callback_data' => 'new_maraicher']),
-                Keyboard::inlineButton(['text' => '📋 Liste Maraîchers', 'callback_data' => 'list_full'])
-            ])
-            ->row([
-                Keyboard::inlineButton(['text' => '🔧 Installation', 'callback_data' => 'new_installation']),
-                Keyboard::inlineButton(['text' => '🛠️ Intervention', 'callback_data' => 'new_intervention'])
-            ])
-            ->row([
-                Keyboard::inlineButton(['text' => '📊 Maintenance', 'callback_data' => 'rapport_maintenance']),
-                Keyboard::inlineButton(['text' => '💳 Paiement', 'callback_data' => 'paiement'])
-            ])
-            ->row([
-                Keyboard::inlineButton(['text' => '🔍 Rechercher', 'callback_data' => 'search_maraicher']),
-                Keyboard::inlineButton(['text' => '❓ Aide', 'callback_data' => 'aide'])
-            ]);
-
-        $this->sendMessage->sendMessageWithKeyboard(
-            $chatId,
-            "🏠 *Menu Principal*\n\nChoisissez une action :",
-            $keyboard,
-            'Markdown'
-        );
-    }
 
     public function sendUnknownCommand($chatId)
     {
@@ -201,12 +177,12 @@ class CallBackService
         );
     }
 
-    public function handleSearchMaraicher($chatId, $userId)
+    public function handleSearch($chatId, $userId, $command = 'search_maraicher', $name = 'name')
     {
         try {
             $existingSession = DB::table('telegram_sessions')
                 ->where('user_id', $userId)
-                ->where('command', '=', 'search_maraicher')
+                ->where('command', '=', $command)
                 ->where('completed', false)
                 ->first();
 
@@ -214,7 +190,7 @@ class CallBackService
                 DB::table('telegram_sessions')->insert([
                     'user_id' => $userId,
                     'chat_id' => $chatId,
-                    'command' => 'search_maraicher',
+                    'command' => $command,
                     'step' => 'awaiting_search_term',
                     'data' => json_encode([]),
                     'completed' => false,
@@ -222,9 +198,8 @@ class CallBackService
                     'updated_at' => now()
                 ]);
 
-                $message = "🔍 **Recherche de Maraîchers**\n\n" .
-                    "Entrez les critères de recherche (nom, localisation, type de produits, etc.) :\n\n" .
-                    "Exemple : _tomates Antananarivo_ ou _légumes bio Toamasina_\n\n" .
+                $message = "🔍 **Recherche {$name} **\n\n" .
+                    "Entrez les critères de recherche :\n\n" .
                     "Tapez /cancel pour annuler à tout moment.";
 
                 $this->sendMessage->sendMessage(
@@ -244,7 +219,7 @@ class CallBackService
             );
 
         } catch (\Exception $e) {
-            \Log::error('Error in handleSearchMaraicher: ' . $e->getMessage(), [
+            Log::error('Error in handleSearchMaraicher: ' . $e->getMessage(), [
                 'user_id' => $userId,
                 'chat_id' => $chatId,
                 'trace' => $e->getTraceAsString()
@@ -253,6 +228,41 @@ class CallBackService
             $this->sendMessage->sendMessage(
                 $chatId,
                 "❌ Une erreur est survenue lors de l'initialisation de la recherche.\n\nVeuillez réessayer plus tard.",
+                'Markdown'
+            );
+        }
+    }
+
+    public function handleEntityListPage($chatId, $entityType, $page)
+    {
+        switch ($entityType) {
+            case 'maraicher':
+                return $this->handleMaraicherListPage($chatId, $page);
+
+            case 'installation':
+                return $this->handleInstallationListPage($chatId, $page);
+
+            // case 'client':
+            //     return $this->handleClientListPage($chatId, $page);
+
+            // case 'commande':
+            //     return $this->handleCommandeListPage($chatId, $page);
+
+            default:
+                Log::warning("Unknown entity type for pagination: {$entityType}");
+                return $this->sendMessage->sendErrorMessage($chatId, "Type d'entité non reconnu");
+        }
+    }
+
+    public function handleInstallationListPage($chatId, $page)
+    {
+        try {
+            $installations = DB::table('installations')->orderBy('created_at', 'desc')->get();
+            $this->listInstallationService->showPaginatedList($chatId, $installations, (int) $page);
+        } catch (\Exception $e) {
+            $this->sendMessage->sendMessage(
+                $chatId,
+                "❌ Erreur lors de l'affichage de la page.",
                 'Markdown'
             );
         }

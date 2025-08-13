@@ -14,17 +14,23 @@ class SessionService
     protected NewMaraicherService $maraicherService;
     protected ListMaraicherService $listMaraicherService;
     protected NewInstallationService $newInstallationService;
+    protected ListInstallationService $listInstallationService;
+    protected SearchServices $searchServices;
 
     public function __construct(
         SendMessageService $sendMessage,
         NewMaraicherService $maraicherService,
         ListMaraicherService $listMaraicherService,
-        NewInstallationService $newInstallationService
+        NewInstallationService $newInstallationService,
+        ListInstallationService $listInstallationService,
+        SearchServices $searchServices,
     ) {
         $this->sendMessage = $sendMessage;
         $this->maraicherService = $maraicherService;
         $this->listMaraicherService = $listMaraicherService;
         $this->newInstallationService = $newInstallationService;
+        $this->listInstallationService = $listInstallationService;
+        $this->searchServices = $searchServices;
     }
 
     public function handleActiveSession($activeSession, $messageText, $userId, $chatId)
@@ -37,12 +43,16 @@ class SessionService
                     $this->handleNewMaraicherSession($activeSession, $messageText, $data, $userId, $chatId);
                     break;
 
-                case 'search_maraicher':
+                case 'new_installation':
+                    $this->handleNewInstallationSession($activeSession, $messageText, $data, $userId, $chatId);
+                    break;
+
+                case 'search_installation':
                     $this->handleSearchSession($activeSession, $messageText, $data, $userId, $chatId);
                     break;
 
-                case 'new_installation':
-                    $this->handleNewInstallationSession($activeSession, $messageText, $data, $userId, $chatId);
+                case 'search_maraicher':
+                    $this->handleSearchSession($activeSession, $messageText, $data, $userId, $chatId);
                     break;
 
                 default:
@@ -80,108 +90,18 @@ class SessionService
     private function handleSearchSession($activeSession, $messageText, $data, $userId, $chatId)
     {
         if ($activeSession->step === 'awaiting_search_term') {
-            $this->processSearchTerm($messageText, $userId, $chatId);
+            $entityType = $this->searchServices->extractEntityType($activeSession->command);
+            $this->searchServices->processSearchTerm($messageText, $userId, $chatId, $entityType);
         } else {
             $this->sendMessage->sendMessage(
                 $chatId,
                 "❌ Étape de recherche inconnue. Utilisez /cancel pour annuler."
             );
-            $this->cancelSession($userId, 'search_maraicher');
+            $this->cancelSession($userId, $activeSession->command);
         }
     }
 
-    private function processSearchTerm($messageText, $userId, $chatId)
-    {
-        try {
-            $searchTerm = $this->sanitizeSearchTerm($messageText);
-
-            $validation = $this->validateSearchTerm($searchTerm);
-            if (!$validation['valid']) {
-                $this->sendMessage->sendMessage($chatId, $validation['message']);
-                return;
-            }
-
-            $updated = DB::table('telegram_sessions')
-                ->where('user_id', $userId)
-                ->where('command', 'search_maraicher')
-                ->where('completed', false)
-                ->update([
-                    'completed' => true,
-                    'updated_at' => now()
-                ]);
-
-            if (!$updated) {
-                throw new \Exception('Failed to update session status');
-            }
-
-            $this->listMaraicherService->searchMaraichers($chatId, $searchTerm);
-
-        } catch (\Exception $e) {
-            Log::error('Error in processSearchTerm: ' . $e->getMessage(), [
-                'user_id' => $userId,
-                'chat_id' => $chatId,
-                'search_term' => $messageText,
-                'trace' => $e->getTraceAsString()
-            ]);
-
-            $this->sendMessage->sendMessage(
-                $chatId,
-                "❌ Erreur lors de la recherche. Veuillez réessayer."
-            );
-
-            // Annuler la session en cas d'erreur
-            $this->cancelSession($userId, 'search_maraicher');
-        }
-    }
-
-    private function sanitizeSearchTerm($searchTerm)
-    {
-        $cleaned = trim($searchTerm);
-        $cleaned = preg_replace('/\s+/', ' ', $cleaned);
-        $cleaned = strip_tags($cleaned);
-        $cleaned = htmlspecialchars($cleaned, ENT_QUOTES, 'UTF-8');
-
-        return $cleaned;
-    }
-
-    private function validateSearchTerm($searchTerm)
-    {
-        if (empty($searchTerm)) {
-            return [
-                'valid' => false,
-                'message' => "❌ Le terme de recherche ne peut pas être vide.\n\n" .
-                           "Veuillez entrer un terme valide ou tapez /cancel pour annuler."
-            ];
-        }
-
-        if (strlen($searchTerm) < 2) {
-            return [
-                'valid' => false,
-                'message' => "❌ Le terme de recherche doit contenir au moins 2 caractères.\n\n" .
-                           "Veuillez entrer un terme plus long ou tapez /cancel pour annuler."
-            ];
-        }
-
-        if (strlen($searchTerm) > 100) {
-            return [
-                'valid' => false,
-                'message' => "❌ Le terme de recherche est trop long (maximum 100 caractères).\n\n" .
-                           "Veuillez raccourcir votre recherche ou tapez /cancel pour annuler."
-            ];
-        }
-
-        if (preg_match('/[<>{}[\]\\\\|`]/', $searchTerm)) {
-            return [
-                'valid' => false,
-                'message' => "❌ Le terme de recherche contient des caractères non autorisés.\n\n" .
-                           "Veuillez utiliser uniquement des lettres, chiffres, espaces et tirets."
-            ];
-        }
-
-        return ['valid' => true];
-    }
-
-    private function cancelSession($userId, $command)
+    public function cancelSession($userId, $command)
     {
         try {
             DB::table('telegram_sessions')

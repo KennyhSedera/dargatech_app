@@ -66,4 +66,9 @@ class SendMessageService
             'message_id' => $messageId,
         ]);
     }
+
+    public function sendErrorMessage($chatId, $text)
+    {
+        return $this->sendMessage($chatId, $text, 'Markdown');
+    }
 }

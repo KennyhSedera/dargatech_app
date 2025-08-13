@@ -24,7 +24,7 @@ class MaraicherCommand extends Command
             ->inline()
             ->row([
                 Keyboard::inlineButton(['text' => '➕ Nouveau Maraîcher', 'callback_data' => 'new_maraicher']),
-                Keyboard::inlineButton(['text' => '👨‍🌾 Liste Maraîchers', 'callback_data' => 'list_full']),
+                Keyboard::inlineButton(['text' => '👨‍🌾 Liste Maraîchers', 'callback_data' => 'list_maraicher']),
             ])
             ->row([
                 Keyboard::inlineButton(['text' => '🔍 Rechercher', 'callback_data' => 'search_maraicher']),
