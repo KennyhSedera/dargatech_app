@@ -70,7 +70,7 @@ class ListInstallationService
         $message .= "🕐 *Mise à jour:* " . date('d/m/Y à H:i') . "\n\n";
 
         // Keyboard amélioré
-        $keyboard = Keyboard::make()
+        $keyboard = Keyboard::make()->inline()
             ->row([
                 Keyboard::inlineButton(['text' => '🔍 Rechercher', 'callback_data' => 'search_installation']),
                 Keyboard::inlineButton(['text' => '➕ Ajouter nouveau', 'callback_data' => 'new_installation'])

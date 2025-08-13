@@ -68,13 +68,13 @@ class ListMaraicherService
         $message .= "🕐 *Mise à jour:* " . date('d/m/Y à H:i') . "\n\n";
 
         // Keyboard amélioré
-        $keyboard = Keyboard::make()
+        $keyboard = Keyboard::make()->inline()
             ->row([
                 Keyboard::inlineButton(['text' => '🔍 Rechercher', 'callback_data' => 'search_maraicher']),
                 Keyboard::inlineButton(['text' => '➕ Ajouter nouveau', 'callback_data' => 'new_maraicher'])
             ])
             ->row([
-                Keyboard::inlineButton(['text' => '🏠 Menu principale', 'callback_data' => 'main_menu'])
+                Keyboard::inlineButton(['text' => '🏠 Menu principale', 'callback_data' => 'menu'])
             ]);
 
         $this->sendMessage->sendMessageWithKeyboard($chatId, $message, $keyboard, 'Markdown');
@@ -90,90 +90,6 @@ class ListMaraicherService
             return "🌱";
         return "👨‍🌾";
     }
-
-    // public function showSummary($chatId)
-    // {
-    //     try {
-    //         $stats = DB::table('clients')
-    //             ->selectRaw('
-    //                 COUNT(*) as total,
-    //                 COUNT(CASE WHEN genre = "Homme" THEN 1 END) as hommes,
-    //                 COUNT(CASE WHEN genre = "Femme" THEN 1 END) as femmes,
-    //                 SUM(CAST(surface_cultivee AS DECIMAL(10,2))) as surface_totale,
-    //                 AVG(CAST(surface_cultivee AS DECIMAL(10,2))) as surface_moyenne
-    //             ')
-    //             ->first();
-
-    //         $activites = DB::table('clients')
-    //             ->select('type_activite_agricole', DB::raw('COUNT(*) as count'))
-    //             ->groupBy('type_activite_agricole')
-    //             ->orderBy('count', 'desc')
-    //             ->get();
-
-    //         $localisations = DB::table('clients')
-    //             ->select('localisation', DB::raw('COUNT(*) as count'))
-    //             ->groupBy('localisation')
-    //             ->orderBy('count', 'desc')
-    //             ->limit(5)
-    //             ->get();
-
-    //         $message = "📈 *Tableau de Bord • SISAM Analytics*\n";
-    //         $message .= "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━\n\n";
-
-    //         // Section démographique avec émojis et barres de progression
-    //         $message .= "👥 *Répartition Démographique*\n";
-    //         $hommesPct = $stats->total > 0 ? round(($stats->hommes / $stats->total) * 100) : 0;
-    //         $femmesPct = $stats->total > 0 ? round(($stats->femmes / $stats->total) * 100) : 0;
-
-    //         $message .= "👨‍🌾 Hommes: {$stats->hommes} ({$hommesPct}%)\n";
-    //         $message .= "👩‍🌾 Femmes: {$stats->femmes} ({$femmesPct}%)\n";
-    //         $message .= "🎯 **Total: {$stats->total} maraîcher(s)**\n\n";
-
-    //         // Section surfaces avec indicateurs visuels
-    //         $message .= "🌾 *Analyse des Surfaces*\n";
-    //         $message .= "📐 Surface totale: *" . number_format($stats->surface_totale, 1) . " ha*\n";
-    //         $message .= "📊 Surface moyenne: *" . number_format($stats->surface_moyenne, 1) . " ha/exploitation*\n\n";
-
-    //         // Top activités avec ranking
-    //         $message .= "🏆 *Top Activités Agricoles*\n";
-    //         foreach ($activites->take(3) as $index => $activite) {
-    //             $rank = ["🥇", "🥈", "🥉"][$index] ?? "🏅";
-    //             $message .= "{$rank} {$activite->type_activite_agricole}: *{$activite->count}*\n";
-    //         }
-    //         $message .= "\n";
-
-    //         // Localisation avec émojis de région
-    //         $message .= "🗺️ *Répartition Géographique*\n";
-    //         foreach ($localisations as $index => $localisation) {
-    //             $regionIcon = $localisation->localisation;
-    //             $message .= "{$regionIcon} {$localisation->localisation}: *{$localisation->count}*\n";
-    //         }
-
-    //         $message .= "\n🕐 *Dernière mise à jour:* " . date('d/m/Y à H:i');
-
-    //         $keyboard = Keyboard::make()
-    //             ->row([
-    //                 Keyboard::inlineButton(['text' => '📋 Liste Complète', 'callback_data' => 'list_maraicher']),
-    //                 Keyboard::inlineButton(['text' => '🔍 Rechercher', 'callback_data' => 'search_maraicher'])
-    //             ])
-    //             ->row([
-    //                 Keyboard::inlineButton(['text' => '🌱 Nouveau Maraîcher', 'callback_data' => 'new_maraicher']),
-    //                 Keyboard::inlineButton(['text' => '📊 Rapports Avancés', 'callback_data' => 'advanced_reports'])
-    //             ])
-    //             ->row([
-    //                 Keyboard::inlineButton(['text' => '🏠 Accueil', 'callback_data' => 'main_menu'])
-    //             ]);
-
-    //         $this->sendMessage->sendMessageWithKeyboard($chatId, $message, $keyboard, 'Markdown');
-
-    //     } catch (\Exception $e) {
-    //         $this->sendMessage->sendMessage(
-    //             $chatId,
-    //             "⚠️ *Erreur de Chargement*\n\nImpossible de générer les statistiques actuellement.\n\n🔄 Veuillez réessayer dans quelques instants.",
-    //             'Markdown'
-    //         );
-    //     }
-    // }
 
     public function showPaginatedList($chatId, $maraichers, $page = 1)
     {
@@ -212,7 +128,7 @@ class ListMaraicherService
         ]);
 
         $keyboard->row([
-            Keyboard::inlineButton(['text' => '🏠 Menu principale', 'callback_data' => 'main_menu'])
+            Keyboard::inlineButton(['text' => '🏠 Menu principale', 'callback_data' => 'menu'])
         ]);
 
         $this->sendMessage->sendMessageWithKeyboard($chatId, $message, $keyboard, 'Markdown');
