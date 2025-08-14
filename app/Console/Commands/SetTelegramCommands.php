@@ -53,6 +53,10 @@ class SetTelegramCommands extends Command
                 'command' => 'generer_recu',
                 'description' => 'Generer recu 📄',
             ],
+            [
+                'command' => 'cancel',
+                'description' => 'Annuler une commande 🚫',
+            ],
         ];
 
         $response = $telegram->setMyCommands(['commands' => $commands]);

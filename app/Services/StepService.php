@@ -5,6 +5,7 @@ namespace App\Services;
 use DB;
 use Log;
 use Telegram\Bot\Api;
+use Telegram\Bot\Keyboard\Keyboard;
 
 class StepService
 {
@@ -24,20 +25,38 @@ class StepService
         $this->stepConfigurations = [
             'new_maraicher' => [
                 'steps' => [
-                    'nom', 'prenom', 'telephone', 'email', 'CIN', 'genre',
-                    'localisation', 'type_activite_agricole', 'surface_cultivee', 'date_contrat'
+                    'nom',
+                    'prenom',
+                    'telephone',
+                    'email',
+                    'CIN',
+                    'genre',
+                    'localisation',
+                    'type_activite_agricole',
+                    'surface_cultivee',
+                    'date_contrat'
                 ],
                 'prompts' => [
                     'nom' => "🌱 Veuillez entrer le *nom* du maraîcher :",
                     'prenom' => "✍️ Entrez maintenant le *prénom* :",
                     'telephone' => "📞 Entrez le *téléphone* :",
                     'localisation' => "📍 Entrez la *localisation* ou *adresse* :",
-                    'genre' => "👤 Entrez le *genre* (Homme/Femme) :",
+                    'genre' => "👤 Entrez le *genre* :",
                     'email' => "📧 Entrez l'*email* :",
                     'CIN' => "🪪 Entrez le *CIN* :",
                     'date_contrat' => "📅 Entrez la *date de contrat* (AAAA-MM-JJ) :",
                     'type_activite_agricole' => "🌾 Entrez le *type d'activité agricole* :",
                     'surface_cultivee' => "📏 Entrez la *surface cultivée* (en hectares, ex : 0.5) :",
+                ],
+                'keyboards' => [
+                    'genre' => [
+                        ['Homme', 'Femme']
+                    ],
+                    'type_activite_agricole' => [
+                        ['Maraîchage', 'Arboriculture'],
+                        ['Céréaliculture', 'Élevage'],
+                        ['Agriculture mixte', 'Autre']
+                    ]
                 ],
                 'validation' => [
                     'email' => 'email',
@@ -49,7 +68,17 @@ class StepService
             ],
             'new_installation' => [
                 'steps' => [
-                    'client_id', 'numero_serie', 'debit_nominal', 'puissance_pompe', 'profondeur_forage', 'hmt', 'source_eau', 'photo', 'latitude', 'longitude', 'date_installation'
+                    'client_id',
+                    'numero_serie',
+                    'debit_nominal',
+                    'puissance_pompe',
+                    'profondeur_forage',
+                    'hmt',
+                    'source_eau',
+                    'photo',
+                    'latitude',
+                    'longitude',
+                    'date_installation'
                 ],
                 'prompts' => [
                     'client_id' => "👤 Veuillez entrer le *nom* du client :",
@@ -64,27 +93,49 @@ class StepService
                     'latitude' => "📍 Entrez la *latitude* de l'installation :",
                     'longitude' => "📍 Entrez la *longitude* de l'installation :"
                 ],
+                'keyboards' => [
+                    'source_eau' => [
+                        ['Forage', 'Puits'],
+                        ['Etang', 'Barrage'],
+                        ['Rivière', 'Autre']
+                    ]
+                ],
                 'validation' => [
                     'debit_nominal' => 'numeric',
                     'puissance_pompe' => 'numeric',
                     'profondeur_forage' => 'numeric',
                     'hmt' => 'numeric',
                     'date_installation' => 'date',
-                    'photo' => 'file_exists'
+                    'photo' => 'file_exists',
+                    'latitude' => 'numeric',
+                    'longitude' => 'numeric'
                 ]
             ],
             'new_intervention' => [
                 'steps' => [
-                   'installation_id', 'type_intervention', 'description_probleme', 'date_intervention'
+                    'installation_id',
+                    'type_intervention',
+                    'description_probleme',
+                    'photo',
+                    'date_intervention'
                 ],
                 'prompts' => [
                     'installation_id' => "📦 Veuillez entrer la *code de l'installation * :",
-                    'type_intervention' => "🛠️ Entrez le *type d'intervention* (Curative/Préventive) :",
-                    'description' => "📝 Entrez la *description* de l'intervention :",
+                    'type_intervention' => "🛠️ Entrez le *type d'intervention* :",
+                    'description_probleme' => "📝 Entrez la *description du problème* :",
+                    'photo' => "📸 Ajoutez la *photo* de l'intervention :",
                     'date_intervention' => "📅 Entrez la *date de l'intervention* (AAAA-MM-JJ) :"
                 ],
+                'keyboards' => [
+                    'type_intervention' => [
+                        ['Curative', 'Préventive'],
+                        ['Maintenance', 'Réparation'],
+                        ['Installation', 'Diagnostic']
+                    ]
+                ],
                 'validation' => [
-                    'date_intervention' => 'date'
+                    'date_intervention' => 'date',
+                    'photo' => 'file_exists'
                 ]
             ]
         ];
@@ -95,43 +146,66 @@ class StepService
         $messageText = null;
         $filename = null;
 
-        if (!empty($message->photo)) {
-            $photos = $this->normalizePhotos($message->photo);
+        $photoService = new PhotoService($this->sendMessage, $this->telegram);
 
-            if (count($photos) === 0) {
-                $this->sendMessage->sendMessage($chatId, "❌ Photo introuvable, veuillez renvoyer une image.");
+        $nextStep = $this->getNextStep($step, $command);
+
+        if ($step === 'photo') {
+            $existingPhotos = [];
+            if (!empty($data['photo']) && $data['photo'] !== 'null') {
+                $existingPhotos = json_decode($data['photo'], true) ?: [];
+            }
+
+            if (!empty($message->photo)) {
+                $photo = $photoService->upload($message, $chatId);
+                $filename = $photo[1] ?? null;
+
+                if (empty($existingPhotos)) {
+                    $messageText = $photo[0] ?? null;
+                    if (!$this->validateStep($step, $messageText, $command, $chatId)) {
+                        return;
+                    }
+                }
+
+                if ($filename) {
+                    $existingPhotos[] = $filename;
+                }
+                $data['photo'] = json_encode($existingPhotos);
+
+                $this->updateSession($userId, $command, 'photo', $data);
+
+                $text = "📸 Vous pouvez envoyer une autre photo ou \n";
+                $text .= $this->getPromptForStep($nextStep, $command);
+                $this->sendMessage->sendMessage($chatId, $text, 'Markdown');
                 return;
             }
 
-            $lastPhoto = $photos[count($photos) - 1];
-            $fileId = is_array($lastPhoto) ? ($lastPhoto['file_id'] ?? null) : ($lastPhoto->file_id ?? null);
-
-            if (!$fileId) {
-                $this->sendMessage->sendMessage($chatId, "❌ Impossible de lire la photo. Veuillez renvoyer une image valide.");
+            $messageText = trim($message->text ?? '');
+            if (empty($messageText)) {
+                $this->sendMessage->sendMessage($chatId, "❌ Ce champ est obligatoire. Veuillez fournir une valeur valide :");
                 return;
             }
 
-            $savedPath = $this->downloadTelegramFile($fileId);
-            if (!$savedPath) {
-                $this->sendMessage->sendMessage($chatId, "❌ Erreur lors du téléchargement de la photo. Veuillez réessayer.");
-                return;
-            }
+            $data[$nextStep] = $messageText;
 
-            $filename = 'storage/installation/'.$fileId . '.jpg';
-            $messageText = $savedPath;
+            $this->updateSession($userId, $command, $this->getNextStep($nextStep, $command), $data);
+            $this->sendStepMessage($chatId, $this->getNextStep($nextStep, $command), $command);
+            return;
         }
 
-        elseif (!empty($message->document) && isset($message->document->file_id)) {
+        if (!empty($message->photo)) {
+            $photo = $photoService->upload($message, $chatId);
+            $filename = $photo[1] ?? null;
+            $messageText = $photo[0] ?? null;
+        } elseif (!empty($message->document) && isset($message->document->file_id)) {
             $fileId = $message->document->file_id;
-            $savedPath = $this->downloadTelegramFile($fileId);
+            $savedPath = $photoService->downloadTelegramFile($fileId);
             if (!$savedPath) {
                 $this->sendMessage->sendMessage($chatId, "❌ Erreur lors du téléchargement du document. Veuillez réessayer.");
                 return;
             }
             $messageText = $savedPath;
-        }
-
-        else {
+        } else {
             $messageText = trim($message->text ?? '');
         }
 
@@ -144,60 +218,64 @@ class StepService
             return;
         }
 
-        $data[$step] = $message->photo ? $filename : $messageText;
+        $data[$step] = $messageText;
         $nextStep = $this->getNextStep($step, $command);
 
-        if ($nextStep) {
-            $this->updateSession($userId, $command, $nextStep, $data);
-            $this->sendMessage->sendMessage($chatId, $this->getPromptForStep($nextStep, $command), 'Markdown');
-        } else {
-            $this->completeSession($userId, $command, $data);
-            if ($onComplete && is_callable($onComplete)) {
-                $onComplete($data, $userId, $chatId);
-            }
-        }
-    }
-
-    private function normalizePhotos($photos)
-    {
-        if (!is_array($photos)) {
-            if ($photos instanceof \Traversable) {
-                return iterator_to_array($photos);
+        if ($step === 'client_id') {
+            $exist = DB::table('clients')->where('id', $messageText)->exists();
+            if ($exist) {
+                if ($nextStep) {
+                    $this->updateSession($userId, $command, $nextStep, $data);
+                    $this->sendStepMessage($chatId, $nextStep, $command);
+                } else {
+                    $this->completeSession($userId, $command, $data);
+                    if ($onComplete && is_callable($onComplete)) {
+                        $onComplete($data, $userId, $chatId);
+                    }
+                }
             } else {
-                return json_decode(json_encode($photos), true);
+                $this->sendMessage->sendMessage($chatId, "❌ Le client n'existe pas. Veuillez fournir un client existant :");
+            }
+        } else {
+            if ($nextStep) {
+                $this->updateSession($userId, $command, $nextStep, $data);
+                $this->sendStepMessage($chatId, $nextStep, $command);
+            } else {
+                $this->completeSession($userId, $command, $data);
+                if ($onComplete && is_callable($onComplete)) {
+                    $onComplete($data, $userId, $chatId);
+                }
             }
         }
-        return $photos;
     }
 
-    private function downloadTelegramFile(string $fileId): ?string
+    private function sendStepMessage($chatId, $step, $command)
     {
-        try {
-            $file = $this->telegram->getFile(['file_id' => $fileId]);
-            $filePath = $file->getFilePath();
-            $url = "https://api.telegram.org/file/bot" . env('TELEGRAM_BOT_TOKEN') . "/" . $filePath;
+        $prompt = $this->getPromptForStep($step, $command);
+        $keyboard = $this->getKeyboardForStep($step, $command);
 
-            $content = file_get_contents($url);
-            if ($content === false) {
-                Log::error("Erreur téléchargement fichier Telegram pour file_id {$fileId}");
-                return null;
-            }
+        if ($keyboard) {
+            $this->sendMessage->sendMessageWithKeyboard($chatId, $prompt, $keyboard, 'Markdown');
+        } else {
+            $this->sendMessage->sendMessage($chatId, $prompt, 'Markdown');
+        }
+    }
 
-            $saveDir = storage_path('app/public/installation');
-            if (!file_exists($saveDir)) {
-                mkdir($saveDir, 0755, true);
-            }
+    private function getKeyboardForStep($step, $command)
+    {
+        $keyboards = $this->stepConfigurations[$command]['keyboards'] ?? [];
 
-            $fileName = $fileId . '.jpg';
-            $fullPath = $saveDir . DIRECTORY_SEPARATOR . $fileName;
-
-            file_put_contents($fullPath, $content);
-
-            return $fullPath;
-        } catch (\Exception $e) {
-            Log::error("Exception téléchargement fichier Telegram: " . $e->getMessage());
+        if (!isset($keyboards[$step])) {
             return null;
         }
+
+        $keyboardButtons = $keyboards[$step];
+
+        return Keyboard::make()
+            ->setKeyboard($keyboardButtons)
+            ->setOneTimeKeyboard(true)
+            ->setResizeKeyboard(true)
+            ->setSelective(false);
     }
 
     private function validateStep($step, $value, $command, $chatId)
@@ -217,6 +295,7 @@ class StepService
             }
             return true;
         }
+
         switch ($validation) {
             case 'email':
                 if (!filter_var($value, FILTER_VALIDATE_EMAIL)) {
@@ -264,22 +343,33 @@ class StepService
         return true;
     }
 
-private function getNextStep($currentStep, $command)
-{
-    $steps = $this->stepConfigurations[$command]['steps'] ?? [];
-    $index = array_search($currentStep, $steps);
+    private function getNextStep($currentStep, $command)
+    {
+        $steps = $this->stepConfigurations[$command]['steps'] ?? [];
+        $index = array_search($currentStep, $steps);
 
-    if ($index === false) {
-        return null;
+        if ($index === false) {
+            return null;
+        }
+
+        return $steps[$index + 1] ?? null;
     }
-
-    return $steps[$index + 1] ?? null;
-}
 
     public function getPromptForStep($step, $command)
     {
         $prompts = $this->stepConfigurations[$command]['prompts'] ?? [];
         return $prompts[$step] ?? "Entrez la valeur pour {$step} :";
+    }
+
+    public function startStep($chatId, $command)
+    {
+        $steps = $this->stepConfigurations[$command]['steps'] ?? [];
+        if (empty($steps)) {
+            return;
+        }
+
+        $firstStep = $steps[0];
+        $this->sendStepMessage($chatId, $firstStep, $command);
     }
 
     private function updateSession($userId, $command, $nextStep, $data)
@@ -306,26 +396,5 @@ private function getNextStep($currentStep, $command)
                 'data' => json_encode($data),
                 'updated_at' => now()
             ]);
-    }
-
-    public function getWorkflowConfig($command)
-    {
-        return $this->stepConfigurations[$command] ?? null;
-    }
-
-    public function addWorkflowConfig($command, $config)
-    {
-        $this->stepConfigurations[$command] = $config;
-    }
-
-    public function getFirstStep($command)
-    {
-        $steps = $this->stepConfigurations[$command]['steps'] ?? [];
-        return $steps[0] ?? null;
-    }
-
-    public function workflowExists($command)
-    {
-        return isset($this->stepConfigurations[$command]);
     }
 }

@@ -130,13 +130,20 @@ class ListInstallationService
     public function searchinstallations($chatId, $searchTerm)
     {
         try {
-            $installations = DB::table(table: 'installations')
-                ->where(function ($query) use ($searchTerm) {
-                    $query->where('code_installation', 'like', '%' . $searchTerm . '%')
-                        ->orWhere('numero_serie', 'like', '%' . $searchTerm . '%')
-                        ->orWhere('source_eau', 'like', '%' . $searchTerm . '%')
-                        ->orWhere('debit_nominal', 'like', '%' . $searchTerm . '%')
-                        ->orWhere('date_installation', 'like', '%' . $searchTerm . '%');
+            $like = 'LIKE';
+            if (env('DB_CONNECTION') === 'pgsql') {
+                $like = 'ILIKE';
+            } else {
+                $like = 'LIKE';
+            }
+
+            $installations = DB::table('installations')
+                ->where(function ($query) use ($searchTerm, $like) {
+                    $query->where('code_installation', $like, "%{$searchTerm}%")
+                        ->orWhere('numero_serie', $like, '%' . $searchTerm . '%')
+                        ->orWhere('source_eau', $like, '%' . $searchTerm . '%')
+                        ->orWhere('debit_nominal', $like, '%' . $searchTerm . '%')
+                        ->orWhere('date_installation', $like, '%' . $searchTerm . '%');
                 })
                 ->orderBy('created_at', 'desc')
                 ->get();

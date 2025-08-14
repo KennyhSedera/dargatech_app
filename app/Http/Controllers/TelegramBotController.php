@@ -34,6 +34,10 @@ class TelegramBotController extends Controller
     {
         try {
             $update = $this->telegram->getWebhookUpdate();
+            $chatId = $update->getMessage()->getChat()->getId();
+            $userId = $update->getMessage()->getFrom()->getId();
+
+            $this->sessionService->cleanupSessionsSuccess(1, $chatId);
 
             if ($update->isType('callback_query')) {
                 $callback = $update->getCallbackQuery();
@@ -101,8 +105,6 @@ class TelegramBotController extends Controller
 
             if ($update->getMessage()) {
                 $messageText = $update->getMessage();
-                $chatId = $update->getMessage()->getChat()->getId();
-                $userId = $update->getMessage()->getFrom()->getId();
 
                 if (!str_starts_with($messageText->getText(), '/')) {
                     $userId = $update->getMessage()->getFrom()->getId();

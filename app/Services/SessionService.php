@@ -179,12 +179,15 @@ class SessionService
         }
     }
 
-    public function cleanupSessionsSuccess($hoursOld = 72)
+    public function cleanupSessionsSuccess($hoursOld = 72, $userId)
     {
+        $cutoff = now()->subHours((int) $hoursOld)->toDateTimeString();
+
         try {
             $deleted = DB::table('telegram_sessions')
-                ->where('created_at', '<', now()->subHours($hoursOld))
-                ->where('completed', operator: true)
+                ->where('created_at', '<', $cutoff)
+                ->where('user_id', $userId)
+                ->where('completed', 1)
                 ->delete();
 
             if ($deleted > 0) {
@@ -197,4 +200,5 @@ class SessionService
             return false;
         }
     }
+
 }

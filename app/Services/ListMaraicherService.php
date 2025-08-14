@@ -137,13 +137,23 @@ class ListMaraicherService
     public function searchMaraichers($chatId, $searchTerm)
     {
         try {
+            $like = 'LIKE';
+            if (env('DB_CONNECTION') === 'pgsql') {
+                $like = 'ILIKE';
+            } else {
+                $like = 'LIKE';
+            }
+
             $maraichers = DB::table('clients')
-                ->where(function ($query) use ($searchTerm) {
-                    $query->where('nom', 'like', '%' . $searchTerm . '%')
-                        ->orWhere('prenom', 'like', '%' . $searchTerm . '%')
-                        ->orWhere('localisation', 'like', '%' . $searchTerm . '%')
-                        ->orWhere('telephone', 'like', '%' . $searchTerm . '%')
-                        ->orWhere('type_activite_agricole', 'like', '%' . $searchTerm . '%');
+                ->when($searchTerm, function ($query, $searchTerm) use ($like) {
+                    $query->where(function ($subQuery) use ($searchTerm, $like) {
+                        $subQuery
+                            ->where('nom', $like, "%{$searchTerm}%")
+                            ->orWhere('prenom', $like, "%{$searchTerm}%")
+                            ->orWhere('localisation', $like, "%{$searchTerm}%")
+                            ->orWhere('telephone', $like, "%{$searchTerm}%")
+                            ->orWhere('type_activite_agricole', $like, "%{$searchTerm}%");
+                    });
                 })
                 ->orderBy('created_at', 'desc')
                 ->get();

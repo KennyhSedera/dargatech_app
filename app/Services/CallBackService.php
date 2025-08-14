@@ -213,7 +213,7 @@ class CallBackService
             $this->sendMessage->sendMessage(
                 $chatId,
                 "⚠️ **Session en cours**\n\n" .
-                "Vous avez déjà une session de recherche active.\n\n" .
+                "Vous avez déjà une session de *recherche* active.\n\n" .
                 "Veuillez compléter la session actuelle ou tapez /cancel pour l'annuler.",
                 'Markdown'
             );

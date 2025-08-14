@@ -33,9 +33,9 @@ class CancelCommand extends Command
         if ($command->count() > 0) {
             foreach ($command as $c) {
                 $sessionService->cancelSession($userId, $c->command);
-            }
 
-            $this->replyWithMessage(['text' => '✅ Session annulée.']);
+                $this->replyWithMessage(['text' => '✅ Session ' . $c->command . ' annulée.']);
+            }
         } else {
             $this->replyWithMessage(use_sendMessage_parameters: ['text' => '❌ Aucune session en cours.']);
         }
