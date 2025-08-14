@@ -3,14 +3,12 @@
 namespace App\Http\Controllers;
 
 use App\Services\CallBackService;
-use App\Services\SendMessageService;
 use App\Services\SessionService;
 use App\Telegram\Commands\StartCommand;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
 use Telegram\Bot\Api;
-use Telegram\Bot\Commands\HelpCommand;
 use Telegram\Bot\Laravel\Facades\Telegram;
 
 class TelegramBotController extends Controller

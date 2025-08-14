@@ -165,7 +165,26 @@ class SessionService
         try {
             $deleted = DB::table('telegram_sessions')
                 ->where('created_at', '<', now()->subHours($hoursOld))
-                ->where('completed', false)
+                ->where('completed', operator: false)
+                ->delete();
+
+            if ($deleted > 0) {
+                Log::info("Cleaned up $deleted old sessions");
+            }
+
+            return $deleted;
+        } catch (\Exception $e) {
+            Log::error('Error cleaning up old sessions: ' . $e->getMessage());
+            return false;
+        }
+    }
+
+    public function cleanupSessionsSuccess($hoursOld = 72)
+    {
+        try {
+            $deleted = DB::table('telegram_sessions')
+                ->where('created_at', '<', now()->subHours($hoursOld))
+                ->where('completed', operator: true)
                 ->delete();
 
             if ($deleted > 0) {

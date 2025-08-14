@@ -1,9 +1,8 @@
 <?php
 
+use App\Telegram\Commands\CancelCommand;
 use App\Telegram\Commands\InstallationCommand;
-use App\Telegram\Commands\ListMaraicherCommand;
 use App\Telegram\Commands\MaraicherCommand;
-use App\Telegram\Commands\NewMaraicherCommand;
 use App\Telegram\Commands\StartCommand;
 use Telegram\Bot\Commands\HelpCommand;
 
@@ -33,6 +32,7 @@ return [
         StartCommand::class,
         MaraicherCommand::class,
         InstallationCommand::class,
+        CancelCommand::class,
     ],
 
     'command_groups' => [
