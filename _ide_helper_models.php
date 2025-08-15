@@ -57,6 +57,7 @@ namespace App\Models{
  * @property float $surface_cultivee
  * @property \Illuminate\Support\Carbon|null $created_at
  * @property \Illuminate\Support\Carbon|null $updated_at
+ * @property string $created_via
  * @property-read \Illuminate\Database\Eloquent\Collection<int, \App\Models\Alerts> $alert
  * @property-read int|null $alert_count
  * @property-read \Illuminate\Database\Eloquent\Collection<int, \App\Models\Installation> $installations
@@ -68,6 +69,7 @@ namespace App\Models{
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Client query()
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Client whereCIN($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Client whereCreatedAt($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Client whereCreatedVia($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Client whereDateContrat($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Client whereEmail($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Client whereGenre($value)
@@ -122,6 +124,8 @@ namespace App\Models{
  * @property string $source_eau
  * @property int $hmt
  * @property int $localisation_id
+ * @property string $created_via
+ * @property string|null $photos_installation
  * @property-read \Illuminate\Database\Eloquent\Collection<int, \App\Models\Alerts> $alert
  * @property-read int|null $alert_count
  * @property-read \App\Models\Client $client
@@ -134,12 +138,14 @@ namespace App\Models{
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Installation whereClientId($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Installation whereCodeInstallation($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Installation whereCreatedAt($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Installation whereCreatedVia($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Installation whereDateInstallation($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Installation whereDebitNominal($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Installation whereHmt($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Installation whereId($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Installation whereLocalisationId($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Installation whereNumeroSerie($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Installation wherePhotosInstallation($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Installation whereProfondeurForage($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Installation wherePuissancePompe($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Installation whereSourceEau($value)
@@ -187,6 +193,7 @@ namespace App\Models{
  * @property string $status_intervention
  * @property \Illuminate\Support\Carbon|null $created_at
  * @property \Illuminate\Support\Carbon|null $updated_at
+ * @property string|null $telegram_message_id
  * @property-read \App\Models\Installation $installation
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Maintenance newModelQuery()
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Maintenance newQuery()
@@ -197,6 +204,7 @@ namespace App\Models{
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Maintenance whereId($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Maintenance whereInstallationId($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Maintenance whereStatusIntervention($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Maintenance whereTelegramMessageId($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Maintenance whereTypeIntervention($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Maintenance whereUpdatedAt($value)
  */
@@ -443,6 +451,9 @@ namespace App\Models{
  * @property string|null $photo
  * @property \Illuminate\Support\Carbon|null $created_at
  * @property \Illuminate\Support\Carbon|null $updated_at
+ * @property string|null $telegram_user_id
+ * @property string|null $telegram_username
+ * @property bool $bot_active
  * @property-read \Illuminate\Database\Eloquent\Collection<int, \App\Models\Maintenance> $maintenance
  * @property-read int|null $maintenance_count
  * @property-read \App\Models\User $user
@@ -450,12 +461,15 @@ namespace App\Models{
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Technicien newQuery()
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Technicien query()
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Technicien whereAdress($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Technicien whereBotActive($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Technicien whereContact($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Technicien whereCreatedAt($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Technicien whereGenre($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Technicien whereId($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Technicien wherePhoto($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Technicien whereSpeciality($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Technicien whereTelegramUserId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Technicien whereTelegramUsername($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Technicien whereUpdatedAt($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Technicien whereUserId($value)
  */

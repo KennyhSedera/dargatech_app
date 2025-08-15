@@ -139,7 +139,6 @@ class TelegramBotController extends Controller
         }
     }
 
-    // Autres méthodes existantes...
     public function setWebhook()
     {
         try {

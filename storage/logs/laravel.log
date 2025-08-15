@@ -126,3 +126,4 @@
 #65 D:\\ENI\\Stage\\dargatech_app\\public\\index.php(17): Illuminate\\Foundation\\Application->handleRequest(Object(Illuminate\\Http\\Request))
 #66 D:\\ENI\\Stage\\dargatech_app\\vendor\\laravel\\framework\\src\\Illuminate\\Foundation\\resources\\server.php(23): require_once('D:\\\\ENI\\\\Stage\\\\da...')
 #67 {main}"} 
+[2025-08-15 19:20:11] local.INFO: Cleaned up 3 old sessions  

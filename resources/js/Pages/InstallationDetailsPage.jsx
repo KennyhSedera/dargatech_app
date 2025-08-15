@@ -1,6 +1,6 @@
 import AuthenticatedLayout from "@/Layouts/AuthenticatedLayout";
 import { Head } from "@inertiajs/react";
-import React, { useState, useEffect } from "react";
+import { useEffect, useState } from "react";
 
 const Icons = {
     Calendar: () => <span className="text-lg">📅</span>,
@@ -22,6 +22,14 @@ const Icons = {
 };
 
 const InstallationDetailsPage = ({ installation }) => {
+    const [loading, setLoading] = useState(true);
+
+    useEffect(() => {
+        if (installation) {
+            setLoading(false);
+        }
+    }, [installation]);
+
     const formatDate = (dateString) => {
         if (!dateString) return "N/A";
         return new Date(dateString).toLocaleDateString("fr-FR", {
@@ -87,6 +95,21 @@ const InstallationDetailsPage = ({ installation }) => {
         </div>
     );
 
+    if (loading) {
+        return (
+            <AuthenticatedLayout>
+                <div className="flex items-center justify-center min-h-screen">
+                    <div className="flex flex-col items-center space-y-4">
+                        <div className="w-12 h-12 border-4 border-teal-500 rounded-full border-t-transparent animate-spin"></div>
+                        <p className="text-gray-500 dark:text-gray-400">
+                            Chargement des données...
+                        </p>
+                    </div>
+                </div>
+            </AuthenticatedLayout>
+        );
+    }
+
     return (
         <AuthenticatedLayout>
             <Head title={"Installation - " + installation.code_installation} />
@@ -137,7 +160,7 @@ const InstallationDetailsPage = ({ installation }) => {
                                             {installation.debit_nominal}
                                         </div>
                                         <div className="text-sm text-gray-600 dark:text-gray-300">
-                                            L/h Débit
+                                            m³/h Débit
                                         </div>
                                     </div>
                                     <div className="py-2 text-center rounded-lg bg-gray-50 dark:bg-gray-700">
@@ -161,7 +184,7 @@ const InstallationDetailsPage = ({ installation }) => {
                                             {installation.profondeur_forage}
                                         </div>
                                         <div className="text-sm text-gray-600 dark:text-gray-300">
-                                            m Profondeur
+                                            m Distance
                                         </div>
                                     </div>
                                 </div>
@@ -198,18 +221,18 @@ const InstallationDetailsPage = ({ installation }) => {
                                 <InfoCard
                                     icon={Icons.Bolt}
                                     label="Débit Nominal"
-                                    value={`${installation.debit_nominal} L/h`}
+                                    value={`${installation.debit_nominal} m³/h`}
                                 />
                                 <InfoCard
                                     icon={Icons.Bolt}
-                                    label="Puissance Pompe"
+                                    label="Puissance crête installé "
                                     value={`${installation.puissance_pompe} W`}
                                 />
                             </div>
                             <div className="mt-4">
                                 <InfoCard
                                     icon={Icons.Chart}
-                                    label="Profondeur de Forage"
+                                    label="Distance maximale pompe champ PV "
                                     value={`${installation.profondeur_forage} m`}
                                 />
                             </div>
