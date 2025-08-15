@@ -3,6 +3,7 @@
 namespace App\Services;
 
 use DB;
+use Exception;
 use Log;
 use Telegram\Bot\Api;
 use Telegram\Bot\Keyboard\Keyboard;
@@ -75,23 +76,21 @@ class StepService
                     'profondeur_forage',
                     'hmt',
                     'source_eau',
+                    'localisation',
                     'photo',
-                    'latitude',
-                    'longitude',
                     'date_installation'
                 ],
                 'prompts' => [
                     'client_id' => "👤 Veuillez entrer le *nom* du client :",
                     'numero_serie' => "📦 Entrez le *numéro de série* de la pompe :",
-                    'debit_nominal' => "📏 Entrez le *debit nominal* de la pompe :",
-                    'puissance_pompe' => "🔋 Entrez la *puissance de pompe* de la pompe :",
-                    'profondeur_forage' => "📏 Entrez la *profondeur de forage* de la pompe :",
+                    'debit_nominal' => "📏 Entrez le *debit nominal (m³/h)* :",
+                    'puissance_pompe' => "🔋 Entrez la *Puissance crête installé (W)* :",
+                    'profondeur_forage' => "📏 Entrez la *Distance maximale pompe champ PV (m)* :",
                     'hmt' => "📏 Entrez le *HMT* de la pompe :",
                     'source_eau' => "📏 Entrez la *source d'eau* de la pompe :",
                     'photo' => "📸 Ajoutez la *photo* de l'installation :",
                     'date_installation' => "📅 Entrez la *date d'installation* de la pompe (AAAA-MM-JJ) :",
-                    'latitude' => "📍 Entrez la *latitude* de l'installation :",
-                    'longitude' => "📍 Entrez la *longitude* de l'installation :"
+                    'localisation' => "📍 Envoyez la localisation de l'installation en utilisant le bouton de localisation de Telegram. :"
                 ],
                 'keyboards' => [
                     'source_eau' => [
@@ -101,6 +100,7 @@ class StepService
                     ]
                 ],
                 'validation' => [
+                    'client_id' => 'numeric',
                     'debit_nominal' => 'numeric',
                     'puissance_pompe' => 'numeric',
                     'profondeur_forage' => 'numeric',
@@ -150,6 +150,37 @@ class StepService
 
         $nextStep = $this->getNextStep($step, $command);
 
+        if ($step === 'location' || $step === 'localisation') {
+            if (!empty($message->location)) {
+                $latitude = $message->location->latitude;
+                $longitude = $message->location->longitude;
+
+                Log::info("Location: " . $latitude . ", " . $longitude);
+
+                $locationData = [
+                    $latitude,
+                    $longitude,
+                ];
+
+                $data[$step] = json_encode($locationData);
+
+                if ($nextStep) {
+                    $this->updateSession($userId, $command, $nextStep, $data);
+                    $this->sendStepMessage($chatId, $nextStep, $command);
+                } else {
+                    $this->completeSession($userId, $command, $data);
+                    if ($onComplete && is_callable($onComplete)) {
+                        $onComplete($data, $userId, $chatId);
+                    }
+                }
+
+                return;
+            } else {
+                $this->sendMessage->sendMessage($chatId, "📍 Veuillez partager votre localisation en utilisant le bouton de localisation de Telegram.");
+                return;
+            }
+        }
+
         if ($step === 'photo') {
             $existingPhotos = [];
             if (!empty($data['photo']) && $data['photo'] !== 'null') {
@@ -168,7 +199,7 @@ class StepService
                 }
 
                 if ($filename) {
-                    $existingPhotos[] = $filename;
+                    $existingPhotos[] = 'storage/installation/' . $filename;
                 }
                 $data['photo'] = json_encode($existingPhotos);
 
@@ -188,12 +219,24 @@ class StepService
 
             $data[$nextStep] = $messageText;
 
-            $this->updateSession($userId, $command, $this->getNextStep($nextStep, $command), $data);
-            $this->sendStepMessage($chatId, $this->getNextStep($nextStep, $command), $command);
+            $finalStep = $this->getNextStep($nextStep, $command);
+            if ($finalStep) {
+                $this->updateSession($userId, $command, $finalStep, $data);
+                $this->sendStepMessage($chatId, $finalStep, $command);
+            } else {
+                $this->completeSession($userId, $command, $data);
+                if ($onComplete && is_callable($onComplete)) {
+                    $onComplete($data, $userId, $chatId);
+                }
+            }
             return;
         }
 
-        if (!empty($message->photo)) {
+        if (!empty($message->location)) {
+            $latitude = $message->location->latitude;
+            $longitude = $message->location->longitude;
+            $messageText = "Localisation: $latitude,$longitude";
+        } elseif (!empty($message->photo)) {
             $photo = $photoService->upload($message, $chatId);
             $filename = $photo[1] ?? null;
             $messageText = $photo[0] ?? null;
@@ -234,7 +277,7 @@ class StepService
                     }
                 }
             } else {
-                $this->sendMessage->sendMessage($chatId, "❌ Le client n'existe pas. Veuillez fournir un client existant :");
+                $this->sendMessage->sendMessage($chatId, "❌ Le numéro de client n'existe pas. Veuillez fournir un client existant :");
             }
         } else {
             if ($nextStep) {

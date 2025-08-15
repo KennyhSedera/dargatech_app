@@ -36,14 +36,16 @@ class NewInstallationService
 
         try {
             $locationService = new LocationService();
-            $location = $locationService->getLocationDetails(lat: $data['latitude'], lon: $data['longitude']);
+            $locationdata = json_decode($data['localisation']);
+
+            $location = $locationService->getLocationDetails(lat: $locationdata[0], lon: $locationdata[1]);
 
             $pays = ($location['pays'] !== 'Erreur') ? $location['pays'] : null;
             $ville = ($location['adresse'] !== 'Erreur lors de la récupération') ? $location['adresse'] : null;
 
             $localisation_id = DB::table('localisations')->insertGetId([
-                'latitude' => $data['latitude'],
-                'longitude' => $data['longitude'],
+                'latitude' => $locationdata[0],
+                'longitude' => $locationdata[1],
                 'pays' => $pays,
                 'ville' => $ville,
                 'created_at' => now(),
@@ -60,7 +62,7 @@ class NewInstallationService
                 'debit_nominal' => $data['debit_nominal'],
                 'profondeur_forage' => $data['profondeur_forage'],
                 'source_eau' => $data['source_eau'],
-                'photos_installation' => json_encode([$data['photo']]),
+                'photos_installation' => $data['photo'],
                 'hmt' => $data['hmt'],
                 'localisation_id' => $localisation_id,
                 'date_installation' => $data['date_installation'],
@@ -106,7 +108,7 @@ class NewInstallationService
 
             DB::table('telegram_sessions')
                 ->where('user_id', $userId)
-                ->where('command', 'new_installation') // Corrigé ici
+                ->where('command', 'new_installation')
                 ->where('completed', false)
                 ->delete();
         }
