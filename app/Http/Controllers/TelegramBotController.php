@@ -62,11 +62,11 @@ class TelegramBotController extends Controller
                 }
 
                 try {
-                    $result = match ($data) {
+                    match ($data) {
                         'maraicher' => $this->callBackService->handleMaraicher($chatId),
                         'new_maraicher' => $this->callBackService->handleNewMaraicher($chatId, $userId),
                         'new_installation' => $this->callBackService->handleNewInstallations($chatId, $userId),
-                        'installation' => $this->callBackService->handleInstallations($chatId),
+                        'installation' => $this->callBackService->handleInstallations($chatId, $userId),
                         'list_installation' => $this->callBackService->handleListInstallation($chatId),
                         // 'new_intervention'      => $this->callBackService->handleNewIntervention($chatId),
                         // 'rapport_maintenance'   => $this->callBackService->handleRapportMaintenance($chatId),

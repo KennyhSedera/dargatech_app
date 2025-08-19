@@ -33,62 +33,75 @@ export const sidebarPagespart = [
 ];
 export default sidebarPages;
 
-export const logo = '/images/logo.png';
-export const titre = '/images/titre.png';
-export const nodata = '/images/nodata.webp';
-export const nodata1 = '/images/nodata1.png';
-export const nodata2 = '/images/nodata2.png';
-export const togo = '/images/togo.png';
-export const marker = '/images/marker.png';
+export const logo = "/images/logo.png";
+export const titre = "/images/titre.png";
+export const nodata = "/images/nodata.webp";
+export const nodata1 = "/images/nodata1.png";
+export const nodata2 = "/images/nodata2.png";
+export const togo = "/images/togo.png";
+export const marker = "/images/marker.png";
 export const formatdate = (date) => {
     if (!date || moment(date).isValid()) {
-        return moment(date).format('DD/MM/YYYY');
+        return moment(date).format("DD/MM/YYYY");
     } else {
-        console.error('Date invalide:', date);
-        return '';
+        console.error("Date invalide:", date);
+        return "";
     }
 };
 
 export const parsedate = (date) => {
-    const parsed = moment(date, 'DD/MM/YYYY', true);
+    const parsed = moment(date, "DD/MM/YYYY", true);
     if (parsed.isValid()) {
         return parsed.toDate();
     } else {
-        console.error('Date invalide pour parsing:', date);
+        console.error("Date invalide pour parsing:", date);
         return null;
     }
 };
 
-
 export const formatDate = (date) => {
-    if (!date) return '';
+    if (!date) return "";
 
-    return new Date(date).toLocaleDateString('fr-CA');
+    return new Date(date).toLocaleDateString("fr-CA");
 };
 
 export const generateRandomWord = (length = 8) => {
-    const characters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
-    let randomWord = '';
+    const characters =
+        "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
+    let randomWord = "";
     for (let i = 0; i < length; i++) {
         const randomIndex = Math.floor(Math.random() * characters.length);
         randomWord += characters[randomIndex];
     }
     return randomWord;
-}
+};
 
 export function incrementCodeInstallation(code) {
     const prefix = code.slice(0, 1);
     const number = parseInt(code.slice(1), 10);
-    const newNumber = (number + 1).toString().padStart(4, '0');
+    const newNumber = (number + 1).toString().padStart(4, "0");
     return `${prefix}${newNumber}`;
 }
 
 export function incrementRecuNumber(current) {
-    const parts = current.split('_');
+    const parts = current.split("_");
     const numberStr = parts[2];
     const number = parseInt(numberStr, 10) + 1;
 
-    const newNumberStr = number.toString().padStart(numberStr.length, '0');
+    const newNumberStr = number.toString().padStart(numberStr.length, "0");
 
     return `${parts[0]}_${parts[1]}_${newNumberStr}`;
+}
+
+export function addFavicon() {
+    const favicon = document.createElement("link");
+    favicon.rel = "shortcut icon";
+    favicon.href = logo;
+    favicon.type = "image/png";
+
+    document.head.appendChild(favicon);
+
+    return () => {
+        document.head.removeChild(favicon);
+    };
 }

@@ -16,6 +16,7 @@ use App\Http\Controllers\UserRoleController;
 use App\Http\Controllers\UserController;
 use App\Http\Controllers\PartenaireController;
 use App\Http\Controllers\PaiementPdfController;
+use App\Http\Controllers\TelegramFormController;
 use App\Services\ListInstallationService;
 use App\Services\LocationService;
 use Illuminate\Support\Facades\Auth;
@@ -149,15 +150,6 @@ Route::group(['prefix' => 'api'], function () {
     Route::get('/telegram/set-webhook', [TelegramBotController::class, 'setWebhook']);
     Route::get('/telegram/webhook-info', [TelegramBotController::class, 'getWebhookInfo']);
     Route::get('/telegram/delete-webhook', [TelegramBotController::class, 'deleteWebhook']);
-});
 
-// Usage basique
-
-
-Route::get('/test', function (Request $request) {
-    $installation = new ListInstallationService();
-
-    $location = $installation->getInstallations();
-
-    return response()->json(data: $location);
+    Route::post('/telegram/send-message/{telegram_user_id}', [TelegramFormController::class, 'cancelForm']);
 });

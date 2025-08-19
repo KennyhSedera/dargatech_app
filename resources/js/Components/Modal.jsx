@@ -3,14 +3,14 @@ import {
     DialogPanel,
     Transition,
     TransitionChild,
-} from '@headlessui/react';
+} from "@headlessui/react";
 
 export default function Modal({
     children,
     show = false,
-    maxWidth = '2xl',
+    maxWidth = "2xl",
     closeable = true,
-    onClose = () => { },
+    onClose = () => {},
 }) {
     const close = () => {
         if (closeable) {
@@ -19,13 +19,13 @@ export default function Modal({
     };
 
     const maxWidthClass = {
-        sm: 'sm:max-w-sm',
-        md: 'sm:max-w-md',
-        lg: 'sm:max-w-lg',
-        xl: 'sm:max-w-xl',
-        '2xl': 'sm:max-w-2xl',
-        '3xl': 'sm:max-w-3xl',
-        '4xl': 'sm:max-w-4xl',
+        sm: "sm:max-w-sm",
+        md: "sm:max-w-md",
+        lg: "sm:max-w-lg",
+        xl: "sm:max-w-xl",
+        "2xl": "sm:max-w-2xl",
+        "3xl": "sm:max-w-3xl",
+        "4xl": "sm:max-w-4xl",
     }[maxWidth];
 
     return (
@@ -33,7 +33,7 @@ export default function Modal({
             <Dialog
                 as="div"
                 id="modal"
-                className="fixed inset-0 z-40 flex transform items-center overflow-y-auto px-4 py-6 transition-all sm:px-0"
+                className="fixed inset-0 z-40 flex items-center justify-center p-4 overflow-y-auto transition-all transform"
                 onClose={close}
             >
                 <TransitionChild
@@ -56,7 +56,15 @@ export default function Modal({
                     leaveTo="opacity-0 translate-y-4 sm:translate-y-0 sm:scale-95"
                 >
                     <DialogPanel
-                        className={`mb-6 transform rounded-lg bg-white shadow-xl transition-all sm:mx-auto sm:w-full dark:bg-gray-800 dark:text-white p-4 z-40 ${maxWidthClass}`}
+                        className={`
+                            w-full max-w-full min-h-0 max-h-full
+                            transform rounded-lg bg-white shadow-xl transition-all
+                            dark:bg-gray-800 dark:text-white
+                            p-4 z-40 relative
+                            overflow-y-auto
+                            ${maxWidthClass}
+                            sm:w-auto sm:max-h-[90vh]
+                        `}
                     >
                         {children}
                     </DialogPanel>

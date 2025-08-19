@@ -41,4 +41,16 @@ return [
 
     'shared_commands' => [
     ],
+
+    'bot_username' => env('TELEGRAM_BOT_USERNAME', 'dargatech_bot'),
+    'bot_token' => env('TELEGRAM_BOT_TOKEN'),
+    'webhook_url' => env('TELEGRAM_WEBHOOK_URL'),
+
+    'token_expiry_minutes' => env('TELEGRAM_TOKEN_EXPIRY', 60),
+
+    'allowed_actions' => [
+        'create_installation',
+        'create_client',
+        'view_data'
+    ]
 ];

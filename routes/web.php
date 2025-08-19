@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\ProfileController;
+use App\Http\Controllers\TelegramFormController;
 use App\Models\Client;
 use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
@@ -93,6 +94,14 @@ Route::get('/installation/{id}', function ($id) {
     $installation = \App\Models\Installation::findOrFail($id)->load('client', 'localisation');
     return Inertia::render('InstallationDetailsPage', ['installation' => $installation]);
 })->middleware(['auth', 'verified'])->name('installation_detail');
+
+Route::middleware(['web', 'telegram.token'])->group(function () {
+    Route::get('/formulaire/client', [TelegramFormController::class, 'clientForm'])
+        ->name('telegram.client.form');
+
+    Route::get('/formulaire/installation', [TelegramFormController::class, 'installationForm'])
+        ->name('telegram.installation.form');
+});
 
 require __DIR__ . '/auth.php';
 require __DIR__ . '/api.php';

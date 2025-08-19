@@ -123,9 +123,9 @@ class CallBackService
         );
     }
 
-    public function handleInstallations($chatId)
+    public function handleInstallations($chatId, $userId)
     {
-        $this->installationCommand->sendInstallationMenu($this->telegram, $chatId);
+        $this->installationCommand->sendInstallationMenu($this->telegram, $chatId, $userId);
     }
 
     public function handleListInstallation($chatId)
