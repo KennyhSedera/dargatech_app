@@ -45,7 +45,6 @@ const FormulaireInstallation = ({
         statuts: "installée",
     });
 
-    // Memoized function to generate next installation code
     const generateNextInstallationCode = useCallback((installations) => {
         if (!installations || installations.length === 0) {
             return "I0001";
@@ -71,10 +70,12 @@ const FormulaireInstallation = ({
                 getinstallations(),
             ]);
 
-            const clientFormat = clients.map((el) => ({
-                id: el.id,
-                nom: `${el.nom} ${el.prenom}`,
-            }));
+            const clientFormat = clients
+                .filter((el) => el.is_payed !== false)
+                .map((el) => ({
+                    id: el.id,
+                    nom: `${el.nom} ${el.prenom}`,
+                }));
 
             const newCode = generateNextInstallationCode(installation.data);
 

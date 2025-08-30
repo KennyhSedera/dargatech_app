@@ -1,35 +1,35 @@
-import React, { useEffect, useState } from 'react';
-import Modal from '../Modal';
-import TextInput from '../inputs/TextInput';
-import InputLabel from '../inputs/InputLabel';
-import InputError from '../inputs/InputError';
-import { useForm } from '@inertiajs/react';
-import { createClients, updateClients } from '@/Services/clientService';
-import { validateFormClient } from '../validateForm';
-import SelectInput from '../inputs/SelectInput';
+import React, { useEffect, useState } from "react";
+import Modal from "../Modal";
+import TextInput from "../inputs/TextInput";
+import InputLabel from "../inputs/InputLabel";
+import InputError from "../inputs/InputError";
+import { useForm } from "@inertiajs/react";
+import { createClients, updateClients } from "@/Services/clientService";
+import { validateFormClient } from "../validateForm";
+import SelectInput from "../inputs/SelectInput";
 
 const FormulaireClient = ({
     open = true,
     setOpen,
     dataModify = {},
-    onCloseFormulaire = () => { },
+    onCloseFormulaire = () => {},
 }) => {
-    const [btnTitle, setBtnTitle] = useState('Enregistrer');
+    const [btnTitle, setBtnTitle] = useState("Enregistrer");
     const [validationErrors, setValidationErrors] = useState({});
     const [load, setLoad] = useState(false);
 
     const { data, setData, errors, reset } = useForm({
-        nom: '',
-        prenom: '',
-        email: '',
-        genre: 'Homme',
-        CIN: '',
-        telephone: '',
-        pays: 'Togo',
-        ville: 'Kara',
-        localisation: '',
-        surface_cultivee: '',
-        type_activite_agricole: '',
+        nom: "",
+        prenom: "",
+        email: "",
+        genre: "Homme",
+        CIN: "",
+        telephone: "",
+        pays: "Togo",
+        ville: "Kara",
+        localisation: "",
+        surface_cultivee: "",
+        type_activite_agricole: "",
     });
 
     const onClose = (message) => {
@@ -40,7 +40,7 @@ const FormulaireClient = ({
 
     const clearForm = () => {
         reset();
-        setBtnTitle('Enregistrer');
+        setBtnTitle("Enregistrer");
         setValidationErrors({});
         setLoad(false);
     };
@@ -48,21 +48,21 @@ const FormulaireClient = ({
     useEffect(() => {
         if (dataModify.id) {
             setData({
-                nom: dataModify.nom || '',
-                prenom: dataModify.prenom || '',
-                email: dataModify.email || '',
-                genre: dataModify.genre || 'Homme',
-                CIN: dataModify.CIN || '',
-                telephone: dataModify.telephone || '',
-                pays: dataModify.localisation?.pays || 'Togo',
-                ville: dataModify.localisation?.ville || 'Kara',
-                quartier: dataModify.localisation?.quartier || '',
-                village: dataModify.localisation?.village || '',
-                localisation: dataModify?.localisation || '',
-                surface_cultivee: dataModify.surface_cultivee || '',
-                type_activite_agricole: dataModify.type_activite_agricole || '',
+                nom: dataModify.nom || "",
+                prenom: dataModify.prenom || "",
+                email: dataModify.email || "",
+                genre: dataModify.genre || "Homme",
+                CIN: dataModify.CIN || "",
+                telephone: dataModify.telephone || "",
+                pays: dataModify.localisation?.pays || "Togo",
+                ville: dataModify.localisation?.ville || "Kara",
+                quartier: dataModify.localisation?.quartier || "",
+                village: dataModify.localisation?.village || "",
+                localisation: dataModify?.localisation || "",
+                surface_cultivee: dataModify.surface_cultivee || "",
+                type_activite_agricole: dataModify.type_activite_agricole || "",
             });
-            setBtnTitle('Modifier');
+            setBtnTitle("Modifier");
         } else {
             clearForm();
         }
@@ -77,13 +77,12 @@ const FormulaireClient = ({
         setBtnTitle(dataModify.id ? "Modification..." : "Enregistrement...");
 
         try {
-
             if (dataModify.id) {
                 await updateClients(dataModify.id, data);
-                onClose('Client modifié avec succès !');
+                onClose("Client modifié avec succès !");
             } else {
                 await createClients(data);
-                onClose('Client créé avec succès !');
+                onClose("Client créé avec succès !");
             }
         } catch (error) {
             console.error("Erreur:", error);
@@ -93,30 +92,35 @@ const FormulaireClient = ({
     };
 
     return (
-        <Modal
-            show={open}
-            closeable={false}
-            onClose={onClose}
-            maxWidth='3xl'
-        >
-            <div className='text-center font-semibold text-2xl'>
-                {dataModify.id ? 'Modifier un Maraîcher' : 'Ajouter un Maraîcher'}
+        <Modal show={open} closeable={false} onClose={onClose} maxWidth="4xl">
+            <div className="text-2xl font-semibold text-center">
+                {dataModify.id
+                    ? "Modifier un Maraîcher"
+                    : "Ajouter un Maraîcher"}
             </div>
-            <form className='w-full my-6 grid grid-cols-1 sm:grid-cols-3 gap-4'>
+            <form className="grid w-full grid-cols-1 gap-4 my-6 sm:grid-cols-3">
                 <div>
                     <InputLabel htmlFor="nom" value="Nom" />
                     <TextInput
                         id="nom"
                         name="nom"
                         value={data.nom}
-                        className="mt-1 block w-full"
+                        className="block w-full mt-1"
                         autoComplete="nom"
                         isFocused={true}
-                        onChange={(e) => setData('nom', e.target.value)}
+                        onChange={(e) => setData("nom", e.target.value)}
                         required
-                        onFocus={() => setValidationErrors({ ...validationErrors, 'nom': '' })}
+                        onFocus={() =>
+                            setValidationErrors({
+                                ...validationErrors,
+                                nom: "",
+                            })
+                        }
                     />
-                    <InputError message={validationErrors.nom || errors.nom} className="mt-2" />
+                    <InputError
+                        message={validationErrors.nom || errors.nom}
+                        className="mt-2"
+                    />
                 </div>
                 <div>
                     <InputLabel htmlFor="prenom" value="Prénom" />
@@ -124,13 +128,21 @@ const FormulaireClient = ({
                         id="prenom"
                         name="prenom"
                         value={data.prenom}
-                        className="mt-1 block w-full"
+                        className="block w-full mt-1"
                         autoComplete="prenom"
-                        onChange={(e) => setData('prenom', e.target.value)}
+                        onChange={(e) => setData("prenom", e.target.value)}
                         required
-                        onFocus={() => setValidationErrors({ ...validationErrors, 'prenom': '' })}
+                        onFocus={() =>
+                            setValidationErrors({
+                                ...validationErrors,
+                                prenom: "",
+                            })
+                        }
                     />
-                    <InputError message={validationErrors.prenom || errors.prenom} className="mt-2" />
+                    <InputError
+                        message={validationErrors.prenom || errors.prenom}
+                        className="mt-2"
+                    />
                 </div>
                 <div>
                     <InputLabel htmlFor="email" value="Email" />
@@ -138,12 +150,20 @@ const FormulaireClient = ({
                         id="email"
                         name="email"
                         value={data.email}
-                        className="mt-1 block w-full"
+                        className="block w-full mt-1"
                         autoComplete="email"
-                        onChange={(e) => setData('email', e.target.value)}
-                        onFocus={() => setValidationErrors({ ...validationErrors, 'email': '' })}
+                        onChange={(e) => setData("email", e.target.value)}
+                        onFocus={() =>
+                            setValidationErrors({
+                                ...validationErrors,
+                                email: "",
+                            })
+                        }
                     />
-                    <InputError message={validationErrors.email || errors.email} className="mt-2" />
+                    <InputError
+                        message={validationErrors.email || errors.email}
+                        className="mt-2"
+                    />
                 </div>
                 <div>
                     <InputLabel htmlFor="genre" value="Sexe" />
@@ -154,7 +174,7 @@ const FormulaireClient = ({
                         value={data.genre}
                         className="block w-full mt-1"
                         autoComplete="genre"
-                        onChange={(e) => setData('genre', e.target.value)}
+                        onChange={(e) => setData("genre", e.target.value)}
                         required
                     >
                         <option value="Homme">Homme</option>
@@ -168,13 +188,21 @@ const FormulaireClient = ({
                         id="CIN"
                         name="CIN"
                         value={data.CIN}
-                        className="mt-1 block w-full"
+                        className="block w-full mt-1"
                         autoComplete="CIN"
-                        onChange={(e) => setData('CIN', e.target.value)}
+                        onChange={(e) => setData("CIN", e.target.value)}
                         required
-                        onFocus={() => setValidationErrors({ ...validationErrors, 'CIN': '' })}
+                        onFocus={() =>
+                            setValidationErrors({
+                                ...validationErrors,
+                                CIN: "",
+                            })
+                        }
                     />
-                    <InputError message={validationErrors.CIN || errors.CIN} className="mt-2" />
+                    <InputError
+                        message={validationErrors.CIN || errors.CIN}
+                        className="mt-2"
+                    />
                 </div>
                 <div>
                     <InputLabel htmlFor="telephone" value="Téléphone" />
@@ -182,68 +210,125 @@ const FormulaireClient = ({
                         id="telephone"
                         name="telephone"
                         value={data.telephone}
-                        className="mt-1 block w-full"
+                        className="block w-full mt-1"
                         autoComplete="telephone"
-                        onChange={(e) => setData('telephone', e.target.value)}
+                        onChange={(e) => setData("telephone", e.target.value)}
                         required
-                        onFocus={() => setValidationErrors({ ...validationErrors, 'telephone': '' })}
+                        onFocus={() =>
+                            setValidationErrors({
+                                ...validationErrors,
+                                telephone: "",
+                            })
+                        }
                     />
-                    <InputError message={validationErrors.telephone || errors.telephone} className="mt-2" />
+                    <InputError
+                        message={validationErrors.telephone || errors.telephone}
+                        className="mt-2"
+                    />
                 </div>
                 <div>
-                    <InputLabel htmlFor="localisation" value="Localisation ou adresse" />
+                    <InputLabel
+                        htmlFor="localisation"
+                        value="Localisation ou adresse"
+                    />
                     <TextInput
                         id="localisation"
                         name="localisation"
                         value={data.localisation}
-                        className="mt-1 block w-full"
+                        className="block w-full mt-1"
                         autoComplete="localisation"
-                        onChange={(e) => setData('localisation', e.target.value)}
+                        onChange={(e) =>
+                            setData("localisation", e.target.value)
+                        }
                         required
-                        onFocus={() => setValidationErrors({ ...validationErrors, 'localisation': '' })}
+                        onFocus={() =>
+                            setValidationErrors({
+                                ...validationErrors,
+                                localisation: "",
+                            })
+                        }
                     />
-                    <InputError message={validationErrors.localisation || errors.localisation} className="mt-2" />
+                    <InputError
+                        message={
+                            validationErrors.localisation || errors.localisation
+                        }
+                        className="mt-2"
+                    />
                 </div>
                 <div>
-                    <InputLabel htmlFor="type_activite_agricole" value="Type activité agricole" />
+                    <InputLabel
+                        htmlFor="type_activite_agricole"
+                        value="Type activité agricole"
+                    />
                     <TextInput
                         id="type_activite_agricole"
                         name="type_activite_agricole"
                         value={data.type_activite_agricole}
-                        className="mt-1 block w-full"
+                        className="block w-full mt-1"
                         autoComplete="type_activite_agricole"
-                        onChange={(e) => setData('type_activite_agricole', e.target.value)}
+                        onChange={(e) =>
+                            setData("type_activite_agricole", e.target.value)
+                        }
                         required
-                        onFocus={() => setValidationErrors({ ...validationErrors, 'type_activite_agricole': '' })}
+                        onFocus={() =>
+                            setValidationErrors({
+                                ...validationErrors,
+                                type_activite_agricole: "",
+                            })
+                        }
                     />
-                    <InputError message={validationErrors.type_activite_agricole || errors.type_activite_agricole} className="mt-2" />
+                    <InputError
+                        message={
+                            validationErrors.type_activite_agricole ||
+                            errors.type_activite_agricole
+                        }
+                        className="mt-2"
+                    />
                 </div>
                 <div>
-                    <InputLabel htmlFor="surface_cultivee" value="Surface cultivée (en ha)" />
+                    <InputLabel
+                        htmlFor="surface_cultivee"
+                        value="Surface cultivée (en ha)"
+                    />
                     <TextInput
                         id="surface_cultivee"
                         name="surface_cultivee"
                         value={data.surface_cultivee}
-                        className="mt-1 block w-full"
+                        className="block w-full mt-1"
                         autoComplete="surface_cultivee"
-                        onChange={(e) => setData('surface_cultivee', e.target.value)}
+                        onChange={(e) =>
+                            setData("surface_cultivee", e.target.value)
+                        }
                         required
-                        onFocus={() => setValidationErrors({ ...validationErrors, 'surface_cultivee': '' })}
+                        onFocus={() =>
+                            setValidationErrors({
+                                ...validationErrors,
+                                surface_cultivee: "",
+                            })
+                        }
                     />
-                    <InputError message={validationErrors.surface_cultivee || errors.surface_cultivee} className="mt-2" />
+                    <InputError
+                        message={
+                            validationErrors.surface_cultivee ||
+                            errors.surface_cultivee
+                        }
+                        className="mt-2"
+                    />
                 </div>
             </form>
-            <div className='flex items-center justify-end gap-4 px-1'>
+            <div className="flex items-center justify-end gap-4 px-1">
                 <button
                     type="button"
-                    className='rounded-md py-1 px-4 text-red-500 bg-red-400/10'
-                    onClick={() => onClose('')}
+                    className="px-4 py-1 text-red-500 rounded-md bg-red-400/10"
+                    onClick={() => onClose("")}
                 >
                     Fermer
                 </button>
                 <button
                     type="submit"
-                    className={`disabled:cursor-not-allowed rounded-md py-1 px-4 bg-blue-500 text-white ${load && 'opacity-25'}`}
+                    className={`disabled:cursor-not-allowed rounded-md py-1 px-4 bg-blue-500 text-white ${
+                        load && "opacity-25"
+                    }`}
                     disabled={load}
                     onClick={submit}
                 >

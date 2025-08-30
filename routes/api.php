@@ -17,11 +17,8 @@ use App\Http\Controllers\UserController;
 use App\Http\Controllers\PartenaireController;
 use App\Http\Controllers\PaiementPdfController;
 use App\Http\Controllers\TelegramFormController;
-use App\Services\ListInstallationService;
-use App\Services\LocationService;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Route;
-use PhpParser\Node\Expr\List_;
 
 Route::group(['prefix' => 'api'], function () {
 
@@ -90,7 +87,6 @@ Route::group(['prefix' => 'api'], function () {
 
     Route::group(['prefix' => 'rapport', 'as' => 'rapport.', 'middleware' => 'auth'], function () {
         Route::get('/', [RapportController::class, 'index'])->name('index');
-        // Route::get('/{id}', [RapportController::class, 'show'])->name('show');
         Route::post('/', [RapportController::class, 'store'])->name('store');
         Route::put('/{id}', [RapportController::class, 'update'])->name('update');
         Route::delete('/{id}', [RapportController::class, 'destroy'])->name('destroy');
@@ -115,7 +111,6 @@ Route::group(['prefix' => 'api'], function () {
     Route::group(['prefix' => 'technicien', 'as' => 'technicien.', 'middleware' => 'auth'], function () {
         Route::get('/', [TechnicienController::class, 'index'])->name('index');
         Route::get('/{id}', [TechnicienController::class, 'show'])->name('show');
-        // Route::get('/by/user{id}', [TechnicienController::class, 'byuser'])->name('byuser');
         Route::post('/', [TechnicienController::class, 'store'])->name('store');
         Route::put('/{id}', [TechnicienController::class, 'update'])->name('update');
         Route::delete('/{id}', [TechnicienController::class, 'destroy'])->name('destroy');

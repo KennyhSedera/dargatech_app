@@ -1,70 +1,76 @@
-import React, { useEffect, useState, useRef } from 'react'
-import { Head, useForm, usePage } from '@inertiajs/react'
-import InputLabel from '@/Components/inputs/InputLabel';
-import TextInput from '@/Components/inputs/TextInput';
-import InputError from '@/Components/inputs/InputError';
-import useTheme from '@/hooks/useTheme';
-import DangerButton from '@/Components/buttons/DangerButton';
-import { getType_paiements } from '@/Services/TypePaiementService';
-import { getClients } from '@/Services/clientService';
-import PrimaryButton from '@/Components/buttons/PrimaryButton';
-import DesignationComponent from '@/Components/Paiement/DesignationComponent';
-import InfoPaiement from '@/Components/Paiement/InfoPaiement';
-import InfoMaraicher from '@/Components/Paiement/InfoMaraicher';
-import InfoVendeur from '@/Components/Paiement/InfoVendeur';
-import PaiementFooter from '@/Components/Paiement/PaiementFooter';
-import { createPaiement, getLastPaiements, getPaiement, updatePaiement } from '@/Services/PaiementService';
-import Snackbar from '@/Components/Snackbar';
-import html2pdf from 'html2pdf.js';
-import FichierPaiementPdf from '@/Components/paiements/FichierPaiementPdf';
-import moment from 'moment';
-import { sendPdfByEmail } from '@/Services/envoyePdfEmail';
-import { extractDateRange } from '@/utils/getTwoDateUtils';
-import { incrementCodeInstallation, incrementRecuNumber } from '@/constant';
+import React, { useEffect, useState, useRef } from "react";
+import { Head, useForm, usePage } from "@inertiajs/react";
+import InputLabel from "@/Components/inputs/InputLabel";
+import TextInput from "@/Components/inputs/TextInput";
+import InputError from "@/Components/inputs/InputError";
+import useTheme from "@/hooks/useTheme";
+import DangerButton from "@/Components/buttons/DangerButton";
+import { getType_paiements } from "@/Services/TypePaiementService";
+import { getClients } from "@/Services/clientService";
+import PrimaryButton from "@/Components/buttons/PrimaryButton";
+import DesignationComponent from "@/Components/Paiement/DesignationComponent";
+import InfoPaiement from "@/Components/Paiement/InfoPaiement";
+import InfoMaraicher from "@/Components/Paiement/InfoMaraicher";
+import InfoVendeur from "@/Components/Paiement/InfoVendeur";
+import PaiementFooter from "@/Components/Paiement/PaiementFooter";
+import {
+    createPaiement,
+    getLastPaiements,
+    getPaiement,
+    updatePaiement,
+} from "@/Services/PaiementService";
+import Snackbar from "@/Components/Snackbar";
+import FichierPaiementPdf from "@/Components/paiements/FichierPaiementPdf";
+import moment from "moment";
+import { sendPdfByEmail } from "@/Services/envoyePdfEmail";
+import { extractDateRange } from "@/utils/getTwoDateUtils";
+import { incrementRecuNumber } from "@/constant";
+
 const FormulairePaiement = () => {
     const { theme, setTheme } = useTheme();
     const contentRef = useRef(null);
     const [showPdf, setShowPdf] = useState(true);
     const [paiementData, setPaiementData] = useState(null);
     const [isEditing, setIsEditing] = useState(false);
+
     // Extract the ID from the URL
     const getIdFromUrl = () => {
         const urlParams = new URLSearchParams(window.location.search);
-        return urlParams.get('id');
+        return urlParams.get("id");
     };
 
     const paiementId = getIdFromUrl();
 
     const { data, setData, errors, reset } = useForm({
-        type: 'recu',
-        numero: 'RECU_N_0001',
-        date_creation: new Date().toISOString().split('T')[0],
-        date: new Date().toISOString().split('T')[0],
-        lieu_creation: 'Atakpamé',
-        date_additionnel: 'Date de vente',
-        periode_couverte: '',
-        nom_vendeur: 'Darga',
-        nom_vendeurs: 'DARGATECH TOGO',
-        select1: 'Numéro TVA',
-        num_tva: '',
-        nom_rue_vendeur: 'Kara',
-        ville_vendeur: 'Kara',
-        pays_vendeur: 'Togo',
-        civilite_acheteur: 'Mr.',
-        prenom_acheteur: '',
-        nom_acheteur: '',
-        num_rue_acheteur: '',
-        ville_acheteur: '',
-        pays_acheteur: '',
-        mode_paiement: 'Espèce',
-        date_echeance: new Date().toISOString().split('T')[0],
-        date_paiement: new Date().toISOString().split('T')[0],
-        etat_paiment: 'Payé',
-        montant_paye: '',
-        objet: '',
-        description: '',
+        type: "recu",
+        numero: "RECU_N_0001",
+        date_creation: new Date().toISOString().split("T")[0],
+        date: new Date().toISOString().split("T")[0],
+        lieu_creation: "Atakpamé",
+        date_additionnel: "Date de vente",
+        periode_couverte: "",
+        nom_vendeur: "Darga",
+        nom_vendeurs: "DARGATECH TOGO",
+        select1: "Numéro TVA",
+        num_tva: "",
+        nom_rue_vendeur: "Kara",
+        ville_vendeur: "Kara",
+        pays_vendeur: "Togo",
+        civilite_acheteur: "Mr.",
+        prenom_acheteur: "",
+        nom_acheteur: "",
+        num_rue_acheteur: "",
+        ville_acheteur: "",
+        pays_acheteur: "",
+        mode_paiement: "Espèce",
+        date_echeance: new Date().toISOString().split("T")[0],
+        date_paiement: new Date().toISOString().split("T")[0],
+        etat_paiment: "Payé",
+        montant_paye: "",
+        objet: "",
+        description: "",
         produits: [],
-        client_id: '',
+        client_id: "",
     });
 
     const [validationErrors, setValidationErrors] = useState({});
@@ -72,32 +78,39 @@ const FormulairePaiement = () => {
     const [typePaiement, setTypePaiement] = useState([]);
     const [alert, setAlert] = useState({
         open: false,
-        message: '',
-        type: 'success'
+        message: "",
+        type: "success",
     });
-    const [email, setEmail] = useState('');
+    const [email, setEmail] = useState("");
 
     const getType = async () => {
         try {
-            const [{ clients }, type] = await Promise.all([getClients(), getType_paiements()]);
-            setClients(clients?.map(el => ({
-                id: el.id,
-                nom: el.prenom,
-                nom_famille: el.nom,
-                ville: el.localisation,
-                pays: 'Togo',
-                village: el.localisation,
-                quartier: el.localisation,
-                email: el.email,
-                genre: el.genre,
-                telephone: el.telephone,
-                localisation: el.localisation
-            })));
-            setTypePaiement(type.type?.map(el => ({ id: el.id, nom: el.name })));
+            const [{ clients }, type] = await Promise.all([
+                getClients(),
+                getType_paiements(),
+            ]);
+            setClients(
+                clients?.map((el) => ({
+                    id: el.id,
+                    nom: el.prenom,
+                    nom_famille: el.nom,
+                    ville: el.localisation,
+                    pays: "Togo",
+                    village: el.localisation,
+                    quartier: el.localisation,
+                    email: el.email,
+                    genre: el.genre,
+                    telephone: el.telephone,
+                    localisation: el.localisation,
+                }))
+            );
+            setTypePaiement(
+                type.type?.map((el) => ({ id: el.id, nom: el.name }))
+            );
         } catch (error) {
-            console.error('Error fetching payment types:', error);
+            console.error("Error fetching payment types:", error);
         }
-    }
+    };
 
     // Fetch payment data if ID is provided
     const fetchPaiementData = async (id) => {
@@ -106,9 +119,12 @@ const FormulairePaiement = () => {
             if (response) {
                 const paiement = response;
 
-                const client = clients.find(c => c.id === paiement.client_id);
+                const client = clients.find((c) => c.id === paiement.client_id);
                 const dateRange = extractDateRange(paiement.periode_couverte);
-                data.periode_couverte = dateRange.startDate.original + " au " + dateRange.endDate.original;
+                data.periode_couverte =
+                    dateRange.startDate.original +
+                    " au " +
+                    dateRange.endDate.original;
 
                 if (client) {
                     setData({
@@ -116,7 +132,8 @@ const FormulairePaiement = () => {
                         numero: paiement.numero,
                         nom_acheteur: client.nom_famille,
                         prenom_acheteur: client.nom,
-                        civilite_acheteur: client.genre === 'Homme' ? 'Mr.' : 'Mme.',
+                        civilite_acheteur:
+                            client.genre === "Homme" ? "Mr." : "Mme.",
                         ville_acheteur: client.ville,
                         pays_acheteur: client.pays,
                         num_rue_acheteur: client.village || client.quartier,
@@ -126,15 +143,17 @@ const FormulairePaiement = () => {
                         mode_paiement: paiement.mode_paiement,
                         date_echeance: paiement.echeance,
                         statut_paiement: paiement.statut_paiement,
-                        produits: paiement.produits.map(el => ({
+                        produits: paiement.produits.map((el) => ({
                             ...el,
                             designation: el.designation,
                             prix_unitaire: el.prix_unitaire,
                             quantite: el.quantite,
-                            unite: el.unite
+                            unite: el.unite,
                         })),
                         montant_paye: parseFloat(paiement.montant).toFixed(2),
-                        date_creation: paiement.date_creation || dateRange.startDate.original,
+                        date_creation:
+                            paiement.date_creation ||
+                            dateRange.startDate.original,
                         date: paiement.date || dateRange.endDate.original,
                         lieu_creation: paiement.lieu_creation,
                         date_additionnel: paiement.date_additionnel,
@@ -152,17 +171,17 @@ const FormulairePaiement = () => {
                 setIsEditing(true);
             }
         } catch (error) {
-            console.error('Error fetching payment data:', error);
+            console.error("Error fetching payment data:", error);
             setAlert({
                 open: true,
-                message: 'Erreur lors du chargement du paiement',
-                type: 'error'
+                message: "Erreur lors du chargement du paiement",
+                type: "error",
             });
         }
     };
 
     useEffect(() => {
-        setTheme(theme || 'light');
+        setTheme(theme || "light");
         getType();
     }, [theme]);
 
@@ -175,33 +194,41 @@ const FormulairePaiement = () => {
     const getLastNumero = async () => {
         const { data } = await getLastPaiements();
         if (data) {
-            setData('numero', incrementRecuNumber(data.numero));
+            setData("numero", incrementRecuNumber(data.numero));
         }
-    }
+    };
 
     useEffect(() => {
         if (!paiementId) {
-            getLastNumero()
+            getLastNumero();
         }
-    }, [paiementId])
+    }, [paiementId]);
 
     const handleSelect = (item) => {
-        const cli = clients.find(el => el.id === item.id);
+        const cli = clients.find((el) => el.id === item.id);
         if (cli) {
-            setData('client_id', cli.id);
-            setData('nom_acheteur', cli.nom_famille);
-            setData('prenom_acheteur', cli.nom);
-            setData('ville_acheteur', cli.ville);
-            setData('pays_acheteur', cli.pays);
-            setData('num_rue_acheteur', cli.village || cli.quartier);
-            setData('civilite_acheteur', cli.genre === 'Homme' ? 'Mr.' : 'Mme.');
+            setData("client_id", cli.id);
+            setData("nom_acheteur", cli.nom_famille);
+            setData("prenom_acheteur", cli.nom);
+            setData("ville_acheteur", cli.ville);
+            setData("pays_acheteur", cli.pays);
+            setData("num_rue_acheteur", cli.village || cli.quartier);
+            setData(
+                "civilite_acheteur",
+                cli.genre === "Homme" ? "Mr." : "Mme."
+            );
             setEmail(cli.email);
         }
     };
 
     const handleSubmit = async () => {
-        data.periode_couverte = moment(data.date_creation).format('DD/MM/YYYY') + " au " + moment(data.date).format('DD/MM/YYYY');
-        data.date_paiement = data.date_paiement ? new Date(data.date_paiement).toISOString().split('T')[0] : new Date().toISOString().split('T')[0];
+        data.periode_couverte =
+            moment(data.date_creation).format("DD/MM/YYYY") +
+            " au " +
+            moment(data.date).format("DD/MM/YYYY");
+        data.date_paiement = data.date_paiement
+            ? new Date(data.date_paiement).toISOString().split("T")[0]
+            : new Date().toISOString().split("T")[0];
         data.observation = data.objet;
         data.echeance = data.date_echeance;
         data.statut_paiement = data.etat_paiment;
@@ -224,7 +251,7 @@ const FormulairePaiement = () => {
             setAlert({
                 open: true,
                 message: response.message,
-                type: response.success ? 'success' : 'error'
+                type: response.success ? "success" : "error",
             });
             if (response.success) {
                 setTimeout(() => {
@@ -234,71 +261,89 @@ const FormulairePaiement = () => {
                 sendPdfByEmail(data, email);
             }
         } catch (error) {
-            console.error('Error submitting payment:', error);
+            console.error("Error submitting payment:", error);
             setAlert({
                 open: true,
-                message: 'Erreur lors de l\'enregistrement du paiement',
-                type: 'error'
+                message: "Erreur lors de l'enregistrement du paiement",
+                type: "error",
             });
         }
     };
 
     return (
-        <div className='bg-gray-100 dark:bg-gray-900 dark:text-white p-10'>
-            <Head title={isEditing ? 'Modifier Paiement' : 'Formulaire Paiement'} />
+        <div className="min-h-screen p-4 bg-gray-100 sm:p-6 lg:p-10 dark:bg-gray-900 dark:text-white">
+            <Head
+                title={isEditing ? "Modifier Paiement" : "Formulaire Paiement"}
+            />
             <Snackbar
                 message={alert.message}
                 type={alert.type}
                 duration={3000}
                 position="top-right"
                 show={alert.open}
-                onClose={() => setAlert({ ...alert, message: '', open: false })}
+                onClose={() => setAlert({ ...alert, message: "", open: false })}
             />
-            <div className='bg-white dark:bg-gray-800 p-6 rounded-lg'>
-                <DangerButton
-                    onClick={() => window.history.back()}
-                    className='absolute capitalize'
-                >Retour</DangerButton>
-                <div className='text-center text-2xl font-bold'>
-                    {isEditing ? 'Modifier Paiement' : 'Formulaire de Paiement'}
+
+            <div className="relative p-4 mx-auto bg-white rounded-lg shadow-lg max-w-7xl sm:p-6 dark:bg-gray-800">
+                {/* Bouton retour responsive */}
+                <div className="mb-6">
+                    <DangerButton
+                        onClick={() => window.history.back()}
+                        className="text-sm capitalize sm:text-base"
+                    >
+                        ← Retour
+                    </DangerButton>
                 </div>
 
-                {/* en tete */}
-                <InfoPaiement
-                    data={data}
-                    errors={errors}
-                    setData={setData}
-                    validationErrors={validationErrors}
-                    setValidationErrors={setValidationErrors}
-                />
+                {/* Titre responsive */}
+                <div className="mb-6 text-xl font-bold text-center sm:text-2xl lg:text-3xl sm:mb-8">
+                    {isEditing ? "Modifier Paiement" : "Formulaire de Paiement"}
+                </div>
 
-                <div className='border-b w-full my-6 opacity-35 '></div>
-
-                {/* information vendeur et maraicher */}
-                <div className='grid grid-cols-2 gap-8'>
-                    <InfoVendeur
+                {/* En-tête - Information paiement */}
+                <div className="mb-6 sm:mb-8">
+                    <InfoPaiement
                         data={data}
                         errors={errors}
                         setData={setData}
-                        setValidationErrors={setValidationErrors}
                         validationErrors={validationErrors}
-                    />
-                    <InfoMaraicher
-                        clients={clients}
-                        data={data}
-                        errors={errors}
-                        handleSelect={handleSelect}
-                        setData={setData}
                         setValidationErrors={setValidationErrors}
-                        validationErrors={validationErrors}
                     />
                 </div>
 
-                <div className='border-b w-full my-6 opacity-35 '></div>
+                {/* Séparateur */}
+                <div className="w-full my-4 border-b sm:my-6 opacity-35"></div>
 
-                {/* objet */}
-                <div className='my-10 grid grid-cols-2'>
-                    <div>
+                {/* Information vendeur et maraicher - Grid responsive */}
+                <div className="grid grid-cols-1 gap-4 mb-6 lg:grid-cols-2 sm:gap-6 lg:gap-8 sm:mb-8">
+                    <div className="space-y-4">
+                        <InfoVendeur
+                            data={data}
+                            errors={errors}
+                            setData={setData}
+                            setValidationErrors={setValidationErrors}
+                            validationErrors={validationErrors}
+                        />
+                    </div>
+                    <div className="space-y-4">
+                        <InfoMaraicher
+                            clients={clients}
+                            data={data}
+                            errors={errors}
+                            handleSelect={handleSelect}
+                            setData={setData}
+                            setValidationErrors={setValidationErrors}
+                            validationErrors={validationErrors}
+                        />
+                    </div>
+                </div>
+
+                {/* Séparateur */}
+                <div className="w-full my-4 border-b sm:my-6 opacity-35"></div>
+
+                {/* Objet - Responsive grid */}
+                <div className="grid grid-cols-1 gap-4 my-6 md:grid-cols-2 sm:my-10">
+                    <div className="w-full">
                         <InputLabel htmlFor="objet" value="Objet" />
                         <TextInput
                             id="objet"
@@ -306,38 +351,59 @@ const FormulairePaiement = () => {
                             value={data.objet}
                             className="block w-full mt-1"
                             autoComplete="objet"
-                            onChange={(e) => setData('objet', e.target.value)}
+                            onChange={(e) => setData("objet", e.target.value)}
                             required
-                            onFocus={() => setValidationErrors({ ...validationErrors, 'objet': '' })}
+                            onFocus={() =>
+                                setValidationErrors({
+                                    ...validationErrors,
+                                    objet: "",
+                                })
+                            }
                         />
-                        <InputError message={validationErrors.objet || errors.objet} className="mt-2" />
+                        <InputError
+                            message={validationErrors.objet || errors.objet}
+                            className="mt-2"
+                        />
                     </div>
                 </div>
 
-                <div className='border-b w-full my-6 opacity-35 '></div>
+                {/* Séparateur */}
+                <div className="w-full my-4 border-b sm:my-6 opacity-35"></div>
 
-                {/* designation */}
-                <div className=''>
-                    <div className='flex items-center justify-start'>
-                        <span className='font-bold text-lg'>Désignations</span>
+                {/* Désignations */}
+                <div className="mb-6 sm:mb-8">
+                    <div className="flex items-center justify-start mb-4">
+                        <span className="text-lg font-bold sm:text-xl">
+                            Désignations
+                        </span>
                     </div>
-                    <DesignationComponent data={data} setData={setData} />
+                    <div className="overflow-x-auto">
+                        <DesignationComponent data={data} setData={setData} />
+                    </div>
                 </div>
 
-                <div className='border-b w-full my-6 opacity-35 '></div>
+                {/* Séparateur */}
+                <div className="w-full my-4 border-b sm:my-6 opacity-35"></div>
 
-                {/* payement */}
-                <PaiementFooter
-                    data={data}
-                    errors={errors}
-                    setData={setData}
-                    setValidationErrors={setValidationErrors}
-                    typePaiement={typePaiement}
-                    validationErrors={validationErrors}
-                />
-                <div className='mt-8 flex items-center justify-end'>
-                    <PrimaryButton className='px-10' onClick={handleSubmit}>
-                        {isEditing ? 'Mettre à jour' : 'Enregistrer'}
+                {/* Paiement */}
+                <div className="mb-6 sm:mb-8">
+                    <PaiementFooter
+                        data={data}
+                        errors={errors}
+                        setData={setData}
+                        setValidationErrors={setValidationErrors}
+                        typePaiement={typePaiement}
+                        validationErrors={validationErrors}
+                    />
+                </div>
+
+                {/* Bouton d'action - Responsive */}
+                <div className="flex flex-col items-center justify-end gap-4 mt-6 sm:flex-row sm:mt-8">
+                    <PrimaryButton
+                        className="w-full px-6 py-2 text-sm sm:w-auto sm:px-10 sm:text-base"
+                        onClick={handleSubmit}
+                    >
+                        {isEditing ? "Mettre à jour" : "Enregistrer"}
                     </PrimaryButton>
                 </div>
             </div>
@@ -351,7 +417,7 @@ const FormulairePaiement = () => {
                 )}
             </div>
         </div>
-    )
-}
+    );
+};
 
-export default FormulairePaiement
+export default FormulairePaiement;
