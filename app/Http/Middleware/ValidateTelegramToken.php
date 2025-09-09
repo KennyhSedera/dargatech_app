@@ -21,10 +21,6 @@ class ValidateTelegramToken
             return $this->redirectToTelegram('Token invalide ou expiré');
         }
 
-        if ($tokenData['action'] !== 'create_installation') {
-            return $this->redirectToTelegram('Action non autorisée');
-        }
-
         $request->merge(['telegram_token_data' => $tokenData]);
 
         return $next($request);
@@ -85,7 +81,7 @@ class ValidateTelegramToken
         }
     }
 
-    private function redirectToTelegram(string $message, $userId = null, $chatId = null)
+    private function redirectToTelegram(string $message)
     {
         $botUsername = config(env('TELEGRAM_BOT_USERNAME'), 'dargatech_bot');
         $encodedMessage = urlencode("error:$message");

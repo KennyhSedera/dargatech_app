@@ -2,6 +2,7 @@
 
 use App\Telegram\Commands\CancelCommand;
 use App\Telegram\Commands\InstallationCommand;
+use App\Telegram\Commands\InterventionCommand;
 use App\Telegram\Commands\MaraicherCommand;
 use App\Telegram\Commands\StartCommand;
 use Telegram\Bot\Commands\HelpCommand;
@@ -32,6 +33,7 @@ return [
         StartCommand::class,
         MaraicherCommand::class,
         InstallationCommand::class,
+        InterventionCommand::class,
         CancelCommand::class,
     ],
 

@@ -2,9 +2,9 @@
 
 namespace App\Services;
 
+use App\Telegram\Keyboard\NewChoiceKeyboard;
 use App\Telegram\Keyboard\PaginationKeyboard;
 use DB;
-use Log;
 use Telegram\Bot\Keyboard\Keyboard;
 
 class ListInstallationService
@@ -200,4 +200,14 @@ class ListInstallationService
         }
     }
 
+
+    public function sendButtonNew($chatId, $text, $userId, $action = 'create_installation', $route = 'telegram.installation.form', $callack_data = 'new_installation')
+    {
+        $tokenService = new TokenService();
+        $secureToken = $tokenService->generateSecureToken($userId, $action, $chatId);
+
+        $keyboard = new NewChoiceKeyboard();
+        $keyboards = $keyboard->getNewChoiceKeyboard('Avec message telegram', $callack_data, 'Avec interface web', route($route, ['token' => $secureToken]));
+        $this->sendMessage->sendMessageWithKeyboard($chatId, $text, $keyboards, 'HTML');
+    }
 }

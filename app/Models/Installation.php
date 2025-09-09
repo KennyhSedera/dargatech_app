@@ -19,7 +19,8 @@ class Installation extends Model
         'statuts',
         'localisation_id',
         'source_eau',
-        'hmt'
+        'hmt',
+        'created_via',
     ];
 
     public function client()

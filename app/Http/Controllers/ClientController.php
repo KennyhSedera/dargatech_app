@@ -6,6 +6,8 @@ use App\Models\Client;
 use App\Models\Localisation;
 use Carbon\Carbon;
 use Illuminate\Support\Facades\DB;
+use Log;
+use Request;
 
 class ClientController extends Controller
 {
@@ -44,6 +46,7 @@ class ClientController extends Controller
             DB::beginTransaction();
 
             $validatedData = $request->validated();
+            Log::info($validatedData);
 
             $client = Client::create([
                 'nom' => $validatedData['nom'],
@@ -55,7 +58,8 @@ class ClientController extends Controller
                 'localisation' => $validatedData['localisation'],
                 'surface_cultivee' => $validatedData['surface_cultivee'],
                 'type_activite_agricole' => $validatedData['type_activite_agricole'],
-                'date_contrat' => Carbon::now()
+                'date_contrat' => Carbon::now(),
+                'created_via' => $validatedData['created_via']
             ]);
 
             DB::commit();
@@ -63,6 +67,7 @@ class ClientController extends Controller
             return response()->json([
                 'message' => 'Client créé avec succès !',
                 'success' => true,
+                'client' => $client
             ], 201);
 
         } catch (\Exception $e) {
@@ -149,5 +154,15 @@ class ClientController extends Controller
                 'success' => false
             ], 500);
         }
+    }
+
+    public function updateIsPaid(Request $request, $id)
+    {
+        $client = Client::findOrFail($id);
+        $client->update([
+            'is_payed' => filter_var($request->input('is_payed'), FILTER_VALIDATE_BOOLEAN),
+        ]);
+
+        return response()->json(['client' => $client]);
     }
 }

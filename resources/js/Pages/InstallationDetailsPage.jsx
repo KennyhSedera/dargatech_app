@@ -42,15 +42,15 @@ const InstallationDetailsPage = ({ installation }) => {
     const getStatusBadgeClass = (status) => {
         switch (status?.toLowerCase()) {
             case "installée":
-                return "bg-green-500/50 text-white shadow-md shadow-green-200 dark:shadow-green-900/30";
+                return "green-500";
             case "en_cours":
-                return "bg-yellow-500/50 text-white shadow-md shadow-yellow-200 dark:shadow-yellow-900/30";
+                return "yellow-500";
             case "planifiée":
-                return "bg-blue-500/50 text-white shadow-md shadow-blue-200 dark:shadow-blue-900/30";
+                return "blue-500";
             case "en panne":
-                return "bg-red-500/50 to-red-/50 text-white shadow-md shadow-red-200 dark:shadow-red-900/30";
+                return "red-500";
             default:
-                return "bg-gray-500/50 to-gray-600/50 text-white shadow-md shadow-gray-200 dark:shadow-gray-900/30";
+                return "gray-500 ";
         }
     };
 
@@ -141,11 +141,16 @@ const InstallationDetailsPage = ({ installation }) => {
                                             </div>
                                         </div>
                                     </div>
-                                    <div className="flex-shrink-0">
-                                        <span
-                                            className={`px-6 py-3 rounded-lg text-lg font-bold ${getStatusBadgeClass(
+                                    <div className="flex items-center flex-shrink-0 transition-transform duration-200 transform hover:scale-105">
+                                        <div
+                                            className={`w-3 h-3 bg-${getStatusBadgeClass(
                                                 installation.statuts
-                                            )} transform hover:scale-105 transition-transform duration-200`}
+                                            )} rounded-xl`}
+                                        ></div>
+                                        <span
+                                            className={`px-6 py-3 rounded-lg text-lg font-bold text-${getStatusBadgeClass(
+                                                installation.statuts
+                                            )} capitalize `}
                                         >
                                             {installation.statuts || "N/A"}
                                         </span>

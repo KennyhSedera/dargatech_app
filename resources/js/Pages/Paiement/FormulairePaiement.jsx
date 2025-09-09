@@ -33,6 +33,19 @@ const FormulairePaiement = () => {
     const [paiementData, setPaiementData] = useState(null);
     const [isEditing, setIsEditing] = useState(false);
 
+    const { props } = usePage();
+    const { client_id, amount, designation } = props;
+
+    const [validationErrors, setValidationErrors] = useState({});
+    const [clients, setClients] = useState([]);
+    const [typePaiement, setTypePaiement] = useState([]);
+    const [alert, setAlert] = useState({
+        open: false,
+        message: "",
+        type: "success",
+    });
+    const [email, setEmail] = useState("");
+
     // Extract the ID from the URL
     const getIdFromUrl = () => {
         const urlParams = new URLSearchParams(window.location.search);
@@ -73,15 +86,49 @@ const FormulairePaiement = () => {
         client_id: "",
     });
 
-    const [validationErrors, setValidationErrors] = useState({});
-    const [clients, setClients] = useState([]);
-    const [typePaiement, setTypePaiement] = useState([]);
-    const [alert, setAlert] = useState({
-        open: false,
-        message: "",
-        type: "success",
-    });
-    const [email, setEmail] = useState("");
+    useEffect(() => {
+        let client = null;
+        if (client_id) {
+            client =
+                clients.find((el) => el.id === parseInt(client_id)) ||
+                clients.find((el) => el.id === client_id);
+        }
+
+        setData((prevData) => ({
+            ...prevData,
+            client_id: client_id,
+            nom_acheteur: client?.nom_famille,
+            prenom_acheteur: client?.nom,
+            civilite_acheteur: client?.genre === "Homme" ? "Mr." : "Mme.",
+            ville_acheteur: client?.ville,
+            pays_acheteur: client?.pays,
+            num_rue_acheteur: client?.village || client?.quartier,
+        }));
+    }, [client_id, clients]);
+
+    useEffect(() => {
+        setData((prevData) => ({
+            ...prevData,
+            produits: [
+                ...prevData.produits,
+                {
+                    designation,
+                    reference: "",
+                    quantite: 1,
+                    unite: "",
+                    tva: 0,
+                    prix_unitaire: amount,
+                    total_ht: amount,
+                    total_ttc: amount,
+                },
+            ],
+            montant_paye: amount,
+            description: designation,
+            objet: designation,
+            date_paiement: new Date().toISOString().split("T")[0],
+            date_echeance: new Date().toISOString().split("T")[0],
+        }));
+    }, [amount, designation]);
 
     const getType = async () => {
         try {
@@ -119,7 +166,15 @@ const FormulairePaiement = () => {
             if (response) {
                 const paiement = response;
 
-                const client = clients.find((c) => c.id === paiement.client_id);
+                let client = null;
+                if (client_id) {
+                    client =
+                        clients.find((el) => el.id === parseInt(client_id)) ||
+                        clients.find((el) => el.id === client_id);
+                } else {
+                    client = clients.find((c) => c.id === paiement.client_id);
+                }
+
                 const dateRange = extractDateRange(paiement.periode_couverte);
                 data.periode_couverte =
                     dateRange.startDate.original +
@@ -235,7 +290,6 @@ const FormulairePaiement = () => {
         data.montant_paye = data.montant_paye || "0";
         data.montant = data.montant_paye || "0";
 
-        // If editing, add the ID to the data
         if (isEditing && paiementId) {
             data.id = paiementId;
         }
@@ -253,11 +307,35 @@ const FormulairePaiement = () => {
                 message: response.message,
                 type: response.success ? "success" : "error",
             });
+
             if (response.success) {
-                setTimeout(() => {
+                setTimeout(async () => {
                     reset();
                     window.history.back();
+
+                    if (client_id && amount && designation) {
+                        try {
+                            const res = await fetch(
+                                `/api/clients/${client_id}/is-paid`,
+                                {
+                                    method: "PUT",
+                                    headers: {
+                                        "Content-Type": "application/json",
+                                    },
+                                    body: JSON.stringify({
+                                        is_payed: true,
+                                    }),
+                                }
+                            );
+
+                            const json = await res.json();
+                            console.log("Mise à jour is_payed:", json);
+                        } catch (err) {
+                            console.error("Erreur mise à jour client:", err);
+                        }
+                    }
                 }, 3000);
+
                 sendPdfByEmail(data, email);
             }
         } catch (error) {

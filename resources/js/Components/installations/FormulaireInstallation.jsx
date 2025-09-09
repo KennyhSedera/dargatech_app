@@ -21,6 +21,7 @@ const FormulaireInstallation = ({
     setOpen,
     dataModify = {},
     onCloseFormulaire = () => {},
+    token_data,
 }) => {
     const [btnTitle, setBtnTitle] = useState("Enregistrer");
     const [load, setLoad] = useState(false);
@@ -43,6 +44,7 @@ const FormulaireInstallation = ({
         pays: "",
         ville: "",
         statuts: "installée",
+        created_via: token_data ? "telegram_bot" : "web",
     });
 
     const generateNextInstallationCode = useCallback((installations) => {

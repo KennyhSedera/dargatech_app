@@ -21,19 +21,20 @@ class InstallationRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'client_id'         => 'required|numeric',
+            'client_id' => 'required|numeric',
             'code_installation' => 'required|string',
             'date_installation' => 'required|date',
-            'puissance_pompe'   => 'required|numeric',
+            'puissance_pompe' => 'required|numeric',
             'profondeur_forage' => 'required|numeric',
-            'debit_nominal'     => 'required|numeric',
-            'numero_serie'      => 'required|string',
-            'source_eau'        => 'required|string',
-            'hmt'               => 'required|numeric',
-            'latitude'          => 'required|numeric',
-            'longitude'         => 'required|numeric',
-            'pays'              => 'nullable|string',
-            'ville'             => 'nullable|string',
+            'debit_nominal' => 'required|numeric',
+            'numero_serie' => 'required|string',
+            'source_eau' => 'required|string',
+            'hmt' => 'required|numeric',
+            'latitude' => 'required|numeric',
+            'longitude' => 'required|numeric',
+            'pays' => 'nullable|string',
+            'ville' => 'nullable|string',
+            'created_via' => 'required|string'
         ];
     }
 }

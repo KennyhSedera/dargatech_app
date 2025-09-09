@@ -55,6 +55,14 @@ class SessionService
                     $this->handleSearchSession($activeSession, $messageText, $data, $userId, $chatId);
                     break;
 
+                case 'search_intervention':
+                    $this->handleSearchSession($activeSession, $messageText, $data, $userId, $chatId);
+                    break;
+
+                case 'search_rapport':
+                    $this->handleSearchSession($activeSession, $messageText, $data, $userId, $chatId);
+                    break;
+
                 default:
                     $this->sendMessage->sendMessage($chatId, "❌ Session inconnue. Utilisez /cancel pour annuler.");
                     $this->cancelSession($userId, $activeSession->command);

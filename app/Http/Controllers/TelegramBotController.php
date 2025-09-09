@@ -64,23 +64,29 @@ class TelegramBotController extends Controller
                 try {
                     match ($data) {
                         'maraicher' => $this->callBackService->handleMaraicher($chatId),
+                        'installation' => $this->callBackService->handleInstallations($chatId),
+                        'intervention' => $this->callBackService->handleIntervention($chatId),
+                        'rapport_maintenance' => $this->callBackService->handleRapportMaintenance($chatId),
                         'new_maraicher' => $this->callBackService->handleNewMaraicher($chatId, $userId),
                         'new_installation' => $this->callBackService->handleNewInstallations($chatId, $userId),
-                        'installation' => $this->callBackService->handleInstallations($chatId, $userId),
                         'list_installation' => $this->callBackService->handleListInstallation($chatId),
-                        // 'new_intervention'      => $this->callBackService->handleNewIntervention($chatId),
-                        // 'rapport_maintenance'   => $this->callBackService->handleRapportMaintenance($chatId),
+                        'list_maraicher' => $this->callBackService->handleListFull($chatId),
+                        'list_interventions' => $this->callBackService->handleListInterventions($chatId),
+                        'list_rapport_maintenance' => $this->callBackService->handleListRapportsMaintenance($chatId),
                         // 'enregistrer_paiement'  => $this->callBackService->handlePaiement($chatId),
                         // 'generer_recu'          => $this->callBackService->handleRecu($chatId),
-                        // 'mes_interventions'     => $this->callBackService->handleHistorique($chatId),
-                        // 'rechercher_installation' => $this->callBackService->handleRecherche($chatId),
                         'help' => $this->callBackService->handleHelp($chatId),
-                        'list_maraicher' => $this->callBackService->handleListFull($chatId),
                         'list_detailed' => $this->callBackService->handleListDetailed($chatId),
                         'search_maraicher' => $this->callBackService->handleSearch($chatId, $userId, 'search_maraicher', 'de Maraîcher'),
                         'search_installation' => $this->callBackService->handleSearch($chatId, $userId, 'search_installation', 'd\'Installation'),
+                        'search_intervention' => $this->callBackService->handleSearch($chatId, $userId, 'search_intervention', 'd\'Intervention'),
+                        'search_rapport' => $this->callBackService->handleSearch($chatId, $userId, 'search_rapport', 'de Rapport de maintenance'),
                         'menu' => $this->startCommand->handleKeyboardMenu($chatId),
                         'current_page' => $this->callBackService->handleCurrentPage($chatId),
+                        'button_create_installation' => $this->callBackService->handleSendButtonNewIntsallation($chatId, $userId),
+                        'button_create_maraicher' => $this->callBackService->handleSendButtonNewMaraichers($chatId, $userId),
+                        'button_create_intervention' => $this->callBackService->handleSendButtonNewInterventions($chatId, $userId),
+                        'button_create_rapport_maintenance' => $this->callBackService->handleSendButtonNewPapports($chatId, $userId),
                         default => $this->callBackService->sendUnknownCommand($chatId),
                     };
 
@@ -121,7 +127,7 @@ class TelegramBotController extends Controller
                         return response('Session handled', 200);
                     } else {
                         Log::info('No active session found for user ' . $userId);
-                        $this->cancelAllUserSessions($userId, $chatId);
+                        $this->sessionService->cancelAllUserSessions($userId, $chatId);
                     }
                 }
 
@@ -146,7 +152,12 @@ class TelegramBotController extends Controller
                 'url' => env('TELEGRAM_WEBHOOK_URL')
             ]);
 
-            return response()->json($response);
+            return response()->json([
+                'response' => $response,
+                "ok" => true,
+                "result" => true,
+                "description" => "Webhook is already set"
+            ]);
         } catch (\Exception $e) {
             return response()->json(['error' => $e->getMessage()], 500);
         }

@@ -15,25 +15,18 @@ class InstallationCommand extends Command
     public function handle()
     {
         $chatId = $this->getUpdate()->getMessage()->getChat()->getId();
-        $userId = $this->getUpdate()->getMessage()->getFrom()->getId();
 
-        $this->sendInstallationMenu($this->telegram, $chatId, $userId);
+        $this->sendInstallationMenu($this->telegram, $chatId);
     }
 
-    public function sendInstallationMenu(Api $telegram, $chatId, $userId = null)
+    public function sendInstallationMenu(Api $telegram, $chatId)
     {
-        if ($userId === null) {
-            $userId = $this->getUserIdFromContext($chatId);
-        }
-
-        $secureToken = $this->generateSecureToken($userId, 'create_installation', $chatId);
-
         $keyboard = Keyboard::make()
             ->inline()
             ->row([
                 Keyboard::inlineButton([
                     'text' => '➕ Nouveau Installation',
-                    'url' => route('telegram.installation.form', ['token' => $secureToken])
+                    'callback_data' => 'button_create_installation'
                 ]),
                 Keyboard::inlineButton([
                     'text' => '🏭 Liste Installations',
@@ -54,20 +47,5 @@ class InstallationCommand extends Command
             'reply_markup' => $keyboard,
             'parse_mode' => 'HTML',
         ]);
-    }
-
-    private function generateSecureToken($userId, $action, $chatId)
-    {
-        $payload = [
-            'user_id' => $userId,
-            'chat_id' => $chatId,
-            'action' => $action,
-            'created_at' => now()->timestamp,
-            'expires_at' => now()->addHours(2)->timestamp,
-            'random' => bin2hex(random_bytes(16)),
-            'source' => 'telegram_command'
-        ];
-
-        return encrypt(json_encode($payload));
     }
 }

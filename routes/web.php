@@ -42,8 +42,12 @@ Route::get('/paiements', function () {
     return Inertia::render('Paiement/PaiementPage');
 })->middleware(['auth', 'verified'])->name('paiements');
 
-Route::get('/form/paiement', function () {
-    return Inertia::render('Paiement/FormulairePaiement');
+Route::get('/form/paiement', function (Request $request) {
+    return Inertia::render('Paiement/FormulairePaiement', [
+        'client_id' => $request->input('client_id'),
+        'amount' => $request->input('amount'),
+        'designation' => $request->input('designation'),
+    ]);
 })->middleware(['auth', 'verified'])->name('form_paiement');
 
 Route::get('/interventions', function () {

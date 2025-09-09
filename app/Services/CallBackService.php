@@ -2,10 +2,13 @@
 
 namespace App\Services;
 
+use App\Models\rapportMaintenances;
 use App\Services\MaraicherService;
 use App\Services\SendMessageService;
 use App\Telegram\Commands\InstallationCommand;
+use App\Telegram\Commands\InterventionCommand;
 use App\Telegram\Commands\MaraicherCommand;
+use App\Telegram\Commands\RapportMaintenanceCommand;
 use DB;
 use Log;
 use Telegram\Bot\Api;
@@ -22,6 +25,10 @@ class CallBackService
     protected HelpCommand $helpCommand;
     protected InstallationCommand $installationCommand;
     protected ListInstallationService $listInstallationService;
+    protected InterventionCommand $interventionCommand;
+    protected InterventionService $interventionService;
+    protected RapportMaintenanceCommand $rapportMaintenanceCommand;
+    protected RapportMaintenanceService $rapportMaintenanceService;
 
     public function __construct(
         Api $telegram,
@@ -32,6 +39,10 @@ class CallBackService
         HelpCommand $helpCommand,
         InstallationCommand $installationCommand,
         ListInstallationService $listInstallationService,
+        InterventionCommand $interventionCommand,
+        RapportMaintenanceCommand $rapportMaintenanceCommand,
+        InterventionService $interventionService,
+        RapportMaintenanceService $rapportMaintenanceService,
     ) {
         $this->telegram = $telegram;
         $this->maraicherService = $maraicherService;
@@ -41,6 +52,10 @@ class CallBackService
         $this->helpCommand = $helpCommand;
         $this->installationCommand = $installationCommand;
         $this->listInstallationService = $listInstallationService;
+        $this->interventionCommand = $interventionCommand;
+        $this->rapportMaintenanceCommand = $rapportMaintenanceCommand;
+        $this->interventionService = $interventionService;
+        $this->rapportMaintenanceService = $rapportMaintenanceService;
     }
 
     public function handleCurrentPage($chatId)
@@ -123,9 +138,29 @@ class CallBackService
         );
     }
 
-    public function handleInstallations($chatId, $userId)
+    public function handleInstallations($chatId)
     {
-        $this->installationCommand->sendInstallationMenu($this->telegram, $chatId, $userId);
+        $this->installationCommand->sendInstallationMenu($this->telegram, $chatId);
+    }
+
+    public function handleSendButtonNewIntsallation($chatId, $userId)
+    {
+        $this->listInstallationService->sendButtonNew($chatId, text: "🌱 Enregistrer une nouvelle installation \n\n Choississez une option :", userId: $userId, action: 'create_installation', route: 'telegram.installation.form', callack_data: 'new_installation');
+    }
+
+    public function handleSendButtonNewMaraichers($chatId, $userId)
+    {
+        $this->listInstallationService->sendButtonNew($chatId, text: "🌱 Enregistrer un nouveau maraîcher \n\n Choississez une option :", userId: $userId, action: 'create_maraicher', route: 'telegram.client.form', callack_data: 'new_maraicher');
+    }
+
+    public function handleSendButtonNewInterventions($chatId, $userId)
+    {
+        $this->listInstallationService->sendButtonNew($chatId, text: "🌱 Enregistrer une nouvelle intervention \n\n Choississez une option :", userId: $userId, action: 'create_intervention', route: 'telegram.intervention.form', callack_data: 'new_intervention');
+    }
+
+    public function handleSendButtonNewPapports($chatId, $userId)
+    {
+        $this->listInstallationService->sendButtonNew($chatId, text: "🌱 Enregistrer une nouvelle rapport intervention \n\n Choississez une option :", userId: $userId, action: 'create_rapport', route: 'telegram.rapport.form', callack_data: 'new_rapport_maintenance');
     }
 
     public function handleListInstallation($chatId)
@@ -133,9 +168,29 @@ class CallBackService
         $this->listInstallationService->showFullList($chatId);
     }
 
+    public function handleIntervention($chatId)
+    {
+        $this->interventionCommand->sendInterventionMenu($this->telegram, $chatId);
+    }
+
+    public function handleRapportMaintenance($chatId)
+    {
+        $this->rapportMaintenanceCommand->sendRapportMaintenanceMenu($this->telegram, $chatId);
+    }
+
     public function handleListFull($chatId)
     {
         $this->listMaraicherService->showFullList($chatId);
+    }
+
+    public function handleListInterventions($chatId)
+    {
+        $this->interventionService->showFullList($chatId);
+    }
+
+    public function handleListRapportsMaintenance($chatId)
+    {
+        $this->rapportMaintenanceService->showFullList($chatId);
     }
 
     public function handleHelp($chatId)
@@ -167,7 +222,6 @@ class CallBackService
         }
     }
 
-
     public function sendUnknownCommand($chatId)
     {
         $this->sendMessage->sendMessage(
@@ -180,11 +234,18 @@ class CallBackService
     public function handleSearch($chatId, $userId, $command = 'search_maraicher', $name = 'name')
     {
         try {
+            $searchCommands = ['search_maraicher', 'search_installation', 'search_intervention', 'search_rapport_maintenance'];
             $existingSession = DB::table('telegram_sessions')
                 ->where('user_id', $userId)
-                ->where('command', '=', $command)
+                ->whereIn('command', $searchCommands)
                 ->where('completed', false)
                 ->first();
+
+            $extractedCommand = '';
+            if ($existingSession) {
+                $extractedCommand = substr($existingSession->command, 7);
+                $extractedCommand = str_replace('_', ' ', $extractedCommand);
+            }
 
             if (!$existingSession) {
                 DB::table('telegram_sessions')->insert([
@@ -213,9 +274,8 @@ class CallBackService
             $this->sendMessage->sendMessage(
                 $chatId,
                 "⚠️ **Session en cours**\n\n" .
-                "Vous avez déjà une session de *recherche* active.\n\n" .
-                "Veuillez compléter la session actuelle ou tapez /cancel pour l'annuler.",
-                'Markdown'
+                "Vous avez déjà une session de *recherche {$extractedCommand}* active.\n\n" .
+                "Veuillez compléter la session actuelle ou tapez /cancel pour l'annuler."
             );
 
         } catch (\Exception $e) {
@@ -242,11 +302,11 @@ class CallBackService
             case 'installation':
                 return $this->handleInstallationListPage($chatId, $page);
 
-            // case 'client':
-            //     return $this->handleClientListPage($chatId, $page);
+            case 'intervention':
+                return $this->handleInterventionListPage($chatId, $page);
 
-            // case 'commande':
-            //     return $this->handleCommandeListPage($chatId, $page);
+            case 'rapport':
+                return $this->handleRapportListPage($chatId, $page);
 
             default:
                 Log::warning("Unknown entity type for pagination: {$entityType}");
@@ -259,6 +319,46 @@ class CallBackService
         try {
             $installations = DB::table('installations')->orderBy('created_at', 'desc')->get();
             $this->listInstallationService->showPaginatedList($chatId, $installations, (int) $page);
+        } catch (\Exception $e) {
+            $this->sendMessage->sendMessage(
+                $chatId,
+                "❌ Erreur lors de l'affichage de la page.",
+                'Markdown'
+            );
+        }
+    }
+
+    public function handleInterventionListPage($chatId, $page)
+    {
+        try {
+            $interventions = DB::table('maintenances')
+                ->leftJoin('installations', 'maintenances.installation_id', '=', 'installations.id')
+                ->select(
+                    'maintenances.*',
+                    'installations.code_installation as installation_code',
+                    'installations.numero_serie as installation_numero_serie',
+                    'installations.source_eau'
+                )
+                ->orderBy('maintenances.created_at', 'desc')
+                ->get();
+            $this->interventionService->showPaginatedList($chatId, $interventions, (int) $page);
+        } catch (\Exception $e) {
+            $this->sendMessage->sendMessage(
+                $chatId,
+                "❌ Erreur lors de l'affichage de la page.",
+                'Markdown'
+            );
+        }
+    }
+
+    public function handleRapportListPage($chatId, $page)
+    {
+        try {
+            $rapports = rapportMaintenances::with('client', 'maintenance')
+                ->whereHas('maintenance')
+                ->orderBy('created_at', 'desc')
+                ->get();
+            $this->rapportMaintenanceService->showPaginatedList($chatId, $rapports, (int) $page);
         } catch (\Exception $e) {
             $this->sendMessage->sendMessage(
                 $chatId,

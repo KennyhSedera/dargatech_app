@@ -10,15 +10,21 @@ class SearchServices
     protected SendMessageService $sendMessage;
     protected ListMaraicherService $maraicherService;
     protected ListInstallationService $installationService;
+    protected InterventionService $interventionService;
+    protected RapportMaintenanceService $rapportMaintenanceService;
 
     public function __construct(
         SendMessageService $sendMessageService,
         ListMaraicherService $maraicherService,
         ListInstallationService $installationService,
+        InterventionService $interventionService,
+        RapportMaintenanceService $rapportMaintenanceService
     ) {
         $this->sendMessage = $sendMessageService;
         $this->maraicherService = $maraicherService;
         $this->installationService = $installationService;
+        $this->interventionService = $interventionService;
+        $this->rapportMaintenanceService = $rapportMaintenanceService;
     }
 
     public function extractEntityType($command)
@@ -83,6 +89,14 @@ class SearchServices
 
             case 'installation':
                 $this->installationService->searchInstallations($chatId, $searchTerm);
+                break;
+
+            case 'intervention':
+                $this->interventionService->searchInterventions($chatId, $searchTerm);
+                break;
+
+            case 'rapport':
+                $this->rapportMaintenanceService->searchRapports($chatId, $searchTerm);
                 break;
 
             default:
@@ -155,7 +169,17 @@ class SearchServices
             'installation' => [
                 'label' => 'des installations',
                 'min_length' => 1,
-                'max_length' => 50,
+                'max_length' => 100,
+            ],
+            'intervention' => [
+                'label' => 'des interventions',
+                'min_length' => 2,
+                'max_length' => 100,
+            ],
+            'rapport' => [
+                'label' => 'des rapports de maintenance',
+                'min_length' => 2,
+                'max_length' => 100,
             ],
         ];
 

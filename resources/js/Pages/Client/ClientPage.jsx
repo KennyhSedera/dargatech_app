@@ -223,7 +223,7 @@ const ClientPage = () => {
                         <DataTable
                             headers={headers}
                             rows={filteredData}
-                            itemsPerPage={10}
+                            itemsPerPage={8}
                             actions={actions}
                             className="mt-4"
                             currentPage={currentPage}

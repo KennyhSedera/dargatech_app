@@ -29,6 +29,7 @@ Route::group(['prefix' => 'api'], function () {
         Route::post('/', [ClientController::class, 'store'])->name('store');
         Route::put('/{id}', [ClientController::class, 'update'])->name('update');
         Route::delete('/{id}', [ClientController::class, 'destroy'])->name('destroy');
+        Route::put('/{id}/is-paid', [ClientController::class, 'updateIsPaid'])->name('update-is-paid');
     });
 
     Route::group(['prefix' => 'maintenance', 'as' => 'maintenance.', 'middleware' => 'auth'], function () {

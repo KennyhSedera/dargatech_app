@@ -23,7 +23,8 @@ class Client extends Model
         'localisation',
         'date_contrat',
         'surface_cultivee',
-        'type_activite_agricole'
+        'type_activite_agricole',
+        'created_via'
     ];
 
     public function installations()

@@ -201,6 +201,7 @@ export default function Dashboard() {
                     </Link>
                 ))}
             </div>
+            <Calendar className="mt-2" events={events} />
             <div className="grid grid-cols-1 gap-2 mt-2 md:grid-cols-3">
                 <BarChart
                     className="col-span-2"
@@ -211,7 +212,6 @@ export default function Dashboard() {
                 />
                 <RapportQuotidient data={data} />
             </div>
-            <Calendar className="mt-2" events={events} />
             <div className="grid grid-cols-1 gap-2 mt-2 md:grid-cols-3">
                 <CircleChart
                     value={percentenpanne || 0}

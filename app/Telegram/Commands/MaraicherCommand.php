@@ -23,7 +23,7 @@ class MaraicherCommand extends Command
         $keyboard = Keyboard::make()
             ->inline()
             ->row([
-                Keyboard::inlineButton(['text' => '➕ Nouveau Maraîcher', 'callback_data' => 'new_maraicher']),
+                Keyboard::inlineButton(['text' => '➕ Nouveau Maraîcher', 'callback_data' => 'button_create_maraicher']),
                 Keyboard::inlineButton(['text' => '👨‍🌾 Liste Maraîchers', 'callback_data' => 'list_maraicher']),
             ])
             ->row([
@@ -37,6 +37,5 @@ class MaraicherCommand extends Command
             'parse_mode' => 'HTML',
         ]);
     }
-
 
 }

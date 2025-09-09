@@ -5,6 +5,7 @@ use App\Http\Requests\InstallationRequest;
 use App\Models\Installation;
 use Illuminate\Http\Request;
 use App\Models\Localisation;
+use Illuminate\Http\JsonResponse;
 use Illuminate\Support\Facades\DB;
 
 class InstallationController extends Controller
@@ -49,7 +50,8 @@ class InstallationController extends Controller
                 'statuts' => $validatedData['statuts'] ?? 'installée',
                 'localisation_id' => $localisation->id,
                 'source_eau' => $validatedData['source_eau'],
-                'hmt' => $validatedData['hmt']
+                'hmt' => $validatedData['hmt'],
+                'created_via' => $validatedData['created_via']
             ]);
 
             DB::commit();
@@ -73,7 +75,7 @@ class InstallationController extends Controller
     {
         $installation = Installation::find($id);
 
-        if (! $installation) {
+        if (!$installation) {
             return response()->json([
                 'message' => 'Installation non trouvé.',
             ], 404);
@@ -84,14 +86,7 @@ class InstallationController extends Controller
         ]);
     }
 
-    /**
-     * Mise à jour d'une installation.
-     *
-     * @param  \Illuminate\Http\Request  $request
-     * @param  int  $id
-     * @return \Illuminate\Http\Response
-     */
-    public function update(Request $request, $id)
+    public function update(Request $request, $id): JsonResponse
     {
         try {
             DB::beginTransaction();
@@ -165,7 +160,7 @@ class InstallationController extends Controller
     {
         $installation = Installation::find($id);
 
-        if (! $installation) {
+        if (!$installation) {
             return response()->json([
                 'message' => 'Installation non trouvé.',
             ], 404);

@@ -2,9 +2,11 @@
 
 namespace App\Services;
 
+use App\Telegram\Keyboard\NewChoiceKeyboard;
 use Illuminate\Support\Facades\DB;
 use Log;
 use PhpParser\Node\Stmt\TryCatch;
+use Telegram\Bot\Api;
 
 class NewInstallationService
 {

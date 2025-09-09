@@ -22,6 +22,12 @@ class CancelCommand extends Command
         $chatId = $this->getUpdate()->getMessage()->getChat()->getId();
         $userId = $this->getUpdate()->getMessage()->getFrom()->getId();
 
+        $this->cancelSession($userId, $chatId);
+
+    }
+
+    public function cancelSession($userId, $chatId)
+    {
         $sessionService = app(SessionService::class);
 
         $command = DB::table('telegram_sessions')

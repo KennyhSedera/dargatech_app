@@ -3,7 +3,7 @@ import Modal from "../Modal";
 import TextInput from "../inputs/TextInput";
 import InputLabel from "../inputs/InputLabel";
 import InputError from "../inputs/InputError";
-import { useForm } from "@inertiajs/react";
+import { router, useForm } from "@inertiajs/react";
 import { createClients, updateClients } from "@/Services/clientService";
 import { validateFormClient } from "../validateForm";
 import SelectInput from "../inputs/SelectInput";
@@ -13,6 +13,7 @@ const FormulaireClient = ({
     setOpen,
     dataModify = {},
     onCloseFormulaire = () => {},
+    token_data,
 }) => {
     const [btnTitle, setBtnTitle] = useState("Enregistrer");
     const [validationErrors, setValidationErrors] = useState({});
@@ -30,6 +31,7 @@ const FormulaireClient = ({
         localisation: "",
         surface_cultivee: "",
         type_activite_agricole: "",
+        created_via: token_data ? "telegram_bot" : "web",
     });
 
     const onClose = (message) => {
@@ -81,8 +83,18 @@ const FormulaireClient = ({
                 await updateClients(dataModify.id, data);
                 onClose("Client modifié avec succès !");
             } else {
-                await createClients(data);
+                const res = await createClients(data);
+
                 onClose("Client créé avec succès !");
+                router.visit("/form/paiement", {
+                    method: "get",
+                    data: {
+                        client_id: res.client.id,
+                        amount: 30000,
+                        designation:
+                            "Acompte pour signature de contrat et installation",
+                    },
+                });
             }
         } catch (error) {
             console.error("Erreur:", error);

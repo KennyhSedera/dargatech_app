@@ -10,17 +10,14 @@ const TelegramInstallationFormulaire = ({
 }) => {
     useEffect(() => {
         addFavicon();
-        console.log({ source, token_data, telegram_user_id });
     }, []);
 
     const onCloseFormulaire = async (message) => {
         if (!message) {
-            message = "Enregistrement installation annulé";
+            message = "❌ Enregistrement installation annulé";
         }
 
         try {
-            console.log("Envoi du message:", message);
-
             const response = await fetch(
                 `/api/telegram/send-message/${telegram_user_id}`,
                 {
@@ -29,7 +26,7 @@ const TelegramInstallationFormulaire = ({
                         "Content-Type": "application/json",
                     },
                     body: JSON.stringify({
-                        message: message,
+                        message: "✅ " + message,
                     }),
                 }
             );
@@ -65,6 +62,7 @@ const TelegramInstallationFormulaire = ({
                 onCloseFormulaire={onCloseFormulaire}
                 dataModify={{}}
                 setOpen={() => {}}
+                token_data={token_data}
             />
         </div>
     );
