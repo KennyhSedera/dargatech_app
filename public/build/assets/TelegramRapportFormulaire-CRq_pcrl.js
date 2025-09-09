@@ -1,0 +1,1 @@
+import{r as e,j as r,$ as a}from"./app-CNOETwtv.js";import{A as t}from"./constant-CGdnuimt.js";import"./iconBase-BDSg09zG.js";const m=()=>(e.useEffect(()=>{t()},[]),r.jsx("div",{children:r.jsx(a,{title:"Formulaire Rapport Maintenance Telegram"})}));export{m as default};

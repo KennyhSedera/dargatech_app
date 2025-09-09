@@ -1,1 +1,0 @@
-import{r,j as e,$ as t}from"./app-4wEmdYjz.js";import{A as a}from"./constant-B_m1A7JV.js";import"./iconBase-jDJ7O41m.js";const n=()=>(r.useEffect(()=>{a()},[]),e.jsx("div",{children:e.jsx(t,{title:"Formulaire Maintenance Telegram"})}));export{n as default};
