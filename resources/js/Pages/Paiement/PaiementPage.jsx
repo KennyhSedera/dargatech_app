@@ -32,6 +32,7 @@ const PaiementPage = () => {
     });
     const [isType, setIsType] = useState(false);
     const [id, setId] = useState(false);
+    const [itemsPerPage, setItemsPerPage] = useState(10);
 
     const headers = [
         { key: "id", label: "ID", sortable: true },
@@ -234,12 +235,15 @@ const PaiementPage = () => {
                                 <DataTable
                                     headers={headers}
                                     rows={filteredData}
-                                    itemsPerPage={9}
+                                    itemsPerPage={itemsPerPage}
                                     actions={actions}
                                     className="mt-4"
                                     currentPage={currentPage}
                                     onPageChange={setCurrentPage}
                                     masqueColumns={["client_id"]}
+                                    onItemsPerPageChange={(n) =>
+                                        setItemsPerPage(n)
+                                    }
                                 />
                             ) : (
                                 <EmptyState nom="paiement" search={search} />

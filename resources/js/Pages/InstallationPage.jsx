@@ -35,6 +35,7 @@ const InstallationPage = () => {
         message: "",
         type: "success",
     });
+    const [itemsPerPage, setItemsPerPage] = useState(10);
 
     const headers = [
         { key: "code_installation", label: "Code", sortable: true },
@@ -246,7 +247,7 @@ const InstallationPage = () => {
                         <DataTable
                             headers={headers}
                             rows={filteredData}
-                            itemsPerPage={6}
+                            itemsPerPage={itemsPerPage}
                             actions={actions}
                             className="mt-4"
                             currentPage={currentPage}
@@ -256,6 +257,7 @@ const InstallationPage = () => {
                                 "latitude",
                                 "longitude",
                             ]}
+                            onItemsPerPageChange={(n) => setItemsPerPage(n)}
                         />
                     ) : (
                         <EmptyState nom="installation" search={search} />

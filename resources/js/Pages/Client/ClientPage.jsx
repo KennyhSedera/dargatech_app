@@ -31,6 +31,7 @@ const ClientPage = () => {
         message: "",
         type: "success",
     });
+    const [itemsPerPage, setItemsPerPage] = useState(10);
 
     const fetchClients = async () => {
         setIsLoading(true);
@@ -223,11 +224,12 @@ const ClientPage = () => {
                         <DataTable
                             headers={headers}
                             rows={filteredData}
-                            itemsPerPage={8}
+                            itemsPerPage={itemsPerPage}
                             actions={actions}
                             className="mt-4"
                             currentPage={currentPage}
                             onPageChange={setCurrentPage}
+                            onItemsPerPageChange={(n) => setItemsPerPage(n)}
                         />
                     ) : (
                         <EmptyState nom="maraîcher" search={search} />
