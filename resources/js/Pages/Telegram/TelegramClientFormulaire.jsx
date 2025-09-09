@@ -11,6 +11,8 @@ const TelegramClientFormulaire = ({ source, token_data, telegram_user_id }) => {
     const onCloseFormulaire = async (message) => {
         if (!message) {
             message = "❌ Enregistrement client annulé";
+        } else {
+            message = "✅ Maraicher ou " + message;
         }
 
         try {
@@ -22,7 +24,7 @@ const TelegramClientFormulaire = ({ source, token_data, telegram_user_id }) => {
                         "Content-Type": "application/json",
                     },
                     body: JSON.stringify({
-                        message: "✅ Maraicher ou" + message,
+                        message: message,
                     }),
                 }
             );

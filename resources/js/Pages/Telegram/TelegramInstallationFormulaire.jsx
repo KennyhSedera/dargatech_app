@@ -15,6 +15,8 @@ const TelegramInstallationFormulaire = ({
     const onCloseFormulaire = async (message) => {
         if (!message) {
             message = "❌ Enregistrement installation annulé";
+        } else {
+            message = "✅ " + message;
         }
 
         try {
@@ -26,7 +28,7 @@ const TelegramInstallationFormulaire = ({
                         "Content-Type": "application/json",
                     },
                     body: JSON.stringify({
-                        message: "✅ " + message,
+                        message: message,
                     }),
                 }
             );
