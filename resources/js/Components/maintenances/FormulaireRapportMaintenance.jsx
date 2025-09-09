@@ -70,7 +70,6 @@ const FormulaireRapportMaintenance = ({
     };
 
     const onLoadFile = (files) => {
-        // files est déjà un tableau grâce à multiple=true
         setData("photo_probleme", files);
         if (validationErrors.photo_probleme) {
             setValidationErrors({

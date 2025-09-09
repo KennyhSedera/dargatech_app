@@ -46,7 +46,6 @@ class ClientController extends Controller
             DB::beginTransaction();
 
             $validatedData = $request->validated();
-            Log::info($validatedData);
 
             $client = Client::create([
                 'nom' => $validatedData['nom'],
@@ -72,7 +71,7 @@ class ClientController extends Controller
 
         } catch (\Exception $e) {
             DB::rollBack();
-            \Log::error('Erreur création client: ' . $e->getMessage());
+            Log::error('Erreur création client: ' . $e->getMessage());
 
             return response()->json([
                 'message' => 'Erreur lors de la création du client',
@@ -97,7 +96,6 @@ class ClientController extends Controller
 
             $validatedData = $request->validated();
 
-            // Mettre à jour le client
             $client->update([
                 'nom' => $validatedData['nom'],
                 'prenom' => $validatedData['prenom'],

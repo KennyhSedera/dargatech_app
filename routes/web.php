@@ -105,6 +105,12 @@ Route::middleware(['web', 'telegram.token'])->group(function () {
 
     Route::get('/formulaire/installation', [TelegramFormController::class, 'installationForm'])
         ->name('telegram.installation.form');
+
+    Route::get('/formulaire/intervention', [TelegramFormController::class, 'interventionForm'])
+        ->name('telegram.intervention.form');
+
+    Route::get('/formulaire/rapport', [TelegramFormController::class, 'rapportForm'])
+        ->name('telegram.rapport.form');
 });
 
 require __DIR__ . '/auth.php';

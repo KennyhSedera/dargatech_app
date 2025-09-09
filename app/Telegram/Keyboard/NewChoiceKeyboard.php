@@ -18,7 +18,10 @@ class NewChoiceKeyboard
 
         $keyboard = Keyboard::make()
             ->inline()
-            ->row($buttons);
+            ->row($buttons)
+            ->row([
+                Keyboard::inlineButton(['text' => '🏠 Menu principale', 'callback_data' => 'menu'])
+            ]);
 
         return $keyboard;
     }

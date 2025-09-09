@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import Modal from "../Modal";
 import TextInput from "../inputs/TextInput";
 import InputLabel from "../inputs/InputLabel";
@@ -18,6 +18,7 @@ import SelectInput from "../inputs/SelectInput";
 import { validateFormMaintenance } from "../validateForm";
 import { getTechniciens } from "@/Services/technicienService";
 import TextArea from "../inputs/TextArea";
+import InputImage from "../inputs/InputImage";
 
 const FormulaireMaintenance = ({
     open = true,
@@ -38,7 +39,9 @@ const FormulaireMaintenance = ({
         solutions_apportees: "",
         duree_intervention: "",
         technicien: idTechnicien,
+        photo_probleme: [],
     });
+    const fileInputRef = useRef(null);
 
     const getInstallation = async () => {
         const [{ data }] = await Promise.all([getinstallations()]);
@@ -121,6 +124,16 @@ const FormulaireMaintenance = ({
         });
     };
 
+    const onLoadFile = (files) => {
+        setData("photo_probleme", files);
+        if (validationErrors.photo_probleme) {
+            setValidationErrors({
+                ...validationErrors,
+                photo_probleme: "",
+            });
+        }
+    };
+
     return (
         <Modal show={open} closeable={false} onClose={onClose} maxWidth="4xl">
             <div className="text-2xl font-semibold text-center">
@@ -128,7 +141,7 @@ const FormulaireMaintenance = ({
                     ? "Modifier une Intervention"
                     : "Ajouter une Intervention"}
             </div>
-            <form className="grid w-full grid-cols-1 gap-4 px-6 my-6">
+            <form className="grid w-full grid-cols-2 gap-4 px-6 my-6">
                 <div>
                     <InputLabel
                         htmlFor="installation_id"
@@ -177,7 +190,7 @@ const FormulaireMaintenance = ({
                     </SelectInput>
                     <InputError message={errors.email} className="mt-2" />
                 </div>
-                <div>
+                <div className="col-span-2">
                     <InputLabel
                         htmlFor="description_probleme"
                         value="Description du problème"
@@ -204,6 +217,32 @@ const FormulaireMaintenance = ({
                         message={
                             validationErrors.description_probleme ||
                             errors.description_probleme
+                        }
+                        className="mt-2"
+                    />
+                </div>
+                <div>
+                    <InputLabel
+                        htmlFor="solutions_apportees"
+                        value="Photo du problème"
+                    />
+                    <InputImage
+                        ref={fileInputRef}
+                        selectedFiles={data.photo_probleme}
+                        onLoadFile={onLoadFile}
+                        onFocus={() =>
+                            setValidationErrors({
+                                ...validationErrors,
+                                photo_probleme: "",
+                            })
+                        }
+                        multiple={true}
+                        placeholder="Sélectionner des photos"
+                    />
+                    <InputError
+                        message={
+                            validationErrors.photo_probleme ||
+                            errors.photo_probleme
                         }
                         className="mt-2"
                     />

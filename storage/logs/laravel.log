@@ -1,14 +1,1 @@
-[2025-09-09 12:54:59] local.INFO: array (
-  'nom' => 'hjgjh',
-  'prenom' => 'hgjg',
-  'telephone' => '44667',
-  'localisation' => 'lmml',
-  'surface_cultivee' => '1',
-  'type_activite_agricole' => 'klmkl',
-  'email' => 'sederakenys@gmail.com',
-  'CIN' => '467764',
-  'genre' => 'Homme',
-  'pays' => 'Togo',
-  'ville' => 'Kara',
-  'created_via' => 'web',
-)  
+[2025-09-09 13:52:06] local.ERROR: Telegram webhook error: Undefined array key 0  

@@ -31,6 +31,28 @@ class TelegramFormController extends Controller
         ]);
     }
 
+    public function interventionForm(Request $request)
+    {
+        $tokenData = $request->get('telegram_token_data');
+
+        return Inertia::render('Telegram/TelegramInterventionFormulaire', [
+            'source' => 'telegram',
+            'token_data' => $tokenData,
+            'telegram_user_id' => $tokenData['user_id']
+        ]);
+    }
+
+    public function rapportForm(Request $request)
+    {
+        $tokenData = $request->get('telegram_token_data');
+
+        return Inertia::render('Telegram/TelegramRapportFormulaire', [
+            'source' => 'telegram',
+            'token_data' => $tokenData,
+            'telegram_user_id' => $tokenData['user_id']
+        ]);
+    }
+
     public function cancelForm(Request $request, $telegram_user_id)
     {
         $message = $request->input('message');
