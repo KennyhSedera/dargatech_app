@@ -11,7 +11,7 @@ export default function DataTable({
     onPageChange = () => {},
     onItemsPerPageChange = () => {},
     masqueColumns = [],
-    itemsPerPageOptions = [5, 10, 25, 50, 100],
+    itemsPerPageOptions = [5, 8, 10, 25, 50, 100],
 }) {
     const [sortConfig, setSortConfig] = useState({
         key: null,

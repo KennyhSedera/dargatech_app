@@ -2,6 +2,7 @@ import {
     forwardRef,
     useEffect,
     useImperativeHandle,
+    useMemo,
     useRef,
     useState,
 } from "react";
@@ -24,10 +25,14 @@ const InputImage = forwardRef(
         const inputRef = useRef(null);
         const [filenames, setFilenames] = useState([]);
 
-        const defaultPlaceholder = multiple
-            ? "Sélectionner des images"
-            : "Sélectionner une image";
-        const displayPlaceholder = placeholder || defaultPlaceholder;
+        const displayPlaceholder = useMemo(() => {
+            return (
+                placeholder ||
+                (multiple
+                    ? "Sélectionner des images"
+                    : "Sélectionner une image")
+            );
+        }, [placeholder, multiple]);
 
         useImperativeHandle(ref, () => ({
             focus: () => inputRef.current?.focus(),

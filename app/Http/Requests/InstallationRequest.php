@@ -34,7 +34,24 @@ class InstallationRequest extends FormRequest
             'longitude' => 'required|numeric',
             'pays' => 'nullable|string',
             'ville' => 'nullable|string',
-            'created_via' => 'required|string'
+            'created_via' => 'required|string',
+            'photos_installation' => 'nullable|array',
+            'photos_installation.*' => 'image|mimes:jpg,jpeg,png,gif|max:5120',
+        ];
+    }
+
+    public function messages(): array
+    {
+        return [
+            'client_id.exists' => 'Le client sélectionné n\'existe pas.',
+            'code_installation.unique' => 'Ce code d\'installation existe déjà.',
+            'date_installation.before_or_equal' => 'La date d\'installation ne peut pas être dans le futur.',
+            'numero_serie.unique' => 'Ce numéro de série existe déjà.',
+            'latitude.between' => 'La latitude doit être comprise entre -90 et 90.',
+            'longitude.between' => 'La longitude doit être comprise entre -180 et 180.',
+            'photos_installation.image' => 'Le fichier doit être une image.',
+            'photos_installation.mimes' => 'L\'image doit être au format: jpeg, png, jpg ou gif.',
+            'photos_installation.max' => 'L\'image ne doit pas dépasser 2MB.',
         ];
     }
 }

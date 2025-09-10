@@ -1,10 +1,9 @@
-import React, { useEffect, useState, useCallback } from "react";
+import React, { useEffect, useState, useCallback, useRef } from "react";
 import Modal from "../Modal";
 import TextInput from "../inputs/TextInput";
 import InputLabel from "../inputs/InputLabel";
 import { useForm } from "@inertiajs/react";
 import InputError from "../inputs/InputError";
-import { validateFormInstalation } from "../validateForm";
 import {
     createinstallations,
     getinstallations,
@@ -15,6 +14,7 @@ import { getClients } from "@/Services/clientService";
 import { formatDate } from "@/constant";
 import SelectInput from "../inputs/SelectInput";
 import { getLocationDetails } from "@/utils/geoLocationUtils";
+import InputImage from "../inputs/InputImage";
 
 const FormulaireInstallation = ({
     open = true,
@@ -28,9 +28,10 @@ const FormulaireInstallation = ({
     const [validationErrors, setValidationErrors] = useState({});
     const [clients, setClients] = useState([]);
     const [locationLoading, setLocationLoading] = useState(false);
+    const fileInputRef = useRef(null);
 
     const { data, setData, errors, reset } = useForm({
-        client_id: 0,
+        client_id: "",
         date_installation: new Date().toISOString().split("T")[0],
         puissance_pompe: "",
         profondeur_forage: "",
@@ -44,7 +45,7 @@ const FormulaireInstallation = ({
         pays: "",
         ville: "",
         statuts: "installée",
-        created_via: token_data ? "telegram_bot" : "web",
+        photos_installation: [],
     });
 
     const generateNextInstallationCode = useCallback((installations) => {
@@ -101,7 +102,7 @@ const FormulaireInstallation = ({
 
     const clearForm = useCallback(() => {
         setData({
-            client_id: 0,
+            client_id: "",
             date_installation: new Date().toISOString().split("T")[0],
             puissance_pompe: "",
             profondeur_forage: "",
@@ -115,6 +116,7 @@ const FormulaireInstallation = ({
             pays: "",
             ville: "",
             statuts: "installée",
+            photos_installation: [],
         });
         setLoad(false);
         setBtnTitle("Enregistrer");
@@ -133,7 +135,7 @@ const FormulaireInstallation = ({
 
         if (dataModify.id) {
             setData({
-                client_id: dataModify.client_id || 0,
+                client_id: dataModify.client_id || "",
                 date_installation:
                     formatDate(dataModify.date_installation) ||
                     new Date().toISOString().split("T")[0],
@@ -149,62 +151,201 @@ const FormulaireInstallation = ({
                 latitude: dataModify.latitude || "",
                 longitude: dataModify.longitude || "",
                 statuts: dataModify.statuts || "installée",
+                photos_installation: dataModify.photos_installation || [],
+                created_via: dataModify.created_via || "web",
             });
             setBtnTitle("Modifier");
         } else {
             clearForm();
         }
-    }, [dataModify, setData, getClient, clearForm]);
+    }, [dataModify, setData, clearForm]);
 
-    const getLocation = useCallback(async () => {
-        if (!data.latitude || !data.longitude) {
-            console.warn(
-                "Latitude and longitude are required for location lookup"
-            );
-            return;
+    const getLocation = useCallback(
+        async (lat, lng) => {
+            if (!lat || !lng) {
+                console.warn(
+                    "Latitude and longitude are required for location lookup"
+                );
+                return;
+            }
+
+            setLocationLoading(true);
+            try {
+                const loc = await getLocationDetails(lat, lng);
+                setData((prevData) => ({
+                    ...prevData,
+                    ville:
+                        loc.region ||
+                        loc.village ||
+                        loc.adresse ||
+                        prevData.ville,
+                    pays: loc.pays || prevData.pays,
+                }));
+            } catch (error) {
+                console.error("Error getting location:", error);
+            } finally {
+                setLocationLoading(false);
+            }
+        },
+        [setData]
+    );
+
+    const validateForm = (formData) => {
+        const errors = {};
+
+        if (
+            !formData.client_id ||
+            formData.client_id === "" ||
+            formData.client_id === 0
+        ) {
+            errors.client_id = "Veuillez sélectionner un client";
         }
 
-        setLocationLoading(true);
-        try {
-            const loc = await getLocationDetails(data.latitude, data.longitude);
-            setData(
-                "ville",
-                loc.region || loc.village || loc.adresse || prev.ville
-            );
-            setData("pays", loc.pays);
-        } catch (error) {
-            console.error("Error getting location:", error);
-        } finally {
-            setLocationLoading(false);
+        const numericFields = [
+            "puissance_pompe",
+            "profondeur_forage",
+            "debit_nominal",
+            "hmt",
+        ];
+        numericFields.forEach((field) => {
+            if (!formData[field] || formData[field] === "") {
+                errors[field] = `Le champ ${field} est requis`;
+            } else if (
+                isNaN(formData[field]) ||
+                parseFloat(formData[field]) <= 0
+            ) {
+                errors[field] = `Le champ ${field} doit être un nombre positif`;
+            }
+        });
+        const textFields = ["numero_serie", "code_installation"];
+        textFields.forEach((field) => {
+            if (!formData[field] || formData[field].trim() === "") {
+                errors[field] = `Le champ ${field} est requis`;
+            }
+        });
+
+        if (!formData.latitude || formData.latitude === "") {
+            errors.latitude = "La latitude est requise";
+        } else if (
+            isNaN(formData.latitude) ||
+            parseFloat(formData.latitude) < -90 ||
+            parseFloat(formData.latitude) > 90
+        ) {
+            errors.latitude = "La latitude doit être comprise entre -90 et 90";
         }
-    }, [data.latitude, data.longitude, setData]);
+
+        if (!formData.longitude || formData.longitude === "") {
+            errors.longitude = "La longitude est requise";
+        } else if (
+            isNaN(formData.longitude) ||
+            parseFloat(formData.longitude) < -180 ||
+            parseFloat(formData.longitude) > 180
+        ) {
+            errors.longitude =
+                "La longitude doit être comprise entre -180 et 180";
+        }
+
+        if (!formData.date_installation) {
+            errors.date_installation = "La date d'installation est requise";
+        } else if (new Date(formData.date_installation) > new Date()) {
+            errors.date_installation =
+                "La date d'installation ne peut pas être dans le futur";
+        }
+
+        return { isValid: Object.keys(errors).length === 0, errors };
+    };
 
     const submit = async () => {
         const isCreating = btnTitle === "Enregistrer";
 
-        if (isCreating && !validateFormInstalation(data, setValidationErrors)) {
+        const validation = validateForm(data);
+        if (!validation.isValid) {
+            setValidationErrors(validation.errors);
             return;
         }
+
         setLoad(true);
         setBtnTitle("Chargement...");
 
         try {
+            let submitData;
+
+            if (
+                Array.isArray(data.photos_installation) &&
+                data.photos_installation.length > 0
+            ) {
+                submitData = new FormData();
+
+                submitData.append("client_id", parseInt(data.client_id));
+                submitData.append("date_installation", data.date_installation);
+                submitData.append(
+                    "puissance_pompe",
+                    parseFloat(data.puissance_pompe)
+                );
+                submitData.append(
+                    "profondeur_forage",
+                    parseFloat(data.profondeur_forage)
+                );
+                submitData.append(
+                    "debit_nominal",
+                    parseFloat(data.debit_nominal)
+                );
+                submitData.append("numero_serie", data.numero_serie);
+                submitData.append("code_installation", data.code_installation);
+                submitData.append("source_eau", data.source_eau);
+                submitData.append("hmt", parseFloat(data.hmt));
+                submitData.append("latitude", parseFloat(data.latitude));
+                submitData.append("longitude", parseFloat(data.longitude));
+                submitData.append("pays", data.pays || "");
+                submitData.append("ville", data.ville || "");
+                submitData.append("statuts", data.statuts);
+                submitData.append(
+                    "created_via",
+                    token_data ? "telegram_bot" : "web"
+                );
+
+                // ✅ Boucle sur les fichiers
+                data.photos_installation.forEach((file) => {
+                    submitData.append("photos_installation[]", file);
+                });
+            } else {
+                // Si pas de fichier -> JSON classique
+                submitData = {
+                    client_id: parseInt(data.client_id),
+                    date_installation: data.date_installation,
+                    puissance_pompe: parseFloat(data.puissance_pompe),
+                    profondeur_forage: parseFloat(data.profondeur_forage),
+                    debit_nominal: parseFloat(data.debit_nominal),
+                    numero_serie: data.numero_serie,
+                    code_installation: data.code_installation,
+                    source_eau: data.source_eau,
+                    hmt: parseFloat(data.hmt),
+                    latitude: parseFloat(data.latitude),
+                    longitude: parseFloat(data.longitude),
+                    pays: data.pays || "",
+                    ville: data.ville || "",
+                    statuts: data.statuts,
+                    created_via: token_data ? "telegram_bot" : "web",
+                };
+            }
+
             let message;
             if (isCreating) {
-                ({ message } = await createinstallations(data));
+                ({ message } = await createinstallations(submitData));
             } else {
-                ({ message } = await updateinstallations(dataModify.id, data));
+                ({ message } = await updateinstallations(
+                    dataModify.id,
+                    submitData
+                ));
             }
             onClose(message);
         } catch (error) {
             console.error("Error submitting installation:", error);
-
             if (error.response?.data?.errors) {
                 setValidationErrors(error.response.data.errors);
             } else {
                 setValidationErrors({
-                    general:
-                        "Une erreur est survenue lors de la soumission du formulaire.",
+                    general: "Une erreur est survenue lors de la soumission.",
                 });
             }
         } finally {
@@ -214,10 +355,14 @@ const FormulaireInstallation = ({
     };
 
     useEffect(() => {
-        const isValidCoordinates = data.latitude && data.longitude;
-        if (!isValidCoordinates) return;
+        const timeoutId = setTimeout(() => {
+            const isValidCoordinates = data.latitude && data.longitude;
+            if (isValidCoordinates) {
+                getLocation(data.latitude, data.longitude);
+            }
+        }, 500);
 
-        getLocation();
+        return () => clearTimeout(timeoutId);
     }, [data.latitude, data.longitude, getLocation]);
 
     const handleSelect = useCallback(
@@ -236,6 +381,11 @@ const FormulaireInstallation = ({
         [setData, clearFieldError]
     );
 
+    const onLoadFile = (file) => {
+        setData((prevData) => ({ ...prevData, photos_installation: file }));
+        clearFieldError("photos_installation");
+    };
+
     return (
         <Modal show={open} closeable={false} onClose={onClose} maxWidth="4xl">
             <div className="text-2xl font-semibold text-center">
@@ -252,12 +402,12 @@ const FormulaireInstallation = ({
 
             <form className="grid w-full grid-cols-1 gap-4 my-6 sm:grid-cols-3">
                 <div>
-                    <InputLabel htmlFor="client_id" value="Nom client" />
+                    <InputLabel htmlFor="client_id" value="Nom client *" />
                     <InputAutocomplete
                         data={clients}
                         className="block w-full mt-1"
                         onSelect={handleSelect}
-                        defaultValue={data.client_id ?? 0}
+                        defaultValue={data.client_id ?? ""}
                         onFocus={() => clearFieldError("client_id")}
                     />
                     <InputError
@@ -269,7 +419,7 @@ const FormulaireInstallation = ({
                 <div>
                     <InputLabel
                         htmlFor="numero_serie"
-                        value="Numéro de série de la pompe"
+                        value="Numéro de série de la pompe *"
                     />
                     <TextInput
                         id="numero_serie"
@@ -292,7 +442,7 @@ const FormulaireInstallation = ({
                 </div>
 
                 <div>
-                    <InputLabel htmlFor="source_eau" value="Source d'eau" />
+                    <InputLabel htmlFor="source_eau" value="Source d'eau *" />
                     <SelectInput
                         id="source_eau"
                         name="source_eau"
@@ -319,7 +469,7 @@ const FormulaireInstallation = ({
                 </div>
 
                 <div>
-                    <InputLabel htmlFor="hmt" value="HMT (m)" />
+                    <InputLabel htmlFor="hmt" value="HMT (m) *" />
                     <TextInput
                         id="hmt"
                         name="hmt"
@@ -331,6 +481,8 @@ const FormulaireInstallation = ({
                         }
                         required
                         type="number"
+                        min="0"
+                        step="0.01"
                         onFocus={() => clearFieldError("hmt")}
                     />
                     <InputError
@@ -342,7 +494,7 @@ const FormulaireInstallation = ({
                 <div>
                     <InputLabel
                         htmlFor="profondeur_forage"
-                        value="Distance maximale pompe champ PV (m)"
+                        value="Distance maximale pompe champ PV (m) *"
                     />
                     <TextInput
                         id="profondeur_forage"
@@ -358,6 +510,8 @@ const FormulaireInstallation = ({
                         }
                         required
                         type="number"
+                        min="0"
+                        step="0.01"
                         onFocus={() => clearFieldError("profondeur_forage")}
                     />
                     <InputError
@@ -372,7 +526,7 @@ const FormulaireInstallation = ({
                 <div>
                     <InputLabel
                         htmlFor="debit_nominal"
-                        value="Débit nominal (m³/h)"
+                        value="Débit nominal (m³/h) *"
                     />
                     <TextInput
                         id="debit_nominal"
@@ -385,6 +539,8 @@ const FormulaireInstallation = ({
                         }
                         required
                         type="number"
+                        min="0"
+                        step="0.01"
                         onFocus={() => clearFieldError("debit_nominal")}
                     />
                     <InputError
@@ -399,7 +555,7 @@ const FormulaireInstallation = ({
                 <div>
                     <InputLabel
                         htmlFor="puissance_pompe"
-                        value="Puissance crête installé (W)"
+                        value="Puissance crête installé (W) *"
                     />
                     <TextInput
                         id="puissance_pompe"
@@ -412,6 +568,8 @@ const FormulaireInstallation = ({
                         }
                         required
                         type="number"
+                        min="0"
+                        step="0.01"
                         onFocus={() => clearFieldError("puissance_pompe")}
                     />
                     <InputError
@@ -424,7 +582,7 @@ const FormulaireInstallation = ({
                 </div>
 
                 <div>
-                    <InputLabel htmlFor="latitude" value="Latitude" />
+                    <InputLabel htmlFor="latitude" value="Latitude *" />
                     <TextInput
                         id="latitude"
                         name="latitude"
@@ -433,10 +591,13 @@ const FormulaireInstallation = ({
                         autoComplete="latitude"
                         type="number"
                         step="any"
+                        min="-90"
+                        max="90"
                         onChange={(e) =>
                             handleInputChange("latitude", e.target.value)
                         }
                         onFocus={() => clearFieldError("latitude")}
+                        required
                     />
                     <InputError
                         message={validationErrors.latitude || errors.latitude}
@@ -445,7 +606,7 @@ const FormulaireInstallation = ({
                 </div>
 
                 <div>
-                    <InputLabel htmlFor="longitude" value="Longitude" />
+                    <InputLabel htmlFor="longitude" value="Longitude *" />
                     <TextInput
                         id="longitude"
                         name="longitude"
@@ -454,10 +615,13 @@ const FormulaireInstallation = ({
                         autoComplete="longitude"
                         type="number"
                         step="any"
+                        min="-180"
+                        max="180"
                         onChange={(e) =>
                             handleInputChange("longitude", e.target.value)
                         }
                         onFocus={() => clearFieldError("longitude")}
+                        required
                     />
                     <InputError
                         message={validationErrors.longitude || errors.longitude}
@@ -466,20 +630,20 @@ const FormulaireInstallation = ({
                 </div>
 
                 <div>
-                    <InputLabel htmlFor="pays" value="Pays" />
+                    <InputLabel htmlFor="pays" value="Localisation" />
                     <TextInput
                         id="pays"
                         name="pays"
-                        value={data.pays}
+                        value={data.pays + ", " + data.ville}
                         readOnly
-                        className="block w-full mt-1"
+                        className="block w-full mt-1 bg-gray-50"
                         autoComplete="pays"
-                        onChange={(e) =>
-                            handleInputChange("pays", e.target.value)
-                        }
-                        required
-                        onFocus={() => clearFieldError("pays")}
                     />
+                    {locationLoading && (
+                        <p className="mt-1 text-sm text-blue-500">
+                            Recherche de la localisation...
+                        </p>
+                    )}
                     <InputError
                         message={validationErrors.pays || errors.pays}
                         className="mt-2"
@@ -487,22 +651,23 @@ const FormulaireInstallation = ({
                 </div>
 
                 <div>
-                    <InputLabel htmlFor="ville" value="Ville" />
-                    <TextInput
-                        id="ville"
-                        name="ville"
-                        value={data.ville}
-                        readOnly
-                        className="block w-full mt-1"
-                        autoComplete="ville"
-                        onChange={(e) =>
-                            handleInputChange("ville", e.target.value)
-                        }
-                        required
-                        onFocus={() => clearFieldError("ville")}
+                    <InputLabel
+                        htmlFor="photos_installation"
+                        value="Photo de l'installation"
+                    />
+                    <InputImage
+                        ref={fileInputRef}
+                        selectedFiles={data.photos_installation}
+                        onLoadFile={onLoadFile}
+                        onFocus={() => clearFieldError("photos_installation")}
+                        multiple={true}
+                        placeholder="Sélectionner une photo"
                     />
                     <InputError
-                        message={validationErrors.ville || errors.ville}
+                        message={
+                            validationErrors.photos_installation ||
+                            errors.photos_installation
+                        }
                         className="mt-2"
                     />
                 </div>
@@ -510,7 +675,7 @@ const FormulaireInstallation = ({
                 <div>
                     <InputLabel
                         htmlFor="date_installation"
-                        value="Date de l'installation"
+                        value="Date de l'installation *"
                     />
                     <TextInput
                         id="date_installation"
@@ -519,6 +684,7 @@ const FormulaireInstallation = ({
                         className="block w-full mt-1"
                         autoComplete="date_installation"
                         type="date"
+                        max={new Date().toISOString().split("T")[0]}
                         onChange={(e) =>
                             handleInputChange(
                                 "date_installation",

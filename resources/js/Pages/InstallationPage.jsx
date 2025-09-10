@@ -219,6 +219,7 @@ const InstallationPage = () => {
                 setOpen={setOpen}
                 onCloseFormulaire={onCloseFormulaire}
                 dataModify={dataToModify}
+                token_data={null}
             />
             <Snackbar
                 message={alert.message}

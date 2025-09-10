@@ -21,6 +21,7 @@ class Installation extends Model
         'source_eau',
         'hmt',
         'created_via',
+        'photos_installation',
     ];
 
     public function client()

@@ -17,6 +17,7 @@ import Calendar from "@/Components/Calendar";
 import { getmaintenances } from "@/Services/maintenanceService";
 import { all } from "axios";
 import { getinstallations } from "@/Services/installationService";
+import DateCard from "./../Components/dashboard/DateCard";
 
 export default function Dashboard() {
     const [data, setData] = useState({});
@@ -200,6 +201,12 @@ export default function Dashboard() {
                         <div className="absolute inset-0 transition-opacity duration-500 opacity-0 bg-gradient-to-tr group-hover:opacity-30"></div>
                     </Link>
                 ))}
+            </div>
+            <div className="grid grid-cols-1 gap-2 md:grid-cols-4">
+                <div className="w-full h-full bg-white rounded-md shadow-md dark:bg-gray-800"></div>
+                <div className="w-full h-full bg-white rounded-md shadow-md dark:bg-gray-800"></div>
+                <div className="w-full h-full bg-white rounded-md shadow-md dark:bg-gray-800"></div>
+                <DateCard />
             </div>
             <Calendar className="mt-2" events={events} />
             <div className="grid grid-cols-1 gap-2 mt-2 md:grid-cols-3">

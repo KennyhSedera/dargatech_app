@@ -7,6 +7,7 @@ use Illuminate\Http\Request;
 use App\Models\Localisation;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Support\Facades\DB;
+use Log;
 
 class InstallationController extends Controller
 {
@@ -32,6 +33,20 @@ class InstallationController extends Controller
 
             $validatedData = $request->validated();
 
+            Log::info($validatedData);
+
+            $photos = [];
+
+
+            /** @var \Illuminate\Http\Request $request */
+            if ($request->hasFile('photos_installation')) {
+                foreach ($request->file('photos_installation') as $photo) {
+                    $photoName = time() . '_' . uniqid() . '.' . $photo->getClientOriginalExtension();
+                    $photo->move(public_path('uploads/installations'), $photoName);
+                    $photos[] = 'uploads/installations/' . $photoName;
+                }
+            }
+
             $localisation = Localisation::create([
                 'latitude' => $validatedData['latitude'] ?? 0,
                 'longitude' => $validatedData['longitude'] ?? 0,
@@ -51,25 +66,28 @@ class InstallationController extends Controller
                 'localisation_id' => $localisation->id,
                 'source_eau' => $validatedData['source_eau'],
                 'hmt' => $validatedData['hmt'],
-                'created_via' => $validatedData['created_via']
+                'created_via' => $validatedData['created_via'] ?? 'web',
+                'photos_installation' => json_encode($photos), // tableau en JSON
             ]);
 
             DB::commit();
             return response()->json([
-                'message' => 'Installation créé avec succès !',
+                'message' => 'Installation créée avec succès !',
                 'success' => true,
             ], 201);
+
         } catch (\Exception $e) {
             DB::rollBack();
             \Log::error('Erreur création installation: ' . $e->getMessage());
 
             return response()->json([
-                'message' => 'Erreur lors de la création du installation',
+                'message' => 'Erreur lors de la création de l\'installation',
                 'error' => $e->getMessage(),
                 'success' => false
             ], 500);
         }
     }
+
 
     public function show($id)
     {

@@ -4,19 +4,15 @@ import TextInput from "../inputs/TextInput";
 import InputLabel from "../inputs/InputLabel";
 import { useForm } from "@inertiajs/react";
 import InputError from "../inputs/InputError";
-import {
-    getinstallations,
-    getinstallationsenpanne,
-} from "@/Services/installationService";
+import { getinstallations } from "@/Services/installationService";
 import InputAutocomplete from "../inputs/InputAutocomplete ";
-import { formatdate, formatDate } from "@/constant";
+import { formatDate } from "@/constant";
 import {
     createmaintenances,
     updatemaintenances,
 } from "@/Services/maintenanceService";
 import SelectInput from "../inputs/SelectInput";
 import { validateFormMaintenance } from "../validateForm";
-import { getTechniciens } from "@/Services/technicienService";
 import TextArea from "../inputs/TextArea";
 import InputImage from "../inputs/InputImage";
 
