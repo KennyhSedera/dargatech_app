@@ -10,6 +10,16 @@ export const getmaintenances = async () => {
     }
 };
 
+export const getmaintenancebyinstallation = async (id) => {
+    try {
+        const response = await api.get("/maintenance/installation/" + id);
+        return response.data;
+    } catch (error) {
+        console.error("Erreur lors de la récupération des maintenances", error);
+        throw error;
+    }
+};
+
 export const createmaintenances = async (data) => {
     try {
         const response = await api.post("/maintenance", data);

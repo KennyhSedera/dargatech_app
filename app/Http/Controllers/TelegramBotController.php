@@ -73,7 +73,7 @@ class TelegramBotController extends Controller
                         'list_maraicher' => $this->callBackService->handleListFull($chatId),
                         'list_interventions' => $this->callBackService->handleListInterventions($chatId),
                         'list_rapport_maintenance' => $this->callBackService->handleListRapportsMaintenance($chatId),
-                        // 'enregistrer_paiement'  => $this->callBackService->handlePaiement($chatId),
+                        'enregistrer_paiement' => $this->callBackService->handlePaiement($chatId, $userId),
                         // 'generer_recu'          => $this->callBackService->handleRecu($chatId),
                         'help' => $this->callBackService->handleHelp($chatId),
                         'list_detailed' => $this->callBackService->handleListDetailed($chatId),

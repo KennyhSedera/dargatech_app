@@ -202,12 +202,12 @@ export default function Dashboard() {
                     </Link>
                 ))}
             </div>
-            <div className="grid grid-cols-1 gap-2 md:grid-cols-4">
+            {/* <div className="grid grid-cols-1 gap-2 md:grid-cols-4">
                 <div className="w-full h-full bg-white rounded-md shadow-md dark:bg-gray-800"></div>
                 <div className="w-full h-full bg-white rounded-md shadow-md dark:bg-gray-800"></div>
                 <div className="w-full h-full bg-white rounded-md shadow-md dark:bg-gray-800"></div>
                 <DateCard />
-            </div>
+            </div> */}
             <Calendar className="mt-2" events={events} />
             <div className="grid grid-cols-1 gap-2 mt-2 md:grid-cols-3">
                 <BarChart

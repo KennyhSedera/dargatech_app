@@ -21,7 +21,8 @@ class rapportMaintenances extends Model
         'intervention_realisee',
         'verification_fonctionnement',
         'recommandation_client',
-        'date_intervention'
+        'date_intervention',
+        'created_via'
     ];
 
     public function client()

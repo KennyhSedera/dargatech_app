@@ -367,5 +367,10 @@ class CallBackService
             );
         }
     }
+
+    public function handlePaiement($chatId, $userId)
+    {
+        $this->listInstallationService->sendButtonNew($chatId, text: "🌱 Enregistrer une nouvelle paiement \n\n Choississez une option :", userId: $userId, action: 'create_paiement', route: 'telegram.paiement.form', callack_data: 'new_paiement');
+    }
 }
 

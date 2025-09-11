@@ -19,6 +19,8 @@ class Maintenance extends Model
         'description_probleme',
         'date_intervention',
         'status_intervention',
+        'created_via',
+        'photo_probleme'
     ];
 
     public function installation()

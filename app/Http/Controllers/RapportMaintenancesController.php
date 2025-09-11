@@ -35,6 +35,7 @@ class RapportMaintenancesController extends Controller
                 'verification_fonctionnement' => 'required|string',
                 'recommandations' => 'nullable|string',
                 'date_intervention' => 'required|date',
+                'created_via' => 'required|string',
             ]);
 
             if ($validator->fails()) {

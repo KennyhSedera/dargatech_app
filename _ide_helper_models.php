@@ -58,6 +58,7 @@ namespace App\Models{
  * @property \Illuminate\Support\Carbon|null $created_at
  * @property \Illuminate\Support\Carbon|null $updated_at
  * @property string $created_via
+ * @property bool $is_payed
  * @property-read \Illuminate\Database\Eloquent\Collection<int, \App\Models\Alerts> $alert
  * @property-read int|null $alert_count
  * @property-read \Illuminate\Database\Eloquent\Collection<int, \App\Models\Installation> $installations
@@ -74,6 +75,7 @@ namespace App\Models{
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Client whereEmail($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Client whereGenre($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Client whereId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Client whereIsPayed($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Client whereLocalisation($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Client whereNom($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Client wherePrenom($value)
@@ -193,18 +195,20 @@ namespace App\Models{
  * @property string $status_intervention
  * @property \Illuminate\Support\Carbon|null $created_at
  * @property \Illuminate\Support\Carbon|null $updated_at
- * @property string|null $telegram_message_id
+ * @property string $created_via
+ * @property string|null $photo_probleme
  * @property-read \App\Models\Installation $installation
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Maintenance newModelQuery()
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Maintenance newQuery()
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Maintenance query()
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Maintenance whereCreatedAt($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Maintenance whereCreatedVia($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Maintenance whereDateIntervention($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Maintenance whereDescriptionProbleme($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Maintenance whereId($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Maintenance whereInstallationId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Maintenance wherePhotoProbleme($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Maintenance whereStatusIntervention($value)
- * @method static \Illuminate\Database\Eloquent\Builder<static>|Maintenance whereTelegramMessageId($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Maintenance whereTypeIntervention($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Maintenance whereUpdatedAt($value)
  */
@@ -587,6 +591,7 @@ namespace App\Models{
  * @property \Illuminate\Support\Carbon|null $updated_at
  * @property string|null $date_intervention
  * @property string|null $photo_probleme
+ * @property string $created_via
  * @property-read \App\Models\Client|null $client
  * @property-read \App\Models\Maintenance|null $maintenance
  * @property-read \App\Models\Technicien|null $technicien
@@ -596,6 +601,7 @@ namespace App\Models{
  * @method static \Illuminate\Database\Eloquent\Builder<static>|rapportMaintenances whereCauseIdentifiee($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|rapportMaintenances whereClientId($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|rapportMaintenances whereCreatedAt($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|rapportMaintenances whereCreatedVia($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|rapportMaintenances whereDateIntervention($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|rapportMaintenances whereDescriptionPanne($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|rapportMaintenances whereDiagnosticInitial($value)

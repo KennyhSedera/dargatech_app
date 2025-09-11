@@ -14,7 +14,8 @@ import {
 import { Head, router, usePage } from "@inertiajs/react";
 import React, { useEffect, useState } from "react";
 import { GoTrash } from "react-icons/go";
-import { TbEdit } from "react-icons/tb";
+import { RiTelegramFill } from "react-icons/ri";
+import { TbEdit, TbWorldCheck } from "react-icons/tb";
 
 const InterventionPage = () => {
     const [search, setsearch] = useState("");
@@ -116,6 +117,19 @@ const InterventionPage = () => {
                 </span>
             ),
         },
+        {
+            key: "created_via",
+            label: "Via",
+            customRender: (row) => (
+                <span className="text-xl font-medium text-gray-900 dark:text-white">
+                    {row === "web" ? (
+                        <TbWorldCheck />
+                    ) : (
+                        <RiTelegramFill className="text-blue-400" />
+                    )}
+                </span>
+            ),
+        },
     ];
 
     const actions = [
@@ -163,6 +177,7 @@ const InterventionPage = () => {
             description_probleme: el.description_probleme,
             status_intervention: el.status_intervention,
             date_intervention: formatdate(el.date_intervention),
+            created_via: el.created_via,
         }));
 
         setMaintenances(intervention);

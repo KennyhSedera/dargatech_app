@@ -26,7 +26,7 @@ import { sendPdfByEmail } from "@/Services/envoyePdfEmail";
 import { extractDateRange } from "@/utils/getTwoDateUtils";
 import { incrementRecuNumber } from "@/constant";
 
-const FormulairePaiement = () => {
+const FormulairePaiement = ({ token_data, telegramback }) => {
     const { theme, setTheme } = useTheme();
     const contentRef = useRef(null);
     const [showPdf, setShowPdf] = useState(true);
@@ -311,7 +311,9 @@ const FormulairePaiement = () => {
             if (response.success) {
                 setTimeout(async () => {
                     reset();
-                    window.history.back();
+                    token_data
+                        ? telegramback(response.message)
+                        : window.history.back();
 
                     if (client_id && amount && designation) {
                         try {
@@ -366,7 +368,9 @@ const FormulairePaiement = () => {
                 {/* Bouton retour responsive */}
                 <div className="mb-6">
                     <DangerButton
-                        onClick={() => window.history.back()}
+                        onClick={() =>
+                            token_data ? telegramback() : window.history.back()
+                        }
                         className="text-sm capitalize sm:text-base"
                     >
                         ← Retour

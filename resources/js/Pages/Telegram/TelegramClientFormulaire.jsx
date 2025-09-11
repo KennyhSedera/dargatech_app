@@ -3,7 +3,11 @@ import { addFavicon, logo } from "@/constant";
 import { Head, router } from "@inertiajs/react";
 import React, { useEffect } from "react";
 
-const TelegramClientFormulaire = ({ source, token_data, telegram_user_id }) => {
+const TelegramClientFormulaire = ({
+    telegram_bot_username,
+    token_data,
+    telegram_user_id,
+}) => {
     useEffect(() => {
         addFavicon();
     }, []);
@@ -31,7 +35,8 @@ const TelegramClientFormulaire = ({ source, token_data, telegram_user_id }) => {
 
             if (response.ok) {
                 setTimeout(() => {
-                    window.location.href = "https://t.me/dargatech_bot";
+                    window.location.href =
+                        "https://t.me/" + telegram_bot_username;
                 }, 500);
             } else {
                 const errorText = await response.text();

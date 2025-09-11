@@ -6,8 +6,13 @@ import TextArea from "../inputs/TextArea";
 import Modal from "../Modal";
 import InputImage from "../inputs/InputImage";
 import { useForm } from "@inertiajs/react";
-import { createRapportMaintenance } from "@/Services/maintenanceService";
+import {
+    createRapportMaintenance,
+    getmaintenancebyinstallation,
+    getmaintenances,
+} from "@/Services/maintenanceService";
 import Snackbar from "@/Components/Snackbar";
+import InputAutocomplete from "../inputs/InputAutocomplete ";
 
 const FormulaireRapportMaintenance = ({
     open = true,
@@ -15,6 +20,7 @@ const FormulaireRapportMaintenance = ({
     dataModify = {},
     onCloseFormulaire = () => {},
     idTechnicien,
+    token_data,
 }) => {
     const today = new Date().toISOString().split("T")[0];
 
@@ -39,6 +45,23 @@ const FormulaireRapportMaintenance = ({
         message: "",
         type: "info",
     });
+    const [installation, setInstallation] = useState([]);
+
+    const getInstallation = async () => {
+        const [{ data }] = await Promise.all([getmaintenances()]);
+
+        const installationFormat = data
+            .filter((el) => el.status_intervention !== "terminée")
+            .map((el) => ({
+                id: el.installation.id,
+                nom: el.installation.code_installation,
+            }));
+        setInstallation(installationFormat);
+    };
+
+    useEffect(() => {
+        getInstallation();
+    }, []);
 
     useEffect(() => {
         if (dataModify) {
@@ -76,6 +99,15 @@ const FormulaireRapportMaintenance = ({
                 ...validationErrors,
                 photo_probleme: "",
             });
+        }
+    };
+
+    const handleSelect = async (item) => {
+        const { data } = await getmaintenancebyinstallation(item.id);
+        if (data) {
+            setData("maintenanceId", data[0].id);
+            setData("clientId", data[0].installation.client_id);
+            setData("description_probleme", data[0].description_probleme);
         }
     };
 
@@ -122,15 +154,14 @@ const FormulaireRapportMaintenance = ({
         }
 
         data.technicienId = idTechnicien;
+        data.created_via = token_data ? "telegram_bot" : "web";
 
         try {
             setload(true);
 
-            // Vérifier la taille des fichiers avant l'envoi
             if (data.photo_probleme && Array.isArray(data.photo_probleme)) {
                 for (const file of data.photo_probleme) {
                     if (file.size > 5 * 1024 * 1024) {
-                        // 5MB
                         setSnackbar({
                             show: true,
                             message: `Le fichier ${file.name} est trop volumineux (max 5MB)`,
@@ -147,7 +178,6 @@ const FormulaireRapportMaintenance = ({
             formData.append("maintenanceId", data.maintenanceId);
             formData.append("description_probleme", data.description_probleme);
 
-            // Gestion correcte des photos
             if (
                 data.photo_probleme &&
                 Array.isArray(data.photo_probleme) &&
@@ -190,11 +220,96 @@ const FormulaireRapportMaintenance = ({
     };
 
     return (
-        <Modal show={open} closeable={false} onClose={onClose} maxWidth="xl">
+        <Modal show={open} closeable={false} onClose={onClose}>
             <div className="text-2xl font-semibold text-center">
                 Formulaire rapport maintenance
             </div>
-            <form className="grid w-full grid-cols-1 gap-4 my-6 sm:grid-cols-2">
+            <form
+                className={`grid w-full grid-cols-1 gap-4 my-6 ${
+                    token_data ? " sm:grid-cols-3" : " sm:grid-cols-2"
+                }`}
+            >
+                {token_data && (
+                    <div>
+                        <InputLabel
+                            htmlFor="installation_id"
+                            value="Code d'instalation *"
+                        />
+                        <InputAutocomplete
+                            data={installation}
+                            className="block w-full mt-1"
+                            onSelect={handleSelect}
+                            defaultValue={data.installation_id}
+                            onFocus={() =>
+                                setValidationErrors({
+                                    ...validationErrors,
+                                    installation_id: "",
+                                })
+                            }
+                        />
+                        <InputError
+                            message={
+                                validationErrors.installation_id ||
+                                errors.installation_id
+                            }
+                            className="mt-2"
+                        />
+                    </div>
+                )}
+                {token_data && (
+                    <div>
+                        <InputLabel
+                            htmlFor="photo_probleme"
+                            value="Photo du problème (optionnel)"
+                        />
+                        <InputImage
+                            ref={fileInputRef}
+                            selectedFiles={data.photo_probleme}
+                            onLoadFile={onLoadFile}
+                            onFocus={() =>
+                                setValidationErrors({
+                                    ...validationErrors,
+                                    photo_probleme: "",
+                                })
+                            }
+                            multiple={true}
+                            placeholder="Sélectionner des photos"
+                        />
+                    </div>
+                )}
+                {token_data && (
+                    <div>
+                        <InputLabel
+                            htmlFor="date_intervention"
+                            value="Date de l'intervention *"
+                        />
+                        <TextInput
+                            id="date_intervention"
+                            name="date_intervention"
+                            value={data.date_intervention}
+                            className="block w-full mt-1"
+                            autoComplete="off"
+                            onChange={(e) =>
+                                setData("date_intervention", e.target.value)
+                            }
+                            type="date"
+                            required
+                            onFocus={() =>
+                                setFormErrors({
+                                    ...formErrors,
+                                    date_intervention: "",
+                                })
+                            }
+                        />
+                        <InputError
+                            message={
+                                formErrors.date_intervention ||
+                                errors.date_intervention
+                            }
+                            className="mt-2"
+                        />
+                    </div>
+                )}
                 <div>
                     <InputLabel
                         htmlFor="description_probleme"
@@ -385,56 +500,60 @@ const FormulaireRapportMaintenance = ({
                         className="mt-2"
                     />
                 </div>
-                <div>
-                    <InputLabel
-                        htmlFor="photo_probleme"
-                        value="Photo du problème (optionnel)"
-                    />
-                    <InputImage
-                        ref={fileInputRef}
-                        selectedFiles={data.photo_probleme}
-                        onLoadFile={onLoadFile}
-                        onFocus={() =>
-                            setValidationErrors({
-                                ...validationErrors,
-                                photo_probleme: "",
-                            })
-                        }
-                        multiple={true}
-                        placeholder="Sélectionner des photos"
-                    />
-                </div>
-                <div>
-                    <InputLabel
-                        htmlFor="date_intervention"
-                        value="Date de l'intervention *"
-                    />
-                    <TextInput
-                        id="date_intervention"
-                        name="date_intervention"
-                        value={data.date_intervention}
-                        className="block w-full mt-1"
-                        autoComplete="off"
-                        onChange={(e) =>
-                            setData("date_intervention", e.target.value)
-                        }
-                        type="date"
-                        required
-                        onFocus={() =>
-                            setFormErrors({
-                                ...formErrors,
-                                date_intervention: "",
-                            })
-                        }
-                    />
-                    <InputError
-                        message={
-                            formErrors.date_intervention ||
-                            errors.date_intervention
-                        }
-                        className="mt-2"
-                    />
-                </div>
+                {!token_data && (
+                    <div>
+                        <InputLabel
+                            htmlFor="photo_probleme"
+                            value="Photo du problème (optionnel)"
+                        />
+                        <InputImage
+                            ref={fileInputRef}
+                            selectedFiles={data.photo_probleme}
+                            onLoadFile={onLoadFile}
+                            onFocus={() =>
+                                setValidationErrors({
+                                    ...validationErrors,
+                                    photo_probleme: "",
+                                })
+                            }
+                            multiple={true}
+                            placeholder="Sélectionner des photos"
+                        />
+                    </div>
+                )}
+                {!token_data && (
+                    <div>
+                        <InputLabel
+                            htmlFor="date_intervention"
+                            value="Date de l'intervention *"
+                        />
+                        <TextInput
+                            id="date_intervention"
+                            name="date_intervention"
+                            value={data.date_intervention}
+                            className="block w-full mt-1"
+                            autoComplete="off"
+                            onChange={(e) =>
+                                setData("date_intervention", e.target.value)
+                            }
+                            type="date"
+                            required
+                            onFocus={() =>
+                                setFormErrors({
+                                    ...formErrors,
+                                    date_intervention: "",
+                                })
+                            }
+                        />
+                        <InputError
+                            message={
+                                formErrors.date_intervention ||
+                                errors.date_intervention
+                            }
+                            className="mt-2"
+                        />
+                    </div>
+                )}
             </form>
             <div className="flex items-center justify-end gap-4 px-1">
                 <button

@@ -4,7 +4,7 @@ import { Head } from "@inertiajs/react";
 import React, { useEffect } from "react";
 
 const TelegramInstallationFormulaire = ({
-    source,
+    telegram_bot_username,
     token_data,
     telegram_user_id,
 }) => {
@@ -35,7 +35,8 @@ const TelegramInstallationFormulaire = ({
 
             if (response.ok) {
                 setTimeout(() => {
-                    window.location.href = "https://t.me/dargatech_bot";
+                    window.location.href =
+                        "https://t.me/" + telegram_bot_username;
                 }, 500);
             } else {
                 const errorText = await response.text();

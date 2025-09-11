@@ -38,6 +38,7 @@ Route::group(['prefix' => 'api'], function () {
         Route::post('/', [MaintenanceController::class, 'store'])->name('store');
         Route::put('/{id}', [MaintenanceController::class, 'update'])->name('update');
         Route::delete('/{id}', [MaintenanceController::class, 'destroy'])->name('destroy');
+        Route::get('/installation/{id}', [MaintenanceController::class, 'findMaintenanceByInstallation'])->name('findMaintenanceByInstallation');
     });
 
     Route::group(['prefix' => 'rapport-maintenances', 'as' => 'rapport-maintenances.', 'middleware' => 'auth'], function () {

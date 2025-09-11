@@ -16,7 +16,8 @@ class TelegramFormController extends Controller
         return Inertia::render('Telegram/TelegramClientFormulaire', [
             'source' => 'telegram',
             'token_data' => $tokenData,
-            'telegram_user_id' => $tokenData['user_id']
+            'telegram_user_id' => $tokenData['user_id'],
+            'telegram_bot_username' => env('TELEGRAM_BOT_USERNAME'),
         ]);
     }
 
@@ -27,7 +28,8 @@ class TelegramFormController extends Controller
         return Inertia::render('Telegram/TelegramInstallationFormulaire', [
             'source' => 'telegram',
             'token_data' => $tokenData,
-            'telegram_user_id' => $tokenData['user_id']
+            'telegram_user_id' => $tokenData['user_id'],
+            'telegram_bot_username' => env('TELEGRAM_BOT_USERNAME'),
         ]);
     }
 
@@ -38,7 +40,8 @@ class TelegramFormController extends Controller
         return Inertia::render('Telegram/TelegramInterventionFormulaire', [
             'source' => 'telegram',
             'token_data' => $tokenData,
-            'telegram_user_id' => $tokenData['user_id']
+            'telegram_user_id' => $tokenData['user_id'],
+            'telegram_bot_username' => env('TELEGRAM_BOT_USERNAME'),
         ]);
     }
 
@@ -49,7 +52,20 @@ class TelegramFormController extends Controller
         return Inertia::render('Telegram/TelegramRapportFormulaire', [
             'source' => 'telegram',
             'token_data' => $tokenData,
-            'telegram_user_id' => $tokenData['user_id']
+            'telegram_user_id' => $tokenData['user_id'],
+            'telegram_bot_username' => env('TELEGRAM_BOT_USERNAME'),
+        ]);
+    }
+
+    public function paiementForm(Request $request)
+    {
+        $tokenData = $request->get('telegram_token_data');
+
+        return Inertia::render('Telegram/TelegramPaimentFormulaire', [
+            'source' => 'telegram',
+            'token_data' => $tokenData,
+            'telegram_user_id' => $tokenData['user_id'],
+            'telegram_bot_username' => env('TELEGRAM_BOT_USERNAME'),
         ]);
     }
 

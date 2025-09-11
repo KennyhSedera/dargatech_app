@@ -22,6 +22,7 @@ const FormulaireMaintenance = ({
     dataModify = {},
     onCloseFormulaire = () => {},
     idTechnicien,
+    token_data,
 }) => {
     const [btnTitle, setBtnTitle] = useState("Enregistrer");
     const [load, setLoad] = useState(false);
@@ -94,14 +95,33 @@ const FormulaireMaintenance = ({
             return;
         }
 
+        data.created_via = token_data ? "telegram_bot" : "web";
+
+        const formData = new FormData();
+
+        Object.keys(data).forEach((key) => {
+            if (key === "photo_probleme") {
+                if (Array.isArray(data[key]) && data[key].length > 0) {
+                    data[key].forEach((file, index) => {
+                        formData.append("photo_probleme[]", file);
+                    });
+                }
+            } else {
+                formData.append(key, data[key]);
+            }
+        });
+
         setLoad(true);
         setBtnTitle("Chargement...");
         try {
             let message;
             if (btnTitle === "Enregistrer") {
-                ({ message } = await createmaintenances(data));
+                ({ message } = await createmaintenances(formData));
             } else {
-                ({ message } = await updatemaintenances(dataModify.id, data));
+                ({ message } = await updatemaintenances(
+                    dataModify.id,
+                    formData
+                ));
             }
             onClose(message);
         } catch (error) {
@@ -137,7 +157,7 @@ const FormulaireMaintenance = ({
                     ? "Modifier une Intervention"
                     : "Ajouter une Intervention"}
             </div>
-            <form className="grid w-full grid-cols-2 gap-4 px-6 my-6">
+            <form className="grid w-full grid-cols-1 gap-4 px-6 my-6 sm:grid-cols-2">
                 <div>
                     <InputLabel
                         htmlFor="installation_id"
@@ -186,7 +206,7 @@ const FormulaireMaintenance = ({
                     </SelectInput>
                     <InputError message={errors.email} className="mt-2" />
                 </div>
-                <div className="col-span-2">
+                <div className="sm:col-span-2">
                     <InputLabel
                         htmlFor="description_probleme"
                         value="Description du problème"

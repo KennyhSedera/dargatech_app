@@ -28,26 +28,42 @@ class MaintenanceController extends Controller
                 $installation->update(['statuts' => 'en panne']);
             }
 
+            $photos = [];
+
+            /** @var \Illuminate\Http\Request $request */
+            if ($request->hasFile('photo_probleme')) {
+                foreach ($request->file('photo_probleme') as $photo) {
+                    $photoName = time() . '_' . uniqid() . '.' . $photo->getClientOriginalExtension();
+                    $photo->move(public_path('uploads/rapports'), $photoName);
+                    $photos[] = 'uploads/rapports/' . $photoName;
+                }
+            }
+
             $maintenance = Maintenance::create([
-                'installation_id'      => $validatedData['installation_id'],
-                'type_intervention'    => $validatedData['type_intervention'],
+                'installation_id' => $validatedData['installation_id'],
+                'type_intervention' => $validatedData['type_intervention'],
                 'description_probleme' => $validatedData['description_probleme'],
-                'date_intervention'    => $validatedData['date_intervention'],
-                'status_intervention'  => 'en attente',
+                'solutions_apportees' => $validatedData['solutions_apportees'] ?? null,
+                'duree_intervention' => $validatedData['duree_intervention'] ?? null,
+                'technicien_id' => $validatedData['technicien'] ?? null,
+                'date_intervention' => $validatedData['date_intervention'],
+                'status_intervention' => 'en attente',
+                'created_via' => $validatedData['created_via'] ?? 'web',
+                'photo_probleme' => !empty($photos) ? json_encode($photos) : null,
             ]);
 
             DB::commit();
 
             return response()->json([
                 'message' => 'Maintenance enregistrée avec succès',
-                'data'    => $maintenance,
+                'data' => $maintenance,
             ], 201);
         } catch (\Exception $e) {
             DB::rollBack();
 
             return response()->json([
                 'message' => 'Failed to add maintenance.',
-                'error'   => $e->getMessage(),
+                'error' => $e->getMessage(),
                 'success' => false,
             ], 500);
         }
@@ -62,12 +78,12 @@ class MaintenanceController extends Controller
     public function update(MaintenanceRequest $request, $id)
     {
         $validatedData = $request->validated();
-        $data          = Maintenance::findOrFail($id);
+        $data = Maintenance::findOrFail($id);
 
         $data->update([
-            'type_intervention'    => $validatedData['type_intervention'],
+            'type_intervention' => $validatedData['type_intervention'],
             'description_probleme' => $validatedData['description_probleme'],
-            'date_intervention'    => $validatedData['date_intervention'],
+            'date_intervention' => $validatedData['date_intervention'],
         ]);
 
         return response()->json([
@@ -84,5 +100,14 @@ class MaintenanceController extends Controller
             'message' => 'Maintenance supprimé avec succès !',
             'success' => true,
         ], 200);
+    }
+
+    public function findMaintenanceByInstallation($id)
+    {
+        $data = Maintenance::with(['installation'])
+            ->where('installation_id', $id)
+            ->where('status_intervention', '!=', 'terminée')
+            ->get();
+        return response()->json(['data' => $data], 200);
     }
 }
