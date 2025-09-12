@@ -46,7 +46,6 @@ const FormulairePaiement = ({ token_data, telegramback }) => {
     });
     const [email, setEmail] = useState("");
 
-    // Extract the ID from the URL
     const getIdFromUrl = () => {
         const urlParams = new URLSearchParams(window.location.search);
         return urlParams.get("id");
@@ -159,7 +158,6 @@ const FormulairePaiement = ({ token_data, telegramback }) => {
         }
     };
 
-    // Fetch payment data if ID is provided
     const fetchPaiementData = async (id) => {
         try {
             const response = await getPaiement(id);
@@ -338,7 +336,15 @@ const FormulairePaiement = ({ token_data, telegramback }) => {
                     }
                 }, 3000);
 
-                sendPdfByEmail(data, email);
+                const telegram_chat_id = token_data ? token_data.chat_id : null;
+                const res = await sendPdfByEmail(data, email, telegram_chat_id);
+                if (res.success) {
+                    alert(res.message);
+                    token_data
+                        ? telegramback(res.message)
+                        : window.history.back();
+                    s;
+                }
             }
         } catch (error) {
             console.error("Error submitting payment:", error);

@@ -21,7 +21,7 @@
         .header {
             width: 100%;
             margin-bottom: 30px;
-            overflow: hidden; 
+            overflow: hidden;
         }
         .logo-container {
             float: left;
@@ -61,7 +61,7 @@
             width: 100%;
             clear: both;
             margin-bottom: 24px;
-            overflow: hidden; 
+            overflow: hidden;
         }
         .info-section {
             margin-bottom: 10px;
@@ -162,7 +162,7 @@
 <body>
     <div class="container">
         <!-- En-tête avec logo et informations du document -->
-        <div class="header clearfix">
+        <div class="clearfix header">
             <div class="logo-container">
                 <div class="logo-inner">
                     <img src="<?php echo e(public_path('images/logo.png')); ?>" alt="logo" class="logo">
@@ -194,7 +194,7 @@
         </div>
 
         <!-- Informations vendeur et acheteur côte à côte -->
-        <div class="info-sections clearfix">
+        <div class="clearfix info-sections">
             <div class="info-section info-section-left">
                 <div class="info-header">
                     VENDEUR:
@@ -219,7 +219,7 @@
 
         <!-- Objet du document -->
         <div class="doc-title">
-            SISAM - versement Loyer de la période du <?php echo e($data['periode_couverte']); ?>
+            SISAM - <?php echo e($data['description'] || $data['observation']); ?>
 
         </div>
 
@@ -265,7 +265,7 @@
         </div>
 
         <!-- Résumé totaux -->
-        <div class="total-summary clearfix">
+        <div class="clearfix total-summary">
             <table class="total-table">
                 <tr>
                     <td class="text-right">Total HT</td>
@@ -323,4 +323,5 @@
         </div>
     </div>
 </body>
-</html><?php /**PATH D:\ENI\Stage\dargatech_app\resources\views/pdf/paiement.blade.php ENDPATH**/ ?>
+</html>
+<?php /**PATH D:\ENI\Stage\dargatech_app\resources\views/pdf/paiement.blade.php ENDPATH**/ ?>

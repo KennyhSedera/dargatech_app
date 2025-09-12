@@ -46,7 +46,7 @@ class PaiementController extends Controller
                 'ville_vendeur' => 'nullable|string',
                 'pays_vendeur' => 'nullable|string',
             ]);
-    
+
             if ($validator->fails()) {
                 return response()->json([
                     'message' => 'Erreur de validation',
@@ -54,31 +54,31 @@ class PaiementController extends Controller
                     'success' => false
                 ], 422);
             }
-    
+
             $paiement = Paiement::create($validator->validated());
-    
+
             if ($request->has('produits')) {
                 foreach ($request->produits as $produit) {
                     Products::create([
                         'designation' => $produit['designation'],
                         'prix_unitaire' => $produit['prix_unitaire'],
                         'reference' => $produit['reference'],
-                        'quantite' => $produit['quantite'],                  
-                        'unite' => $produit['unite'],                           
-                        'tva' => $produit['tva'],                           
+                        'quantite' => $produit['quantite'],
+                        'unite' => $produit['unite'],
+                        'tva' => $produit['tva'],
                         'total_ht' => $produit['total_ht'],
                         'total_ttc' => $produit['total_ttc'],
                         'paiement_id' => $paiement->id,
                     ]);
                 }
             }
-    
+
             return response()->json([
                 'message' => 'Paiement ajouté avec succès !',
                 'paiement' => $paiement,
                 'success' => true,
             ], 201);
-    
+
         } catch (\Exception $e) {
             return response()->json([
                 'message' => 'Erreur lors de la création du paiement',
@@ -88,7 +88,7 @@ class PaiementController extends Controller
         }
     }
 
-    public function findLastPaiement() 
+    public function findLastPaiement()
     {
         $data = Paiement::with('client')->latest()->first();
 
@@ -112,7 +112,7 @@ class PaiementController extends Controller
     {
         $paiement = Paiement::find($id);
 
-        if (! $paiement) {
+        if (!$paiement) {
             return response()->json([
                 'message' => 'Paiement non trouvé.',
                 'success' => false
@@ -185,7 +185,7 @@ class PaiementController extends Controller
     {
         $data = Paiement::find($id);
 
-        if (! $data) {
+        if (!$data) {
             return response()->json([
                 'message' => 'Paiement non trouvé.',
             ], 404);

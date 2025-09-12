@@ -6,61 +6,27 @@ use Illuminate\Http\Request;
 use PDF;
 use Mail;
 use App\Mail\PaiementPdfMail;
-use Illuminate\Support\Facades\View;
+use Illuminate\Support\Facades\Http;
+use Illuminate\Support\Facades\Log;
 
 class PaiementPdfController extends Controller
 {
-    /**
-     * Générer et envoyer le PDF par email
-     * 
-     * @param Request $request
-     * @return \Illuminate\Http\JsonResponse
-     */
     public function generateAndSendPdf(Request $request)
     {
-        // Valider les données reçues
-        $validatedData = $request->validate([
-            'email' => 'required|email',
-            'data' => 'required|array',
-            'data.numero' => 'required|string',
-            'data.lieu_creation' => 'required|string',
-            'data.date_creation' => 'required|date',
-            'data.date' => 'required|date',
-            'data.nom_vendeur' => 'required|string',
-            'data.ville_vendeur' => 'required|string',
-            'data.pays_vendeur' => 'required|string',
-            'data.civilite_acheteur' => 'required|string',
-            'data.nom_acheteur' => 'required|string',
-            'data.ville_acheteur' => 'required|string',
-            'data.pays_acheteur' => 'required|string',
-            'data.periode_couverte' => 'required|string',
-            'data.produits' => 'required|array',
-            'data.produits.*.designation' => 'nullable|string',
-            'data.produits.*.reference' => 'nullable|string',
-            'data.produits.*.quantite' => 'nullable|numeric',
-            'data.produits.*.prix_unitaire' => 'nullable|numeric',
-            'data.produits.*.tva' => 'nullable|numeric',
-            'data.montant_paye' => 'nullable|string',
-            'data.mode_paiement' => 'nullable|string',
-        ]);
-
-        // Compléter les données avec les informations bancaires
         $pdfData = $request->data;
         $pdfData['banque'] = 'TG055';
         $pdfData['iban'] = 'TG53TG0550271314144776000172';
 
-        // Calculer les totaux
         $totalHT = 0;
         $totalTVA = 0;
 
         foreach ($pdfData['produits'] as &$produit) {
             $produitHT = $produit['quantite'] * $produit['prix_unitaire'];
             $produitTVA = $produitHT * ($produit['tva'] / 100);
-            
+
             $totalHT += $produitHT;
             $totalTVA += $produitTVA;
-            
-            // Convertir en format lisible pour l'affichage
+
             $produit['total_ht'] = $produitHT;
             $produit['montant_tva'] = $produitTVA;
             $produit['total_ttc'] = $produitHT + $produitTVA;
@@ -70,51 +36,101 @@ class PaiementPdfController extends Controller
         $pdfData['total_tva'] = $totalTVA;
         $pdfData['total_ttc'] = $totalHT + $totalTVA;
 
-        // Générer le PDF
         $pdf = PDF::loadView('pdf.paiement', ['data' => $pdfData]);
-        
-        // Options de PDF
+
         $pdf->setPaper('a4');
         $pdf->setOption('margin-top', 10);
         $pdf->setOption('margin-bottom', 10);
         $pdf->setOption('margin-right', 10);
         $pdf->setOption('margin-left', 10);
 
-        // Enregistrer temporairement le PDF
         $filename = 'recu_paiement_' . $pdfData['numero'] . '.pdf';
         $pdfPath = storage_path('app/public/temp/' . $filename);
-        
-        // Assurer que le répertoire existe
+
         if (!file_exists(storage_path('app/public/temp'))) {
             mkdir(storage_path('app/public/temp'), 0755, true);
         }
-        
+
         $pdf->save($pdfPath);
 
-        // Envoyer le PDF par email
-        try {
-            Mail::to($request->email)
-                ->send(new PaiementPdfMail($pdfPath, $pdfData, $filename));
-            
-            // Supprimer le fichier temporaire après envoi
-            if (file_exists($pdfPath)) {
-                unlink($pdfPath);
+        $emailSent = false;
+        $telegramSent = false;
+
+        if (!empty($request->email)) {
+            try {
+                Mail::to($request->email)
+                    ->send(new PaiementPdfMail($pdfPath, $pdfData, $filename));
+                $emailSent = true;
+            } catch (\Exception $e) {
+                Log::error('Erreur envoi email: ' . $e->getMessage());
             }
-            
+        }
+
+        if (!empty($request->telegram_chat_id)) {
+            try {
+                $telegramSent = $this->sendPdfToTelegram($pdfPath, $filename, $request->telegram_chat_id, $pdfData);
+            } catch (\Exception $e) {
+                Log::error('Erreur envoi Telegram: ' . $e->getMessage());
+            }
+        }
+
+        if (file_exists(filename: $pdfPath)) {
+            unlink($pdfPath);
+        }
+
+        if ($emailSent || $telegramSent) {
+            $message = 'Le reçu de paiement a été envoyé avec succès';
+            if ($emailSent && $telegramSent) {
+                $message .= ' par email à ' . $request->email . ' et par Telegram.';
+            } elseif ($emailSent) {
+                $message .= ' par email à ' . $request->email . '.';
+            } elseif ($telegramSent) {
+                $message .= ' par Telegram.';
+            }
+
             return response()->json([
                 'success' => true,
-                'message' => 'Le reçu de paiement a été envoyé avec succès à ' . $request->email
+                'message' => $message,
+                'email_sent' => $emailSent,
+                'telegram_sent' => $telegramSent
             ]);
-        } catch (\Exception $e) {
-            // Supprimer le fichier temporaire en cas d'erreur
-            if (file_exists($pdfPath)) {
-                unlink($pdfPath);
-            }
-            
+        } else {
             return response()->json([
                 'success' => false,
-                'message' => 'Erreur lors de l\'envoi de l\'email: ' . $e->getMessage()
+                'message' => 'Erreur lors de l\'envoi du reçu de paiement.'
             ], 500);
         }
+    }
+
+    private function sendPdfToTelegram($pdfPath, $filename, $chatId, $pdfData)
+    {
+        $botToken = env('TELEGRAM_BOT_TOKEN');
+
+        if (!$botToken) {
+            throw new \Exception('Token Telegram non configuré');
+        }
+
+        $telegramApiUrl = "https://api.telegram.org/bot{$botToken}/sendDocument";
+
+        $caption = "📄 Reçu de paiement N° {$pdfData['numero']}\n";
+        $caption .= "💰 Total TTC: " . number_format($pdfData['total_ttc'], 2, ',', ' ') . " €\n";
+        $caption .= "📅 Date: " . date('d/m/Y');
+
+        $response = Http::attach(
+            'document',
+            file_get_contents($pdfPath),
+            $filename
+        )->post($telegramApiUrl, [
+                    'chat_id' => $chatId,
+                    'caption' => $caption,
+                    'parse_mode' => 'HTML'
+                ]);
+
+        if (!$response->successful()) {
+            $errorMessage = $response->json()['description'] ?? 'Erreur inconnue';
+            throw new \Exception('Erreur API Telegram: ' . $errorMessage);
+        }
+
+        return true;
     }
 }

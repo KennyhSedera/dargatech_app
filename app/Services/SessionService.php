@@ -16,6 +16,7 @@ class SessionService
     protected NewInstallationService $newInstallationService;
     protected ListInstallationService $listInstallationService;
     protected SearchServices $searchServices;
+    protected PaiementService $paiementService;
 
     public function __construct(
         SendMessageService $sendMessage,
@@ -24,6 +25,7 @@ class SessionService
         NewInstallationService $newInstallationService,
         ListInstallationService $listInstallationService,
         SearchServices $searchServices,
+        PaiementService $paiementService,
     ) {
         $this->sendMessage = $sendMessage;
         $this->maraicherService = $maraicherService;
@@ -31,6 +33,7 @@ class SessionService
         $this->newInstallationService = $newInstallationService;
         $this->listInstallationService = $listInstallationService;
         $this->searchServices = $searchServices;
+        $this->paiementService = $paiementService;
     }
 
     public function handleActiveSession($activeSession, $messageText, $userId, $chatId)
@@ -61,6 +64,10 @@ class SessionService
 
                 case 'search_rapport':
                     $this->handleSearchSession($activeSession, $messageText, $data, $userId, $chatId);
+                    break;
+
+                case 'generate_recu':
+                    $this->handleGenerateRecuSession($messageText, $userId, $chatId);
                     break;
 
                 default:
@@ -109,6 +116,10 @@ class SessionService
         }
     }
 
+    private function handleGenerateRecuSession($messageText, $userId, $chatId)
+    {
+        $this->paiementService->handleGenerateRecu($messageText, $userId, $chatId);
+    }
     public function cancelSession($userId, $command)
     {
         try {

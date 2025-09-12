@@ -12,6 +12,8 @@ const TelegramPaimentFormulaire = ({
         addFavicon();
     }, []);
 
+    console.log(token_data);
+
     const handleTelegramGoback = async (message) => {
         if (!message) {
             message = "❌ Enregistrement paiement annulé";
