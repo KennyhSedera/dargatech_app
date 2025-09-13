@@ -6,7 +6,7 @@ import InputError from "@/Components/inputs/InputError";
 import useTheme from "@/hooks/useTheme";
 import DangerButton from "@/Components/buttons/DangerButton";
 import { getType_paiements } from "@/Services/TypePaiementService";
-import { getClients } from "@/Services/clientService";
+import { getClient, getClients } from "@/Services/clientService";
 import PrimaryButton from "@/Components/buttons/PrimaryButton";
 import DesignationComponent from "@/Components/Paiement/DesignationComponent";
 import InfoPaiement from "@/Components/Paiement/InfoPaiement";
@@ -53,6 +53,11 @@ const FormulairePaiement = ({ token_data, telegramback }) => {
 
     const paiementId = getIdFromUrl();
 
+    useEffect(() => {
+        setTheme(theme || "light");
+        getType();
+    }, [theme]);
+
     const { data, setData, errors, reset } = useForm({
         type: "recu",
         numero: "RECU_N_0001",
@@ -86,26 +91,6 @@ const FormulairePaiement = ({ token_data, telegramback }) => {
     });
 
     useEffect(() => {
-        let client = null;
-        if (client_id) {
-            client =
-                clients.find((el) => el.id === parseInt(client_id)) ||
-                clients.find((el) => el.id === client_id);
-        }
-
-        setData((prevData) => ({
-            ...prevData,
-            client_id: client_id,
-            nom_acheteur: client?.nom_famille,
-            prenom_acheteur: client?.nom,
-            civilite_acheteur: client?.genre === "Homme" ? "Mr." : "Mme.",
-            ville_acheteur: client?.ville,
-            pays_acheteur: client?.pays,
-            num_rue_acheteur: client?.village || client?.quartier,
-        }));
-    }, [client_id, clients]);
-
-    useEffect(() => {
         setData((prevData) => ({
             ...prevData,
             produits: [
@@ -123,7 +108,7 @@ const FormulairePaiement = ({ token_data, telegramback }) => {
             ],
             montant_paye: amount,
             description: designation,
-            objet: designation,
+            objet: "Frais de l'installation du pompage solaire.",
             date_paiement: new Date().toISOString().split("T")[0],
             date_echeance: new Date().toISOString().split("T")[0],
         }));
@@ -233,16 +218,37 @@ const FormulairePaiement = ({ token_data, telegramback }) => {
         }
     };
 
-    useEffect(() => {
-        setTheme(theme || "light");
-        getType();
-    }, [theme]);
+    const fetchClient = async (id) => {
+        try {
+            const { client } = await getClient(id);
+            console.log(client);
+
+            if (client) {
+                setData({
+                    ...data,
+                    client_id: id,
+                    nom_acheteur: client.nom,
+                    prenom_acheteur: client.prenom,
+                    civilite_acheteur:
+                        client.genre === "Homme" ? "Mr." : "Mme.",
+                    ville_acheteur: client.localisation,
+                    pays_acheteur: "Togo",
+                    num_rue_acheteur: client.localisation,
+                });
+            }
+        } catch (error) {
+            console.error("Error fetching client:", error);
+            return null;
+        }
+    };
 
     useEffect(() => {
         if (clients.length > 0 && paiementId) {
             fetchPaiementData(paiementId);
+        } else if (clients.length > 0 && client_id) {
+            fetchClient(client_id);
         }
-    }, [clients, paiementId]);
+    }, [clients, paiementId, client_id]);
 
     const getLastNumero = async () => {
         const { data } = await getLastPaiements();
@@ -316,15 +322,9 @@ const FormulairePaiement = ({ token_data, telegramback }) => {
                     if (client_id && amount && designation) {
                         try {
                             const res = await fetch(
-                                `/api/clients/${client_id}/is-paid`,
+                                `/api/paiement/client/${client_id}`,
                                 {
-                                    method: "PUT",
-                                    headers: {
-                                        "Content-Type": "application/json",
-                                    },
-                                    body: JSON.stringify({
-                                        is_payed: true,
-                                    }),
+                                    method: "GET",
                                 }
                             );
 
@@ -337,13 +337,12 @@ const FormulairePaiement = ({ token_data, telegramback }) => {
                 }, 3000);
 
                 const telegram_chat_id = token_data ? token_data.chat_id : null;
+
                 const res = await sendPdfByEmail(data, email, telegram_chat_id);
                 if (res.success) {
-                    alert(res.message);
                     token_data
                         ? telegramback(res.message)
                         : window.history.back();
-                    s;
                 }
             }
         } catch (error) {

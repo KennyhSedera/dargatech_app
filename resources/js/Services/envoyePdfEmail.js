@@ -1,11 +1,6 @@
 import axios from "axios";
 
-export const sendPdfByEmail = async (
-    pdfData,
-    email,
-    telegram_chat_id,
-    token_data
-) => {
+export const sendPdfByEmail = async (pdfData, email, telegram_chat_id) => {
     try {
         const response = await axios.post(
             "/api/paiement/generate-and-send-pdf",

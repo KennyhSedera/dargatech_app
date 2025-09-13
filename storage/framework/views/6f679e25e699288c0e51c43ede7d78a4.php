@@ -219,7 +219,7 @@
 
         <!-- Objet du document -->
         <div class="doc-title">
-            SISAM - <?php echo e($data['description'] || $data['observation']); ?>
+            SISAM - <?php echo e($data['description'] ?? $data['observation']); ?>
 
         </div>
 

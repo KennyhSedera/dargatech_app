@@ -154,13 +154,13 @@ class ClientController extends Controller
         }
     }
 
-    public function updateIsPaid(Request $request, $id)
+    public function updateIsPaid($id)
     {
         $client = Client::findOrFail($id);
         $client->update([
-            'is_payed' => filter_var($request->input('is_payed'), FILTER_VALIDATE_BOOLEAN),
+            'is_payed' => true,
         ]);
 
-        return response()->json(['client' => $client]);
+        return response()->json(['client' => $client, 'success' => true, 'message' => 'Client mis à jour avec succès !']);
     }
 }

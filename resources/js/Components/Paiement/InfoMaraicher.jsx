@@ -52,7 +52,7 @@ const InfoMaraicher = ({
                             data={clients}
                             className="block w-full mt-1"
                             onSelect={handleSelect}
-                            defaultValue={data.client_id}
+                            defaultValue={data.client_id || 1}
                             onFocus={() =>
                                 setValidationErrors({
                                     ...validationErrors,

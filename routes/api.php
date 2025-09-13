@@ -85,6 +85,7 @@ Route::group(['prefix' => 'api'], function () {
         Route::post('/', [PaiementController::class, 'store'])->name('store');
         Route::put('/{id}', [PaiementController::class, 'update'])->name('update');
         Route::delete('/{id}', [PaiementController::class, 'destroy'])->name('destroy');
+        Route::get('/client/{id}', [ClientController::class, 'updateIsPaid'])->name('client-is-paid');
     });
 
     Route::group(['prefix' => 'rapport', 'as' => 'rapport.', 'middleware' => 'auth'], function () {

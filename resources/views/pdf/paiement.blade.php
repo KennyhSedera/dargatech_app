@@ -216,8 +216,7 @@
 
         <!-- Objet du document -->
         <div class="doc-title">
-            SISAM - {{ $data['description'] }} <br>
-            {{ $data['observation'] }}
+            SISAM - {{ $data['description'] ?? $data['observation'] }}
         </div>
 
         <!-- Tableau des produits -->
