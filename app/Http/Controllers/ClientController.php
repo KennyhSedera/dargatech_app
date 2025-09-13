@@ -13,13 +13,15 @@ class ClientController extends Controller
 {
     public function index()
     {
-        $clients = Client::all();
+        $clients = Client::orderBy('created_at', 'asc')->get();
         return response()->json(['clients' => $clients]);
     }
 
     public function getclientinstallation()
     {
-        $clients = Client::with('installations')->get();
+        $clients = Client::with('installations')
+            ->orderBy('created_at', 'asc')
+            ->get();
         return response()->json(['clients' => $clients]);
     }
 

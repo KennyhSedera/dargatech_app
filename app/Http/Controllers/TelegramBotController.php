@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Profile;
 use App\Models\Technicien;
 use App\Services\CallBackService;
 use App\Services\SendMessageService;
@@ -46,11 +47,19 @@ class TelegramBotController extends Controller
 
             $username = $update->getMessage()->getChat()->first_name . ' ' . $update->getMessage()->getChat()->last_name;
 
+            $existingCompte = null;
+
             $existingCompte = Technicien::where('telegram_username', $username)->first();
+
+            if (!$existingCompte) {
+                $existingCompte = Profile::where('telegram_username', $username)->first();
+            }
+
             if ($existingCompte) {
                 if (!$existingCompte->telegram_user_id) {
                     $existingCompte->update(['telegram_user_id' => $chatId]);
                 }
+
                 if (!$existingCompte->bot_active) {
                     $this->sendMessageService->sendErrorMessage($chatId, "🚫 Votre accès à cette bot est désactivé \n Veuillez contacter les administrateurs.");
                 }

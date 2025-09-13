@@ -15,6 +15,9 @@ class Profile extends Model
         'adress',
         'speciality',
         'photo',
+        'telegram_username',
+        'telegram_user_id',
+        'bot_active'
     ];
 
     public function user()

@@ -15,7 +15,7 @@ class LocalisationController extends Controller
 
     public function store(LocalisationRequest $request)
     {
-        Localisation::create($request->validate());
+        Localisation::create($request->validated());
 
         return response()->json([
             'message' => 'Localisation ajouté avec succès !',
@@ -27,7 +27,7 @@ class LocalisationController extends Controller
     {
         $data = Localisation::find($id);
 
-        if (! $data) {
+        if (!$data) {
             return response()->json([
                 'message' => 'Localisation non trouvé.',
             ], 404);
@@ -40,13 +40,13 @@ class LocalisationController extends Controller
     {
         $data = Localisation::find($id);
 
-        if (! $data) {
+        if (!$data) {
             return response()->json([
                 'message' => 'Localisation non trouvé.',
             ], 404);
         }
 
-        $data->update($request->validate());
+        $data->update($request->validated());
 
         return response()->json([
             'message' => 'Localisation modifié avec succès !',
@@ -58,7 +58,7 @@ class LocalisationController extends Controller
     {
         $data = Localisation::find($id);
 
-        if (! $data) {
+        if (!$data) {
             return response()->json([
                 'message' => 'Localisation non trouvé.',
             ], 404);

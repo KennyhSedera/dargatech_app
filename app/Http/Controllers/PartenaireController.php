@@ -17,7 +17,9 @@ class PartenaireController extends Controller
      */
     public function index()
     {
-        $partenaires = Partenaire::with('user')->get();
+        $partenaires = Partenaire::with('user')
+            ->orderBy('created_at', 'asc')
+            ->get();
         return response()->json($partenaires);
     }
 
@@ -48,14 +50,14 @@ class PartenaireController extends Controller
             'password' => Hash::make($password),
             'user_role' => 3,
         ]);
-        
+
         $logoPath = null;
         if ($request->hasFile('logo')) {
             $logoName = time() . '-' . $request->logo->getClientOriginalName();
             $request->logo->move(public_path('logos'), $logoName);
             $logoPath = '/logos/' . $logoName;
         }
-        
+
         $partenaire = Partenaire::create([
             'logo' => $logoPath,
             'user_id' => $user->id,
@@ -78,11 +80,11 @@ class PartenaireController extends Controller
         ));
 
         return response()->json([
-            'message' => 'Utilisateur et partenaire créés avec succès', 
+            'message' => 'Utilisateur et partenaire créés avec succès',
             'user' => $user,
-            'partenaire' => $partenaire, 
+            'partenaire' => $partenaire,
             'success' => true
-        ]); 
+        ]);
     }
 
     /**

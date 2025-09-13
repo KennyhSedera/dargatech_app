@@ -15,6 +15,7 @@ use Illuminate\Support\Facades\Hash;
 use Inertia\Inertia;
 use Inertia\Response;
 use Illuminate\View\View;
+use Log;
 
 class ProfileController extends Controller
 {
@@ -35,6 +36,7 @@ class ProfileController extends Controller
      */
     public function update(ProfileUpdateRequest $request): RedirectResponse
     {
+        /** @var \Illuminate\Http\Request $request */
         $request->user()->fill($request->validated());
 
         if ($request->user()->isDirty('email')) {
@@ -43,15 +45,14 @@ class ProfileController extends Controller
 
         $request->user()->save();
 
-        // Mise à jour ou création du profil
         $profileData = $request->validate([
             'genre' => 'nullable|string|max:255',
             'contact' => 'nullable|string|max:255',
             'adress' => 'nullable|string|max:255',
             'speciality' => 'nullable|string|max:255',
+            'telegram_username' => 'nullable|string|max:255',
         ]);
 
-        // Mise à jour ou création du profil
         $technicienData = $request->validate([
             'genre' => 'nullable|string|max:255',
             'contact' => 'nullable|string|max:255',
@@ -70,11 +71,11 @@ class ProfileController extends Controller
         ]);
 
         if ($request->user()->partenaire) {
-            $request->user()->partenaire->update($partenaireData);
+            $request->user()->partenaire->update(attributes: $partenaireData);
         }
 
         if ($request->user()->technicien) {
-            $request->user()->technicien->update($technicienData);
+            $request->user()->technicien->update(attributes: $technicienData);
         }
 
         // Mise à jour ou création du profil
@@ -91,6 +92,7 @@ class ProfileController extends Controller
     {
         $validated = $request->validated();
 
+        /** @var \Illuminate\Http\Request $request */
         $request->user()->update([
             'password' => Hash::make($validated['password']),
         ]);

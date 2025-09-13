@@ -18,25 +18,27 @@ class AdminController extends Controller
         DB::beginTransaction();
 
         $request->validate([
-            'name'      => 'required|string',
-            'email'     => 'required|email|unique:users,email',
-            'contact'   => 'required|string',
-            'adress'    => 'required|string',
+            'name' => 'required|string',
+            'email' => 'required|email|unique:users,email',
+            'contact' => 'required|string',
+            'adress' => 'required|string',
+            'telegram_username' => 'required|string'
         ]);
 
         $password = Str::random(10);
 
         try {
             $user = User::create([
-                'name'      => $request->name,
-                'email'     => $request->email,
-                'password'  => Hash::make($password),
+                'name' => $request->name,
+                'email' => $request->email,
+                'password' => Hash::make($password),
                 'user_role' => 1,
             ]);
 
             $user->profile()->create([
-                'contact'    => $request->contact,
-                'adress'     => $request->adress,
+                'contact' => $request->contact,
+                'adress' => $request->adress,
+                'telegram_username' => $request->telegram_username
             ]);
 
             DB::commit();
@@ -51,7 +53,7 @@ class AdminController extends Controller
                 ));
             } catch (\Exception $emailError) {
                 Log::error('Erreur lors de l\'envoi de l\'email au admin: ' . $emailError->getMessage());
-                
+
                 return response()->json([
                     'message' => 'Admin créé avec succès, mais l\'email n\'a pas pu être envoyé',
                     'user' => $user->load('profile'),
@@ -67,7 +69,7 @@ class AdminController extends Controller
         } catch (\Exception $e) {
             DB::rollBack();
             Log::error('Erreur lors de la création du admin: ' . $e->getMessage());
-            
+
             return response()->json([
                 'message' => 'Erreur lors de la création du admin',
                 'error' => $e->getMessage()

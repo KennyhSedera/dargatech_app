@@ -402,17 +402,23 @@ namespace App\Models{
  * @property string|null $photo
  * @property \Illuminate\Support\Carbon|null $created_at
  * @property \Illuminate\Support\Carbon|null $updated_at
+ * @property string|null $telegram_user_id
+ * @property string|null $telegram_username
+ * @property bool $bot_active
  * @property-read \App\Models\User $user
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Profile newModelQuery()
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Profile newQuery()
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Profile query()
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Profile whereAdress($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Profile whereBotActive($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Profile whereContact($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Profile whereCreatedAt($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Profile whereGenre($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Profile whereId($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Profile wherePhoto($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Profile whereSpeciality($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Profile whereTelegramUserId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Profile whereTelegramUsername($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Profile whereUpdatedAt($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Profile whereUserId($value)
  */

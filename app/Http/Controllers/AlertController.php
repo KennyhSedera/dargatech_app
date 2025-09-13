@@ -18,9 +18,9 @@ class AlertController extends Controller
     public function store(Request $request)
     {
         $data = $request->validate([
-            'client_id'       => 'required|numeric|min:0',
-            'type_alert'      => 'required|string',
-            'message'         => 'required|string',
+            'client_id' => 'required|numeric|min:0',
+            'type_alert' => 'required|string',
+            'message' => 'required|string',
             'installation_id' => 'required|numeric|min:0',
         ]);
 
@@ -44,7 +44,7 @@ class AlertController extends Controller
 
             return response()->json([
                 'message' => 'Failed to add alert.',
-                'error'   => $e->getMessage(),
+                'error' => $e->getMessage(),
                 'success' => false,
             ], 500);
         }
@@ -54,7 +54,7 @@ class AlertController extends Controller
     {
         $data = Alerts::find($id);
 
-        if (! $data) {
+        if (!$data) {
             return response()->json([
                 'message' => 'Alert non trouvé.',
             ], 404);
@@ -67,16 +67,16 @@ class AlertController extends Controller
     {
         $data = Alerts::find($id);
 
-        if (! $data) {
+        if (!$data) {
             return response()->json([
                 'message' => 'Alert non trouvé.',
             ], 404);
         }
 
         $new = $request->validate([
-            'client_id'       => 'required|numeric|min:0',
-            'type_alert'      => 'required|string',
-            'message'         => 'required|string',
+            'client_id' => 'required|numeric|min:0',
+            'type_alert' => 'required|string',
+            'message' => 'required|string',
             'installation_id' => 'required|numeric|min:0',
         ]);
 
@@ -92,7 +92,7 @@ class AlertController extends Controller
     {
         $data = Alerts::find($id);
 
-        if (! $data) {
+        if (!$data) {
             return response()->json([
                 'message' => 'Alert non trouvé.',
             ], 404);

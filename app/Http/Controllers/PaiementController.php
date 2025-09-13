@@ -10,7 +10,8 @@ class PaiementController extends Controller
 {
     public function index()
     {
-        $data = Paiement::with(['client'])->get();
+        $data = Paiement::with(['client'])
+            ->orderBy('created_at', 'asc')->get();
 
         return response()->json(['data' => $data], 200);
     }

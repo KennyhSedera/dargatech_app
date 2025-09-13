@@ -20,14 +20,21 @@ class ProfileUpdateRequest extends FormRequest
      */
     public function rules(): array
     {
+
         return [
             'name' => ['required', 'string', 'max:255'],
             'email' => ['required', 'string', 'email', 'max:255', Rule::unique(User::class)->ignore($this->user()->id)],
-            'phone' => ['nullable', 'string', 'max:20'],
-            'address' => ['nullable', 'string', 'max:255'],
-            'city' => ['nullable', 'string', 'max:100'],
-            'country' => ['nullable', 'string', 'max:100'],
-            'postal_code' => ['nullable', 'string', 'max:20'],
+            'genre' => 'nullable|string|max:255',
+            'contact' => 'nullable|string|max:255',
+            'adress' => 'nullable|string|max:255',
+            'speciality' => 'nullable|string|max:255',
+            'telegram_username' => 'nullable|string|max:255',
+            'ville' => 'nullable|string|max:255',
+            'pays' => 'nullable|string|max:255',
+            'site_web' => 'nullable|string|max:255',
+            'description' => 'nullable|string|max:255',
+            'highlighted' => 'nullable|boolean',
+            'categorie' => 'nullable|string|max:255',
         ];
     }
 
@@ -39,16 +46,18 @@ class ProfileUpdateRequest extends FormRequest
     public function messages(): array
     {
         return [
-            'name.required' => 'Le nom est requis',
-            'name.max' => 'Le nom ne doit pas dépasser :max caractères',
-            'email.required' => 'L\'email est requis',
-            'email.email' => 'L\'email doit être une adresse email valide',
-            'email.unique' => 'Cette adresse email est déjà utilisée',
-            'phone.max' => 'Le numéro de téléphone ne doit pas dépasser :max caractères',
-            'address.max' => 'L\'adresse ne doit pas dépasser :max caractères',
-            'city.max' => 'La ville ne doit pas dépasser :max caractères',
-            'country.max' => 'Le pays ne doit pas dépasser :max caractères',
-            'postal_code.max' => 'Le code postal ne doit pas dépasser :max caractères',
+            'email.unique' => 'Cet email est deja utilisé.',
+            'email.required' => 'Veuillez entrer un email.',
+            'email.string' => 'Le champ email doit être une chaîne de caractères.',
+            'email.email' => 'Le champ email doit être une adresse email valide.',
+            'email.max' => 'Le champ email ne doit pas contenir plus de :max caractères.',
+            'name.required' => 'Veuillez entrer un nom.',
+            'name.string' => 'Le champ nom doit être une chaîne de caractères.',
+            'name.max' => 'Le champ nom ne doit pas contenir plus de :max caractères.',
+            'genre.string' => 'Le champ genre doit être une chaîne de caractères.',
+            'genre.max' => 'Le champ genre ne doit pas contenir plus de :max caractères.',
+            'contact.string' => 'Le champ contact doit être une chaîne de caractères.',
+            'contact.max' => 'Le champ contact ne doit pas contenir plus de :max caractères.',
         ];
     }
 }

@@ -210,8 +210,8 @@ export default function Edit({ mustVerifyEmail, status }) {
                                                         "Non défini"}
                                                 </dd>
                                             </div>
-                                            {user.user_role.name ===
-                                                "technicien" && (
+                                            {user.user_role.name !==
+                                                "partenaire" && (
                                                 <div className="flex items-center justify-between p-3 transition-colors duration-300 rounded-lg bg-gray-50 dark:bg-gray-900 hover:bg-gray-100 dark:hover:bg-gray-700">
                                                     <dt className="flex items-center gap-2">
                                                         <TbBrandTelegram className="w-5 h-5 text-gray-400" />
@@ -221,6 +221,7 @@ export default function Edit({ mustVerifyEmail, status }) {
                                                     </dt>
                                                     <dd className="text-sm font-semibold text-gray-900 dark:text-gray-100">
                                                         {technicien.telegram_username ||
+                                                            profile.telegram_username ||
                                                             "Non définie"}
                                                     </dd>
                                                 </div>

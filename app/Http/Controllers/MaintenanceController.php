@@ -10,7 +10,9 @@ class MaintenanceController extends Controller
 {
     public function index()
     {
-        $data = Maintenance::with(['installation.client'])->get();
+        $data = Maintenance::with(['installation.client'])
+            ->orderBy('created_at', 'asc')
+            ->get();
 
         return response()->json(['data' => $data], 200);
     }

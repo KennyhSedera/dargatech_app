@@ -60,10 +60,9 @@ export default function UpdateProfileInformation({
             categorie: partenaire.categorie || "",
             description: partenaire.description || "",
             highlighted: partenaire.highlighted || false,
-            telegram_username: technicien.telegram_username || "",
+            telegram_username:
+                technicien.telegram_username || profile.telegram_username || "",
         });
-
-    console.log(data);
 
     const submit = (e) => {
         e.preventDefault();
@@ -378,8 +377,8 @@ export default function UpdateProfileInformation({
                                                 />
                                             </div>
                                         )}
-                                        {user.user_role.name ===
-                                            "technicien" && (
+                                        {user.user_role.name !==
+                                            "partenaire" && (
                                             <div>
                                                 <InputLabel
                                                     htmlFor="telegram_username"
