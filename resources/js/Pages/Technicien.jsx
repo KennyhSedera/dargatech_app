@@ -1,16 +1,19 @@
-import ConfirmDialog from '@/Components/ConfirmDialog'
-import EmptyState from '@/Components/EmptyState'
-import HeaderPage from '@/Components/HeaderPage'
-import Snackbar from '@/Components/Snackbar'
-import TechnicienCard from '@/Components/technicien/TechnicienCard'
-import TechnicienFormulaire from '@/Components/technicien/TechnicienFormulaire'
-import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout'
-import { deleteTechniciens, getTechniciens } from '@/Services/technicienService'
-import { Head } from '@inertiajs/react'
-import React, { useEffect, useState } from 'react'
+import ConfirmDialog from "@/Components/ConfirmDialog";
+import EmptyState from "@/Components/EmptyState";
+import HeaderPage from "@/Components/HeaderPage";
+import Snackbar from "@/Components/Snackbar";
+import TechnicienCard from "@/Components/technicien/TechnicienCard";
+import TechnicienFormulaire from "@/Components/technicien/TechnicienFormulaire";
+import AuthenticatedLayout from "@/Layouts/AuthenticatedLayout";
+import {
+    deleteTechniciens,
+    getTechniciens,
+} from "@/Services/technicienService";
+import { Head } from "@inertiajs/react";
+import React, { useEffect, useState } from "react";
 
 const Technicien = () => {
-    const [search, setSearch] = useState('');
+    const [search, setSearch] = useState("");
     const [open, setopen] = useState(false);
     const [techniciens, setTechniciens] = useState([]);
     const [filteredData, setFilteredData] = useState([]);
@@ -19,20 +22,20 @@ const Technicien = () => {
     const [itemsPerPage] = useState(8);
     const [suppression, setSuppression] = useState({
         open: false,
-        message: '',
+        message: "",
         id: 0,
     });
     const [alert, setAlert] = useState({
         open: false,
-        message: '',
-        type: 'success'
+        message: "",
+        type: "success",
     });
 
     const fetchTechnicien = async () => {
         setIsLoading(true);
         const { data } = await getTechniciens();
 
-        const technichien = data.map(el => ({
+        const technichien = data.map((el) => ({
             id: el.technicien.id,
             name: el.name,
             email: el.email,
@@ -41,6 +44,8 @@ const Technicien = () => {
             adress: el.technicien.adress,
             speciality: el.technicien.speciality,
             photo: el.technicien.photo,
+            telegram_username: el.technicien.telegram_username,
+            bot_active: el.technicien.bot_active,
         }));
 
         setTechniciens(technichien);
@@ -56,19 +61,20 @@ const Technicien = () => {
         setSearch(value);
         setCurrentPage(1);
 
-        const data = techniciens.filter(el =>
-            el.name.toLowerCase().includes(value.toLowerCase()) ||
-            el.email.toLowerCase().includes(value.toLowerCase()) ||
-            el.speciality.toLowerCase().includes(value.toLowerCase())
+        const data = techniciens.filter(
+            (el) =>
+                el.name.toLowerCase().includes(value.toLowerCase()) ||
+                el.email.toLowerCase().includes(value.toLowerCase()) ||
+                el.speciality.toLowerCase().includes(value.toLowerCase())
         );
 
         setFilteredData(data);
-    }
+    };
 
     const onCloseFormulaire = (message) => {
         fetchTechnicien();
         message && setAlert({ ...alert, message, open: true });
-    }
+    };
 
     const showDetail = (id) => {
         // Handle view detail functionality
@@ -79,7 +85,7 @@ const Technicien = () => {
         setSuppression({
             open: true,
             message: `Êtes-vous sûr de vouloir supprimer le technicien ${item.name} ?`,
-            id: item.id
+            id: item.id,
         });
     };
 
@@ -113,10 +119,9 @@ const Technicien = () => {
         pageNumbers.push(i);
     }
 
-
     return (
         <AuthenticatedLayout>
-            <Head title='Technicien' />
+            <Head title="Technicien" />
             <HeaderPage
                 handleClick={() => setopen(true)}
                 title={`Liste des Techniciens ( Total: ${techniciens.length} )`}
@@ -135,14 +140,14 @@ const Technicien = () => {
                 duration={3000}
                 position="top-right"
                 show={alert.open}
-                onClose={() => setAlert({ ...alert, message: '', open: false })}
+                onClose={() => setAlert({ ...alert, message: "", open: false })}
             />
             <ConfirmDialog
                 open={suppression.open}
                 message={suppression.message}
-                btnAcceptName='Supprimer'
-                title='Suppression'
-                btnAcceptColor='bg-red-500 text-white'
+                btnAcceptName="Supprimer"
+                title="Suppression"
+                btnAcceptColor="bg-red-500 text-white"
                 close={() => setSuppression({ ...suppression, open: false })}
                 accept={confirmDelete}
             />
@@ -154,7 +159,7 @@ const Technicien = () => {
             ) : (
                 <>
                     {filteredData.length > 0 ? (
-                        <div className='mt-4'>
+                        <div className="mt-4">
                             <div className="grid grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
                                 {currentItems.map((technician) => (
                                     <TechnicienCard
@@ -173,60 +178,84 @@ const Technicien = () => {
                                         <button
                                             onClick={() => setCurrentPage(1)}
                                             disabled={currentPage === 1}
-                                            className={`mx-1 p-2 rounded-md ${currentPage === 1
-                                                ? 'text-gray-400 cursor-not-allowed'
-                                                : 'text-gray-700 hover:bg-indigo-50'
-                                                }`}
+                                            className={`mx-1 p-2 rounded-md ${
+                                                currentPage === 1
+                                                    ? "text-gray-400 cursor-not-allowed"
+                                                    : "text-gray-700 hover:bg-indigo-50"
+                                            }`}
                                             title="Première page"
                                         >
                                             &laquo;
                                         </button>
 
                                         <button
-                                            onClick={() => setCurrentPage(prev => Math.max(prev - 1, 1))}
+                                            onClick={() =>
+                                                setCurrentPage((prev) =>
+                                                    Math.max(prev - 1, 1)
+                                                )
+                                            }
                                             disabled={currentPage === 1}
-                                            className={`mx-1 p-2 rounded-md ${currentPage === 1
-                                                ? 'text-gray-400 cursor-not-allowed'
-                                                : 'text-gray-700 hover:bg-indigo-50'
-                                                }`}
+                                            className={`mx-1 p-2 rounded-md ${
+                                                currentPage === 1
+                                                    ? "text-gray-400 cursor-not-allowed"
+                                                    : "text-gray-700 hover:bg-indigo-50"
+                                            }`}
                                             title="Page précédente"
                                         >
                                             &lsaquo;
                                         </button>
 
                                         {/* Page numbers */}
-                                        {pageNumbers.map(number => (
+                                        {pageNumbers.map((number) => (
                                             <button
                                                 key={number}
-                                                onClick={() => setCurrentPage(number)}
-                                                className={`mx-1 w-9 h-9 flex items-center justify-center rounded-md ${currentPage === number
-                                                    ? 'bg-indigo-600 text-white font-medium'
-                                                    : 'text-gray-700 hover:bg-indigo-50'
-                                                    }`}
+                                                onClick={() =>
+                                                    setCurrentPage(number)
+                                                }
+                                                className={`mx-1 w-9 h-9 flex items-center justify-center rounded-md ${
+                                                    currentPage === number
+                                                        ? "bg-indigo-600 text-white font-medium"
+                                                        : "text-gray-700 hover:bg-indigo-50"
+                                                }`}
                                             >
                                                 {number}
                                             </button>
                                         ))}
 
                                         <button
-                                            onClick={() => setCurrentPage(prev => Math.min(prev + 1, totalPages))}
-                                            disabled={currentPage === totalPages}
-                                            className={`mx-1 p-2 rounded-md ${currentPage === totalPages
-                                                ? 'text-gray-400 cursor-not-allowed'
-                                                : 'text-gray-700 hover:bg-indigo-50'
-                                                }`}
+                                            onClick={() =>
+                                                setCurrentPage((prev) =>
+                                                    Math.min(
+                                                        prev + 1,
+                                                        totalPages
+                                                    )
+                                                )
+                                            }
+                                            disabled={
+                                                currentPage === totalPages
+                                            }
+                                            className={`mx-1 p-2 rounded-md ${
+                                                currentPage === totalPages
+                                                    ? "text-gray-400 cursor-not-allowed"
+                                                    : "text-gray-700 hover:bg-indigo-50"
+                                            }`}
                                             title="Page suivante"
                                         >
                                             &rsaquo;
                                         </button>
 
                                         <button
-                                            onClick={() => setCurrentPage(totalPages)}
-                                            disabled={currentPage === totalPages}
-                                            className={`mx-1 p-2 rounded-md ${currentPage === totalPages
-                                                ? 'text-gray-400 cursor-not-allowed'
-                                                : 'text-gray-700 hover:bg-indigo-50'
-                                                }`}
+                                            onClick={() =>
+                                                setCurrentPage(totalPages)
+                                            }
+                                            disabled={
+                                                currentPage === totalPages
+                                            }
+                                            className={`mx-1 p-2 rounded-md ${
+                                                currentPage === totalPages
+                                                    ? "text-gray-400 cursor-not-allowed"
+                                                    : "text-gray-700 hover:bg-indigo-50"
+                                            }`}
                                             title="Dernière page"
                                         >
                                             &raquo;
@@ -236,12 +265,12 @@ const Technicien = () => {
                             )}
                         </div>
                     ) : (
-                        <EmptyState nom='technicien' search={search} />
+                        <EmptyState nom="technicien" search={search} />
                     )}
                 </>
             )}
         </AuthenticatedLayout>
-    )
-}
+    );
+};
 
 export default Technicien;

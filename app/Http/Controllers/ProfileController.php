@@ -24,7 +24,7 @@ class ProfileController extends Controller
     public function edit(Request $request): Response
     {
         $user = $request->user()->load(['user_role', 'profile', 'technicien']);
-        
+
         return Inertia::render('Profile/Edit', [
             'user' => $user,
         ]);
@@ -51,6 +51,15 @@ class ProfileController extends Controller
             'speciality' => 'nullable|string|max:255',
         ]);
 
+        // Mise à jour ou création du profil
+        $technicienData = $request->validate([
+            'genre' => 'nullable|string|max:255',
+            'contact' => 'nullable|string|max:255',
+            'adress' => 'nullable|string|max:255',
+            'speciality' => 'nullable|string|max:255',
+            'telegram_username' => 'nullable|string|max:255',
+        ]);
+
         $partenaireData = $request->validate([
             'ville' => 'nullable|string|max:255',
             'pays' => 'nullable|string|max:255',
@@ -65,7 +74,7 @@ class ProfileController extends Controller
         }
 
         if ($request->user()->technicien) {
-            $request->user()->technicien->update($profileData);
+            $request->user()->technicien->update($technicienData);
         }
 
         // Mise à jour ou création du profil
@@ -99,7 +108,7 @@ class ProfileController extends Controller
         ]);
 
         $user = $request->user();
-        
+
         // Delete old photo if exists
         if ($user->profile && $user->profile->photo) {
             $oldPhotoPath = public_path($user->profile->photo);
@@ -107,7 +116,7 @@ class ProfileController extends Controller
                 unlink($oldPhotoPath);
             }
         }
-        
+
         if ($user->technicien && $user->technicien->photo) {
             $oldPhotoPath = public_path($user->technicien->photo);
             if (file_exists($oldPhotoPath)) {
@@ -126,13 +135,13 @@ class ProfileController extends Controller
         $imageName = time() . '.' . $image->getClientOriginalExtension();
         $image->move(public_path('uploads/profile-photos'), $imageName);
         $photoPath = '/uploads/profile-photos/' . $imageName;
-        
+
         if ($user->profile) {
             $user->profile->update(['photo' => $photoPath]);
         } else {
             $user->profile()->create(['photo' => $photoPath]);
         }
-        
+
         if ($user->technicien) {
             $user->technicien->update(['photo' => $photoPath]);
         }

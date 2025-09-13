@@ -15,6 +15,8 @@ class Technicien extends Model
         'adress',
         'speciality',
         'photo',
+        'telegram_user_id',
+        'telegram_username'
     ];
 
     public function user()

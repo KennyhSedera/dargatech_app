@@ -2,7 +2,9 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Technicien;
 use App\Services\CallBackService;
+use App\Services\SendMessageService;
 use App\Services\SessionService;
 use App\Telegram\Commands\StartCommand;
 use Illuminate\Http\Request;
@@ -17,17 +19,20 @@ class TelegramBotController extends Controller
     protected CallBackService $callBackService;
     protected SessionService $sessionService;
     protected StartCommand $startCommand;
+    protected SendMessageService $sendMessageService;
 
     public function __construct(
         Api $telegram,
         CallBackService $callBackService,
         SessionService $sessionService,
         StartCommand $startCommand,
+        SendMessageService $sendMessageService
     ) {
         $this->telegram = $telegram;
         $this->callBackService = $callBackService;
         $this->sessionService = $sessionService;
         $this->startCommand = $startCommand;
+        $this->sendMessageService = $sendMessageService;
     }
 
     public function webhook(Request $request)
@@ -39,105 +44,120 @@ class TelegramBotController extends Controller
 
             $this->sessionService->cleanupSessionsSuccess(1, $chatId);
 
-            if ($update->isType('callback_query')) {
-                $callback = $update->getCallbackQuery();
-                $chatId = $callback->getMessage()->getChat()->getId();
-                $userId = $callback->getFrom()->getId();
-                $data = $callback->getData();
-                $callbackId = $callback->getId();
+            $username = $update->getMessage()->getChat()->first_name . ' ' . $update->getMessage()->getChat()->last_name;
 
-                if (preg_match('/^(\w+)_page_(\d+)$/', $data, $matches)) {
-                    $entityType = $matches[1];
-                    $page = (int) $matches[2];
-
-                    $this->callBackService->handleEntityListPage($chatId, $entityType, $page);
-
-                    $this->telegram->answerCallbackQuery([
-                        'callback_query_id' => $callbackId,
-                        'text' => "📄 Page {$page}",
-                        'show_alert' => false
-                    ]);
-
-                    return response('Pagination handled', 200);
+            $existingCompte = Technicien::where('telegram_username', $username)->first();
+            if ($existingCompte) {
+                if (!$existingCompte->telegram_user_id) {
+                    $existingCompte->update(['telegram_user_id' => $chatId]);
+                }
+                if (!$existingCompte->bot_active) {
+                    $this->sendMessageService->sendErrorMessage($chatId, "🚫 Votre accès à cette bot est désactivé \n Veuillez contacter les administrateurs.");
                 }
 
-                try {
-                    match ($data) {
-                        'maraicher' => $this->callBackService->handleMaraicher($chatId),
-                        'installation' => $this->callBackService->handleInstallations($chatId),
-                        'intervention' => $this->callBackService->handleIntervention($chatId),
-                        'rapport_maintenance' => $this->callBackService->handleRapportMaintenance($chatId),
-                        'new_maraicher' => $this->callBackService->handleNewMaraicher($chatId, $userId),
-                        'new_installation' => $this->callBackService->handleNewInstallations($chatId, $userId),
-                        'list_installation' => $this->callBackService->handleListInstallation($chatId),
-                        'list_maraicher' => $this->callBackService->handleListFull($chatId),
-                        'list_interventions' => $this->callBackService->handleListInterventions($chatId),
-                        'list_rapport_maintenance' => $this->callBackService->handleListRapportsMaintenance($chatId),
-                        'enregistrer_paiement' => $this->callBackService->handlePaiement($chatId, $userId),
-                        'generer_recu' => $this->callBackService->handleGenerateRecu($chatId),
-                        'help' => $this->callBackService->handleHelp($chatId),
-                        'list_detailed' => $this->callBackService->handleListDetailed($chatId),
-                        'search_maraicher' => $this->callBackService->handleSearch($chatId, $userId, 'search_maraicher', 'de Maraîcher'),
-                        'search_installation' => $this->callBackService->handleSearch($chatId, $userId, 'search_installation', 'd\'Installation'),
-                        'search_intervention' => $this->callBackService->handleSearch($chatId, $userId, 'search_intervention', 'd\'Intervention'),
-                        'search_rapport' => $this->callBackService->handleSearch($chatId, $userId, 'search_rapport', 'de Rapport de maintenance'),
-                        'menu' => $this->startCommand->handleKeyboardMenu($chatId),
-                        'current_page' => $this->callBackService->handleCurrentPage($chatId),
-                        'button_create_installation' => $this->callBackService->handleSendButtonNewIntsallation($chatId, $userId),
-                        'button_create_maraicher' => $this->callBackService->handleSendButtonNewMaraichers($chatId, $userId),
-                        'button_create_intervention' => $this->callBackService->handleSendButtonNewInterventions($chatId, $userId),
-                        'button_create_rapport_maintenance' => $this->callBackService->handleSendButtonNewPapports($chatId, $userId),
-                        default => $this->callBackService->sendUnknownCommand($chatId),
-                    };
+                if ($existingCompte->bot_active) {
+                    if ($update->isType('callback_query')) {
+                        $callback = $update->getCallbackQuery();
+                        $chatId = $callback->getMessage()->getChat()->getId();
+                        $userId = $callback->getFrom()->getId();
+                        $data = $callback->getData();
+                        $callbackId = $callback->getId();
 
-                    $this->telegram->answerCallbackQuery([
-                        'callback_query_id' => $callbackId,
-                        'text' => '✅',
-                        'show_alert' => false
-                    ]);
+                        if (preg_match('/^(\w+)_page_(\d+)$/', $data, $matches)) {
+                            $entityType = $matches[1];
+                            $page = (int) $matches[2];
 
-                } catch (\Exception $e) {
-                    \Log::error('Erreur callback: ' . $e->getMessage());
+                            $this->callBackService->handleEntityListPage($chatId, $entityType, $page);
 
-                    $this->telegram->answerCallbackQuery([
-                        'callback_query_id' => $callbackId,
-                        'text' => '❌ Erreur: ' . $e->getMessage(),
-                        'show_alert' => true
-                    ]);
-                }
+                            $this->telegram->answerCallbackQuery([
+                                'callback_query_id' => $callbackId,
+                                'text' => "📄 Page {$page}",
+                                'show_alert' => false
+                            ]);
 
-                return response('Callback handled', 200);
-            }
+                            return response('Pagination handled', 200);
+                        }
 
-            if ($update->getMessage()) {
-                $messageText = $update->getMessage();
+                        try {
+                            match ($data) {
+                                'maraicher' => $this->callBackService->handleMaraicher($chatId),
+                                'installation' => $this->callBackService->handleInstallations($chatId),
+                                'intervention' => $this->callBackService->handleIntervention($chatId),
+                                'rapport_maintenance' => $this->callBackService->handleRapportMaintenance($chatId),
+                                'new_maraicher' => $this->callBackService->handleNewMaraicher($chatId, $userId),
+                                'new_installation' => $this->callBackService->handleNewInstallations($chatId, $userId),
+                                'list_installation' => $this->callBackService->handleListInstallation($chatId),
+                                'list_maraicher' => $this->callBackService->handleListFull($chatId),
+                                'list_interventions' => $this->callBackService->handleListInterventions($chatId),
+                                'list_rapport_maintenance' => $this->callBackService->handleListRapportsMaintenance($chatId),
+                                'enregistrer_paiement' => $this->callBackService->handlePaiement($chatId, $userId),
+                                'generer_recu' => $this->callBackService->handleGenerateRecu($chatId),
+                                'help' => $this->callBackService->handleHelp($chatId),
+                                'list_detailed' => $this->callBackService->handleListDetailed($chatId),
+                                'search_maraicher' => $this->callBackService->handleSearch($chatId, $userId, 'search_maraicher', 'de Maraîcher'),
+                                'search_installation' => $this->callBackService->handleSearch($chatId, $userId, 'search_installation', 'd\'Installation'),
+                                'search_intervention' => $this->callBackService->handleSearch($chatId, $userId, 'search_intervention', 'd\'Intervention'),
+                                'search_rapport' => $this->callBackService->handleSearch($chatId, $userId, 'search_rapport', 'de Rapport de maintenance'),
+                                'menu' => $this->startCommand->handleKeyboardMenu($chatId),
+                                'current_page' => $this->callBackService->handleCurrentPage($chatId),
+                                'button_create_installation' => $this->callBackService->handleSendButtonNewIntsallation($chatId, $userId),
+                                'button_create_maraicher' => $this->callBackService->handleSendButtonNewMaraichers($chatId, $userId),
+                                'button_create_intervention' => $this->callBackService->handleSendButtonNewInterventions($chatId, $userId),
+                                'button_create_rapport_maintenance' => $this->callBackService->handleSendButtonNewPapports($chatId, $userId),
+                                default => $this->callBackService->sendUnknownCommand($chatId),
+                            };
 
-                if (!str_starts_with($messageText->getText(), '/')) {
-                    $userId = $update->getMessage()->getFrom()->getId();
-                    $chatId = $update->getMessage()->getChat()->getId();
+                            $this->telegram->answerCallbackQuery([
+                                'callback_query_id' => $callbackId,
+                                'text' => '✅',
+                                'show_alert' => false
+                            ]);
 
-                    $activeSession = DB::table('telegram_sessions')
-                        ->where('user_id', $userId)
-                        ->where('completed', false)
-                        ->orderBy('created_at', 'desc')
-                        ->first();
+                        } catch (\Exception $e) {
+                            \Log::error('Erreur callback: ' . $e->getMessage());
 
-                    if ($activeSession) {
-                        $this->sessionService->handleActiveSession($activeSession, $messageText, $userId, $chatId);
-                        return response('Session handled', 200);
-                    } else {
-                        Log::info('No active session found for user ' . $userId);
-                        $this->sessionService->cancelAllUserSessions($userId, $chatId);
+                            $this->telegram->answerCallbackQuery([
+                                'callback_query_id' => $callbackId,
+                                'text' => '❌ Erreur: ' . $e->getMessage(),
+                                'show_alert' => true
+                            ]);
+                        }
+
+                        return response('Callback handled', 200);
                     }
-                }
 
-                if ($messageText->getText() === '👨‍🌾 Nouveau Maraîcher') {
-                    $this->callBackService->handleNewMaraicher($chatId, $userId);
+                    if ($update->getMessage()) {
+                        $messageText = $update->getMessage();
+
+                        if (!str_starts_with($messageText->getText(), '/')) {
+                            $userId = $update->getMessage()->getFrom()->getId();
+                            $chatId = $update->getMessage()->getChat()->getId();
+
+                            $activeSession = DB::table('telegram_sessions')
+                                ->where('user_id', $userId)
+                                ->where('completed', false)
+                                ->orderBy('created_at', 'desc')
+                                ->first();
+
+                            if ($activeSession) {
+                                $this->sessionService->handleActiveSession($activeSession, $messageText, $userId, $chatId);
+                                return response('Session handled', 200);
+                            } else {
+                                Log::info('No active session found for user ' . $userId);
+                                $this->sessionService->cancelAllUserSessions($userId, $chatId);
+                            }
+                        }
+
+                        if ($messageText->getText() === '👨‍🌾 Nouveau Maraîcher') {
+                            $this->callBackService->handleNewMaraicher($chatId, $userId);
+                        }
+                    }
+
+                    Telegram::commandsHandler(true);
                 }
+            } else {
+                $this->sendMessageService->sendErrorMessage($chatId, "🚫 Vous n'avez pas le droit d'acceder à cette bot! \n Veuillez contacter les administrateurs.");
             }
-
-            Telegram::commandsHandler(true);
-
             return response('OK', 200);
         } catch (\Exception $e) {
             \Log::error('Telegram webhook error: ' . $e->getMessage());

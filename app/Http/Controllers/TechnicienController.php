@@ -16,7 +16,6 @@ class TechnicienController extends Controller
         DB::beginTransaction();
 
         try {
-            // Création de l'utilisateur
             $user = User::create([
                 'name' => $request->name,
                 'email' => $request->email,
@@ -24,21 +23,20 @@ class TechnicienController extends Controller
                 'user_role' => 2,
             ]);
 
-            // Création du technicien
             $user->technicien()->create([
                 'contact' => $request->contact,
                 'adress' => $request->adress,
                 'speciality' => $request->speciality,
                 'genre' => $request->genre,
                 'photo' => $request->photo,
+                'telegram_username' => $request->telegram_username
             ]);
 
             DB::commit();
 
-            // Envoi de l'email dans un try-catch séparé
             try {
                 $appLink = config('app.url') . '/login';
-                $botLink = 'https://t.me/dargatech_bot';
+                $botLink = 'https://t.me/' . env('TELEGRAM_BOT_USERNAME');
 
                 Mail::to($request->email)->send(new BotCredentialsMail(
                     $request->password,
@@ -131,6 +129,7 @@ class TechnicienController extends Controller
                 'adress' => $request->adress,
                 'speciality' => $request->speciality,
                 'genre' => $request->genre,
+                'telegram_username' => $request->telegram_username
             ]);
 
             if ($request->photo) {

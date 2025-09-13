@@ -26,6 +26,7 @@ const TechnicienFormulaire = ({
         speciality: "",
         genre: "Homme",
         photo: "",
+        telegram_username: "",
     });
 
     const onClose = (message) => {
@@ -195,6 +196,36 @@ const TechnicienFormulaire = ({
                     <InputError
                         message={
                             validationErrors.speciality || errors.speciality
+                        }
+                        className="mt-2"
+                    />
+                </div>
+                <div className="sm:col-span-2">
+                    <InputLabel
+                        htmlFor="telegram_username"
+                        value="Pseudo sur telegram"
+                    />
+                    <TextInput
+                        id="telegram_username"
+                        name="telegram_username"
+                        value={data.telegram_username}
+                        className="block w-full mt-1"
+                        autoComplete="telegram_username"
+                        onChange={(e) =>
+                            setData("telegram_username", e.target.value)
+                        }
+                        required
+                        onFocus={() =>
+                            setValidationErrors({
+                                ...validationErrors,
+                                telegram_username: "",
+                            })
+                        }
+                    />
+                    <InputError
+                        message={
+                            validationErrors.telegram_username ||
+                            errors.telegram_username
                         }
                         className="mt-2"
                     />
