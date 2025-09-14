@@ -46,31 +46,31 @@ const UsersPage = () => {
         setSearch(value);
         const filtered = users.filter(
             (user) =>
-                user?.name.toLowerCase().includes(value.toLowerCase()) ||
-                user?.email.toLowerCase().includes(value.toLowerCase()) ||
+                user?.name?.toLowerCase().includes(value.toLowerCase()) ||
+                user?.email?.toLowerCase().includes(value.toLowerCase()) ||
                 user?.technicien?.contact
-                    .toLowerCase()
+                    ?.toLowerCase()
                     .includes(value.toLowerCase()) ||
                 user?.technicien?.adress
-                    .toLowerCase()
+                    ?.toLowerCase()
                     .includes(value.toLowerCase()) ||
                 user?.user_role.name
-                    .toLowerCase()
+                    ?.toLowerCase()
                     .includes(value.toLowerCase()) ||
                 user?.profile?.adress
-                    .toLowerCase()
+                    ?.toLowerCase()
                     .includes(value.toLowerCase()) ||
                 user?.profile?.contact
-                    .toLowerCase()
+                    ?.toLowerCase()
                     .includes(value.toLowerCase()) ||
                 user?.partenaire?.telephone
-                    .toLowerCase()
+                    ?.toLowerCase()
                     .includes(value.toLowerCase()) ||
                 user?.partenaire?.adresse
-                    .toLowerCase()
+                    ?.toLowerCase()
                     .includes(value.toLowerCase()) ||
                 user?.partenaire?.site_web
-                    .toLowerCase()
+                    ?.toLowerCase()
                     .includes(value.toLowerCase())
         );
         setFilteredUsers(filtered);

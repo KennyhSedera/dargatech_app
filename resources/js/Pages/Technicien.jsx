@@ -44,7 +44,7 @@ const Technicien = () => {
             adress: el.technicien.adress,
             speciality: el.technicien.speciality,
             photo: el.technicien.photo,
-            telegram_username: el.technicien.telegram_username,
+            telegram_username: el.technicien.telegram_username || "Non defini",
             bot_active: el.technicien.bot_active,
         }));
 
@@ -63,17 +63,17 @@ const Technicien = () => {
 
         const data = techniciens.filter(
             (el) =>
-                el?.name.toLowerCase().includes(value.toLowerCase()) ||
-                el?.email.toLowerCase().includes(value.toLowerCase()) ||
-                el?.speciality.toLowerCase().includes(value.toLowerCase()) ||
+                el?.name?.toLowerCase().includes(value.toLowerCase()) ||
+                el?.email?.toLowerCase().includes(value.toLowerCase()) ||
+                el?.speciality?.toLowerCase().includes(value.toLowerCase()) ||
                 el?.contact
-                    .toString()
+                    ?.toString()
                     .toLowerCase()
                     .includes(value.toLowerCase()) ||
                 el?.telegram_username
-                    .toLowerCase()
+                    ?.toLowerCase()
                     .includes(value.toLowerCase()) ||
-                el?.adress.toLowerCase().includes(value.toLowerCase())
+                el?.adress?.toLowerCase().includes(value.toLowerCase())
         );
 
         setFilteredData(data);

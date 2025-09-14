@@ -78,15 +78,15 @@ const PartenairePage = () => {
 
         const filteredData = partenaires.filter(
             (el) =>
-                el?.name.toLowerCase().includes(value.toLowerCase()) ||
-                el?.email.toLowerCase().includes(value.toLowerCase()) ||
-                el?.categorie.toLowerCase().includes(value.toLowerCase()) ||
-                el?.description.toLowerCase().includes(value.toLowerCase()) ||
-                el?.adresse.toLowerCase().includes(value.toLowerCase()) ||
-                el?.ville.toLowerCase().includes(value.toLowerCase()) ||
-                el?.pays.toLowerCase().includes(value.toLowerCase()) ||
-                el?.telephone.toLowerCase().includes(value.toLowerCase()) ||
-                el?.siteWeb.toLowerCase().includes(value.toLowerCase())
+                el?.name?.toLowerCase().includes(value.toLowerCase()) ||
+                el?.email?.toLowerCase().includes(value.toLowerCase()) ||
+                el?.categorie?.toLowerCase().includes(value.toLowerCase()) ||
+                el?.description?.toLowerCase().includes(value.toLowerCase()) ||
+                el?.adresse?.toLowerCase().includes(value.toLowerCase()) ||
+                el?.ville?.toLowerCase().includes(value.toLowerCase()) ||
+                el?.pays?.toLowerCase().includes(value.toLowerCase()) ||
+                el?.telephone?.toLowerCase().includes(value.toLowerCase()) ||
+                el?.siteWeb?.toLowerCase().includes(value.toLowerCase())
         );
 
         setFilteredPartenaires(filteredData);

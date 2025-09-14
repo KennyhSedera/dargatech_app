@@ -195,19 +195,19 @@ const InterventionPage = () => {
 
         const filteredData = maintenances.filter(
             (el) =>
-                el?.nom.toLowerCase().includes(value.toLowerCase()) ||
+                el?.nom?.toLowerCase().includes(value.toLowerCase()) ||
                 el?.type_intervention
-                    .toLowerCase()
+                    ?.toLowerCase()
                     .includes(value.toLowerCase()) ||
                 el?.description_probleme
-                    .toLowerCase()
+                    ?.toLowerCase()
                     .includes(value.toLowerCase()) ||
                 el?.date_intervention
-                    .toString()
+                    ?.toString()
                     .toLowerCase()
                     .includes(value.toLowerCase()) ||
                 el?.code_installation
-                    .toLowerCase()
+                    ?.toLowerCase()
                     .includes(value.toLowerCase())
         );
 
