@@ -58,10 +58,6 @@ Route::get('/parametres', function () {
     return Inertia::render('SettingPage');
 })->middleware(['auth', 'verified'])->name('parametres');
 
-Route::get('/telegram', function () {
-    return Inertia::render('Bot/ChatBot');
-})->middleware(['auth', 'verified'])->name('telegram');
-
 Route::get('/technicien', function () {
     return Inertia::render('Technicien');
 })->middleware(['auth', 'verified'])->name('technicien');

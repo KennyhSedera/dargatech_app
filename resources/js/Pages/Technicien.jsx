@@ -63,9 +63,17 @@ const Technicien = () => {
 
         const data = techniciens.filter(
             (el) =>
-                el.name.toLowerCase().includes(value.toLowerCase()) ||
-                el.email.toLowerCase().includes(value.toLowerCase()) ||
-                el.speciality.toLowerCase().includes(value.toLowerCase())
+                el?.name.toLowerCase().includes(value.toLowerCase()) ||
+                el?.email.toLowerCase().includes(value.toLowerCase()) ||
+                el?.speciality.toLowerCase().includes(value.toLowerCase()) ||
+                el?.contact
+                    .toString()
+                    .toLowerCase()
+                    .includes(value.toLowerCase()) ||
+                el?.telegram_username
+                    .toLowerCase()
+                    .includes(value.toLowerCase()) ||
+                el?.adress.toLowerCase().includes(value.toLowerCase())
         );
 
         setFilteredData(data);

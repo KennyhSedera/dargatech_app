@@ -253,10 +253,14 @@ export default function DataTable({
                             onChange={(e) =>
                                 handleItemsPerPageChange(Number(e.target.value))
                             }
-                            className="px-2 py-1 text-sm border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent bg-transparent dark:border-gray-600 dark:text-gray-200 w-16"
+                            className="w-16 px-2 py-1 text-sm bg-transparent border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent dark:border-gray-600 dark:text-gray-200"
                         >
                             {itemsPerPageOptions.map((option) => (
-                                <option key={option} value={option}>
+                                <option
+                                    className="bg-gray-200 dark:bg-gray-800"
+                                    key={option}
+                                    value={option}
+                                >
                                     {option}
                                 </option>
                             ))}

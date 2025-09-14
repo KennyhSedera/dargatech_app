@@ -65,16 +65,17 @@ const ClientPage = () => {
 
         const filteredData = clients.filter(
             (el) =>
-                el.nom.toLowerCase().includes(value.toLowerCase()) ||
-                el.prenom.toLowerCase().includes(value.toLowerCase()) ||
-                el.telephone.toLowerCase().includes(value.toLowerCase()) ||
-                el.surface_cultivee
+                el?.nom.toLowerCase().includes(value.toLowerCase()) ||
+                el?.prenom.toLowerCase().includes(value.toLowerCase()) ||
+                el?.telephone.toLowerCase().includes(value.toLowerCase()) ||
+                el?.surface_cultivee
+                    .toString()
                     .toLowerCase()
                     .includes(value.toLowerCase()) ||
-                el.type_activite_agricole
+                el?.type_activite_agricole
                     .toLowerCase()
                     .includes(value.toLowerCase()) ||
-                el.localisation.toLowerCase().includes(value.toLowerCase())
+                el?.localisation.toLowerCase().includes(value.toLowerCase())
         );
 
         setFilteredData(filteredData);

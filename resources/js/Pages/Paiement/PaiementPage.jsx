@@ -118,14 +118,17 @@ const PaiementPage = () => {
 
         const filtered = paiements.filter(
             (el) =>
-                el.nom.toLowerCase().includes(value.toLowerCase()) ||
-                el.montant.toLowerCase().includes(value.toLowerCase()) ||
-                el.type_paiement.toLowerCase().includes(value.toLowerCase()) ||
-                el.periode_couverte
+                el?.numero.toLowerCase().includes(value.toLowerCase()) ||
+                el?.nom.toLowerCase().includes(value.toLowerCase()) ||
+                el?.montant
+                    .toString()
                     .toLowerCase()
                     .includes(value.toLowerCase()) ||
-                el.mode_paiement.toLowerCase().includes(value.toLowerCase()) ||
-                el.date_paiement
+                el?.periode_couverte
+                    .toLowerCase()
+                    .includes(value.toLowerCase()) ||
+                el?.mode_paiement.toLowerCase().includes(value.toLowerCase()) ||
+                el?.date_paiement
                     .toString()
                     .toLowerCase()
                     .includes(value.toLowerCase())

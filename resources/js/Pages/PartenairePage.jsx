@@ -1,28 +1,28 @@
-import React, { useState, useEffect } from 'react';
-import HeaderPage from '@/Components/HeaderPage';
-import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout';
-import { Head } from '@inertiajs/react';
-import PartenaireCard from '@/Components/partenaire/PartenaireCard';
-import { getPartenaires } from '@/Services/partenaireService';
-import PartenaireFormulaire from '@/Components/partenaire/PartenaireFormulaire';
-import Snackbar from '@/Components/Snackbar';
-import EmptyState from '@/Components/EmptyState';
+import React, { useState, useEffect } from "react";
+import HeaderPage from "@/Components/HeaderPage";
+import AuthenticatedLayout from "@/Layouts/AuthenticatedLayout";
+import { Head } from "@inertiajs/react";
+import PartenaireCard from "@/Components/partenaire/PartenaireCard";
+import { getPartenaires } from "@/Services/partenaireService";
+import PartenaireFormulaire from "@/Components/partenaire/PartenaireFormulaire";
+import Snackbar from "@/Components/Snackbar";
+import EmptyState from "@/Components/EmptyState";
 
 const PartenairePage = () => {
-    const [searchTerm, setSearchTerm] = useState('');
+    const [searchTerm, setSearchTerm] = useState("");
     const [partenaires, setPartenaires] = useState([]);
     const [filteredPartenaires, setFilteredPartenaires] = useState([]);
     const [isLoading, setIsLoading] = useState(true);
     const [open, setOpen] = useState(false);
     const [alert, setAlert] = useState({
-        message: '',
-        type: 'success',
+        message: "",
+        type: "success",
         open: false,
     });
 
     const findAllPartenaires = async () => {
         const response = await getPartenaires();
-        const data = response.map(partenaire => ({
+        const data = response.map((partenaire) => ({
             id: partenaire.id,
             name: partenaire.user.name,
             logo: partenaire.logo,
@@ -42,7 +42,7 @@ const PartenairePage = () => {
         setPartenaires(data);
         setFilteredPartenaires(data);
         setIsLoading(false);
-    }
+    };
 
     useEffect(() => {
         findAllPartenaires();
@@ -59,7 +59,7 @@ const PartenairePage = () => {
     const onCloseFormulaire = (message) => {
         setOpen(false);
         if (message) {
-            handleAlert(message, 'success');
+            handleAlert(message, "success");
         }
         findAllPartenaires();
     };
@@ -67,7 +67,7 @@ const PartenairePage = () => {
     const onClose = (message) => {
         setOpen(false);
         if (message) {
-            handleAlert(message, 'success');
+            handleAlert(message, "success");
         }
         findAllPartenaires();
     };
@@ -78,15 +78,15 @@ const PartenairePage = () => {
 
         const filteredData = partenaires.filter(
             (el) =>
-                el.name.toLowerCase().includes(value.toLowerCase()) ||
-                el.email.toLowerCase().includes(value.toLowerCase()) ||
-                el.categorie.toLowerCase().includes(value.toLowerCase()) ||
-                el.description.toLowerCase().includes(value.toLowerCase()) ||
-                el.adresse.toLowerCase().includes(value.toLowerCase()) ||
-                el.ville.toLowerCase().includes(value.toLowerCase()) ||
-                el.pays.toLowerCase().includes(value.toLowerCase()) ||
-                el.telephone.toLowerCase().includes(value.toLowerCase()) ||
-                el.siteWeb.toLowerCase().includes(value.toLowerCase())
+                el?.name.toLowerCase().includes(value.toLowerCase()) ||
+                el?.email.toLowerCase().includes(value.toLowerCase()) ||
+                el?.categorie.toLowerCase().includes(value.toLowerCase()) ||
+                el?.description.toLowerCase().includes(value.toLowerCase()) ||
+                el?.adresse.toLowerCase().includes(value.toLowerCase()) ||
+                el?.ville.toLowerCase().includes(value.toLowerCase()) ||
+                el?.pays.toLowerCase().includes(value.toLowerCase()) ||
+                el?.telephone.toLowerCase().includes(value.toLowerCase()) ||
+                el?.siteWeb.toLowerCase().includes(value.toLowerCase())
         );
 
         setFilteredPartenaires(filteredData);
@@ -94,7 +94,7 @@ const PartenairePage = () => {
 
     return (
         <AuthenticatedLayout>
-            <Head title='Partenaires' />
+            <Head title="Partenaires" />
             <HeaderPage
                 title={`Liste des partenaires ( Total: ${partenaires.length} )`}
                 handleClick={() => setOpen(true)}
@@ -124,13 +124,17 @@ const PartenairePage = () => {
             ) : (
                 <div>
                     {filteredPartenaires.length > 0 ? (
-                        <div className='grid w-full h-full grid-cols-1 gap-12 p-4 md:grid-cols-2 lg:grid-cols-3'>
-                            {filteredPartenaires.map(partenaire => (
-                                <PartenaireCard key={partenaire.id} partenaire={partenaire} onClose={onClose} />
+                        <div className="grid w-full h-full grid-cols-1 gap-12 p-4 md:grid-cols-2 lg:grid-cols-3">
+                            {filteredPartenaires.map((partenaire) => (
+                                <PartenaireCard
+                                    key={partenaire.id}
+                                    partenaire={partenaire}
+                                    onClose={onClose}
+                                />
                             ))}
                         </div>
                     ) : (
-                        <EmptyState nom='partenaire' search={searchTerm} />
+                        <EmptyState nom="partenaire" search={searchTerm} />
                     )}
                 </div>
             )}
