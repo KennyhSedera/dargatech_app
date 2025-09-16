@@ -210,7 +210,7 @@
                     ACHETEUR:
                 </div>
                 <div class="info-content">
-                    <strong><?php echo e($data['civilite_acheteur']); ?> <?php echo e($data['nom_acheteur']); ?></strong><br>
+                    <strong><?php echo e($data['civilite_acheteur']); ?> <?php echo e($data['nom_acheteur']); ?> <?php echo e($data['prenom_acheteur']); ?></strong><br>
                     <?php echo e($data['ville_acheteur']); ?>, <?php echo e($data['pays_acheteur']); ?>
 
                 </div>

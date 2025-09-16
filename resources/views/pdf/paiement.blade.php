@@ -208,7 +208,7 @@
                     ACHETEUR:
                 </div>
                 <div class="info-content">
-                    <strong>{{ $data['civilite_acheteur'] }} {{ $data['nom_acheteur'] }}</strong><br>
+                    <strong>{{ $data['civilite_acheteur'] }} {{ $data['nom_acheteur'] }} {{ $data['prenom_acheteur'] }}</strong><br>
                     {{ $data['ville_acheteur'] }}, {{ $data['pays_acheteur'] }}
                 </div>
             </div>

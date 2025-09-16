@@ -113,6 +113,7 @@ class TelegramBotController extends Controller
                                 'button_create_maraicher' => $this->callBackService->handleSendButtonNewMaraichers($chatId, $userId),
                                 'button_create_intervention' => $this->callBackService->handleSendButtonNewInterventions($chatId, $userId),
                                 'button_create_rapport_maintenance' => $this->callBackService->handleSendButtonNewPapports($chatId, $userId),
+                                'dashboard' => $this->callBackService->handleDashboard($chatId),
                                 default => $this->callBackService->sendUnknownCommand($chatId),
                             };
 

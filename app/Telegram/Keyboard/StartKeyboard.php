@@ -11,6 +11,9 @@ class StartKeyboard
         $keyboard = Keyboard::make()
             ->inline()
             ->row([
+                Keyboard::inlineButton(['text' => '🏠 Tableau de bord', 'callback_data' => 'dashboard']),
+            ])
+            ->row([
                 Keyboard::inlineButton(params: ['text' => '👨‍🌾 Menu Maraîchers', 'callback_data' => 'maraicher']),
                 Keyboard::inlineButton(['text' => '🏭 Menu Installation', 'callback_data' => 'installation']),
             ])

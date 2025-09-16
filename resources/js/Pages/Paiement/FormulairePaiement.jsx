@@ -91,27 +91,29 @@ const FormulairePaiement = ({ token_data, telegramback }) => {
     });
 
     useEffect(() => {
-        setData((prevData) => ({
-            ...prevData,
-            produits: [
-                ...prevData.produits,
-                {
-                    designation,
-                    reference: "",
-                    quantite: 1,
-                    unite: "",
-                    tva: 0,
-                    prix_unitaire: amount,
-                    total_ht: amount,
-                    total_ttc: amount,
-                },
-            ],
-            montant_paye: amount,
-            description: designation,
-            objet: "Frais de l'installation du pompage solaire.",
-            date_paiement: new Date().toISOString().split("T")[0],
-            date_echeance: new Date().toISOString().split("T")[0],
-        }));
+        if (amount && designation) {
+            setData((prevData) => ({
+                ...prevData,
+                produits: [
+                    ...prevData.produits,
+                    {
+                        designation,
+                        reference: "",
+                        quantite: 1,
+                        unite: "",
+                        tva: 0,
+                        prix_unitaire: amount,
+                        total_ht: amount,
+                        total_ttc: amount,
+                    },
+                ],
+                montant_paye: amount,
+                description: designation,
+                objet: "Frais de l'installation du pompage solaire.",
+                date_paiement: new Date().toISOString().split("T")[0],
+                date_echeance: new Date().toISOString().split("T")[0],
+            }));
+        }
     }, [amount, designation]);
 
     const getType = async () => {
@@ -235,6 +237,8 @@ const FormulairePaiement = ({ token_data, telegramback }) => {
                     pays_acheteur: "Togo",
                     num_rue_acheteur: client.localisation,
                 });
+
+                setEmail(client.email);
             }
         } catch (error) {
             console.error("Error fetching client:", error);
@@ -318,7 +322,6 @@ const FormulairePaiement = ({ token_data, telegramback }) => {
                     token_data
                         ? telegramback(response.message)
                         : window.history.back();
-
                     if (client_id && amount && designation) {
                         try {
                             const res = await fetch(
@@ -340,9 +343,11 @@ const FormulairePaiement = ({ token_data, telegramback }) => {
 
                 const res = await sendPdfByEmail(data, email, telegram_chat_id);
                 if (res.success) {
-                    token_data
-                        ? telegramback(res.message)
-                        : window.history.back();
+                    setAlert({
+                        open: true,
+                        message: res.message,
+                        type: res.success ? "success" : "error",
+                    });
                 }
             }
         } catch (error) {

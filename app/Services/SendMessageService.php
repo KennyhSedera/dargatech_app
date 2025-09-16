@@ -67,8 +67,42 @@ class SendMessageService
         ]);
     }
 
+    public function sendPhoto($chatId, $photo, $caption = null, $parseMode = null, $keyboard = null)
+    {
+        try {
+            $params = [
+                'chat_id' => $chatId,
+                'photo' => $photo,
+            ];
+
+            if ($caption) {
+                $params['caption'] = $caption;
+            }
+
+            if ($parseMode) {
+                $params['parse_mode'] = $parseMode;
+            }
+
+            if ($keyboard) {
+                $params['reply_markup'] = $keyboard->toJson();
+            }
+
+            return $this->telegram->sendPhoto($params);
+
+        } catch (\Exception $e) {
+            \Log::error('SendPhoto error: ' . $e->getMessage());
+            throw $e;
+        }
+    }
+
+    public function sendPhotoWithKeyboard($chatId, $photo, $caption, $keyboard, $parseMode = 'HTML')
+    {
+        return $this->sendPhoto($chatId, $photo, $caption, $parseMode, $keyboard);
+    }
+
     public function sendErrorMessage($chatId, $text)
     {
         return $this->sendMessage($chatId, $text, 'Markdown');
     }
+
 }

@@ -11,6 +11,7 @@ use App\Telegram\Commands\MaraicherCommand;
 use App\Telegram\Commands\RapportMaintenanceCommand;
 use DB;
 use Log;
+use SebastianBergmann\CodeCoverage\Report\Html\Dashboard;
 use Telegram\Bot\Api;
 use Telegram\Bot\Commands\HelpCommand;
 use Telegram\Bot\Keyboard\Keyboard;
@@ -29,6 +30,7 @@ class CallBackService
     protected InterventionService $interventionService;
     protected RapportMaintenanceCommand $rapportMaintenanceCommand;
     protected RapportMaintenanceService $rapportMaintenanceService;
+    protected DashboardService $dashboardService;
 
     public function __construct(
         Api $telegram,
@@ -43,6 +45,7 @@ class CallBackService
         RapportMaintenanceCommand $rapportMaintenanceCommand,
         InterventionService $interventionService,
         RapportMaintenanceService $rapportMaintenanceService,
+        DashboardService $dashboardService
     ) {
         $this->telegram = $telegram;
         $this->maraicherService = $maraicherService;
@@ -56,6 +59,7 @@ class CallBackService
         $this->rapportMaintenanceCommand = $rapportMaintenanceCommand;
         $this->interventionService = $interventionService;
         $this->rapportMaintenanceService = $rapportMaintenanceService;
+        $this->dashboardService = $dashboardService;
     }
 
     public function handleCurrentPage($chatId)
@@ -418,6 +422,11 @@ class CallBackService
                 'Markdown'
             );
         }
+    }
+
+    public function handleDashboard($chatId)
+    {
+        $this->dashboardService->showDashboard($chatId);
     }
 }
 

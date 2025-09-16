@@ -8,10 +8,10 @@ class DashboardController extends Controller
 {
     public function count()
     {
-        $client              = DB::table('clients')->count();
-        $installation        = DB::table('installations')->count();
-        $maintenance         = DB::table('maintenances')->count();
-        $soldtotal           = DB::table('paiements')->sum('montant');
+        $client = DB::table('clients')->count();
+        $installation = DB::table('installations')->count();
+        $maintenance = DB::table('maintenances')->count();
+        $soldtotal = DB::table('paiements')->sum('montant');
         $installationenpanne = DB::table('installations')
             ->whereDate('updated_at', Carbon::today())
             ->where('statuts', 'en panne')
@@ -69,18 +69,18 @@ class DashboardController extends Controller
             ->values();
 
         $data = [
-            'client'              => $client,
-            'installation'        => $installation,
-            'maintenance'         => $maintenance,
-            'soldtotal'           => $soldtotal,
+            'client' => $client,
+            'installation' => $installation,
+            'maintenance' => $maintenance,
+            'soldtotal' => $soldtotal,
             'installationenpanne' => $installationenpanne,
-            'intervention'        => $intervention,
-            'paiement'            => $paiement,
-            'alert'               => $alert,
-            'interventioncount'   => $interventioncount,
-            'installationcount'   => $installationcount,
-            'alertcount'          => $alertcount,
-            'enpanne'             => $enpanne,
+            'intervention' => $intervention,
+            'paiement' => $paiement,
+            'alert' => $alert,
+            'interventioncount' => $interventioncount,
+            'installationcount' => $installationcount,
+            'alertcount' => $alertcount,
+            'enpanne' => $enpanne,
         ];
 
         return response()->json(['data' => $data], 200);
