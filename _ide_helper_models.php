@@ -527,6 +527,8 @@ namespace App\Models{
  * @property-read int|null $notifications_count
  * @property-read \App\Models\Partenaire|null $partenaire
  * @property-read \App\Models\Profile|null $profile
+ * @property-read \Illuminate\Database\Eloquent\Collection<int, \App\Models\rapportMaintenances> $rapport
+ * @property-read int|null $rapport_count
  * @property-read \App\Models\Technicien|null $technicien
  * @method static \Database\Factories\UserFactory factory($count = null, $state = [])
  * @method static \Illuminate\Database\Eloquent\Builder<static>|User newModelQuery()
@@ -585,7 +587,7 @@ namespace App\Models{
  *
  * @property int $id
  * @property int $clientId
- * @property int $technicienId
+ * @property int|null $userId
  * @property int $maintenanceId
  * @property string $description_panne
  * @property string $diagnostic_initial
@@ -600,7 +602,7 @@ namespace App\Models{
  * @property string $created_via
  * @property-read \App\Models\Client|null $client
  * @property-read \App\Models\Maintenance|null $maintenance
- * @property-read \App\Models\Technicien|null $technicien
+ * @property-read \App\Models\User|null $user
  * @method static \Illuminate\Database\Eloquent\Builder<static>|rapportMaintenances newModelQuery()
  * @method static \Illuminate\Database\Eloquent\Builder<static>|rapportMaintenances newQuery()
  * @method static \Illuminate\Database\Eloquent\Builder<static>|rapportMaintenances query()
@@ -616,8 +618,8 @@ namespace App\Models{
  * @method static \Illuminate\Database\Eloquent\Builder<static>|rapportMaintenances whereMaintenanceId($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|rapportMaintenances wherePhotoProbleme($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|rapportMaintenances whereRecommandationClient($value)
- * @method static \Illuminate\Database\Eloquent\Builder<static>|rapportMaintenances whereTechnicienId($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|rapportMaintenances whereUpdatedAt($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|rapportMaintenances whereUserId($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|rapportMaintenances whereVerificationFonctionnement($value)
  */
 	class rapportMaintenances extends \Eloquent {}

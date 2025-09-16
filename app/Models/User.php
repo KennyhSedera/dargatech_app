@@ -42,7 +42,7 @@ class User extends Authenticatable
     {
         return [
             'email_verified_at' => 'datetime',
-            'password'          => 'hashed',
+            'password' => 'hashed',
         ];
     }
 
@@ -54,6 +54,11 @@ class User extends Authenticatable
     public function technicien()
     {
         return $this->hasOne(Technicien::class);
+    }
+
+    public function rapport()
+    {
+        return $this->hasMany(rapportMaintenances::class, 'userId');
     }
 
     public function user_role()

@@ -6,9 +6,7 @@ import html2pdf from "html2pdf.js";
 import {
     FaArrowLeft,
     FaUser,
-    FaPrint,
     FaCheck,
-    FaInfo,
     FaTools,
     FaListAlt,
     FaCalendarAlt,
@@ -53,8 +51,6 @@ const RapportMaintenance = ({ intervention_id }) => {
                 setIsLoading(false);
             }
         };
-
-        console.log(rapport);
 
         if (intervention_id) {
             fetchRapport();
@@ -560,8 +556,8 @@ const RapportMaintenance = ({ intervention_id }) => {
                                                                     : ""
                                                             }`}
                                                         >
-                                                            {rapport?.technicien
-                                                                ? `${rapport.technicien.user.name}`
+                                                            {rapport?.user
+                                                                ? `${rapport.user.name}`
                                                                 : "Non assigné"}
                                                         </div>
                                                     </div>

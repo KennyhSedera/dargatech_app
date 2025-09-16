@@ -12,7 +12,7 @@ class rapportMaintenances extends Model
 
     protected $fillable = [
         'clientId',
-        'technicienId',
+        'userId',
         'maintenanceId',
         'description_panne',
         'photo_probleme',
@@ -30,9 +30,9 @@ class rapportMaintenances extends Model
         return $this->belongsTo(Client::class, 'clientId');
     }
 
-    public function technicien()
+    public function user()
     {
-        return $this->belongsTo(Technicien::class, 'technicienId');
+        return $this->belongsTo(User::class, 'userId');
     }
 
     public function maintenance()

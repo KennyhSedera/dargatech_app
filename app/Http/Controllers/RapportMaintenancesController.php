@@ -13,7 +13,7 @@ class RapportMaintenancesController extends Controller
      */
     public function index()
     {
-        $rapports = rapportMaintenances::with(['client', 'technicien', 'technicien.user', 'maintenance'])->get();
+        $rapports = rapportMaintenances::with(['client', 'user', 'maintenance'])->get();
         return response()->json(['data' => $rapports], 200);
     }
 
@@ -25,7 +25,7 @@ class RapportMaintenancesController extends Controller
         try {
             $validator = Validator::make($request->all(), [
                 'clientId' => 'required|exists:clients,id',
-                'technicienId' => 'required|exists:techniciens,id',
+                'userId' => 'required|exists:users,id',
                 'maintenanceId' => 'required|exists:maintenances,id',
                 'description_probleme' => 'required|string',
                 'photo_probleme' => 'nullable|image|max:2048',
@@ -48,7 +48,6 @@ class RapportMaintenancesController extends Controller
 
             $data = $validator->validated();
 
-            // Gérer l'upload de la photo si elle existe
             if ($request->hasFile('photo_probleme')) {
                 $photo = $request->file('photo_probleme');
                 $photoName = time() . '.' . $photo->getClientOriginalExtension();

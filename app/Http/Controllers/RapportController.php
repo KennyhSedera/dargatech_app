@@ -8,6 +8,7 @@ use App\Models\Maintenance;
 use App\Models\Installation;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
+use Log;
 
 class RapportController extends Controller
 {
@@ -22,7 +23,7 @@ class RapportController extends Controller
     {
         $validatedData = $request->validate([
             'clientId' => 'required|integer',
-            'technicienId' => 'required|integer',
+            'userId' => 'required|integer',
             'maintenanceId' => 'required|integer',
             'description_probleme' => 'required|string',
             'photo_probleme' => 'nullable|array',
@@ -48,7 +49,7 @@ class RapportController extends Controller
 
         $dbData = [
             'clientId' => $validatedData['clientId'],
-            'technicienId' => $validatedData['technicienId'],
+            'userId' => $validatedData['userId'],
             'maintenanceId' => $validatedData['maintenanceId'],
             'description_panne' => $validatedData['description_probleme'],
             'photo_probleme' => json_encode($photoPaths), // 💡 Stocké en JSON
@@ -93,7 +94,7 @@ class RapportController extends Controller
     {
         $data = rapportMaintenances::find($id);
 
-        if (! $data) {
+        if (!$data) {
             return response()->json([
                 'message' => 'Rapport non trouvé.',
             ], 404);
@@ -104,9 +105,11 @@ class RapportController extends Controller
 
     public function showByMaintenanceId($maintenance_id)
     {
-        $data = rapportMaintenances::with('maintenance', 'client', 'technicien', 'technicien.user')->where('maintenanceId', $maintenance_id)->first();
+        $data = rapportMaintenances::with('maintenance', 'client', 'user')->where('maintenanceId', $maintenance_id)->first();
 
-        if (! $data) {
+        Log::info($data);
+
+        if (!$data) {
             return response()->json([
                 'message' => 'Rapport non trouvé pour cette intervention.',
             ], 404);
@@ -119,7 +122,7 @@ class RapportController extends Controller
     {
         $data = Rapports::find($id);
 
-        if (! $data) {
+        if (!$data) {
             return response()->json([
                 'message' => 'Rapport non trouvé.',
             ], 404);
@@ -137,7 +140,7 @@ class RapportController extends Controller
     {
         $data = Rapports::find($id);
 
-        if (! $data) {
+        if (!$data) {
             return response()->json([
                 'message' => 'Rapport non trouvé.',
             ], 404);
