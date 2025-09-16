@@ -291,7 +291,6 @@ const InterventionPage = () => {
                 setOpen={setOpenRapport}
                 dataModify={dataRapport}
                 onCloseFormulaire={onCloseFormulaireRapport}
-                idTechnicien={id}
             />
             {isLoading ? (
                 <div className="flex items-center justify-center h-64">

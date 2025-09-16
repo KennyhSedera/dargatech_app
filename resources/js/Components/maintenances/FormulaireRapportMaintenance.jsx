@@ -5,7 +5,7 @@ import TextInput from "../inputs/TextInput";
 import TextArea from "../inputs/TextArea";
 import Modal from "../Modal";
 import InputImage from "../inputs/InputImage";
-import { useForm } from "@inertiajs/react";
+import { useForm, usePage } from "@inertiajs/react";
 import {
     createRapportMaintenance,
     getmaintenancebyinstallation,
@@ -19,14 +19,15 @@ const FormulaireRapportMaintenance = ({
     setOpen,
     dataModify = {},
     onCloseFormulaire = () => {},
-    idTechnicien,
     token_data,
 }) => {
     const today = new Date().toISOString().split("T")[0];
 
+    const userId = usePage().props.auth.user.id;
+
     const { data, setData, errors, reset } = useForm({
         clientId: 0,
-        technicienId: idTechnicien,
+        userId: userId,
         maintenanceId: 0,
         description_probleme: "",
         photo_probleme: [],
@@ -78,7 +79,7 @@ const FormulaireRapportMaintenance = ({
         setOpen(false);
         setData({
             clientId: 0,
-            technicienId: idTechnicien || 1,
+            userId: userId || 1,
             maintenanceId: 0,
             description_probleme: "",
             photo_probleme: [],
@@ -153,7 +154,7 @@ const FormulaireRapportMaintenance = ({
             return;
         }
 
-        data.technicienId = idTechnicien;
+        data.userId = userId;
         data.created_via = token_data ? "telegram_bot" : "web";
 
         try {
@@ -174,7 +175,7 @@ const FormulaireRapportMaintenance = ({
 
             const formData = new FormData();
             formData.append("clientId", data.clientId);
-            formData.append("technicienId", data.technicienId);
+            formData.append("userId", data.userId);
             formData.append("maintenanceId", data.maintenanceId);
             formData.append("description_probleme", data.description_probleme);
 

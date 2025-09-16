@@ -1,11 +1,14 @@
 <?php
 
 use App\Telegram\Commands\CancelCommand;
+use App\Telegram\Commands\GenererRecuCommande;
+use App\Telegram\Commands\HelpCommand;
 use App\Telegram\Commands\InstallationCommand;
 use App\Telegram\Commands\InterventionCommand;
 use App\Telegram\Commands\MaraicherCommand;
+use App\Telegram\Commands\PaiementCommand;
+use App\Telegram\Commands\RapportMaintenanceCommand;
 use App\Telegram\Commands\StartCommand;
-use Telegram\Bot\Commands\HelpCommand;
 
 return [
 
@@ -29,12 +32,15 @@ return [
     'resolve_command_dependencies' => true,
 
     'commands' => [
-        HelpCommand::class,
         StartCommand::class,
         MaraicherCommand::class,
         InstallationCommand::class,
         InterventionCommand::class,
+        RapportMaintenanceCommand::class,
+        PaiementCommand::class,
+        GenererRecuCommande::class,
         CancelCommand::class,
+        HelpCommand::class,
     ],
 
     'command_groups' => [

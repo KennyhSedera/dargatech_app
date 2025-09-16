@@ -3,18 +3,16 @@
 namespace App\Services;
 
 use App\Models\rapportMaintenances;
-use App\Services\MaraicherService;
 use App\Services\SendMessageService;
+use App\Telegram\Commands\HelpCommand;
 use App\Telegram\Commands\InstallationCommand;
 use App\Telegram\Commands\InterventionCommand;
 use App\Telegram\Commands\MaraicherCommand;
 use App\Telegram\Commands\RapportMaintenanceCommand;
 use DB;
 use Log;
-use SebastianBergmann\CodeCoverage\Report\Html\Dashboard;
 use Telegram\Bot\Api;
-use Telegram\Bot\Commands\HelpCommand;
-use Telegram\Bot\Keyboard\Keyboard;
+
 
 class CallBackService
 {
@@ -45,7 +43,7 @@ class CallBackService
         RapportMaintenanceCommand $rapportMaintenanceCommand,
         InterventionService $interventionService,
         RapportMaintenanceService $rapportMaintenanceService,
-        DashboardService $dashboardService
+        DashboardService $dashboardService,
     ) {
         $this->telegram = $telegram;
         $this->maraicherService = $maraicherService;
@@ -199,12 +197,7 @@ class CallBackService
 
     public function handleHelp($chatId)
     {
-        $command = $this->helpCommand->getAllCommandsText();
-        $this->sendMessage->sendMessage(
-            $chatId,
-            $command,
-            'Markdown'
-        );
+        $this->helpCommand->sendHelpMenu($this->telegram, $chatId);
     }
 
     public function handleListDetailed($chatId)

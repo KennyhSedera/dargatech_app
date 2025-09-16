@@ -13,7 +13,7 @@ class DashboardController extends Controller
         $maintenance = DB::table('maintenances')->count();
         $soldtotal = DB::table('paiements')->sum('montant');
         $installationenpanne = DB::table('installations')
-            ->whereDate('updated_at', Carbon::today())
+            ->whereDate('created_at', Carbon::today())
             ->where('statuts', 'en panne')
             ->count();
 
@@ -32,14 +32,6 @@ class DashboardController extends Controller
         $alert = DB::table('alerts')
             ->whereDate('created_at', Carbon::today())
             ->count();
-
-        // $installationcount = DB::table('installations')
-        //     ->selectRaw('DATE(created_at) as date, COUNT(*) as total')
-        // // ->whereBetween('created_at', [Carbon::now()->subDays(7), Carbon::now()])
-        //     ->limit(7)
-        //     ->groupBy(DB::raw('DATE(created_at)'))
-        //     ->orderBy('date', 'asc')
-        //     ->get();
 
         $installationcount = DB::table('installations')
             ->selectRaw('DATE(created_at) as date, COUNT(*) as total')
@@ -85,4 +77,5 @@ class DashboardController extends Controller
 
         return response()->json(['data' => $data], 200);
     }
+
 }

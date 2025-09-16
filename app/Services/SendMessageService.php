@@ -22,7 +22,8 @@ class SendMessageService
             'parse_mode' => $parseMode,
         ]);
     }
-    public function sendMessageWithKeyboard($chatId, $message, $keyboard, $parseMode = null)
+
+    public function sendMessageWithKeyboard($chatId, $message = '', $keyboard, $parseMode = null)
     {
         try {
             $params = [

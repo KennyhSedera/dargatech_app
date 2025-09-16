@@ -64,6 +64,13 @@ class DashboardService
         $this->sendBarChart($chatId, $chartData3, '#0000FF', 'Statistique', type: 'pie');
         $this->sendBarChart($chatId, $chartData2, '#FF0000', 'Statistique Installations');
         $this->sendBarChart($chatId, $chartData, '#0000FF', 'Statistique Interventions', type: 'bar');
+
+        $keyboard2 = DashboardKeyboard::createDashboard([
+            ['text' => '🏠 Menu principal ', 'callback_data' => 'menu'],
+            ['text' => 'ℹ Obtenir de l\'aide', 'callback_data' => 'help'],
+        ], 2);
+
+        $this->messageService->sendMessageWithKeyboard($chatId, '🚫 Fin du tableau de bord.', $keyboard2, 'HTML');
     }
 
     public function sendBarChart($chatId, $chartData = null, $color = null, $title = null, $type = 'line')

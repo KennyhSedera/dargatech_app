@@ -49,7 +49,8 @@ class AdminController extends Controller
                     $password,
                     $appLink,
                     $request->name,
-                    $request->email
+                    $request->email,
+                    'https://t.me/' . env('TELEGRAM_BOT_USERNAME')
                 ));
             } catch (\Exception $emailError) {
                 Log::error('Erreur lors de l\'envoi de l\'email au admin: ' . $emailError->getMessage());

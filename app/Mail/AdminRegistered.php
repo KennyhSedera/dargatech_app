@@ -15,23 +15,19 @@ class AdminRegistered extends Mailable
 
     public $password;
     public $appLink;
+    public $botLink;
     public $name;
     public $email;
 
-    /**
-     * Create a new message instance.
-     */
-    public function __construct($password, $appLink, $name, $email)
+    public function __construct($password, $appLink, $name, $email, $botLink)
     {
-        $this->password    = $password;
-        $this->appLink     = $appLink;
-        $this->name        = $name;
-        $this->email        = $email;
+        $this->password = $password;
+        $this->appLink = $appLink;
+        $this->name = $name;
+        $this->email = $email;
+        $this->botLink = $botLink;
     }
 
-    /**
-     * Get the message envelope.
-     */
     public function envelope(): Envelope
     {
         return new Envelope(
@@ -39,9 +35,6 @@ class AdminRegistered extends Mailable
         );
     }
 
-    /**
-     * Get the message content definition.
-     */
     public function content(): Content
     {
         return new Content(
@@ -49,11 +42,6 @@ class AdminRegistered extends Mailable
         );
     }
 
-    /**
-     * Get the attachments for the message.
-     *
-     * @return array<int, \Illuminate\Mail\Mailables\Attachment>
-     */
     public function attachments(): array
     {
         return [];

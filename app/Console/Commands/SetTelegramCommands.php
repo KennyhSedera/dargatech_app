@@ -26,10 +26,6 @@ class SetTelegramCommands extends Command
                 'description' => 'Accueil du bot 🚀',
             ],
             [
-                'command' => 'help',
-                'description' => 'Obtenir de l’aide 🆘',
-            ],
-            [
                 'command' => 'maraicher',
                 'description' => 'Menu maraicher 👨‍🌾',
             ],
@@ -56,6 +52,10 @@ class SetTelegramCommands extends Command
             [
                 'command' => 'cancel',
                 'description' => 'Annuler une commande 🚫',
+            ],
+            [
+                'command' => 'help',
+                'description' => 'Obtenir de l’aide 🆘',
             ],
         ];
 
