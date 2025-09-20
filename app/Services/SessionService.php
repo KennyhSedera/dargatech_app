@@ -17,6 +17,8 @@ class SessionService
     protected ListInstallationService $listInstallationService;
     protected SearchServices $searchServices;
     protected PaiementService $paiementService;
+    protected InterventionService $interventionService;
+    protected RapportMaintenanceService $rapportMaintenanceService;
 
     public function __construct(
         SendMessageService $sendMessage,
@@ -26,6 +28,8 @@ class SessionService
         ListInstallationService $listInstallationService,
         SearchServices $searchServices,
         PaiementService $paiementService,
+        InterventionService $interventionService,
+        RapportMaintenanceService $rapportMaintenanceService,
     ) {
         $this->sendMessage = $sendMessage;
         $this->maraicherService = $maraicherService;
@@ -34,6 +38,8 @@ class SessionService
         $this->listInstallationService = $listInstallationService;
         $this->searchServices = $searchServices;
         $this->paiementService = $paiementService;
+        $this->interventionService = $interventionService;
+        $this->rapportMaintenanceService = $rapportMaintenanceService;
     }
 
     public function handleActiveSession($activeSession, $messageText, $userId, $chatId)
@@ -48,6 +54,14 @@ class SessionService
 
                 case 'new_installation':
                     $this->handleNewInstallationSession($activeSession, $messageText, $data, $userId, $chatId);
+                    break;
+
+                case 'new_intervention':
+                    $this->handleNewInterventionSession($activeSession, $messageText, $data, $userId, $chatId);
+                    break;
+
+                case 'new_rapport_maintenance':
+                    $this->handleNewRapportMaintenanceSession($activeSession, $messageText, $data, $userId, $chatId);
                     break;
 
                 case 'search_installation':
@@ -100,6 +114,16 @@ class SessionService
     private function handleNewInstallationSession($activeSession, $messageText, $data, $userId, $chatId)
     {
         $this->newInstallationService->handleStep($activeSession->step, $messageText, $data, $userId, $chatId);
+    }
+
+    private function handleNewInterventionSession($activeSession, $messageText, $data, $userId, $chatId)
+    {
+        $this->interventionService->handleStep($activeSession->step, $messageText, $data, $userId, $chatId);
+    }
+
+    public function handleNewRapportMaintenanceSession($activeSession, $messageText, $data, $userId, $chatId)
+    {
+        $this->rapportMaintenanceService->handleStep($activeSession->step, $messageText, $data, $userId, $chatId);
     }
 
     private function handleSearchSession($activeSession, $messageText, $data, $userId, $chatId)

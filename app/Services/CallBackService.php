@@ -29,6 +29,7 @@ class CallBackService
     protected RapportMaintenanceCommand $rapportMaintenanceCommand;
     protected RapportMaintenanceService $rapportMaintenanceService;
     protected DashboardService $dashboardService;
+    protected StepService $stepService;
 
     public function __construct(
         Api $telegram,
@@ -44,6 +45,7 @@ class CallBackService
         InterventionService $interventionService,
         RapportMaintenanceService $rapportMaintenanceService,
         DashboardService $dashboardService,
+        StepService $stepService,
     ) {
         $this->telegram = $telegram;
         $this->maraicherService = $maraicherService;
@@ -58,6 +60,7 @@ class CallBackService
         $this->interventionService = $interventionService;
         $this->rapportMaintenanceService = $rapportMaintenanceService;
         $this->dashboardService = $dashboardService;
+        $this->stepService = $stepService;
     }
 
     public function handleCurrentPage($chatId)
@@ -70,14 +73,69 @@ class CallBackService
         $this->maraicherCommand->sendMaraicherMenu($this->telegram, $chatId);
     }
 
-    public function handleNewMaraicher($chatId, $userId)
+    private function getExistingSession($chatId, $userId)
     {
+        $this->stepService->initializeStepConfigurations();
+
         $existingSession = DB::table('telegram_sessions')
             ->where('user_id', $userId)
-            ->where('command', 'new_maraicher')
             ->where('completed', false)
             ->first();
 
+        if ($existingSession) {
+            $command = $existingSession->command;
+            $step = $existingSession->step;
+
+            $searchCommands = [
+                'search_maraicher',
+                'search_installation',
+                'search_intervention',
+                'search_rapport_maintenance'
+            ];
+
+            if (in_array($command, $searchCommands)) {
+                $extractedCommand = ucfirst(str_replace('search_', '', $command));
+
+                $this->sendMessage->sendMessage(
+                    $chatId,
+                    "⚠️ *Session en cours*\n\n" .
+                    "Vous avez déjà une session de *recherche {$extractedCommand}* active.\n\n" .
+                    "Veuillez compléter la session actuelle ou tapez /cancel pour l'annuler.",
+                    'Markdown'
+                );
+
+                return $existingSession;
+            }
+
+            $commandsMap = [
+                'new_maraicher' => 'Maraicher',
+                'new_installation' => 'Installation',
+                'new_intervention' => 'Intervention',
+            ];
+
+            $commandLabel = $commandsMap[$command] ?? ucfirst($command);
+
+            $currentPrompt = $this->stepService->stepConfigurations[$command]['prompts'][$step]
+                ?? "Complétez l'étape : {$step}";
+
+            $this->sendMessage->sendMessage(
+                $chatId,
+                "⚠️ *Session en cours*\n\n" .
+                "Vous avez déjà une session *d'enregistrement du nouveau {$commandLabel}* active. Tapez /cancel pour l' annuller ou \n\n" .
+                "{$currentPrompt}\n",
+                'Markdown'
+            );
+        }
+
+        return $existingSession;
+    }
+
+    public function handleNewMaraicher($chatId, $userId)
+    {
+        $existingSession = $this->getExistingSession($chatId, $userId);
+        if ($existingSession) {
+            return;
+        }
         if (!$existingSession) {
             DB::table('telegram_sessions')->insert([
                 'user_id' => $userId,
@@ -97,22 +155,14 @@ class CallBackService
             );
             return;
         }
-
-        $this->sendMessage->sendMessage(
-            $chatId,
-            "⚠️ Vous avez déjà une session d'enregistrement en cours.\n\nVeuillez compléter la session actuelle ou tapez /cancel pour l'annuler.",
-            'Markdown'
-        );
     }
 
     public function handleNewInstallations($chatId, $userId)
     {
-        $existingSession = DB::table('telegram_sessions')
-            ->where('user_id', $userId)
-            ->where('command', 'new_installation')
-            ->where('completed', false)
-            ->first();
-
+        $existingSession = $this->getExistingSession($chatId, $userId);
+        if ($existingSession) {
+            return;
+        }
         if (!$existingSession) {
             DB::table('telegram_sessions')->insert([
                 'user_id' => $userId,
@@ -138,6 +188,60 @@ class CallBackService
             "⚠️ Vous avez déjà une session d'enregistrement en cours.\n\nVeuillez compléter la session actuelle ou tapez /cancel pour l'annuler.",
             'Markdown'
         );
+    }
+
+    public function handleNewIntervention($chatId, $userId)
+    {
+        $existingSession = $this->getExistingSession($chatId, $userId);
+        if ($existingSession) {
+            return;
+        }
+        if (!$existingSession) {
+            DB::table('telegram_sessions')->insert([
+                'user_id' => $userId,
+                'chat_id' => $chatId,
+                'command' => 'new_intervention',
+                'step' => 'installation_id',
+                'data' => json_encode([]),
+                'completed' => false,
+                'created_at' => now(),
+                'updated_at' => now()
+            ]);
+
+            $this->sendMessage->sendMessage(
+                $chatId,
+                "🌱 *Enregistrement d'un nouveau Intervention*\n\n📦 Veuillez entrer la *code de l'installation * :",
+                'Markdown'
+            );
+            return;
+        }
+    }
+
+    public function handleNewRapportMaintenance($chatId, $userId)
+    {
+        $existingSession = $this->getExistingSession($chatId, $userId);
+        if ($existingSession) {
+            return;
+        }
+        if (!$existingSession) {
+            DB::table('telegram_sessions')->insert([
+                'user_id' => $userId,
+                'chat_id' => $chatId,
+                'command' => 'new_rapport_maintenance',
+                'step' => 'maintenanceId',
+                'data' => json_encode([]),
+                'completed' => false,
+                'created_at' => now(),
+                'updated_at' => now()
+            ]);
+
+            $this->sendMessage->sendMessage(
+                $chatId,
+                "🌱 *Enregistrement d'un nouveau rapport de maintenance*\n\n📦 Veuillez entrer la *code de l'installation * :",
+                'Markdown'
+            );
+            return;
+        }
     }
 
     public function handleInstallations($chatId)
@@ -230,6 +334,10 @@ class CallBackService
 
     public function handleSearch($chatId, $userId, $command = 'search_maraicher', $name = 'name')
     {
+        $existingSession = $this->getExistingSession($chatId, $userId);
+        if ($existingSession) {
+            return;
+        }
         try {
             $searchCommands = ['search_maraicher', 'search_installation', 'search_intervention', 'search_rapport_maintenance'];
             $existingSession = DB::table('telegram_sessions')
@@ -270,7 +378,7 @@ class CallBackService
 
             $this->sendMessage->sendMessage(
                 $chatId,
-                "⚠️ **Session en cours**\n\n" .
+                "⚠️ *Session en cours*\n\n" .
                 "Vous avez déjà une session de *recherche {$extractedCommand}* active.\n\n" .
                 "Veuillez compléter la session actuelle ou tapez /cancel pour l'annuler."
             );

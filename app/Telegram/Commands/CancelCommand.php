@@ -43,7 +43,7 @@ class CancelCommand extends Command
                 $this->replyWithMessage(['text' => '✅ Session ' . $c->command . ' annulée.']);
             }
         } else {
-            $this->replyWithMessage(use_sendMessage_parameters: ['text' => '❌ Aucune session en cours.']);
+            $this->replyWithMessage(['text' => '❌ Aucune session en cours.']);
         }
     }
 }

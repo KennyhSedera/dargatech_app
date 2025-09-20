@@ -2,8 +2,8 @@
 
 namespace App\Services;
 
+use App\Models\Maintenance;
 use DB;
-use Exception;
 use Log;
 use Telegram\Bot\Api;
 use Telegram\Bot\Keyboard\Keyboard;
@@ -11,7 +11,7 @@ use Telegram\Bot\Keyboard\Keyboard;
 class StepService
 {
     protected SendMessageService $sendMessage;
-    protected array $stepConfigurations;
+    public array $stepConfigurations;
     protected Api $telegram;
 
     public function __construct(SendMessageService $sendMessage, Api $telegram)
@@ -21,7 +21,7 @@ class StepService
         $this->telegram = $telegram;
     }
 
-    private function initializeStepConfigurations()
+    public function initializeStepConfigurations()
     {
         $this->stepConfigurations = [
             'new_maraicher' => [
@@ -32,7 +32,7 @@ class StepService
                     'email',
                     'CIN',
                     'genre',
-                    'localisation',
+                    'adress',
                     'type_activite_agricole',
                     'surface_cultivee',
                     'date_contrat'
@@ -41,7 +41,7 @@ class StepService
                     'nom' => "🌱 Veuillez entrer le *nom* du maraîcher :",
                     'prenom' => "✍️ Entrez maintenant le *prénom* :",
                     'telephone' => "📞 Entrez le *téléphone* :",
-                    'localisation' => "📍 Entrez la *localisation* ou *adresse* :",
+                    'adress' => "📍 Entrez la *localisation* ou *adresse* :",
                     'genre' => "👤 Entrez le *genre* :",
                     'email' => "📧 Entrez l'*email* :",
                     'CIN' => "🪪 Entrez le *CIN* :",
@@ -132,6 +132,32 @@ class StepService
                         ['Maintenance', 'Réparation'],
                         ['Installation', 'Diagnostic']
                     ]
+                ],
+                'validation' => [
+                    'date_intervention' => 'date',
+                    'photo' => 'file_exists'
+                ]
+            ],
+            'new_rapport_maintenance' => [
+                'steps' => [
+                    'maintenanceId',
+                    'diagnostic_initial',
+                    'cause_identifiee',
+                    'intervention_realisee',
+                    'verification_fonctionnement',
+                    'recommandation_client',
+                    'photo',
+                    'date_intervention',
+                ],
+                'prompts' => [
+                    'maintenanceId' => "📦 Veuillez entrer la *code de l'installation * :",
+                    'diagnostic_initial' => "📝 Entrez la *vérifications préliminaires* :",
+                    'cause_identifiee' => "📝 Entrez la *résultat du diagnostic * :",
+                    'intervention_realisee' => "📝 Entrez l'*actions correctives* :",
+                    'verification_fonctionnement' => "📝 Entrez la *vérification du fonctionnement* :",
+                    'recommandation_client' => "📝 Entrez la *recommandation au client* :",
+                    'photo' => "📸 Ajoutez la *photo* de l'intervention :",
+                    'date_intervention' => "📅 Entrez la *date de l'intervention* (AAAA-MM-JJ) :"
                 ],
                 'validation' => [
                     'date_intervention' => 'date',
@@ -278,6 +304,52 @@ class StepService
                 }
             } else {
                 $this->sendMessage->sendMessage($chatId, "❌ Le numéro de client n'existe pas. Veuillez fournir un client existant :");
+            }
+        } else if ($step === 'installation_id') {
+            $installation = DB::table('installations')->where('code_installation', $data[$step])->first();
+
+            if ($installation) {
+                if ($installation->statuts !== 'installée') {
+                    $this->sendMessage->sendMessage($chatId, "❌ L'installation est déjà en cours de traitement. Veuillez fournir une autre installation :");
+                } else {
+                    $data[$step] = $installation->id;
+
+                    if ($nextStep) {
+                        $this->updateSession($userId, $command, $nextStep, $data);
+                        $this->sendStepMessage($chatId, $nextStep, $command);
+                    } else {
+                        $this->completeSession($userId, $command, $data);
+                        if ($onComplete && is_callable($onComplete)) {
+                            $onComplete($data, $userId, $chatId);
+                        }
+                    }
+                }
+
+            } else {
+                $this->sendMessage->sendMessage($chatId, "❌ Le code d'installation n'existe pas. Veuillez fournir un installation existant :");
+            }
+        } else if ($step === 'maintenanceId') {
+            $maintenances = Maintenance::whereHas('installation', function ($query) use ($data, $step) {
+                $query->where('code_installation', $data[$step]);
+            })
+                ->where('status_intervention', 'en attente')
+                ->with(['installation', 'installation.client'])
+                ->first();
+            if ($maintenances->id) {
+                $data[$step] = $maintenances->id;
+                $data['clientId'] = $maintenances->installation->client_id;
+                $data['description_panne'] = $maintenances->description_probleme;
+                if ($nextStep) {
+                    $this->updateSession($userId, $command, $nextStep, $data);
+                    $this->sendStepMessage($chatId, $nextStep, $command);
+                } else {
+                    $this->completeSession($userId, $command, $data);
+                    if ($onComplete && is_callable($onComplete)) {
+                        $onComplete($data, $userId, $chatId);
+                    }
+                }
+            } else {
+                $this->sendMessage->sendMessage($chatId, "❌ La maintenance de l'installation {$data[$step]} n'existe pas. Veuillez fournir une maintenance existante :");
             }
         } else {
             if ($nextStep) {

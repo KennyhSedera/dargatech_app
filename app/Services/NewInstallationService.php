@@ -56,7 +56,7 @@ class NewInstallationService
 
             $code_installation = $this->generateNextCodeInstallation();
 
-            $id = DB::table('installations')->insertGetId([
+            DB::table('installations')->insertGetId([
                 'client_id' => $data['client_id'],
                 'code_installation' => $code_installation,
                 'puissance_pompe' => $data['puissance_pompe'],

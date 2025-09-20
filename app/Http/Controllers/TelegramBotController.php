@@ -95,6 +95,8 @@ class TelegramBotController extends Controller
                                 'rapport_maintenance' => $this->callBackService->handleRapportMaintenance($chatId),
                                 'new_maraicher' => $this->callBackService->handleNewMaraicher($chatId, $userId),
                                 'new_installation' => $this->callBackService->handleNewInstallations($chatId, $userId),
+                                'new_intervention' => $this->callBackService->handleNewIntervention($chatId, $userId),
+                                'new_rapport_maintenance' => $this->callBackService->handleNewRapportMaintenance($chatId, $userId),
                                 'list_installation' => $this->callBackService->handleListInstallation($chatId),
                                 'list_maraicher' => $this->callBackService->handleListFull($chatId),
                                 'list_interventions' => $this->callBackService->handleListInterventions($chatId),

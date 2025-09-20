@@ -36,7 +36,7 @@ class NewMaraicherService
                 'nom' => $data['nom'],
                 'prenom' => $data['prenom'],
                 'telephone' => $data['telephone'],
-                'localisation' => $data['localisation'],
+                'localisation' => $data['adress'],
                 'genre' => $data['genre'],
                 'email' => $data['email'],
                 'CIN' => $data['CIN'],

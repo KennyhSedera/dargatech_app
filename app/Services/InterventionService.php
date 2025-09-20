@@ -2,7 +2,7 @@
 
 namespace App\Services;
 
-use App\Models\Maintenance;
+use App\Models\Installation;
 use App\Telegram\Keyboard\PaginationKeyboard;
 use DB;
 use Log;
@@ -11,9 +11,84 @@ use Telegram\Bot\Keyboard\Keyboard;
 class InterventionService
 {
     protected SendMessageService $sendMessage;
-    public function __construct(SendMessageService $sendMessage)
+    protected StepService $globalStepService;
+    public function __construct(SendMessageService $sendMessage, StepService $stepService)
     {
         $this->sendMessage = $sendMessage;
+        $this->globalStepService = $stepService;
+    }
+
+
+    public function handleStep($step, $messageText, $data, $userId, $chatId)
+    {
+        $this->globalStepService->handleStep(
+            $step,
+            $messageText,
+            $data,
+            $userId,
+            $chatId,
+            'new_intervention',
+            onComplete: [$this, 'finalizeIntervention']
+        );
+    }
+
+    public function finalizeIntervention($data, $userId, $chatId)
+    {
+        $installation = Installation::find($data['installation_id']);
+
+        Log::info($installation);
+
+        DB::beginTransaction();
+        try {
+            // Fix case sensitivity issue
+            if (strtolower($data['type_intervention']) == 'préventive') {
+                $installation->update(['statuts' => 'en panne']);
+            }
+
+            DB::table('maintenances')->insert([
+                "installation_id" => $data['installation_id'],
+                "type_intervention" => $data['type_intervention'],
+                "description_probleme" => $data['description_probleme'],
+                "photo_probleme" => $data['photo'],
+                "created_via" => 'telegram_bot',
+                "status_intervention" => 'en attente',
+                "date_intervention" => $data['date_intervention'],
+                "created_at" => now(), // Use snake_case for consistency
+                "updated_at" => now(), // Use snake_case for consistency
+            ]);
+
+            // Commit the transaction on success
+            DB::commit();
+
+            $successMessage = "✅ Une intervention a été enregistrée dans le système avec succès !";
+            $this->sendMessage->sendMessage($chatId, $successMessage);
+
+        } catch (\Throwable $e) {
+            DB::rollBack();
+
+            Log::error("Erreur lors de l'enregistrement de l'intervention", [
+                'data' => $data,
+                'error' => $e->getMessage()
+            ]);
+
+            // Fix markdown parsing issues by using plain text or proper escaping
+            $errorCode = substr(md5($e->getMessage()), 0, 8);
+            $errorMessage = "❌ Une erreur s'est produite lors de l'enregistrement.\n\n";
+            $errorMessage .= "🔄 Vous pouvez :\n";
+            $errorMessage .= "• Tapez /new_intervention pour recommencer\n";
+            $errorMessage .= "• Contactez le support si le problème persiste\n\n";
+            $errorMessage .= "📝 Code d'erreur : " . $errorCode;
+
+            // Send without markdown to avoid parsing errors
+            $this->sendMessage->sendMessage($chatId, $errorMessage);
+
+            // Clean up session
+            DB::table('telegram_sessions')
+                ->where('user_id', $userId)
+                ->where('command', 'new_intervention')
+                ->where('completed', false)
+                ->delete();
+        }
     }
 
     public function showFullList($chatId)

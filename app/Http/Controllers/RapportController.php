@@ -36,7 +36,6 @@ class RapportController extends Controller
             'date_intervention' => 'required|date',
         ]);
 
-        // Traitement des images
         $photoPaths = [];
 
         if ($request->hasFile('photo_probleme')) {
@@ -52,7 +51,7 @@ class RapportController extends Controller
             'userId' => $validatedData['userId'],
             'maintenanceId' => $validatedData['maintenanceId'],
             'description_panne' => $validatedData['description_probleme'],
-            'photo_probleme' => json_encode($photoPaths), // 💡 Stocké en JSON
+            'photo_probleme' => json_encode($photoPaths),
             'diagnostic_initial' => $validatedData['verifications_preliminaires'],
             'cause_identifiee' => $validatedData['resultat_diagnostic'],
             'intervention_realisee' => $validatedData['actions_correctives'],
@@ -106,8 +105,6 @@ class RapportController extends Controller
     public function showByMaintenanceId($maintenance_id)
     {
         $data = rapportMaintenances::with('maintenance', 'client', 'user')->where('maintenanceId', $maintenance_id)->first();
-
-        Log::info($data);
 
         if (!$data) {
             return response()->json([

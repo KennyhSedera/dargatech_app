@@ -2,17 +2,97 @@
 
 namespace App\Services;
 
+use App\Models\Maintenance;
+use App\Models\Profile;
 use App\Models\rapportMaintenances;
+use App\Models\Technicien;
 use App\Telegram\Keyboard\PaginationKeyboard;
+use DB;
 use Log;
 use Telegram\Bot\Keyboard\Keyboard;
 
 class RapportMaintenanceService
 {
     protected SendMessageService $sendMessage;
-    public function __construct(SendMessageService $sendMessage)
+    protected StepService $globalStepService;
+    public function __construct(SendMessageService $sendMessage, StepService $globalStepService)
     {
         $this->sendMessage = $sendMessage;
+        $this->globalStepService = $globalStepService;
+    }
+
+    public function handleStep($step, $messageText, $data, $userId, $chatId)
+    {
+        $this->globalStepService->handleStep(
+            $step,
+            $messageText,
+            $data,
+            $userId,
+            $chatId,
+            'new_rapport_maintenance',
+            [$this, 'finalizeRapportMaintenance']
+        );
+    }
+
+    public function finalizeRapportMaintenance($data, $userId, $chatId)
+    {
+        $user_id = 1;
+        $profile = Profile::where('telegram_user_id', $userId)
+            ->where('bot_active', true)
+            ->first();
+        if ($profile) {
+            $user_id = $profile->user_id;
+        } else {
+            $technician = Technicien::where('telegram_user_id', $userId)
+                ->where('bot_active', true)
+                ->first();
+            $user_id = $technician->user_id;
+        }
+
+        $maintenance = Maintenance::find($data['maintenanceId']);
+        $maintenance->installation()->update(values: ['statuts' => 'installée']);
+        $maintenance->update(['status_intervention' => 'terminée']);
+
+        DB::beginTransaction();
+
+        try {
+            rapportMaintenances::create([
+                'clientId' => $data['clientId'],
+                'userId' => $user_id,
+                'maintenanceId' => $data['maintenanceId'],
+                'description_panne' => $data['description_panne'],
+                'photo_probleme' => $data['photo'],
+                'diagnostic_initial' => $data['diagnostic_initial'],
+                'cause_identifiee' => $data['cause_identifiee'],
+                'intervention_realisee' => $data['intervention_realisee'],
+                'verification_fonctionnement' => $data['verification_fonctionnement'],
+                'recommandation_client' => $data['recommandation_client'],
+                'date_intervention' => $data['date_intervention'],
+                'created_via' => 'telegram_bot',
+                'created_at' => now(),
+                'updated_at' => now(),
+            ]);
+            DB::table('telegram_sessions')
+                ->where('user_id', $userId)
+                ->where('command', 'new_rapport_maintenance')
+                ->delete();
+
+            DB::commit();
+
+            $successMessage = "✅ Une rapport maintenance a été enregistrée dans le système avec succès !";
+            $this->sendMessage->sendMessage($chatId, $successMessage);
+
+        } catch (\Exception $e) {
+            DB::rollBack();
+            Log::error('Error creating rapport maintenance: ' . $e->getMessage(), [
+                'data' => $data,
+                'user_id' => $userId,
+                'chat_id' => $chatId
+            ]);
+
+            $errorMessage = "❌ Une erreur s'est produite lors de l'enregistrement du rapport maintenance.";
+            $this->sendMessage->sendMessage($chatId, $errorMessage);
+        }
     }
 
     public function showFullList($chatId)
