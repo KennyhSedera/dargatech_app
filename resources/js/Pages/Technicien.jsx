@@ -44,7 +44,7 @@ const Technicien = () => {
             adress: el.technicien.adress,
             speciality: el.technicien.speciality,
             photo: el.technicien.photo,
-            telegram_username: el.technicien.telegram_username || "Non defini",
+            telegram_username: el.technicien.telegram_username,
             bot_active: el.technicien.bot_active,
         }));
 
