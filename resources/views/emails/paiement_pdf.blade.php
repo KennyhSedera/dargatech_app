@@ -15,7 +15,9 @@
         }
 
         .header {
-            background: linear-gradient(to right, #f5a623, #e3ca81, #4a90e2);
+            background: #f8a01c;
+            background: -webkit-linear-gradient(90deg, #f8a01c 0%, #3da6e1 100%);
+            background: linear-gradient(90deg, #f8a01c 0%, #3da6e1 100%);
             color: white;
             padding: 20px;
             text-align: center;
@@ -62,7 +64,9 @@
 
         .button {
             display: inline-block;
-            background: linear-gradient(to right, #f5a623, #e3ca81);
+            background: #f8a01c;
+            background: -webkit-linear-gradient(90deg, #f8a01c 0%, #3da6e1 100%);
+            background: linear-gradient(90deg, #f8a01c 0%, #3da6e1 100%);
             color: white;
             padding: 12px 25px;
             text-decoration: none;

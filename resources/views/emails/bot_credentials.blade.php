@@ -22,8 +22,10 @@
         }
 
         .header {
+            background: #f8a01c;
+            background: -webkit-linear-gradient(90deg, #f8a01c 0%, #3da6e1 100%);
             background: linear-gradient(90deg, #f8a01c 0%, #3da6e1 100%);
-            color: white;
+            color: #ffffff;
             padding: 15px;
             text-align: center;
         }
@@ -58,8 +60,10 @@
 
         .button {
             display: inline-block;
+            background: #f8a01c;
+            background: -webkit-linear-gradient(90deg, #f8a01c 0%, #3da6e1 100%);
             background: linear-gradient(90deg, #f8a01c 0%, #3da6e1 100%);
-            color: #fff !important;
+            color: #ffffff !important;
             text-decoration: none;
             padding: 10px 20px;
             border-radius: 3px;

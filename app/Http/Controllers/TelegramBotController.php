@@ -46,13 +46,18 @@ class TelegramBotController extends Controller
             $this->sessionService->cleanupSessionsSuccess(1, $chatId);
 
             $username = $update->getMessage()->getChat()->first_name . ' ' . $update->getMessage()->getChat()->last_name;
+            $username2 = $update->getMessage()->getChat()->last_name . ' ' . $update->getMessage()->getChat()->first_name;
 
             $existingCompte = null;
 
-            $existingCompte = Technicien::where('telegram_username', $username)->first();
+            $existingCompte = Technicien::where('telegram_username', $username)
+                ->orWhere('telegram_username', $username2)
+                ->first();
 
             if (!$existingCompte) {
-                $existingCompte = Profile::where('telegram_username', $username)->first();
+                $existingCompte = Profile::where('telegram_username', $username)
+                    ->orWhere('telegram_username', $username2)
+                    ->first();
             }
 
             if ($existingCompte) {
