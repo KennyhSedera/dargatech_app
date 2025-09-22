@@ -27,7 +27,7 @@
             background: #f8a01c;
             background: -webkit-linear-gradient(90deg, #f8a01c 0%, #3da6e1 100%);
             background: linear-gradient(90deg, #f8a01c 0%, #3da6e1 100%);
-            color: #fff;
+            color: #fff !important;
             padding: 15px;
             text-align: center;
             margin-bottom: 30px;
@@ -69,8 +69,10 @@
 
         .btn {
             display: inline-block;
-            background-color: #5e35b1;
-            color: #fff !important;
+            background: #f8a01c;
+            background: -webkit-linear-gradient(90deg, #f8a01c 0%, #3da6e1 100%);
+            background: linear-gradient(90deg, #f8a01c 0%, #3da6e1 100%);
+            color: white !important;
             text-decoration: none;
             padding: 12px 24px;
             border-radius: 4px;
@@ -78,11 +80,6 @@
             margin: 20px 0;
             text-align: center;
             transition: background-color 0.3s;
-        }
-
-        .btn:hover {
-            background-color: #4527a0;
-            color: #fff !important;
         }
 
         .footer {
