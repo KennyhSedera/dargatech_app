@@ -20,7 +20,7 @@ const UserCard = ({ user, handleDelete, handleImageError }) => {
                         {user.name}
                     </h3>
                     <div className="relative">
-                        {!user.id !== 1 && (
+                        {user.id !== 1 && (
                             <button
                                 onClick={() => handleDelete(user.id)}
                                 className="p-2 text-white transition-colors rounded-full hover:bg-red-50 dark:hover:bg-gray-700"
