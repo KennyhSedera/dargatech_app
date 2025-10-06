@@ -17,12 +17,14 @@ import Calendar from "@/Components/Calendar";
 import { getmaintenances } from "@/Services/maintenanceService";
 import { all } from "axios";
 import { getinstallations } from "@/Services/installationService";
-import DateCard from "./../Components/dashboard/DateCard";
+import TableNew from "@/Components/dashboard/TableNew";
 
 export default function Dashboard() {
     const [data, setData] = useState({});
     const [events, setEvents] = useState([]);
     const [percentenpanne, setPercentenpanne] = useState(0);
+    const [new_installations, setNew_installations] = useState([]);
+    const [new_maraichers, setNew_maraichers] = useState([]);
 
     const getDataDB = async () => {
         const { data } = await getCount();
@@ -110,7 +112,6 @@ export default function Dashboard() {
 
     const series = [
         { name: "Installations", data: transformData(installationcount) },
-        // { name: "Alertes", data: transformData(alertcount) },
         { name: "Interventions", data: transformData(interventioncount) },
     ];
 
@@ -124,7 +125,28 @@ export default function Dashboard() {
                   )
                 : 0
         );
+        newData(data);
     }, [data]);
+
+    const newData = (data) => {
+        const new_maraicher = data?.new_maraicher?.map((d) => ({
+            id: d.id,
+            name: d.nom + " " + d.prenom,
+            statuts: d.is_payed ? "Payé" : "Non payé",
+            color: d.is_payed ? "bg-green-500" : "bg-red-500",
+            date: d.date,
+        }));
+
+        const new_installation = data?.new_installation?.map((d) => ({
+            id: d.code_installation,
+            name: d.client_nom + " " + d.client_prenom,
+            statuts: d.statuts,
+            color: d.statuts === "en panne" ? "bg-red-500" : "bg-green-500",
+            date: d.date,
+        }));
+        setNew_maraichers(new_maraicher);
+        setNew_installations(new_installation);
+    };
 
     const transformDataArea = (data) =>
         allDates.map((date) => {
@@ -202,12 +224,14 @@ export default function Dashboard() {
                     </Link>
                 ))}
             </div>
-            {/* <div className="grid grid-cols-1 gap-2 md:grid-cols-4">
-                <div className="w-full h-full bg-white rounded-md shadow-md dark:bg-gray-800"></div>
-                <div className="w-full h-full bg-white rounded-md shadow-md dark:bg-gray-800"></div>
-                <div className="w-full h-full bg-white rounded-md shadow-md dark:bg-gray-800"></div>
-                <DateCard />
-            </div> */}
+            <div className="grid grid-cols-1 gap-2 md:grid-cols-2">
+                <div className="w-full h-full p-2 bg-white rounded-md shadow-md dark:bg-gray-800">
+                    <TableNew title="Maraichers" data={new_maraichers} />
+                </div>
+                <div className="w-full h-full p-2 bg-white rounded-md shadow-md dark:bg-gray-800">
+                    <TableNew title="Installations" data={new_installations} />
+                </div>
+            </div>
             <Calendar className="mt-2" events={events} />
             <div className="grid grid-cols-1 gap-2 mt-2 md:grid-cols-3">
                 <BarChart

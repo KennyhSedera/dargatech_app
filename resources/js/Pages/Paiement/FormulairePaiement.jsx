@@ -125,6 +125,7 @@ const FormulairePaiement = ({ token_data, telegramback }) => {
             setClients(
                 clients?.map((el) => ({
                     id: el.id,
+                    title: `${el.prenom} ${el.nom}`,
                     nom: el.prenom,
                     nom_famille: el.nom,
                     ville: el.localisation,

@@ -1,36 +1,34 @@
-import React from 'react'
-import Modal from './Modal'
+import React from "react";
+import Modal from "./Modal";
 
 const ConfirmDialog = ({
-    message = '',
-    title = 'Confirmation',
-    btnCloseName = 'Annuler',
-    btnAcceptName = 'Confirmer',
+    message = "",
+    title = "Confirmation",
+    btnCloseName = "Annuler",
+    btnAcceptName = "Confirmer",
     open = false,
-    close = () => { },
-    accept = () => { },
-    btnCloseColor = 'bg-gray-400 text-white',
-    btnAcceptColor = ' text-white'
+    close = () => {},
+    accept = () => {},
+    btnCloseColor = "bg-gray-400 text-white",
+    btnAcceptColor = " text-white",
 }) => {
     const onClose = () => {
         close();
-    }
+    };
     return (
         <Modal
-            maxWidth='md'
+            maxWidth="md"
             show={open}
             onClose={onClose}
             closeOnOutsideClick={true}
             role="dialog"
             aria-labelledby="modal-title"
         >
-            <div id="modal-title" className="text-xl font-semibold mb-4">
+            <div id="modal-title" className="mb-4 text-xl font-semibold">
                 {title}
             </div>
 
-            <div className="mb-6">
-                {message}
-            </div>
+            <div className="mb-6">{message}</div>
 
             <div className="grid grid-cols-2 gap-4">
                 <button
@@ -47,8 +45,7 @@ const ConfirmDialog = ({
                 </button>
             </div>
         </Modal>
+    );
+};
 
-    )
-}
-
-export default ConfirmDialog
+export default ConfirmDialog;

@@ -1,8 +1,25 @@
-import React, { useState, forwardRef, useEffect, useImperativeHandle, useRef } from 'react';
+import React, {
+    useState,
+    forwardRef,
+    useEffect,
+    useImperativeHandle,
+    useRef,
+} from "react";
 
 const InputAutocomplete = forwardRef(
-    ({ data = [], className = '', isFocused = false, defaultValue = null, onSelect, onFocus, ...props }, ref) => {
-        const [inputValue, setInputValue] = useState('');
+    (
+        {
+            data = [],
+            className = "",
+            isFocused = false,
+            defaultValue = null,
+            onSelect,
+            onFocus,
+            ...props
+        },
+        ref
+    ) => {
+        const [inputValue, setInputValue] = useState("");
         const [filteredData, setFilteredData] = useState([]);
         const [showSuggestions, setShowSuggestions] = useState(false);
         const autocompleteRef = useRef(null);
@@ -14,7 +31,9 @@ const InputAutocomplete = forwardRef(
 
         useEffect(() => {
             if (defaultValue) {
-                const defaultItem = data.find((item) => item.id === defaultValue);
+                const defaultItem = data.find(
+                    (item) => item.id === defaultValue
+                );
                 if (defaultItem) {
                     setInputValue(defaultItem.nom || defaultItem.title);
                 }
@@ -31,7 +50,9 @@ const InputAutocomplete = forwardRef(
         useEffect(() => {
             if (inputValue) {
                 const filtered = data.filter((item) =>
-                    (item.nom || item.title || '').toLowerCase().includes(inputValue.toLowerCase())
+                    (item.nom || item.title || "")
+                        .toLowerCase()
+                        .includes(inputValue.toLowerCase())
                 );
                 setFilteredData(filtered);
                 setShowSuggestions(true);
@@ -43,14 +64,17 @@ const InputAutocomplete = forwardRef(
 
         useEffect(() => {
             function handleClickOutside(event) {
-                if (wrapperRef.current && !wrapperRef.current.contains(event.target)) {
+                if (
+                    wrapperRef.current &&
+                    !wrapperRef.current.contains(event.target)
+                ) {
                     setShowSuggestions(false);
                 }
             }
 
-            document.addEventListener('mousedown', handleClickOutside);
+            document.addEventListener("mousedown", handleClickOutside);
             return () => {
-                document.removeEventListener('mousedown', handleClickOutside);
+                document.removeEventListener("mousedown", handleClickOutside);
             };
         }, []);
 
@@ -70,7 +94,7 @@ const InputAutocomplete = forwardRef(
                     value={inputValue}
                     onChange={(e) => setInputValue(e.target.value)}
                     className={
-                        'rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 dark:border-gray-700 dark:bg-gray-900 dark:text-gray-300 dark:focus:border-indigo-600 dark:focus:ring-indigo-600 ' +
+                        "rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 dark:border-gray-700 dark:bg-gray-900 dark:text-gray-300 dark:focus:border-indigo-600 dark:focus:ring-indigo-600 " +
                         className
                     }
                     ref={autocompleteRef}
@@ -79,16 +103,16 @@ const InputAutocomplete = forwardRef(
                 {showSuggestions && (
                     <ul
                         role="listbox"
-                        className="absolute z-50 mt-1 w-full bg-white dark:bg-gray-800 border border-gray-300 dark:border-gray-700 rounded-md shadow-lg max-h-48 overflow-y-auto"
+                        className="absolute z-50 w-full mt-1 overflow-y-auto bg-white border border-gray-300 rounded-md shadow-lg dark:bg-gray-800 dark:border-gray-700 max-h-48"
                     >
                         {filteredData.length > 0 ? (
                             filteredData.map((item) => (
                                 <li
                                     key={item.id}
-                                    className="px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-700 cursor-pointer"
+                                    className="px-4 py-2 cursor-pointer hover:bg-gray-100 dark:hover:bg-gray-700"
                                     onMouseDown={() => handleSelect(item)}
                                 >
-                                    {item.nom || item.title}
+                                    {item.title || item.nom}
                                 </li>
                             ))
                         ) : inputValue ? (

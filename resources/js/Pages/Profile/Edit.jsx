@@ -61,7 +61,7 @@ export default function Edit({ mustVerifyEmail, status }) {
                     {/* Photo de profil et informations principales */}
                     <div className="absolute text-center transform -translate-x-1/2 -translate-y-1/2 left-1/2">
                         <div className="relative group">
-                            <div className="relative w-40 h-40 mx-auto">
+                            <div className="relative mx-auto w-60 h-60">
                                 <div className="absolute inset-0 rounded-full bg-gradient-to-r from-orange-500 to-pink-500 dark:from-indigo-500 dark:to-purple-500 animate-spin-slow"></div>
                                 <div className="absolute bg-white rounded-full inset-1 dark:bg-gray-800">
                                     <div className="flex items-center justify-center w-full h-full overflow-hidden transition-transform duration-300 border-4 border-white rounded-full bg-gray-200/30 dark:border-gray-800 group-hover:scale-105">
@@ -84,7 +84,7 @@ export default function Edit({ mustVerifyEmail, status }) {
                                         )}
                                     </div>
                                 </div>
-                                <div className="absolute flex items-center justify-center w-8 h-8 transition-transform duration-300 transform bg-green-500 border-4 border-white rounded-full bottom-2 right-2 dark:border-gray-800 hover:scale-110">
+                                <div className="absolute flex items-center justify-center w-8 h-8 transition-transform duration-300 transform bg-green-500 border-4 border-white rounded-full bottom-4 right-4 dark:border-gray-800 hover:scale-110">
                                     <TbPointFilled className="text-white" />
                                 </div>
                             </div>

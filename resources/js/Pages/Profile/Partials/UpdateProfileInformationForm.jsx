@@ -17,6 +17,7 @@ import {
     TbBuildingStore,
     TbFlag,
     TbEdit,
+    TbBrandTelegram,
 } from "react-icons/tb";
 import { updatePhoto } from "@/Services/profileService";
 
@@ -98,10 +99,9 @@ export default function UpdateProfileInformation({
 
     return (
         <section className={`${className} min-h-screen`}>
-            <form onSubmit={submit} className="container px-4 py-8 mx-auto">
-                <div className="overflow-hidden bg-white shadow-xl dark:bg-gray-800 rounded-2xl">
+            <form onSubmit={submit} className="mx-auto ">
+                <div className="overflow-hidden bg-white md:shadow-xl dark:bg-gray-800 md:rounded-2xl">
                     <div className="flex flex-col md:flex-row">
-                        {/* Colonne de gauche - Photo */}
                         <div className="flex flex-col items-center justify-center w-full p-8 md:w-1/3 bg-gradient-to-br from-orange-500 to-pink-500 dark:from-indigo-600 dark:to-purple-700">
                             <div className="space-y-6 text-center">
                                 <div className="relative group">
@@ -166,10 +166,8 @@ export default function UpdateProfileInformation({
                             </div>
                         </div>
 
-                        {/* Colonne de droite - Informations */}
                         <div className="w-full p-8 md:w-2/3">
                             <div className="max-w-3xl mx-auto space-y-8">
-                                {/* Informations de base */}
                                 <div className="space-y-6">
                                     <h3 className="flex items-center gap-2 pb-2 text-xl font-medium text-gray-900 border-b border-gray-200 dark:text-gray-100 dark:border-gray-700">
                                         <TbUser className="w-6 h-6 text-orange-500 dark:text-indigo-400" />
@@ -182,13 +180,10 @@ export default function UpdateProfileInformation({
                                                 value="Nom complet"
                                             />
                                             <div className="relative">
-                                                <div className="absolute inset-y-0 left-0 flex items-center pl-3 pointer-events-none">
-                                                    <TbUser className="w-5 h-5 text-gray-400" />
-                                                </div>
                                                 <TextInput
                                                     id="name"
                                                     type="text"
-                                                    className="block w-full pl-10 mt-1"
+                                                    className="block w-full mt-1"
                                                     value={data.name}
                                                     onChange={(e) =>
                                                         setData(
@@ -213,13 +208,10 @@ export default function UpdateProfileInformation({
                                                 value="Adresse e-mail"
                                             />
                                             <div className="relative">
-                                                <div className="absolute inset-y-0 left-0 flex items-center pl-3 pointer-events-none">
-                                                    <TbMail className="w-5 h-5 text-gray-400" />
-                                                </div>
                                                 <TextInput
                                                     id="email"
                                                     type="email"
-                                                    className="block w-full pl-10 mt-1"
+                                                    className="block w-full mt-1"
                                                     value={data.email}
                                                     onChange={(e) =>
                                                         setData(
@@ -274,28 +266,22 @@ export default function UpdateProfileInformation({
                                     </div>
                                 </div>
 
-                                {/* Informations professionnelles */}
                                 <div className="space-y-6">
                                     <h3 className="flex items-center gap-2 pb-2 text-xl font-medium text-gray-900 border-b border-gray-200 dark:text-gray-100 dark:border-gray-700">
                                         <TbBriefcase className="w-6 h-6 text-orange-500 dark:text-indigo-400" />
                                         Informations professionnelles
                                     </h3>
-                                    <div
-                                        className={`grid grid-cols-1 md:grid-cols-2 gap-6`}
-                                    >
-                                        <div>
+                                    <div className="grid grid-cols-1 gap-6 md:grid-cols-2">
+                                        <div className="col-span-2 md:col-span-1">
                                             <InputLabel
                                                 htmlFor="contact"
                                                 value="Numéro de téléphone"
                                             />
                                             <div className="relative">
-                                                <div className="absolute inset-y-0 left-0 flex items-center pl-3 pointer-events-none">
-                                                    <TbPhone className="w-5 h-5 text-gray-400" />
-                                                </div>
                                                 <TextInput
                                                     id="contact"
                                                     type="tel"
-                                                    className="block w-full pl-10 mt-1"
+                                                    className="block w-full mt-1"
                                                     value={data.contact}
                                                     onChange={(e) =>
                                                         setData(
@@ -310,22 +296,18 @@ export default function UpdateProfileInformation({
                                                 message={errors.contact}
                                             />
                                         </div>
-
                                         {user.user_role.name ===
                                             "technicien" && (
-                                            <div>
+                                            <divv className="col-span-2 md:col-span-1">
                                                 <InputLabel
                                                     htmlFor="speciality"
                                                     value="Spécialité"
                                                 />
                                                 <div className="relative">
-                                                    <div className="absolute inset-y-0 left-0 flex items-center pl-3 pointer-events-none">
-                                                        <TbBriefcase className="w-5 h-5 text-gray-400" />
-                                                    </div>
                                                     <TextInput
                                                         id="speciality"
                                                         type="text"
-                                                        className="block w-full pl-10 mt-1"
+                                                        className="block w-full mt-1"
                                                         value={data.speciality}
                                                         onChange={(e) =>
                                                             setData(
@@ -339,24 +321,20 @@ export default function UpdateProfileInformation({
                                                     className="mt-2"
                                                     message={errors.speciality}
                                                 />
-                                            </div>
+                                            </divv>
                                         )}
-
                                         {user.user_role.name ===
                                             "partenaire" && (
-                                            <div>
+                                            <div className="col-span-2 md:col-span-1">
                                                 <InputLabel
                                                     htmlFor="categorie"
                                                     value="Catégorie"
                                                 />
                                                 <div className="relative">
-                                                    <div className="absolute inset-y-0 left-0 flex items-center pl-3 pointer-events-none">
-                                                        <TbBuildingStore className="w-5 h-5 text-gray-400" />
-                                                    </div>
                                                     <TextInput
                                                         id="categorie"
                                                         type="text"
-                                                        className="block w-full pl-10 mt-1"
+                                                        className="block w-full mt-1"
                                                         value={data.categorie}
                                                         onChange={(e) =>
                                                             setData(
@@ -379,19 +357,16 @@ export default function UpdateProfileInformation({
                                         )}
                                         {user.user_role.name !==
                                             "partenaire" && (
-                                            <div>
+                                            <div className="col-span-2 md:col-span-1">
                                                 <InputLabel
                                                     htmlFor="telegram_username"
-                                                    value="Pseudo telegram"
+                                                    value="Pseudo Telegram"
                                                 />
                                                 <div className="relative">
-                                                    <div className="absolute inset-y-0 left-0 flex items-center pl-3 pointer-events-none">
-                                                        <TbBriefcase className="w-5 h-5 text-gray-400" />
-                                                    </div>
                                                     <TextInput
                                                         id="telegram_username"
                                                         type="text"
-                                                        className="block w-full pl-10 mt-1"
+                                                        className="block w-full mt-1"
                                                         value={
                                                             data.telegram_username
                                                         }
@@ -415,258 +390,231 @@ export default function UpdateProfileInformation({
                                             className={`${
                                                 user.user_role.name ===
                                                 "technicien"
-                                                    ? "col-span-1"
+                                                    ? "col-span-2 md:col-span-1"
                                                     : "col-span-2"
-                                            } `}
+                                            }`}
                                         >
                                             <InputLabel
                                                 htmlFor="adress"
                                                 value="Adresse"
                                             />
-                                            <div className="relative">
-                                                <div className="absolute inset-y-0 left-0 flex items-center pl-3 pointer-events-none">
-                                                    <TbMapPin className="w-5 h-5 text-gray-400" />
-                                                </div>
-                                                <TextInput
-                                                    id="adress"
-                                                    type="text"
-                                                    className="block w-full pl-10 mt-1"
-                                                    value={data.adress}
-                                                    onChange={(e) =>
-                                                        setData(
-                                                            "adress",
-                                                            e.target.value
-                                                        )
-                                                    }
-                                                />
-                                            </div>
-                                            <InputError
-                                                className="mt-2"
-                                                message={errors.adress}
+                                            <TextInput
+                                                id="adress"
+                                                type="text"
+                                                className="block w-full mt-1"
+                                                value={data.adress}
+                                                onChange={(e) =>
+                                                    setData(
+                                                        "adress",
+                                                        e.target.value
+                                                    )
+                                                }
                                             />
                                         </div>
-
-                                        {user.user_role.name ===
-                                            "partenaire" && (
-                                            <>
-                                                <div>
-                                                    <InputLabel
-                                                        htmlFor="ville"
-                                                        value="Ville"
-                                                    />
-                                                    <div className="relative">
-                                                        <div className="absolute inset-y-0 left-0 flex items-center pl-3 pointer-events-none">
-                                                            <TbMapPin className="w-5 h-5 text-gray-400" />
-                                                        </div>
-                                                        <TextInput
-                                                            id="ville"
-                                                            type="text"
-                                                            className="block w-full pl-10 mt-1"
-                                                            value={data.ville}
-                                                            onChange={(e) =>
-                                                                setData(
-                                                                    "ville",
-                                                                    e.target
-                                                                        .value
-                                                                )
-                                                            }
-                                                        />
-                                                    </div>
-                                                    <InputError
-                                                        className="mt-2"
-                                                        message={errors.ville}
-                                                    />
-                                                </div>
-
-                                                <div>
-                                                    <InputLabel
-                                                        htmlFor="pays"
-                                                        value="Pays"
-                                                    />
-                                                    <div className="relative">
-                                                        <div className="absolute inset-y-0 left-0 flex items-center pl-3 pointer-events-none">
-                                                            <TbFlag className="w-5 h-5 text-gray-400" />
-                                                        </div>
-                                                        <TextInput
-                                                            id="pays"
-                                                            type="text"
-                                                            className="block w-full pl-10 mt-1"
-                                                            value={data.pays}
-                                                            onChange={(e) =>
-                                                                setData(
-                                                                    "pays",
-                                                                    e.target
-                                                                        .value
-                                                                )
-                                                            }
-                                                        />
-                                                    </div>
-                                                    <InputError
-                                                        className="mt-2"
-                                                        message={errors.pays}
-                                                    />
-                                                </div>
-
-                                                <div>
-                                                    <InputLabel
-                                                        htmlFor="site_web"
-                                                        value="Site web"
-                                                    />
-                                                    <div className="relative">
-                                                        <div className="absolute inset-y-0 left-0 flex items-center pl-3 pointer-events-none">
-                                                            <TbWorld className="w-5 h-5 text-gray-400" />
-                                                        </div>
-                                                        <TextInput
-                                                            id="site_web"
-                                                            className="block w-full pl-10 mt-1"
-                                                            value={
-                                                                data.site_web
-                                                            }
-                                                            onChange={(e) =>
-                                                                setData(
-                                                                    "site_web",
-                                                                    e.target
-                                                                        .value
-                                                                )
-                                                            }
-                                                            placeholder="https://example.com"
-                                                        />
-                                                    </div>
-                                                    <InputError
-                                                        className="mt-2"
-                                                        message={
-                                                            errors.site_web
-                                                        }
-                                                    />
-                                                </div>
-
-                                                <div>
-                                                    <InputLabel
-                                                        htmlFor="highlighted"
-                                                        value="Mettre en avant"
-                                                    />
-                                                    <div className="flex items-center mt-2">
-                                                        <input
-                                                            id="highlighted"
-                                                            type="checkbox"
-                                                            className="w-5 h-5 text-orange-500 border-gray-300 rounded dark:text-indigo-600 focus:ring-orange-500 dark:focus:ring-indigo-600 dark:border-gray-700"
-                                                            checked={
-                                                                data.highlighted
-                                                            }
-                                                            onChange={(e) =>
-                                                                setData(
-                                                                    "highlighted",
-                                                                    e.target
-                                                                        .checked
-                                                                )
-                                                            }
-                                                        />
-                                                        <label
-                                                            htmlFor="highlighted"
-                                                            className="block ml-2 text-sm text-gray-700 dark:text-gray-200"
-                                                        >
-                                                            Afficher ce
-                                                            partenaire dans les
-                                                            sections mises en
-                                                            avant
-                                                        </label>
-                                                    </div>
-                                                    <InputError
-                                                        className="mt-2"
-                                                        message={
-                                                            errors.highlighted
-                                                        }
-                                                    />
-                                                </div>
-
-                                                <div className="md:col-span-2">
-                                                    <InputLabel
-                                                        htmlFor="description"
-                                                        value="Description"
-                                                    />
-                                                    <div className="relative">
-                                                        <div className="absolute pointer-events-none top-3 left-3">
-                                                            <TbEdit className="w-5 h-5 text-gray-400" />
-                                                        </div>
-                                                        <textarea
-                                                            id="description"
-                                                            className="block w-full pl-10 mt-1 border-gray-300 rounded-md shadow-sm focus:border-orange-500 dark:focus:border-indigo-600 focus:ring-orange-500 dark:focus:ring-indigo-600 dark:border-gray-700 dark:bg-gray-900 dark:text-gray-300"
-                                                            value={
-                                                                data.description
-                                                            }
-                                                            onChange={(e) =>
-                                                                setData(
-                                                                    "description",
-                                                                    e.target
-                                                                        .value
-                                                                )
-                                                            }
-                                                            rows={5}
-                                                            placeholder="Décrivez votre entreprise ou organisation..."
-                                                        />
-                                                    </div>
-                                                    <InputError
-                                                        className="mt-2"
-                                                        message={
-                                                            errors.description
-                                                        }
-                                                    />
-                                                </div>
-                                            </>
-                                        )}
+                                        <InputError
+                                            className="mt-2"
+                                            message={errors.adress}
+                                        />
                                     </div>
-                                </div>
 
-                                {mustVerifyEmail &&
-                                    user.email_verified_at === null && (
-                                        <div className="p-4 rounded-lg bg-yellow-50 dark:bg-yellow-900/20">
-                                            <p className="text-sm text-yellow-800 dark:text-yellow-200">
-                                                Votre adresse e-mail n'est pas
-                                                vérifiée.
-                                                <Link
-                                                    href={route(
-                                                        "verification.send"
-                                                    )}
-                                                    method="post"
-                                                    as="button"
-                                                    className="ml-2 font-medium text-yellow-600 underline hover:text-yellow-700 dark:text-yellow-400 dark:hover:text-yellow-300 hover:no-underline focus:outline-none focus:ring-2 focus:ring-yellow-500 dark:focus:ring-yellow-400 focus:ring-offset-2 dark:focus:ring-offset-gray-800"
-                                                >
-                                                    Cliquez ici pour renvoyer
-                                                    l'e-mail de vérification.
-                                                </Link>
-                                            </p>
-
-                                            {status ===
-                                                "verification-link-sent" && (
-                                                <div className="mt-2 text-sm font-medium text-green-600 dark:text-green-400">
-                                                    Un nouveau lien de
-                                                    vérification a été envoyé à
-                                                    votre adresse e-mail.
+                                    {user.user_role.name === "partenaire" && (
+                                        <div className="grid grid-cols-1 gap-4 mt-4 md:grid-cols-2">
+                                            <div>
+                                                <InputLabel
+                                                    htmlFor="ville"
+                                                    value="Ville"
+                                                />
+                                                <div className="relative">
+                                                    <TextInput
+                                                        id="ville"
+                                                        type="text"
+                                                        className="block w-full mt-1"
+                                                        value={data.ville}
+                                                        onChange={(e) =>
+                                                            setData(
+                                                                "ville",
+                                                                e.target.value
+                                                            )
+                                                        }
+                                                    />
                                                 </div>
-                                            )}
+                                                <InputError
+                                                    className="mt-2"
+                                                    message={errors.ville}
+                                                />
+                                            </div>
+
+                                            {/* Pays */}
+                                            <div>
+                                                <InputLabel
+                                                    htmlFor="pays"
+                                                    value="Pays"
+                                                />
+                                                <div className="relative">
+                                                    <TextInput
+                                                        id="pays"
+                                                        type="text"
+                                                        className="block w-full mt-1"
+                                                        value={data.pays}
+                                                        onChange={(e) =>
+                                                            setData(
+                                                                "pays",
+                                                                e.target.value
+                                                            )
+                                                        }
+                                                    />
+                                                </div>
+                                                <InputError
+                                                    className="mt-2"
+                                                    message={errors.pays}
+                                                />
+                                            </div>
+
+                                            {/* Site Web */}
+                                            <div>
+                                                <InputLabel
+                                                    htmlFor="site_web"
+                                                    value="Site web"
+                                                />
+                                                <div className="relative">
+                                                    <TextInput
+                                                        id="site_web"
+                                                        className="block w-full mt-1"
+                                                        value={data.site_web}
+                                                        onChange={(e) =>
+                                                            setData(
+                                                                "site_web",
+                                                                e.target.value
+                                                            )
+                                                        }
+                                                        placeholder="https://example.com"
+                                                    />
+                                                </div>
+                                                <InputError
+                                                    className="mt-2"
+                                                    message={errors.site_web}
+                                                />
+                                            </div>
+
+                                            {/* Checkbox “Mettre en avant” */}
+                                            <div>
+                                                <InputLabel
+                                                    htmlFor="highlighted"
+                                                    value="Mettre en avant"
+                                                />
+                                                <div className="flex items-center mt-2">
+                                                    <input
+                                                        id="highlighted"
+                                                        type="checkbox"
+                                                        className="w-5 h-5 text-orange-500 border-gray-300 rounded dark:text-indigo-600 focus:ring-orange-500 dark:focus:ring-indigo-600 dark:border-gray-700"
+                                                        checked={
+                                                            data.highlighted
+                                                        }
+                                                        onChange={(e) =>
+                                                            setData(
+                                                                "highlighted",
+                                                                e.target.checked
+                                                            )
+                                                        }
+                                                    />
+                                                    <label
+                                                        htmlFor="highlighted"
+                                                        className="block ml-2 text-sm text-gray-700 dark:text-gray-200"
+                                                    >
+                                                        Afficher ce partenaire
+                                                        dans les sections mises
+                                                        en avant
+                                                    </label>
+                                                </div>
+                                                <InputError
+                                                    className="mt-2"
+                                                    message={errors.highlighted}
+                                                />
+                                            </div>
+
+                                            {/* Description */}
+                                            <div className="md:col-span-2">
+                                                <InputLabel
+                                                    htmlFor="description"
+                                                    value="Description"
+                                                />
+                                                <div className="relative">
+                                                    <div className="absolute pointer-events-none top-3 left-3">
+                                                        <TbEdit className="w-5 h-5 text-gray-400" />
+                                                    </div>
+                                                    <textarea
+                                                        id="description"
+                                                        className="block w-full mt-1 border-gray-300 rounded-md shadow-sm focus:border-orange-500 dark:focus:border-indigo-600 focus:ring-orange-500 dark:focus:ring-indigo-600 dark:border-gray-700 dark:bg-gray-900 dark:text-gray-300"
+                                                        value={data.description}
+                                                        onChange={(e) =>
+                                                            setData(
+                                                                "description",
+                                                                e.target.value
+                                                            )
+                                                        }
+                                                        rows={5}
+                                                        placeholder="Décrivez votre entreprise ou organisation..."
+                                                    />
+                                                </div>
+                                                <InputError
+                                                    className="mt-2"
+                                                    message={errors.description}
+                                                />
+                                            </div>
                                         </div>
                                     )}
-
-                                <div className="flex items-center justify-end gap-4 pt-6">
-                                    <PrimaryButton
-                                        disabled={processing}
-                                        className="bg-gradient-to-r from-orange-500 to-pink-500 dark:from-indigo-500 dark:to-purple-500 text-white px-8 py-3 rounded-lg shadow-lg hover:shadow-xl transition-all duration-300 hover:-translate-y-0.5 text-lg"
-                                    >
-                                        Enregistrer les modifications
-                                    </PrimaryButton>
-
-                                    <Transition
-                                        show={recentlySuccessful}
-                                        enter="transition ease-in-out"
-                                        enterFrom="opacity-0"
-                                        leave="transition ease-in-out"
-                                        leaveTo="opacity-0"
-                                    >
-                                        <p className="text-sm text-green-600 dark:text-green-400">
-                                            Enregistré.
-                                        </p>
-                                    </Transition>
                                 </div>
+                            </div>
+
+                            {mustVerifyEmail &&
+                                user.email_verified_at === null && (
+                                    <div className="p-4 rounded-lg bg-yellow-50 dark:bg-yellow-900/20">
+                                        <p className="text-sm text-yellow-800 dark:text-yellow-200">
+                                            Votre adresse e-mail n'est pas
+                                            vérifiée.
+                                            <Link
+                                                href={route(
+                                                    "verification.send"
+                                                )}
+                                                method="post"
+                                                as="button"
+                                                className="ml-2 font-medium text-yellow-600 underline hover:text-yellow-700 dark:text-yellow-400 dark:hover:text-yellow-300 hover:no-underline focus:outline-none focus:ring-2 focus:ring-yellow-500 dark:focus:ring-yellow-400 focus:ring-offset-2 dark:focus:ring-offset-gray-800"
+                                            >
+                                                Cliquez ici pour renvoyer
+                                                l'e-mail de vérification.
+                                            </Link>
+                                        </p>
+
+                                        {status ===
+                                            "verification-link-sent" && (
+                                            <div className="mt-2 text-sm font-medium text-green-600 dark:text-green-400">
+                                                Un nouveau lien de vérification
+                                                a été envoyé à votre adresse
+                                                e-mail.
+                                            </div>
+                                        )}
+                                    </div>
+                                )}
+
+                            <div className="flex items-center justify-end gap-4 pt-6">
+                                <PrimaryButton
+                                    disabled={processing}
+                                    className="bg-gradient-to-r from-orange-500 to-pink-500 dark:from-indigo-500 dark:to-purple-500 text-white px-8 py-3 rounded-lg shadow-lg hover:shadow-xl transition-all duration-300 hover:-translate-y-0.5 text-lg"
+                                >
+                                    Enregistrer les modifications
+                                </PrimaryButton>
+
+                                <Transition
+                                    show={recentlySuccessful}
+                                    enter="transition ease-in-out"
+                                    enterFrom="opacity-0"
+                                    leave="transition ease-in-out"
+                                    leaveTo="opacity-0"
+                                >
+                                    <p className="text-sm text-green-600 dark:text-green-400">
+                                        Enregistré.
+                                    </p>
+                                </Transition>
                             </div>
                         </div>
                     </div>

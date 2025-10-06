@@ -60,6 +60,35 @@ class DashboardController extends Controller
             ->sortBy('date')
             ->values();
 
+        $new_installation = DB::table('installations')
+            ->join('clients', 'installations.client_id', '=', 'clients.id')
+            ->selectRaw('DATE(installations.created_at) as date,
+                 installations.code_installation,
+                 installations.statuts,
+                 clients.nom as client_nom,
+                 clients.prenom as client_prenom')
+            ->groupBy(
+                DB::raw('DATE(installations.created_at)'),
+                'installations.code_installation',
+                'installations.statuts',
+                'clients.nom',
+                'clients.prenom'
+            )
+            ->orderBy('date', 'desc')
+            ->limit(3)
+            ->get();
+
+        $new_maraicher = DB::table('clients')
+            ->selectRaw('DATE(created_at) as date, nom, prenom, id')
+            ->whereIn('id', function ($query) {
+                $query->selectRaw('MAX(id)')
+                    ->from('clients')
+                    ->groupBy(DB::raw('DATE(created_at)'));
+            })
+            ->orderBy('date', 'desc')
+            ->limit(3)
+            ->get();
+
         $data = [
             'client' => $client,
             'installation' => $installation,
@@ -73,6 +102,8 @@ class DashboardController extends Controller
             'installationcount' => $installationcount,
             'alertcount' => $alertcount,
             'enpanne' => $enpanne,
+            'new_installation' => $new_installation,
+            'new_maraicher' => $new_maraicher,
         ];
 
         return response()->json(['data' => $data], 200);
