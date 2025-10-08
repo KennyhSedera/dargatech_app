@@ -79,7 +79,7 @@ class DashboardController extends Controller
             ->get();
 
         $new_maraicher = DB::table('clients')
-            ->selectRaw('DATE(created_at) as date, nom, prenom, id')
+            ->selectRaw('DATE(created_at) as date, nom, prenom, id, is_payed')
             ->whereIn('id', function ($query) {
                 $query->selectRaw('MAX(id)')
                     ->from('clients')

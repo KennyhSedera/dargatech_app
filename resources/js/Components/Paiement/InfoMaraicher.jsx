@@ -13,12 +13,12 @@ const InfoMaraicher = ({
     validationErrors,
     setValidationErrors,
     handleSelect,
+    amount,
 }) => {
     return (
         <div>
             <div className="my-4 text-lg font-bold">Maraicheur</div>
             <div className="flex flex-col gap-4">
-                {/* Section Civilité, Prénom et Nom */}
                 <div className="grid grid-cols-1 gap-3 sm:grid-cols-2 lg:grid-cols-5">
                     <div className="lg:col-span-1">
                         <InputLabel
@@ -37,8 +37,8 @@ const InfoMaraicher = ({
                             }
                             required
                         >
-                            <option value="préventive">Mr.</option>
-                            <option value="curative">Mme.</option>
+                            <option value="Mr.">Mr.</option>
+                            <option value="Mme.">Mme.</option>
                         </SelectInput>
                         <InputError
                             message={errors.civilite_acheteur}
@@ -56,7 +56,7 @@ const InfoMaraicher = ({
                             onFocus={() =>
                                 setValidationErrors({
                                     ...validationErrors,
-                                    client_id: "",
+                                    prenom_acheteur: "",
                                 })
                             }
                         />
@@ -189,6 +189,35 @@ const InfoMaraicher = ({
                             className="mt-2"
                         />
                     </div>
+                    {!amount && (
+                        <div>
+                            <InputLabel htmlFor="echeance" value="Echéance" />
+                            <TextInput
+                                id="echeance"
+                                name="echeance"
+                                value={data.echeance}
+                                className="block w-full mt-1"
+                                autoComplete="echeance"
+                                onChange={(e) =>
+                                    setData("echeance", e.target.value)
+                                }
+                                required
+                                onFocus={() =>
+                                    setValidationErrors({
+                                        ...validationErrors,
+                                        echeance: "",
+                                    })
+                                }
+                                readOnly
+                            />
+                            <InputError
+                                message={
+                                    validationErrors.echeance || errors.echeance
+                                }
+                                className="mt-2"
+                            />
+                        </div>
+                    )}
                 </div>
             </div>
         </div>

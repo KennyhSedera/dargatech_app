@@ -86,6 +86,7 @@ Route::group(['prefix' => 'api'], function () {
         Route::put('/{id}', [PaiementController::class, 'update'])->name('update');
         Route::delete('/{id}', [PaiementController::class, 'destroy'])->name('destroy');
         Route::get('/client/{id}', [ClientController::class, 'updateIsPaid'])->name('client-is-paid');
+        Route::get('/echeance/client/{id}', [PaiementPdfController::class, 'echeanceclient'])->name('echeanceclient');
     });
 
     Route::group(['prefix' => 'rapport', 'as' => 'rapport.',], function () {

@@ -18,6 +18,7 @@ import { getmaintenances } from "@/Services/maintenanceService";
 import { all } from "axios";
 import { getinstallations } from "@/Services/installationService";
 import TableNew from "@/Components/dashboard/TableNew";
+import { formatMontant } from "@/constant";
 
 export default function Dashboard() {
     const [data, setData] = useState({});
@@ -181,7 +182,7 @@ export default function Dashboard() {
         },
         {
             label: "Total Solde",
-            value: `${data?.soldtotal ?? 0} CFA`,
+            value: `${formatMontant(data?.soldtotal ?? 0)} CFA`,
             color: "from-green-400 dark:to-green-800 to-orange-600",
             icon: <GrMoney />,
             route: "paiements",
@@ -225,12 +226,19 @@ export default function Dashboard() {
                 ))}
             </div>
             <div className="grid grid-cols-1 gap-2 md:grid-cols-2">
-                <div className="w-full h-full p-2 bg-white rounded-md shadow-md dark:bg-gray-800">
-                    <TableNew title="Maraichers" data={new_maraichers} />
-                </div>
-                <div className="w-full h-full p-2 bg-white rounded-md shadow-md dark:bg-gray-800">
-                    <TableNew title="Installations" data={new_installations} />
-                </div>
+                {new_maraichers?.length > 0 && (
+                    <div className="w-full h-full p-2 bg-white rounded-md shadow-md dark:bg-gray-800">
+                        <TableNew title="Maraichers" data={new_maraichers} />
+                    </div>
+                )}
+                {new_installations?.length > 0 && (
+                    <div className="w-full h-full p-2 bg-white rounded-md shadow-md dark:bg-gray-800">
+                        <TableNew
+                            title="Installations"
+                            data={new_installations}
+                        />
+                    </div>
+                )}
             </div>
             <Calendar className="mt-2" events={events} />
             <div className="grid grid-cols-1 gap-2 mt-2 md:grid-cols-3">

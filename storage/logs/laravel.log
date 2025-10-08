@@ -1,6 +1,28 @@
-[2025-10-06 13:44:34] local.INFO: [{"date":"2025-09-09","code_installation":"I0020","statuts":"install\u00e9e","client_nom":"RAKOTO","client_prenom":"Nomena"},{"date":"2025-09-09","code_installation":"I0021","statuts":"install\u00e9e","client_nom":"Kennyh","client_prenom":"Sedera"},{"date":"2025-09-09","code_installation":"I0022","statuts":"install\u00e9e","client_nom":"Kennyh","client_prenom":"Sedera"}]  
-[2025-10-06 13:45:15] local.INFO: [{"date":"2025-09-09","code_installation":"I0020","statuts":"install\u00e9e","client_nom":"RAKOTO","client_prenom":"Nomena"},{"date":"2025-09-09","code_installation":"I0021","statuts":"install\u00e9e","client_nom":"Kennyh","client_prenom":"Sedera"},{"date":"2025-09-09","code_installation":"I0022","statuts":"install\u00e9e","client_nom":"Kennyh","client_prenom":"Sedera"}]  
-[2025-10-06 13:45:19] local.INFO: [{"date":"2025-09-09","code_installation":"I0020","statuts":"install\u00e9e","client_nom":"RAKOTO","client_prenom":"Nomena"},{"date":"2025-09-09","code_installation":"I0021","statuts":"install\u00e9e","client_nom":"Kennyh","client_prenom":"Sedera"},{"date":"2025-09-09","code_installation":"I0022","statuts":"install\u00e9e","client_nom":"Kennyh","client_prenom":"Sedera"}]  
-[2025-10-06 13:45:50] local.INFO: [{"date":"2025-09-09","code_installation":"I0020","statuts":"install\u00e9e","client_nom":"RAKOTO","client_prenom":"Nomena"},{"date":"2025-09-09","code_installation":"I0021","statuts":"install\u00e9e","client_nom":"Kennyh","client_prenom":"Sedera"},{"date":"2025-09-09","code_installation":"I0022","statuts":"install\u00e9e","client_nom":"Kennyh","client_prenom":"Sedera"}]  
-[2025-10-06 13:46:34] local.INFO: [{"date":"2025-09-09","code_installation":"I0020","statuts":"install\u00e9e","client_nom":"RAKOTO","client_prenom":"Nomena"},{"date":"2025-09-09","code_installation":"I0021","statuts":"install\u00e9e","client_nom":"Kennyh","client_prenom":"Sedera"},{"date":"2025-09-09","code_installation":"I0022","statuts":"install\u00e9e","client_nom":"Kennyh","client_prenom":"Sedera"}]  
-[2025-10-06 13:46:57] local.INFO: [{"date":"2025-09-09","code_installation":"I0020","statuts":"install\u00e9e","client_nom":"RAKOTO","client_prenom":"Nomena"},{"date":"2025-09-09","code_installation":"I0021","statuts":"install\u00e9e","client_nom":"Kennyh","client_prenom":"Sedera"},{"date":"2025-09-09","code_installation":"I0022","statuts":"install\u00e9e","client_nom":"Kennyh","client_prenom":"Sedera"}]  
+[2025-10-08 20:39:09] local.INFO: array (
+  'client_id' => '56',
+  'code_installation' => 'I0001',
+  'date_installation' => '2025-10-08',
+  'puissance_pompe' => '100',
+  'profondeur_forage' => '1',
+  'debit_nominal' => '120',
+  'numero_serie' => 'S23',
+  'source_eau' => 'Puits',
+  'hmt' => '2',
+  'latitude' => '7.51498094239',
+  'longitude' => '1.211242675781',
+  'pays' => 'Togo',
+  'ville' => 'Région des Plateaux',
+  'created_via' => 'web',
+  'photos_installation' => 
+  array (
+    0 => 
+    \Illuminate\Http\UploadedFile::__set_state(array(
+       'originalName' => '49e9df53e1048bc939f52c9710b7c1f3.jpg',
+       'mimeType' => 'image/jpeg',
+       'error' => 0,
+       'originalPath' => '49e9df53e1048bc939f52c9710b7c1f3.jpg',
+       'test' => false,
+       'hashName' => NULL,
+    )),
+  ),
+)  

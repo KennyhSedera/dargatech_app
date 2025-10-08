@@ -1,16 +1,29 @@
-import { forwardRef, useEffect, useImperativeHandle, useRef, useState } from 'react';
-import { Eye, EyeOff } from 'lucide-react';
+import {
+    forwardRef,
+    useEffect,
+    useImperativeHandle,
+    useRef,
+    useState,
+} from "react";
+import { Eye, EyeOff } from "lucide-react";
 
 export default forwardRef(function TextInput(
-    { type = 'text', className = '', isFocused = false, value, ...props },
-    ref,
+    {
+        type = "text",
+        className = "",
+        isFocused = false,
+        value,
+        placeholder,
+        ...props
+    },
+    ref
 ) {
     const localRef = useRef(null);
     const [showPassword, setShowPassword] = useState(false);
-    const isPassword = type === 'password';
-    
+    const isPassword = type === "password";
+
     // Handle null/undefined values
-    const safeValue = value === null || value === undefined ? '' : value;
+    const safeValue = value === null || value === undefined ? "" : value;
 
     useImperativeHandle(ref, () => ({
         focus: () => localRef.current?.focus(),
@@ -22,7 +35,7 @@ export default forwardRef(function TextInput(
         }
     }, [isFocused]);
 
-    const inputType = isPassword ? (showPassword ? 'text' : 'password') : type;
+    const inputType = isPassword ? (showPassword ? "text" : "password") : type;
 
     const togglePasswordVisibility = () => {
         setShowPassword(!showPassword);
@@ -32,11 +45,12 @@ export default forwardRef(function TextInput(
         <div className="relative flex items-center">
             <input
                 {...props}
+                placeholder={placeholder}
                 value={safeValue}
                 type={inputType}
                 className={
-                    'rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 dark:border-gray-700 dark:bg-gray-900 dark:text-gray-300 dark:focus:border-indigo-600 dark:focus:ring-indigo-600 ' +
-                    (isPassword ? 'pr-10 ' : '') +
+                    "rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 dark:border-gray-700 dark:bg-gray-900 dark:text-gray-300 dark:focus:border-indigo-600 dark:focus:ring-indigo-600 " +
+                    (isPassword ? "pr-10 " : "") +
                     className
                 }
                 ref={localRef}
@@ -44,14 +58,14 @@ export default forwardRef(function TextInput(
             {isPassword && (
                 <button
                     type="button"
-                    className="absolute right-2 text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-200"
+                    className="absolute text-gray-500 right-2 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-200"
                     onClick={togglePasswordVisibility}
                     tabIndex="-1"
                 >
                     {!showPassword ? (
-                        <EyeOff size={20} className="h-5 w-5" />
+                        <EyeOff size={20} className="w-5 h-5" />
                     ) : (
-                        <Eye size={20} className="h-5 w-5" />
+                        <Eye size={20} className="w-5 h-5" />
                     )}
                 </button>
             )}

@@ -9,7 +9,7 @@ const TableNew = ({
     return (
         <div>
             <div className="text-2xl font-semibold text-center">
-                Nouveau {title}
+                Nouveaux {title}
             </div>
             <table className="w-full table-auto">
                 <thead className="bg-gray-50 dark:bg-gray-700">

@@ -15,6 +15,7 @@ import InfoVendeur from "@/Components/Paiement/InfoVendeur";
 import PaiementFooter from "@/Components/Paiement/PaiementFooter";
 import {
     createPaiement,
+    getLastEcheanceClient,
     getLastPaiements,
     getPaiement,
     updatePaiement,
@@ -24,7 +25,10 @@ import FichierPaiementPdf from "@/Components/paiements/FichierPaiementPdf";
 import moment from "moment";
 import { sendPdfByEmail } from "@/Services/envoyePdfEmail";
 import { extractDateRange } from "@/utils/getTwoDateUtils";
-import { incrementRecuNumber } from "@/constant";
+import { incrementEcheanceNumber, incrementRecuNumber } from "@/constant";
+import { a } from "framer-motion/client";
+import { validateFormPaiement } from "./../../Components/validateForm";
+import { get } from "lodash";
 
 const FormulairePaiement = ({ token_data, telegramback }) => {
     const { theme, setTheme } = useTheme();
@@ -88,6 +92,7 @@ const FormulairePaiement = ({ token_data, telegramback }) => {
         description: "",
         produits: [],
         client_id: "",
+        echeance: "T1",
     });
 
     useEffect(() => {
@@ -112,6 +117,7 @@ const FormulairePaiement = ({ token_data, telegramback }) => {
                 objet: "Frais de l'installation du pompage solaire.",
                 date_paiement: new Date().toISOString().split("T")[0],
                 date_echeance: new Date().toISOString().split("T")[0],
+                echeance: "",
             }));
         }
     }, [amount, designation]);
@@ -205,6 +211,15 @@ const FormulairePaiement = ({ token_data, telegramback }) => {
                         nom_rue_vendeur: paiement.nom_rue_vendeur,
                         ville_vendeur: paiement.ville_vendeur,
                         pays_vendeur: paiement.pays_vendeur,
+                        ville_acheteur: paiement.ville_acheteur,
+                        pays_acheteur: paiement.pays_acheteur,
+                        code_postal_vendeur: paiement.code_postal_vendeur,
+                        telephone_vendeur: paiement.telephone_vendeur,
+                        email_vendeur: paiement.email_vendeur,
+                        date_paiement: paiement.date_paiement,
+                        date_echeance: paiement.date_echeance,
+                        echeance: paiement.echeance,
+                        observation: paiement.observation,
                     });
                     setEmail(client.email);
                 }
@@ -234,8 +249,8 @@ const FormulairePaiement = ({ token_data, telegramback }) => {
                     prenom_acheteur: client.prenom,
                     civilite_acheteur:
                         client.genre === "Homme" ? "Mr." : "Mme.",
-                    ville_acheteur: client.localisation,
-                    pays_acheteur: "Togo",
+                    ville_acheteur: "",
+                    pays_acheteur: "",
                     num_rue_acheteur: client.localisation,
                 });
 
@@ -262,6 +277,14 @@ const FormulairePaiement = ({ token_data, telegramback }) => {
         }
     };
 
+    const getLastEcheance = async (id) => {
+        const data = await getLastEcheanceClient(id);
+
+        if (data) {
+            setData("echeance", incrementEcheanceNumber(data[0]?.echeance));
+        }
+    };
+
     useEffect(() => {
         if (!paiementId) {
             getLastNumero();
@@ -274,33 +297,36 @@ const FormulairePaiement = ({ token_data, telegramback }) => {
             setData("client_id", cli.id);
             setData("nom_acheteur", cli.nom_famille);
             setData("prenom_acheteur", cli.nom);
-            setData("ville_acheteur", cli.ville);
-            setData("pays_acheteur", cli.pays);
             setData("num_rue_acheteur", cli.village || cli.quartier);
             setData(
                 "civilite_acheteur",
                 cli.genre === "Homme" ? "Mr." : "Mme."
             );
             setEmail(cli.email);
+            !amount && getLastEcheance(cli.id);
         }
     };
 
     const handleSubmit = async () => {
-        data.periode_couverte =
-            moment(data.date_creation).format("DD/MM/YYYY") +
-            " au " +
-            moment(data.date).format("DD/MM/YYYY");
+        data.periode_couverte = amount
+            ? "Frais d'installation."
+            : moment(data.date_creation).format("DD/MM/YYYY") +
+              " au " +
+              moment(data.date).format("DD/MM/YYYY");
         data.date_paiement = data.date_paiement
             ? new Date(data.date_paiement).toISOString().split("T")[0]
             : new Date().toISOString().split("T")[0];
         data.observation = data.objet;
-        data.echeance = data.date_echeance;
         data.statut_paiement = data.etat_paiment;
         data.montant_paye = data.montant_paye || "0";
         data.montant = data.montant_paye || "0";
 
         if (isEditing && paiementId) {
             data.id = paiementId;
+        }
+
+        if (!validateFormPaiement(data, setValidationErrors)) {
+            return;
         }
 
         try {
@@ -427,6 +453,7 @@ const FormulairePaiement = ({ token_data, telegramback }) => {
                             setData={setData}
                             setValidationErrors={setValidationErrors}
                             validationErrors={validationErrors}
+                            amount={amount}
                         />
                     </div>
                 </div>
@@ -437,7 +464,7 @@ const FormulairePaiement = ({ token_data, telegramback }) => {
                 {/* Objet - Responsive grid */}
                 <div className="grid grid-cols-1 gap-4 my-6 md:grid-cols-2 sm:my-10">
                     <div className="w-full">
-                        <InputLabel htmlFor="objet" value="Objet" />
+                        <InputLabel htmlFor="objet" value="Observation" />
                         <TextInput
                             id="objet"
                             name="objet"
@@ -452,6 +479,7 @@ const FormulairePaiement = ({ token_data, telegramback }) => {
                                     objet: "",
                                 })
                             }
+                            placeholder="Ajouter l'objet du paiement"
                         />
                         <InputError
                             message={validationErrors.objet || errors.objet}
@@ -471,7 +499,13 @@ const FormulairePaiement = ({ token_data, telegramback }) => {
                         </span>
                     </div>
                     <div className="overflow-x-auto">
-                        <DesignationComponent data={data} setData={setData} />
+                        <DesignationComponent
+                            data={data}
+                            setData={setData}
+                            errors={errors}
+                            setValidationErrors={setValidationErrors}
+                            validationErrors={validationErrors}
+                        />
                     </div>
                 </div>
 

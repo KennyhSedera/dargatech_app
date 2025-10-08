@@ -15,7 +15,10 @@ export const getLastPaiements = async () => {
         const response = await api.get("/paiement/last/id");
         return response.data;
     } catch (error) {
-        console.error("Erreur lors de la récupération du dernier paiement", error);
+        console.error(
+            "Erreur lors de la récupération du dernier paiement",
+            error
+        );
         throw error;
     }
 };
@@ -53,6 +56,16 @@ export const updatePaiement = async (id, data) => {
 export const deletePaiement = async (id) => {
     try {
         const response = await api.delete(`/paiement/${id}`);
+        return response.data;
+    } catch (error) {
+        console.error("Erreur lors de la suppression du paiement", error);
+        throw error;
+    }
+};
+
+export const getLastEcheanceClient = async (id) => {
+    try {
+        const response = await api.get(`/paiement/echeance/client/${id}`);
         return response.data;
     } catch (error) {
         console.error("Erreur lors de la suppression du paiement", error);

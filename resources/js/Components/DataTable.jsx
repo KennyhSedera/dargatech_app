@@ -1,11 +1,10 @@
 import { usePage } from "@inertiajs/react";
-import React, { useState, useMemo } from "react";
+import React, { useState, useMemo, useEffect } from "react";
 
 export default function DataTable({
     headers,
     rows,
     className = "",
-    itemsPerPage = 5,
     actions = [],
     currentPage = 1,
     onPageChange = () => {},
@@ -18,6 +17,52 @@ export default function DataTable({
         direction: "asc",
     });
     const user = usePage().props.auth.user;
+
+    // Fonction pour récupérer le itemsPerPage de l'utilisateur actuel
+    const getUserItemsPerPage = () => {
+        try {
+            const stored = localStorage.getItem("itemsPerPageSettings");
+            if (stored) {
+                const settings = JSON.parse(stored);
+                const userSetting = settings.find((s) => s.user === user.id);
+                return userSetting ? userSetting.nb : 10;
+            }
+        } catch (error) {
+            console.error("Erreur lors de la lecture du localStorage:", error);
+        }
+        return 10;
+    };
+
+    const [itemsPerPage, setitemsPerPage] = useState(getUserItemsPerPage());
+
+    // Fonction pour sauvegarder le itemsPerPage de l'utilisateur actuel
+    const saveUserItemsPerPage = (nb) => {
+        try {
+            const stored = localStorage.getItem("itemsPerPageSettings");
+            let settings = stored ? JSON.parse(stored) : [];
+
+            // Trouver l'index de l'utilisateur actuel
+            const userIndex = settings.findIndex((s) => s.user === user.id);
+
+            if (userIndex !== -1) {
+                // Mettre à jour l'entrée existante
+                settings[userIndex].nb = nb;
+            } else {
+                // Ajouter une nouvelle entrée
+                settings.push({ nb: nb, user: user.id });
+            }
+
+            localStorage.setItem(
+                "itemsPerPageSettings",
+                JSON.stringify(settings)
+            );
+        } catch (error) {
+            console.error(
+                "Erreur lors de la sauvegarde dans localStorage:",
+                error
+            );
+        }
+    };
 
     const handleSort = (key) => {
         let direction = "asc";
@@ -85,6 +130,8 @@ export default function DataTable({
     const handleItemsPerPageChange = (newItemsPerPage) => {
         onItemsPerPageChange(newItemsPerPage);
         onPageChange(1);
+        setitemsPerPage(newItemsPerPage);
+        saveUserItemsPerPage(newItemsPerPage);
     };
 
     const getSortIcon = (headerKey) => {

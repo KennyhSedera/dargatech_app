@@ -26,7 +26,8 @@ class PaiementController extends Controller
                 'date_paiement' => 'required|date',
                 'mode_paiement' => 'required|string',
                 'periode_couverte' => 'required|string',
-                'echeance' => 'nullable|date',
+                'echeance' => 'nullable|string',
+                'date_echeance' => 'nullable|date',
                 'statut_paiement' => 'nullable|string',
                 'observation' => 'nullable|string',
                 'description' => 'nullable|string',
@@ -46,6 +47,8 @@ class PaiementController extends Controller
                 'nom_rue_vendeur' => 'nullable|string',
                 'ville_vendeur' => 'nullable|string',
                 'pays_vendeur' => 'nullable|string',
+                'ville_acheteur' => 'nullable|string',
+                'pays_acheteur' => 'nullable|string',
             ]);
 
             if ($validator->fails()) {
@@ -127,7 +130,8 @@ class PaiementController extends Controller
                 'date_paiement' => 'required|date',
                 'mode_paiement' => 'required|string',
                 'periode_couverte' => 'required|string',
-                'echeance' => 'nullable|date',
+                'date_echeance' => 'nullable|date',
+                'echeance' => 'nullable|string',
                 'statut_paiement' => 'nullable|string',
                 'observation' => 'nullable|string',
                 'description' => 'nullable|string',
@@ -147,6 +151,8 @@ class PaiementController extends Controller
                 'nom_rue_vendeur' => 'nullable|string',
                 'ville_vendeur' => 'nullable|string',
                 'pays_vendeur' => 'nullable|string',
+                'ville_acheteur' => 'nullable|string',
+                'pays_acheteur' => 'nullable|string',
             ]);
 
             if ($validator->fails()) {

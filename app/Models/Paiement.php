@@ -16,6 +16,7 @@ class Paiement extends Model
         'mode_paiement',
         'periode_couverte',
         'echeance',
+        'date_echeance',
         'statut_paiement',
         'description',
         'receipt_path',
@@ -30,6 +31,8 @@ class Paiement extends Model
         'nom_rue_vendeur',
         'ville_vendeur',
         'pays_vendeur',
+        'ville_acheteur',
+        'pays_acheteur',
     ];
 
     public function client()

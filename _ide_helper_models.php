@@ -261,7 +261,7 @@ namespace App\Models{
  * @property string $date_paiement
  * @property string $mode_paiement
  * @property string $periode_couverte
- * @property string|null $echeance
+ * @property string|null $date_echeance
  * @property string|null $statut_paiement
  * @property string|null $observation
  * @property \Illuminate\Support\Carbon|null $created_at
@@ -279,6 +279,9 @@ namespace App\Models{
  * @property string $nom_rue_vendeur
  * @property string $ville_vendeur
  * @property string $pays_vendeur
+ * @property string|null $echeance
+ * @property string|null $pays_acheteur
+ * @property string|null $ville_acheteur
  * @property-read \App\Models\Client $client
  * @property-read \Illuminate\Database\Eloquent\Collection<int, \App\Models\Products> $produits
  * @property-read int|null $produits_count
@@ -290,6 +293,7 @@ namespace App\Models{
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Paiement whereDate($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Paiement whereDateAdditionnel($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Paiement whereDateCreation($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Paiement whereDateEcheance($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Paiement whereDatePaiement($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Paiement whereDescription($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Paiement whereEcheance($value)
@@ -303,11 +307,13 @@ namespace App\Models{
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Paiement whereNumTva($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Paiement whereNumero($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Paiement whereObservation($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Paiement wherePaysAcheteur($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Paiement wherePaysVendeur($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Paiement wherePeriodeCouverte($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Paiement whereSelect1($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Paiement whereStatutPaiement($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Paiement whereUpdatedAt($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Paiement whereVilleAcheteur($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Paiement whereVilleVendeur($value)
  */
 	class Paiement extends \Eloquent {}

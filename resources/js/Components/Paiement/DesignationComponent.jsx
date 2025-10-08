@@ -2,8 +2,14 @@ import React, { useState, useEffect } from "react";
 import InputLabel from "../inputs/InputLabel";
 import TextInput from "../inputs/TextInput";
 import TextArea from "../inputs/TextArea";
+import InputError from "../inputs/InputError";
 
-const DesignationComponent = ({ data, setData }) => {
+const DesignationComponent = ({
+    data,
+    setData,
+    validationErrors,
+    setValidationErrors,
+}) => {
     const [products, setProducts] = useState([
         {
             designation: "",
@@ -17,14 +23,12 @@ const DesignationComponent = ({ data, setData }) => {
         },
     ]);
 
-    // Initialize products from props only once or when data.produits changes its reference
     useEffect(() => {
         if (data.produits && data.produits.length > 0) {
             setProducts(data.produits);
         }
     }, [data.produits]);
 
-    // Fonction pour recalculer les totaux HT et TTC
     const calculateTotals = (product) => {
         const quantite = parseFloat(product.quantite) || 0;
         const prix_unitaire = parseFloat(product.prix_unitaire) || 0;
@@ -36,7 +40,6 @@ const DesignationComponent = ({ data, setData }) => {
         return { total_ht, total_ttc };
     };
 
-    // Met à jour les valeurs de chaque produit
     const handleChange = (index, field, value) => {
         const newProducts = [...products];
         newProducts[index][field] = value;
@@ -49,7 +52,6 @@ const DesignationComponent = ({ data, setData }) => {
 
         setProducts(newProducts);
 
-        // Update parent data with the new products
         const updatedData = {
             produits: newProducts,
             description: data.description || "",
@@ -61,9 +63,27 @@ const DesignationComponent = ({ data, setData }) => {
             ...prev,
             ...updatedData,
         }));
+
+        // Effacer l'erreur du champ modifié
+        if (validationErrors?.produits && validationErrors.produits[index]) {
+            const newErrors = { ...validationErrors };
+            if (newErrors.produits[index]) {
+                delete newErrors.produits[index][field];
+                if (Object.keys(newErrors.produits[index]).length === 0) {
+                    delete newErrors.produits[index];
+                }
+                // Vérifier si le tableau d'erreurs de produits est vide
+                const hasErrors = Object.keys(newErrors.produits).some(
+                    (key) => Object.keys(newErrors.produits[key]).length > 0
+                );
+                if (!hasErrors) {
+                    delete newErrors.produits;
+                }
+                setValidationErrors(newErrors);
+            }
+        }
     };
 
-    // Calculate global totals
     const calculateGlobalTotals = (productsList) => {
         const ensureNumber = (value) => {
             const num = parseFloat(value);
@@ -91,11 +111,9 @@ const DesignationComponent = ({ data, setData }) => {
         };
     };
 
-    // Get the current totals for display
     const { totalHTGlobal, totalTTCGlobal, totalTVAGlobal } =
         calculateGlobalTotals(products);
 
-    // Ajouter un produit
     const addProduct = () => {
         const newProducts = [
             ...products,
@@ -113,28 +131,47 @@ const DesignationComponent = ({ data, setData }) => {
 
         setProducts(newProducts);
 
-        // Update parent data with the new products array
         setData((prev) => ({
             ...prev,
             produits: newProducts,
         }));
     };
 
-    // Supprimer un produit
     const removeProduct = (index) => {
         const newProducts = products.filter((_, i) => i !== index);
         setProducts(newProducts);
 
-        // Update parent data with the new products array
         const totals = calculateGlobalTotals(newProducts);
         setData((prev) => ({
             ...prev,
             produits: newProducts,
             montant_paye: totals.totalTTCGlobal.toFixed(2),
         }));
+
+        // Supprimer les erreurs du produit supprimé
+        if (validationErrors?.produits) {
+            const newErrors = { ...validationErrors };
+            // Réorganiser les erreurs après suppression
+            const newProduitsErrors = {};
+            Object.keys(newErrors.produits).forEach((key) => {
+                const keyIndex = parseInt(key);
+                if (keyIndex < index) {
+                    newProduitsErrors[keyIndex] = newErrors.produits[keyIndex];
+                } else if (keyIndex > index) {
+                    newProduitsErrors[keyIndex - 1] =
+                        newErrors.produits[keyIndex];
+                }
+            });
+
+            if (Object.keys(newProduitsErrors).length > 0) {
+                newErrors.produits = newProduitsErrors;
+            } else {
+                delete newErrors.produits;
+            }
+            setValidationErrors(newErrors);
+        }
     };
 
-    // Handle description change
     const handleDescriptionChange = (event) => {
         const newDescription = event.target.value;
 
@@ -144,24 +181,34 @@ const DesignationComponent = ({ data, setData }) => {
         }));
     };
 
-    // Helper function to safely format numbers
     const formatNumber = (value) => {
         const num = parseFloat(value);
         return isNaN(num) ? "0.00" : num.toFixed(2);
     };
 
+    const getProductError = (index, field) => {
+        return validationErrors?.produits?.[index]?.[field] || "";
+    };
+
+    const produitVide =
+        validationErrors.produits === "Ajouter au moins un produit ou service."
+            ? true
+            : false;
+
     return (
         <div>
-            {/* Version Mobile - Vue Cartes */}
+            {/* Version Mobile */}
             <div className="block lg:hidden">
                 {products.map((product, index) => (
                     <div
                         key={index}
-                        className="relative p-4 mb-4 border border-gray-200 rounded-lg"
+                        className={`relative p-4 mb-4 border ${
+                            produitVide ? "border-red-500" : "border-gray-200"
+                        } rounded-lg`}
                     >
                         {index > 0 && (
                             <button
-                                className="absolute flex items-center justify-center w-6 h-6 text-xs text-white bg-red-500 rounded-full -top-2 -right-2"
+                                className="absolute flex items-center justify-center w-6 h-6 text-xs text-white bg-red-500 rounded-full top-1 right-1"
                                 onClick={() => removeProduct(index)}
                             >
                                 ×
@@ -188,6 +235,14 @@ const DesignationComponent = ({ data, setData }) => {
                                         )
                                     }
                                     required
+                                    placeholder="Nom du produit ou service"
+                                />
+                                <InputError
+                                    message={getProductError(
+                                        index,
+                                        "designation"
+                                    )}
+                                    className="mt-2"
                                 />
                             </div>
 
@@ -305,6 +360,13 @@ const DesignationComponent = ({ data, setData }) => {
                                     type="number"
                                     min={0}
                                 />
+                                <InputError
+                                    message={getProductError(
+                                        index,
+                                        "prix_unitaire"
+                                    )}
+                                    className="mt-2"
+                                />
                             </div>
 
                             <div>
@@ -339,200 +401,260 @@ const DesignationComponent = ({ data, setData }) => {
                         </div>
                     </div>
                 ))}
+
+                <div className="text-sm text-red-500">
+                    {produitVide && validationErrors.produits}
+                </div>
             </div>
 
             {/* Version Desktop - Vue Tableau */}
-            <div className="hidden lg:block">
+            <div
+                className={` ${
+                    produitVide &&
+                    "md:border relative md:border-red-500 md:p-4 md:rounded-md"
+                } hidden lg:block`}
+            >
                 {products.map((product, index) => (
-                    <div
-                        key={index}
-                        className="relative grid grid-cols-11 gap-3 my-4"
-                    >
-                        {index === 0 && (
-                            <>
-                                <div className="col-span-4">
-                                    <InputLabel
-                                        htmlFor={`designation-${index}`}
-                                        value="Nom"
-                                    />
-                                </div>
-                                <div>
-                                    <InputLabel
-                                        htmlFor={`reference-${index}`}
-                                        value="Réf"
-                                    />
-                                </div>
-                                <div>
-                                    <InputLabel
-                                        htmlFor={`quantite-${index}`}
-                                        value="Qté"
-                                    />
-                                </div>
-                                <div>
-                                    <InputLabel
-                                        htmlFor={`unite-${index}`}
-                                        value="Unité"
-                                    />
-                                </div>
-                                <div>
-                                    <InputLabel
-                                        htmlFor={`tva-${index}`}
-                                        value="TVA%"
-                                    />
-                                </div>
-                                <div>
-                                    <InputLabel
-                                        htmlFor={`prix_unitaire-${index}`}
-                                        value="PU TTC"
-                                    />
-                                </div>
-                                <div>
-                                    <InputLabel
-                                        htmlFor={`total_ht-${index}`}
-                                        value="Total HT"
-                                    />
-                                </div>
-                                <div>
-                                    <InputLabel
-                                        htmlFor={`total_ttc-${index}`}
-                                        value="Total TTC"
-                                    />
-                                </div>
-                            </>
-                        )}
+                    <div key={index} className="">
+                        <div
+                            className={`relative grid grid-cols-11 gap-3 my-4`}
+                        >
+                            {index === 0 && (
+                                <>
+                                    <div className="col-span-4">
+                                        <InputLabel
+                                            htmlFor={`designation-${index}`}
+                                            value="Nom"
+                                        />
+                                    </div>
+                                    <div>
+                                        <InputLabel
+                                            htmlFor={`reference-${index}`}
+                                            value="Réf"
+                                        />
+                                    </div>
+                                    <div>
+                                        <InputLabel
+                                            htmlFor={`quantite-${index}`}
+                                            value="Qté"
+                                        />
+                                    </div>
+                                    <div>
+                                        <InputLabel
+                                            htmlFor={`unite-${index}`}
+                                            value="Unité"
+                                        />
+                                    </div>
+                                    <div>
+                                        <InputLabel
+                                            htmlFor={`tva-${index}`}
+                                            value="TVA%"
+                                        />
+                                    </div>
+                                    <div>
+                                        <InputLabel
+                                            htmlFor={`prix_unitaire-${index}`}
+                                            value="PU TTC"
+                                        />
+                                    </div>
+                                    <div>
+                                        <InputLabel
+                                            htmlFor={`total_ht-${index}`}
+                                            value="Total HT"
+                                        />
+                                    </div>
+                                    <div>
+                                        <InputLabel
+                                            htmlFor={`total_ttc-${index}`}
+                                            value="Total TTC"
+                                        />
+                                    </div>
+                                </>
+                            )}
 
-                        <div className="col-span-4">
-                            <TextInput
-                                id={`designation-${index}`}
-                                name="designation"
-                                value={product.designation}
-                                className="block w-full mt-1"
-                                autoComplete="designation"
-                                onChange={(e) =>
-                                    handleChange(
-                                        index,
-                                        "designation",
-                                        e.target.value
-                                    )
-                                }
-                                required
-                            />
-                        </div>
-                        <div>
-                            <TextInput
-                                id={`reference-${index}`}
-                                name="reference"
-                                value={product.reference}
-                                className="block w-full mt-1"
-                                autoComplete="reference"
-                                onChange={(e) =>
-                                    handleChange(
-                                        index,
-                                        "reference",
-                                        e.target.value
-                                    )
-                                }
-                                required
-                            />
-                        </div>
-                        <div>
-                            <TextInput
-                                id={`quantite-${index}`}
-                                name="quantite"
-                                value={product.quantite}
-                                className="block w-full mt-1"
-                                autoComplete="quantite"
-                                onChange={(e) =>
-                                    handleChange(
-                                        index,
-                                        "quantite",
-                                        e.target.value
-                                    )
-                                }
-                                required
-                                type="number"
-                                min={0}
-                            />
-                        </div>
-                        <div>
-                            <TextInput
-                                id={`unite-${index}`}
-                                name="unite"
-                                value={product.unite}
-                                className="block w-full mt-1"
-                                autoComplete="unite"
-                                onChange={(e) =>
-                                    handleChange(index, "unite", e.target.value)
-                                }
-                                required
-                            />
-                        </div>
-                        <div>
-                            <TextInput
-                                id={`tva-${index}`}
-                                name="tva"
-                                value={product.tva}
-                                className="block w-full mt-1"
-                                autoComplete="tva"
-                                onChange={(e) =>
-                                    handleChange(index, "tva", e.target.value)
-                                }
-                                required
-                                type="number"
-                                min={0}
-                            />
-                        </div>
-                        <div>
-                            <TextInput
-                                id={`prix_unitaire-${index}`}
-                                name="prix_unitaire"
-                                value={product.prix_unitaire}
-                                className="block w-full mt-1"
-                                autoComplete="prix_unitaire"
-                                onChange={(e) =>
-                                    handleChange(
-                                        index,
-                                        "prix_unitaire",
-                                        e.target.value
-                                    )
-                                }
-                                required
-                                type="number"
-                                min={0}
-                            />
-                        </div>
-                        <div>
-                            <TextInput
-                                id={`total_ht-${index}`}
-                                name="total_ht"
-                                value={formatNumber(product.total_ht)}
-                                className="block w-full mt-1"
-                                autoComplete="total_ht"
-                                readOnly
-                            />
-                        </div>
-                        <div>
-                            <TextInput
-                                id={`total_ttc-${index}`}
-                                name="total_ttc"
-                                value={formatNumber(product.total_ttc)}
-                                className="block w-full mt-1"
-                                autoComplete="total_ttc"
-                                readOnly
-                            />
+                            <div className="col-span-4">
+                                <TextInput
+                                    id={`designation-${index}`}
+                                    name="designation"
+                                    value={product.designation}
+                                    className="block w-full mt-1"
+                                    autoComplete="designation"
+                                    onChange={(e) =>
+                                        handleChange(
+                                            index,
+                                            "designation",
+                                            e.target.value
+                                        )
+                                    }
+                                    required
+                                    placeholder="Nom du produit ou service"
+                                    onFocus={() =>
+                                        setValidationErrors({
+                                            ...validationErrors,
+                                            produits: "",
+                                        })
+                                    }
+                                />
+                            </div>
+                            <div>
+                                <TextInput
+                                    id={`reference-${index}`}
+                                    name="reference"
+                                    value={product.reference}
+                                    className="block w-full mt-1"
+                                    autoComplete="reference"
+                                    onChange={(e) =>
+                                        handleChange(
+                                            index,
+                                            "reference",
+                                            e.target.value
+                                        )
+                                    }
+                                    required
+                                />
+                            </div>
+                            <div>
+                                <TextInput
+                                    id={`quantite-${index}`}
+                                    name="quantite"
+                                    value={product.quantite}
+                                    className="block w-full mt-1"
+                                    autoComplete="quantite"
+                                    onChange={(e) =>
+                                        handleChange(
+                                            index,
+                                            "quantite",
+                                            e.target.value
+                                        )
+                                    }
+                                    required
+                                    type="number"
+                                    min={0}
+                                />
+                            </div>
+                            <div>
+                                <TextInput
+                                    id={`unite-${index}`}
+                                    name="unite"
+                                    value={product.unite}
+                                    className="block w-full mt-1"
+                                    autoComplete="unite"
+                                    onChange={(e) =>
+                                        handleChange(
+                                            index,
+                                            "unite",
+                                            e.target.value
+                                        )
+                                    }
+                                    required
+                                />
+                            </div>
+                            <div>
+                                <TextInput
+                                    id={`tva-${index}`}
+                                    name="tva"
+                                    value={product.tva}
+                                    className="block w-full mt-1"
+                                    autoComplete="tva"
+                                    onChange={(e) =>
+                                        handleChange(
+                                            index,
+                                            "tva",
+                                            e.target.value
+                                        )
+                                    }
+                                    required
+                                    type="number"
+                                    min={0}
+                                />
+                            </div>
+                            <div>
+                                <TextInput
+                                    id={`prix_unitaire-${index}`}
+                                    name="prix_unitaire"
+                                    value={product.prix_unitaire}
+                                    className="block w-full mt-1"
+                                    autoComplete="prix_unitaire"
+                                    onChange={(e) =>
+                                        handleChange(
+                                            index,
+                                            "prix_unitaire",
+                                            e.target.value
+                                        )
+                                    }
+                                    required
+                                    type="number"
+                                    min={0}
+                                    onFocus={() =>
+                                        setValidationErrors({
+                                            ...validationErrors,
+                                            produits: "",
+                                            montant_paye: "",
+                                        })
+                                    }
+                                />
+                            </div>
+                            <div>
+                                <TextInput
+                                    id={`total_ht-${index}`}
+                                    name="total_ht"
+                                    value={formatNumber(product.total_ht)}
+                                    className="block w-full mt-1"
+                                    autoComplete="total_ht"
+                                    readOnly
+                                />
+                            </div>
+                            <div>
+                                <TextInput
+                                    id={`total_ttc-${index}`}
+                                    name="total_ttc"
+                                    value={formatNumber(product.total_ttc)}
+                                    className="block w-full mt-1"
+                                    autoComplete="total_ttc"
+                                    readOnly
+                                />
+                            </div>
+
+                            {index > 0 && (
+                                <button
+                                    className="absolute right-0 w-5 h-5 text-xs text-white bg-red-500 rounded-full -top-2"
+                                    onClick={() => removeProduct(index)}
+                                >
+                                    ×
+                                </button>
+                            )}
                         </div>
 
-                        {/* Show the delete button only for index > 0 */}
-                        {index > 0 && (
-                            <button
-                                className="absolute w-5 h-5 text-xs text-white bg-red-500 rounded-full -right-2 -top-2"
-                                onClick={() => removeProduct(index)}
-                            >
-                                ×
-                            </button>
-                        )}
+                        {/* Erreurs pour la version desktop */}
+                        <div className="grid grid-cols-11 gap-3">
+                            <div className="col-span-4">
+                                <InputError
+                                    message={getProductError(
+                                        index,
+                                        "designation"
+                                    )}
+                                    className="mt-1"
+                                />
+                            </div>
+                            <div></div>
+                            <div></div>
+                            <div></div>
+                            <div></div>
+                            <div>
+                                <InputError
+                                    message={getProductError(
+                                        index,
+                                        "prix_unitaire"
+                                    )}
+                                    className="mt-1"
+                                />
+                            </div>
+                        </div>
                     </div>
                 ))}
+                <div className="absolute col-span-11 px-2 text-sm text-red-500 bg-white -bottom-2 dark:bg-gray-800">
+                    {produitVide && validationErrors.produits}
+                </div>
             </div>
 
             <TextArea
@@ -553,7 +675,7 @@ const DesignationComponent = ({ data, setData }) => {
                 </button>
 
                 <div className="w-full sm:w-auto">
-                    <div className="p-4 rounded-lg bg-gray-50">
+                    <div className="p-4 rounded-lg bg-gray-50 dark:bg-gray-900">
                         <table className="w-full text-sm">
                             <tbody>
                                 <tr className="border-b">

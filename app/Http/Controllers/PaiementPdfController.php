@@ -6,6 +6,7 @@ use Illuminate\Http\Request;
 use PDF;
 use Mail;
 use App\Mail\PaiementPdfMail;
+use App\Models\Paiement;
 use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\Log;
 
@@ -133,4 +134,13 @@ class PaiementPdfController extends Controller
 
         return true;
     }
+    public function echeanceclient(Request $request, $id)
+    {
+        $paiement = Paiement::where('client_id', $id)
+            ->orderBy('id', 'desc')
+            ->get();
+
+        return response()->json($paiement);
+    }
+
 }

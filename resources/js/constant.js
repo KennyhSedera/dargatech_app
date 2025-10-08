@@ -93,6 +93,33 @@ export function incrementRecuNumber(current) {
     return `${parts[0]}_${parts[1]}_${newNumberStr}`;
 }
 
+export function incrementEcheanceNumber(current) {
+    if (!current) return "T01";
+    const prefix = current.charAt(0);
+    const number = parseInt(current.slice(1), 10);
+    const newNumber = number + 1;
+    const paddedNumber = newNumber.toString().padStart(2, "0");
+
+    return `${prefix}${paddedNumber}`;
+}
+
+export function formatMontant(montant, options = {}) {
+    const num = parseFloat(montant);
+
+    if (isNaN(num)) return "0";
+    if (num >= 1000000) {
+        return (num / 1000000).toFixed(1).replace(/\.0$/, "") + "M";
+    }
+    if (num >= 1000) {
+        return (num / 1000).toFixed(1).replace(/\.0$/, "") + "k";
+    }
+    if (options.separateur) {
+        return num.toLocaleString("fr-FR");
+    }
+
+    return num.toString();
+}
+
 export function addFavicon() {
     const favicon = document.createElement("link");
     favicon.rel = "shortcut icon";
