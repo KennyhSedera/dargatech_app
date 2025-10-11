@@ -17,7 +17,7 @@ const SettingComponent = ({ isDrawerExpanded, setIsDrawerExpanded }) => {
         },
         {
             id: "balanced",
-            label: "Équilibré",
+            label: "Spacieux",
             cols: "grid-cols-5",
             left: 2,
             right: 3,

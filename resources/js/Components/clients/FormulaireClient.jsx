@@ -63,6 +63,9 @@ const FormulaireClient = ({
                 localisation: dataModify?.localisation || "",
                 surface_cultivee: dataModify.surface_cultivee || "",
                 type_activite_agricole: dataModify.type_activite_agricole || "",
+                created_via: dataModify.created_via || "web",
+                ville_acheteur: dataModify.ville_acheteur || "",
+                pays_acheteur: dataModify.pays_acheteur || "",
             });
             setBtnTitle("Modifier");
         } else {
