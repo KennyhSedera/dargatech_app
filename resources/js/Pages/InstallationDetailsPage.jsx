@@ -1,3 +1,4 @@
+import ShowImage from "@/Components/ShowImage";
 import AuthenticatedLayout from "@/Layouts/AuthenticatedLayout";
 import { Head } from "@inertiajs/react";
 import { useEffect, useState } from "react";
@@ -23,6 +24,7 @@ const Icons = {
 
 const InstallationDetailsPage = ({ installation }) => {
     const [loading, setLoading] = useState(true);
+    const [selectedImage, setSelectedImage] = useState(null);
 
     useEffect(() => {
         if (installation) {
@@ -436,8 +438,13 @@ const InstallationDetailsPage = ({ installation }) => {
                                         <div className="grid grid-cols-2 gap-4 md:grid-cols-3">
                                             {photo.map((photoUrl, index) => (
                                                 <div
+                                                    onClick={() =>
+                                                        setSelectedImage(
+                                                            photoUrl
+                                                        )
+                                                    }
                                                     key={index}
-                                                    className="relative overflow-hidden transition-shadow duration-300 shadow-lg group rounded-xl hover:shadow-xl dark:shadow-gray-900/50"
+                                                    className="relative overflow-hidden transition-shadow duration-300 shadow-lg cursor-pointer group rounded-xl hover:shadow-xl dark:shadow-gray-900/50"
                                                 >
                                                     <img
                                                         src={`/${photoUrl}`}
@@ -471,6 +478,10 @@ const InstallationDetailsPage = ({ installation }) => {
                                 </div>
                             </div>
                         </SectionCard>
+                        <ShowImage
+                            selectedImage={selectedImage}
+                            setSelectedImage={setSelectedImage}
+                        />
                     </div>
                 </div>
             </div>

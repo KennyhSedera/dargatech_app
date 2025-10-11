@@ -90,7 +90,7 @@ const FormulairePaiement = ({ token_data, telegramback }) => {
         description: "",
         produits: [],
         client_id: "",
-        echeance: "T1",
+        echeance: "",
     });
 
     useEffect(() => {
@@ -330,17 +330,14 @@ const FormulairePaiement = ({ token_data, telegramback }) => {
             let lastValid = sortedEcheances[0];
 
             for (const e of sortedEcheances) {
-                // si le total >= 18000 on peut passer à l'échéance suivante
                 if (echeanceMap[e] >= 18000) {
                     lastValid = e;
                 } else {
-                    // si total < 18000 => on reste sur cette échéance
                     setData("echeance", `T${String(e).padStart(2, "0")}`);
                     return;
                 }
             }
 
-            // Si toutes les échéances ont >= 18000, on passe à l'échéance suivante
             const nextEcheance = `T${String(lastValid + 1).padStart(2, "0")}`;
             setData("echeance", nextEcheance);
         } else {

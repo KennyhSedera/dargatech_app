@@ -26,6 +26,7 @@ import RapportPdf from "./rapport/RapportPdf";
 import html2pdf from "html2pdf.js";
 import { Head, usePage } from "@inertiajs/react";
 import { addFavicon } from "@/constant";
+import ShowImage from "@/Components/ShowImage";
 
 const InterventionDetailPage = ({ data }) => {
     const [selectedImage, setSelectedImage] = useState(null);
@@ -760,42 +761,10 @@ const InterventionDetailPage = ({ data }) => {
                 </div>
             </div>
 
-            {selectedImage && (
-                <div
-                    className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/95 backdrop-blur-sm animate-in fade-in"
-                    onClick={() => setSelectedImage(null)}
-                >
-                    <div className="relative max-w-6xl max-h-full duration-300 animate-in zoom-in-95">
-                        <img
-                            src={`/${selectedImage}`}
-                            alt="Photo agrandie"
-                            className="object-contain max-w-full max-h-screen shadow-2xl rounded-2xl"
-                            onClick={(e) => e.stopPropagation()}
-                        />
-                        <button
-                            className="absolute p-3 text-white transition rounded-full bg-white/10 backdrop-blur-md top-4 right-4 hover:bg-white/20 hover:scale-110"
-                            onClick={() => setSelectedImage(null)}
-                        >
-                            <svg
-                                className="w-6 h-6"
-                                fill="none"
-                                stroke="currentColor"
-                                viewBox="0 0 24 24"
-                            >
-                                <path
-                                    strokeLinecap="round"
-                                    strokeLinejoin="round"
-                                    strokeWidth={2}
-                                    d="M6 18L18 6M6 6l12 12"
-                                />
-                            </svg>
-                        </button>
-                        <div className="absolute px-6 py-3 text-sm text-white -translate-x-1/2 rounded-full bottom-4 left-1/2 bg-white/10 backdrop-blur-md">
-                            Cliquez n'importe où pour fermer
-                        </div>
-                    </div>
-                </div>
-            )}
+            <ShowImage
+                selectedImage={selectedImage}
+                setSelectedImage={setSelectedImage}
+            />
 
             <div className="hidden">
                 <RapportPdf data={rapportDataPdf} ref={contentRef} />

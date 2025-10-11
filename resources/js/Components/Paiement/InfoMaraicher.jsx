@@ -100,7 +100,6 @@ const InfoMaraicher = ({
                     </div>
                 </div>
 
-                {/* Section Adresse */}
                 <div>
                     <InputLabel
                         htmlFor="num_rue_acheteur"
@@ -132,7 +131,6 @@ const InfoMaraicher = ({
                     />
                 </div>
 
-                {/* Section Ville et Pays */}
                 <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
                     <div>
                         <InputLabel htmlFor="ville_acheteur" value="Ville" />
@@ -206,7 +204,6 @@ const InfoMaraicher = ({
                                     echeance: "",
                                 })
                             }
-                            readOnly
                         />
                         <InputError
                             message={

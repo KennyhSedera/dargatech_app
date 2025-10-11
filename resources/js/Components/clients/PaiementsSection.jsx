@@ -13,9 +13,11 @@ const PaiementInstallation = ({ paiement, getStatusColor, getStatusBadge }) => {
         if (!datePaiement || !dateEcheance) return "";
         const dp = moment(datePaiement);
         const de = moment(dateEcheance);
-        if (dp.isBefore(de, "day")) return "(en avance)";
-        if (dp.isSame(de, "day")) return "(à temps)";
-        return "(en retard)";
+        if (dp.isBefore(de, "day"))
+            return { color: "text-green-500", text: "(en avance)" };
+        if (dp.isSame(de, "day"))
+            return { color: "text-blue-500", text: "(à temps)" };
+        return { color: "text-red-500", text: "(en retard)" };
     };
 
     const remarque = paiement.date_paiement
@@ -45,10 +47,16 @@ const PaiementInstallation = ({ paiement, getStatusColor, getStatusBadge }) => {
                     <p className="text-lg font-bold text-green-600 dark:text-green-400">
                         {formatMontant(paiement.montant)} FCFA
                     </p>
-                    {getStatusBadge(
-                        paiement.statut_paiement,
-                        paiement.date_echeance
-                    )}
+                    <div className="flex items-center space-x-2">
+                        {getStatusBadge(
+                            paiement.statut_paiement,
+                            paiement.date_echeance
+                        )}
+                        <span className={`${remarque.color} text-xs`}>
+                            {remarque.text}
+                        </span>
+                    </div>
+
                     {paiement.date_paiement &&
                         paiement.statut_paiement?.toLowerCase() === "payé" && (
                             <p className="text-xs text-gray-500 dark:text-gray-400">
@@ -56,7 +64,6 @@ const PaiementInstallation = ({ paiement, getStatusColor, getStatusBadge }) => {
                                 {moment(paiement.date_paiement).format(
                                     "DD MMM YYYY"
                                 )}{" "}
-                                {remarque}
                             </p>
                         )}
                 </div>
@@ -122,41 +129,6 @@ const VueEnsemble = ({
                 className="h-full transition-all duration-500 bg-gradient-to-r from-green-500 to-blue-500"
                 style={{ width: `${pourcentagePaye}%` }}
             ></div>
-        </div>
-
-        <div className="grid grid-cols-2 gap-4 md:grid-cols-4 ">
-            <div className="text-center">
-                <p className="text-sm text-gray-500 dark:text-gray-400">
-                    Montant payé
-                </p>
-                <p className="text-lg font-bold text-green-600 dark:text-green-400">
-                    {formatMontant(montantPaye)} FCFA
-                </p>
-            </div>
-            <div className="text-center">
-                <p className="text-sm text-gray-500 dark:text-gray-400">
-                    Montant restant
-                </p>
-                <p className="text-lg font-bold text-orange-600 dark:text-orange-400">
-                    {formatMontant(montantRestant)} FCFA
-                </p>
-            </div>
-            <div className="text-center">
-                <p className="text-sm text-gray-500 dark:text-gray-400">
-                    Trimestres payés
-                </p>
-                <p className="text-lg font-bold text-gray-900 dark:text-white">
-                    {trimestresPayes} / {nombreTrimestres}
-                </p>
-            </div>
-            <div className="text-center">
-                <p className="text-sm text-gray-500 dark:text-gray-400">
-                    Trimestres restants
-                </p>
-                <p className="text-lg font-bold text-gray-900 dark:text-white">
-                    {trimestresRestants}
-                </p>
-            </div>
         </div>
     </div>
 );
@@ -258,7 +230,6 @@ const CalendrierPaiements = ({
     </div>
 );
 
-// --- Composant principal ---
 const PaiementsSection = ({ paiements, client }) => {
     if (!paiements || paiements.length === 0) return null;
 
@@ -482,6 +453,41 @@ const PaiementsSection = ({ paiements, client }) => {
                 getStatusBadge={getStatusBadge}
                 nombreTrimestres={nombreTrimestres}
             />
+
+            <div className="grid grid-cols-2 gap-4 py-6 border-t-2 border-gray-200 md:grid-cols-4 dark:border-gray-700">
+                <div className="text-center">
+                    <p className="text-sm text-gray-500 dark:text-gray-400">
+                        Montant payé
+                    </p>
+                    <p className="text-lg font-bold text-green-600 dark:text-green-400">
+                        {formatMontant(montantPaye)} FCFA
+                    </p>
+                </div>
+                <div className="text-center">
+                    <p className="text-sm text-gray-500 dark:text-gray-400">
+                        Montant restant
+                    </p>
+                    <p className="text-lg font-bold text-orange-600 dark:text-orange-400">
+                        {formatMontant(montantRestant)} FCFA
+                    </p>
+                </div>
+                <div className="text-center">
+                    <p className="text-sm text-gray-500 dark:text-gray-400">
+                        Trimestres payés
+                    </p>
+                    <p className="text-lg font-bold text-gray-900 dark:text-white">
+                        {trimestresPayes} / {nombreTrimestres}
+                    </p>
+                </div>
+                <div className="text-center">
+                    <p className="text-sm text-gray-500 dark:text-gray-400">
+                        Trimestres restants
+                    </p>
+                    <p className="text-lg font-bold text-gray-900 dark:text-white">
+                        {trimestresRestants}
+                    </p>
+                </div>
+            </div>
         </div>
     );
 };

@@ -18,6 +18,8 @@ import DangerButton from "@/Components/buttons/DangerButton";
 import { logo } from "@/constant";
 import RapportPdf from "./RapportPdf";
 import { FaDownload } from "react-icons/fa6";
+import { Camera } from "lucide-react";
+import ShowImage from "@/Components/ShowImage";
 
 const RapportMaintenance = ({ intervention_id }) => {
     const { theme, setTheme } = useTheme();
@@ -29,6 +31,7 @@ const RapportMaintenance = ({ intervention_id }) => {
     const [isPrinting, setIsPrinting] = useState(false);
     const [isSidebarOpen, setIsSidebarOpen] = useState(false);
     const contentRef = useRef(null);
+    const [selectedImage, setSelectedImage] = useState(null);
 
     useEffect(() => {
         setTheme(theme || "light");
@@ -641,7 +644,7 @@ const RapportMaintenance = ({ intervention_id }) => {
                                                                 visuelle
                                                             </h3>
                                                             <div
-                                                                className={`grid grid-cols-1 md:grid-cols-2 gap-4 justify-center bg-slate-50 dark:bg-slate-700/40 rounded-lg p-4 ${
+                                                                className={`grid grid-cols-1 md:grid-cols-3 sm:grid-cols-2 gap-4 justify-center bg-slate-50 dark:bg-slate-700/40 rounded-lg p-4 ${
                                                                     isPrinting
                                                                         ? "print-card"
                                                                         : ""
@@ -654,17 +657,29 @@ const RapportMaintenance = ({ intervention_id }) => {
                                                                         path,
                                                                         index
                                                                     ) => (
-                                                                        <img
-                                                                            key={
-                                                                                index
+                                                                        <div
+                                                                            className="relative cursor-pointer group"
+                                                                            onClick={() =>
+                                                                                setSelectedImage(
+                                                                                    path
+                                                                                )
                                                                             }
-                                                                            src={`/${path}`}
-                                                                            alt={`Photo du problème ${
-                                                                                index +
-                                                                                1
-                                                                            }`}
-                                                                            className="object-cover w-full h-auto rounded-lg shadow-md md:h-52"
-                                                                        />
+                                                                        >
+                                                                            <img
+                                                                                key={
+                                                                                    index
+                                                                                }
+                                                                                src={`/${path}`}
+                                                                                alt={`Photo du problème ${
+                                                                                    index +
+                                                                                    1
+                                                                                }`}
+                                                                                className="object-cover w-full h-auto transition duration-300 ease-in-out rounded-lg shadow-md group-hover:scale-105 md:h-56"
+                                                                            />
+                                                                            <div className="absolute top-0 flex items-center justify-center w-full h-full transition duration-300 ease-in-out rounded-lg opacity-0 group-hover:scale-105 md:h-56 bg-black/50 group-hover:opacity-100">
+                                                                                <Camera className="w-10 h-10 text-white transition opacity-0 group-hover:opacity-100" />
+                                                                            </div>
+                                                                        </div>
                                                                     )
                                                                 )}
                                                             </div>
@@ -863,7 +878,6 @@ const RapportMaintenance = ({ intervention_id }) => {
                                         )}
                                     </div>
 
-                                    {/* Footer intégré dans le contenu */}
                                     <div
                                         className={`mt-8 pt-4 border-t border-slate-200 dark:border-slate-700 text-sm text-slate-500 dark:text-slate-400 flex justify-between items-center ${
                                             isPrinting ? "print-footer" : ""
@@ -898,7 +912,11 @@ const RapportMaintenance = ({ intervention_id }) => {
                 </>
             )}
 
-            {/* Composant PDF caché */}
+            <ShowImage
+                selectedImage={selectedImage}
+                setSelectedImage={setSelectedImage}
+            />
+
             <div className="hidden">
                 <RapportPdf data={rapport} ref={contentRef} />
             </div>

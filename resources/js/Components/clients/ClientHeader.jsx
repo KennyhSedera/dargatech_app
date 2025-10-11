@@ -39,8 +39,8 @@ const ClientHeader = ({ client, installation }) => {
                     <div
                         className={`flex items-center px-4 py-3 space-x-3 rounded-lg text-white border-2 ${
                             latestInstallation.statuts === "installée"
-                                ? "border-green-500"
-                                : "border-red-500"
+                                ? "border-green-500 bg-green-500/10"
+                                : "border-red-500 bg-red-500/10"
                         }`}
                     >
                         <div className="flex items-center justify-center flex-shrink-0 w-10 h-10 rounded-lg bg-yellow-500/20">
