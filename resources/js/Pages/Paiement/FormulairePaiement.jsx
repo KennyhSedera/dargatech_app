@@ -25,10 +25,8 @@ import FichierPaiementPdf from "@/Components/paiements/FichierPaiementPdf";
 import moment from "moment";
 import { sendPdfByEmail } from "@/Services/envoyePdfEmail";
 import { extractDateRange } from "@/utils/getTwoDateUtils";
-import { incrementEcheanceNumber, incrementRecuNumber } from "@/constant";
-import { a } from "framer-motion/client";
+import { incrementRecuNumber, logo, titre } from "@/constant";
 import { validateFormPaiement } from "./../../Components/validateForm";
-import { get } from "lodash";
 
 const FormulairePaiement = ({ token_data, telegramback }) => {
     const { theme, setTheme } = useTheme();
@@ -117,7 +115,7 @@ const FormulairePaiement = ({ token_data, telegramback }) => {
                 objet: "Frais de l'installation du pompage solaire.",
                 date_paiement: new Date().toISOString().split("T")[0],
                 date_echeance: new Date().toISOString().split("T")[0],
-                echeance: "",
+                echeance: "Installation",
             }));
         }
     }, [amount, designation]);
@@ -142,6 +140,8 @@ const FormulairePaiement = ({ token_data, telegramback }) => {
                     genre: el.genre,
                     telephone: el.telephone,
                     localisation: el.localisation,
+                    pays_acheteur: el.pays_acheteur,
+                    ville_acheteur: el.ville_acheteur,
                 }))
             );
             setTypePaiement(
@@ -167,11 +167,25 @@ const FormulairePaiement = ({ token_data, telegramback }) => {
                     client = clients.find((c) => c.id === paiement.client_id);
                 }
 
-                const dateRange = extractDateRange(paiement.periode_couverte);
-                data.periode_couverte =
-                    dateRange.startDate.original +
-                    " au " +
-                    dateRange.endDate.original;
+                let dateRange = null;
+                let periodeCouverte = paiement.periode_couverte;
+
+                const datePattern = /\d{2}\/\d{2}\/\d{4}/g;
+                const datesFound =
+                    paiement.periode_couverte?.match(datePattern);
+
+                if (datesFound && datesFound.length >= 2) {
+                    try {
+                        dateRange = extractDateRange(paiement.periode_couverte);
+                        periodeCouverte =
+                            dateRange.startDate.original +
+                            " au " +
+                            dateRange.endDate.original;
+                    } catch (error) {
+                        console.warn("Impossible d'extraire les dates:", error);
+                        periodeCouverte = paiement.periode_couverte;
+                    }
+                }
 
                 if (client) {
                     setData({
@@ -181,8 +195,10 @@ const FormulairePaiement = ({ token_data, telegramback }) => {
                         prenom_acheteur: client.nom,
                         civilite_acheteur:
                             client.genre === "Homme" ? "Mr." : "Mme.",
-                        ville_acheteur: client.ville,
-                        pays_acheteur: client.pays,
+                        ville_acheteur:
+                            client.ville_acheteur || paiement.ville_acheteur,
+                        pays_acheteur:
+                            client.pays_acheteur || paiement.pays_acheteur,
                         num_rue_acheteur: client.village || client.quartier,
                         client_id: client.id,
                         objet: paiement.observation,
@@ -200,8 +216,12 @@ const FormulairePaiement = ({ token_data, telegramback }) => {
                         montant_paye: parseFloat(paiement.montant).toFixed(2),
                         date_creation:
                             paiement.date_creation ||
-                            dateRange.startDate.original,
-                        date: paiement.date || dateRange.endDate.original,
+                            dateRange?.startDate.original ||
+                            moment().format("DD/MM/YYYY"),
+                        date:
+                            paiement.date ||
+                            dateRange?.endDate.original ||
+                            moment().format("DD/MM/YYYY"),
                         lieu_creation: paiement.lieu_creation,
                         date_additionnel: paiement.date_additionnel,
                         nom_vendeur: paiement.nom_vendeur,
@@ -211,8 +231,6 @@ const FormulairePaiement = ({ token_data, telegramback }) => {
                         nom_rue_vendeur: paiement.nom_rue_vendeur,
                         ville_vendeur: paiement.ville_vendeur,
                         pays_vendeur: paiement.pays_vendeur,
-                        ville_acheteur: paiement.ville_acheteur,
-                        pays_acheteur: paiement.pays_acheteur,
                         code_postal_vendeur: paiement.code_postal_vendeur,
                         telephone_vendeur: paiement.telephone_vendeur,
                         email_vendeur: paiement.email_vendeur,
@@ -220,6 +238,7 @@ const FormulairePaiement = ({ token_data, telegramback }) => {
                         date_echeance: paiement.date_echeance,
                         echeance: paiement.echeance,
                         observation: paiement.observation,
+                        periode_couverte: periodeCouverte,
                     });
                     setEmail(client.email);
                 }
@@ -239,19 +258,23 @@ const FormulairePaiement = ({ token_data, telegramback }) => {
     const fetchClient = async (id) => {
         try {
             const { client } = await getClient(id);
-            console.log(client);
 
             if (client) {
-                setData({
-                    ...data,
-                    client_id: id,
-                    nom_acheteur: client.nom,
-                    prenom_acheteur: client.prenom,
-                    civilite_acheteur:
-                        client.genre === "Homme" ? "Mr." : "Mme.",
-                    ville_acheteur: "",
-                    pays_acheteur: "",
-                    num_rue_acheteur: client.localisation,
+                handleSelect({
+                    email: client.email,
+                    genre: client.genre,
+                    id: client.id,
+                    localisation: client.localisation,
+                    nom: client.prenom,
+                    nom_famille: client.nom,
+                    pays: client.pays_acheteur,
+                    pays_acheteur: client.pays_acheteur,
+                    quartier: client.localisation,
+                    telephone: client.telephone,
+                    title: `${client.prenom} ${client.nom}`,
+                    village: client.localisation,
+                    ville: client.ville_acheteur,
+                    ville_acheteur: client.ville_acheteur,
                 });
 
                 setEmail(client.email);
@@ -280,8 +303,48 @@ const FormulairePaiement = ({ token_data, telegramback }) => {
     const getLastEcheance = async (id) => {
         const data = await getLastEcheanceClient(id);
 
-        if (data) {
-            setData("echeance", incrementEcheanceNumber(data[0]?.echeance));
+        if (data && data.length > 0) {
+            const echeanceMap = {};
+
+            data.forEach((item) => {
+                if (item?.echeance && /^T\d+$/i.test(item.echeance)) {
+                    const num = parseInt(
+                        item.echeance.match(/^T(\d+)$/i)[1],
+                        10
+                    );
+                    if (!echeanceMap[num]) echeanceMap[num] = 0;
+                    echeanceMap[num] +=
+                        parseInt(item.montant) || item.montant || 0;
+                }
+            });
+
+            if (Object.keys(echeanceMap).length === 0) {
+                setData("echeance", "T01");
+                return;
+            }
+
+            const sortedEcheances = Object.keys(echeanceMap)
+                .map(Number)
+                .sort((a, b) => a - b);
+
+            let lastValid = sortedEcheances[0];
+
+            for (const e of sortedEcheances) {
+                // si le total >= 18000 on peut passer à l'échéance suivante
+                if (echeanceMap[e] >= 18000) {
+                    lastValid = e;
+                } else {
+                    // si total < 18000 => on reste sur cette échéance
+                    setData("echeance", `T${String(e).padStart(2, "0")}`);
+                    return;
+                }
+            }
+
+            // Si toutes les échéances ont >= 18000, on passe à l'échéance suivante
+            const nextEcheance = `T${String(lastValid + 1).padStart(2, "0")}`;
+            setData("echeance", nextEcheance);
+        } else {
+            setData("echeance", "T01");
         }
     };
 
@@ -297,13 +360,15 @@ const FormulairePaiement = ({ token_data, telegramback }) => {
             setData("client_id", cli.id);
             setData("nom_acheteur", cli.nom_famille);
             setData("prenom_acheteur", cli.nom);
-            setData("num_rue_acheteur", cli.village || cli.quartier);
+            setData("num_rue_acheteur", cli.localisation);
+            setData("ville_acheteur", cli.ville_acheteur);
+            setData("pays_acheteur", cli.pays_acheteur);
             setData(
                 "civilite_acheteur",
                 cli.genre === "Homme" ? "Mr." : "Mme."
             );
             setEmail(cli.email);
-            !amount && getLastEcheance(cli.id);
+            !client_id && getLastEcheance(cli.id);
         }
     };
 
@@ -402,24 +467,25 @@ const FormulairePaiement = ({ token_data, telegramback }) => {
             />
 
             <div className="relative p-4 mx-auto bg-white rounded-lg shadow-lg max-w-7xl sm:p-6 dark:bg-gray-800">
-                {/* Bouton retour responsive */}
-                <div className="mb-6">
+                <div className="flex items-center justify-between p-2 mb-6 text-white rounded-lg">
+                    <div className="flex items-center">
+                        <img src={logo} alt="logo" className="w-12 h-12 mr-2" />
+                        <img src={titre} alt="titre" className="w-auto h-9" />
+                    </div>
                     <DangerButton
                         onClick={() =>
                             token_data ? telegramback() : window.history.back()
                         }
                         className="text-sm capitalize sm:text-base"
                     >
-                        ← Retour
+                        Retour
                     </DangerButton>
                 </div>
 
-                {/* Titre responsive */}
                 <div className="mb-6 text-xl font-bold text-center sm:text-2xl lg:text-3xl sm:mb-8">
                     {isEditing ? "Modifier Paiement" : "Formulaire de Paiement"}
                 </div>
 
-                {/* En-tête - Information paiement */}
                 <div className="mb-6 sm:mb-8">
                     <InfoPaiement
                         data={data}
@@ -430,10 +496,8 @@ const FormulairePaiement = ({ token_data, telegramback }) => {
                     />
                 </div>
 
-                {/* Séparateur */}
                 <div className="w-full my-4 border-b sm:my-6 opacity-35"></div>
 
-                {/* Information vendeur et maraicher - Grid responsive */}
                 <div className="grid grid-cols-1 gap-4 mb-6 lg:grid-cols-2 sm:gap-6 lg:gap-8 sm:mb-8">
                     <div className="space-y-4">
                         <InfoVendeur
@@ -453,15 +517,12 @@ const FormulairePaiement = ({ token_data, telegramback }) => {
                             setData={setData}
                             setValidationErrors={setValidationErrors}
                             validationErrors={validationErrors}
-                            amount={amount}
                         />
                     </div>
                 </div>
 
-                {/* Séparateur */}
                 <div className="w-full my-4 border-b sm:my-6 opacity-35"></div>
 
-                {/* Objet - Responsive grid */}
                 <div className="grid grid-cols-1 gap-4 my-6 md:grid-cols-2 sm:my-10">
                     <div className="w-full">
                         <InputLabel htmlFor="objet" value="Observation" />
@@ -488,10 +549,8 @@ const FormulairePaiement = ({ token_data, telegramback }) => {
                     </div>
                 </div>
 
-                {/* Séparateur */}
                 <div className="w-full my-4 border-b sm:my-6 opacity-35"></div>
 
-                {/* Désignations */}
                 <div className="mb-6 sm:mb-8">
                     <div className="flex items-center justify-start mb-4">
                         <span className="text-lg font-bold sm:text-xl">
@@ -509,10 +568,8 @@ const FormulairePaiement = ({ token_data, telegramback }) => {
                     </div>
                 </div>
 
-                {/* Séparateur */}
                 <div className="w-full my-4 border-b sm:my-6 opacity-35"></div>
 
-                {/* Paiement */}
                 <div className="mb-6 sm:mb-8">
                     <PaiementFooter
                         data={data}
@@ -524,7 +581,6 @@ const FormulairePaiement = ({ token_data, telegramback }) => {
                     />
                 </div>
 
-                {/* Bouton d'action - Responsive */}
                 <div className="flex flex-col items-center justify-end gap-4 mt-6 sm:flex-row sm:mt-8">
                     <PrimaryButton
                         className="w-full px-6 py-2 text-sm sm:w-auto sm:px-10 sm:text-base"
@@ -535,7 +591,6 @@ const FormulairePaiement = ({ token_data, telegramback }) => {
                 </div>
             </div>
 
-            {/* Composant PDF caché */}
             <div className="hidden">
                 {showPdf && paiementData && (
                     <div ref={contentRef}>

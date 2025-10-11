@@ -1,5 +1,7 @@
 <?php
 
+use App\Http\Controllers\MaintenanceController;
+use App\Http\Controllers\PaiementController;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\TelegramFormController;
 use App\Models\Client;
@@ -94,6 +96,10 @@ Route::get('/installation/{id}', function ($id) {
     $installation = \App\Models\Installation::findOrFail($id)->load('client', 'localisation');
     return Inertia::render('InstallationDetailsPage', ['installation' => $installation]);
 })->middleware(['auth', 'verified'])->name('installation_detail');
+
+Route::get('/paiement/{id}/view', [PaiementController::class, 'showView'])->middleware(['auth', 'verified'])->name('paiement.view');
+
+Route::get('/intervention/{id}/view', [MaintenanceController::class, 'showDetail'])->middleware(['auth', 'verified'])->name('detail.intervention.view');
 
 Route::middleware(['web', 'telegram.token'])->group(function () {
     Route::get('/formulaire/client', [TelegramFormController::class, 'clientForm'])

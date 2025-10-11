@@ -76,7 +76,7 @@ const SettingComponent = ({ isDrawerExpanded, setIsDrawerExpanded }) => {
     };
 
     return (
-        <div className="w-full max-h-screen p-4 border-2 border-blue-500 rounded-lg bg-gradient-to-br from-gray-50 to-gray-100 dark:from-gray-900 dark:to-gray-800">
+        <div className="w-full max-h-screen p-4 border-2 border-blue-500 rounded-2xl bg-gradient-to-br from-gray-50 to-gray-100 dark:from-gray-900 dark:to-gray-800">
             <div className="max-w-4xl mx-auto space-y-4">
                 {/* Header */}
                 <div className="space-y-2">
@@ -117,9 +117,9 @@ const SettingComponent = ({ isDrawerExpanded, setIsDrawerExpanded }) => {
                                 }`}
                             >
                                 <div
-                                    className={`grid ${
+                                    className={`bg-gradient-to-br from-gray-100 to-gray-200 dark:from-gray-700 dark:to-gray-600 grid ${
                                         layout.cols
-                                    } rounded-xl w-28 h-20 overflow-hidden shadow-md transition-all duration-300 ${
+                                    } rounded-xl w-28 h-20 overflow-hidden shadow-sm transition-all duration-300 ${
                                         selectedLayout === layout.id
                                             ? "ring-4 ring-blue-500 ring-offset-2 dark:ring-offset-gray-800"
                                             : "ring-2 ring-gray-200 dark:ring-gray-700 hover:ring-gray-300 dark:hover:ring-gray-600"
@@ -129,7 +129,7 @@ const SettingComponent = ({ isDrawerExpanded, setIsDrawerExpanded }) => {
                                         className={`bg-gradient-to-br from-blue-500 to-blue-600 col-span-${layout.left}`}
                                     ></div>
                                     <div
-                                        className={`bg-gradient-to-br from-gray-100 to-gray-200 dark:from-gray-700 dark:to-gray-600 col-span-${layout.right}`}
+                                        className={`col-span-${layout.right}`}
                                     ></div>
                                 </div>
                                 <div className="mt-2 text-center">
@@ -168,7 +168,7 @@ const SettingComponent = ({ isDrawerExpanded, setIsDrawerExpanded }) => {
                 {/* Section Thème */}
                 <div className="p-6 space-y-6 transition-all duration-300 bg-white shadow-lg dark:bg-gray-800 rounded-2xl hover:shadow-xl">
                     <div className="flex items-center gap-3">
-                        <div className="p-2 bg-purple-100 rounded-lg dark:bg-purple-900">
+                        <div className="p-2 bg-purple-200 rounded-lg dark:bg-purple-900">
                             <Sun className="w-6 h-6 text-purple-600 dark:text-purple-400" />
                         </div>
                         <div>
@@ -216,9 +216,9 @@ const SettingComponent = ({ isDrawerExpanded, setIsDrawerExpanded }) => {
                                         </span>
                                     </div>
                                     {isSelected && (
-                                        <div className="absolute flex items-center justify-center w-6 h-6 bg-gray-100 rounded-full shadow-lg -top-2 -right-2">
+                                        <div className="absolute flex items-center justify-center w-6 h-6 bg-gray-100 rounded-full shadow-lg ring-2 ring-gray-300 dark:ring-white dark:bg-gray-700 -top-2 -right-2">
                                             <svg
-                                                className="w-4 h-4 text-blue-600"
+                                                className="w-4 h-4 text-black dark:text-white"
                                                 fill="none"
                                                 stroke="currentColor"
                                                 viewBox="0 0 24 24"

@@ -138,6 +138,8 @@ export default function Dashboard() {
             date: d.date,
         }));
 
+        console.log(data);
+
         const new_installation = data?.new_installation?.map((d) => ({
             id: d.code_installation,
             name: d.client_nom + " " + d.client_prenom,

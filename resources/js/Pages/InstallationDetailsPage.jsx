@@ -352,10 +352,10 @@ const InstallationDetailsPage = ({ installation }) => {
                                     <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
                                         <div className="p-4 text-center bg-white rounded-lg shadow-sm dark:bg-gray-700">
                                             <div className="text-2xl font-bold text-green-600 dark:text-green-400">
-                                                {
+                                                {parseFloat(
                                                     installation.localisation
                                                         ?.latitude
-                                                }
+                                                ).toFixed(8)}
                                                 °
                                             </div>
                                             <div className="text-sm text-gray-600 dark:text-gray-300">
@@ -364,10 +364,10 @@ const InstallationDetailsPage = ({ installation }) => {
                                         </div>
                                         <div className="p-4 text-center bg-white rounded-lg shadow-sm dark:bg-gray-700">
                                             <div className="text-2xl font-bold text-blue-600 dark:text-blue-400">
-                                                {
+                                                {parseFloat(
                                                     installation.localisation
                                                         ?.longitude
-                                                }
+                                                ).toFixed(8)}
                                                 °
                                             </div>
                                             <div className="text-sm text-gray-600 dark:text-gray-300">

@@ -28,7 +28,9 @@ class ClientRequest extends FormRequest
             'ville' => 'required|string',
             'quartier' => 'nullable|string',
             'village' => 'nullable|string',
-            'created_via' => 'nullable|string'
+            'created_via' => 'nullable|string',
+            'ville_acheteur' => 'nullable|string',
+            'pays_acheteur' => 'nullable|string'
         ];
     }
 

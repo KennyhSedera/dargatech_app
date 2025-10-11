@@ -59,6 +59,8 @@ namespace App\Models{
  * @property \Illuminate\Support\Carbon|null $updated_at
  * @property string $created_via
  * @property bool $is_payed
+ * @property string|null $pays_acheteur
+ * @property string|null $ville_acheteur
  * @property-read \Illuminate\Database\Eloquent\Collection<int, \App\Models\Alerts> $alert
  * @property-read int|null $alert_count
  * @property-read \Illuminate\Database\Eloquent\Collection<int, \App\Models\Installation> $installations
@@ -78,11 +80,13 @@ namespace App\Models{
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Client whereIsPayed($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Client whereLocalisation($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Client whereNom($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Client wherePaysAcheteur($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Client wherePrenom($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Client whereSurfaceCultivee($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Client whereTelephone($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Client whereTypeActiviteAgricole($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Client whereUpdatedAt($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Client whereVilleAcheteur($value)
  */
 	class Client extends \Eloquent {}
 }
@@ -198,6 +202,7 @@ namespace App\Models{
  * @property string $created_via
  * @property string|null $photo_probleme
  * @property-read \App\Models\Installation $installation
+ * @property-read \App\Models\rapportMaintenances|null $rapport_maintenance
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Maintenance newModelQuery()
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Maintenance newQuery()
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Maintenance query()
@@ -280,8 +285,6 @@ namespace App\Models{
  * @property string $ville_vendeur
  * @property string $pays_vendeur
  * @property string|null $echeance
- * @property string|null $pays_acheteur
- * @property string|null $ville_acheteur
  * @property-read \App\Models\Client $client
  * @property-read \Illuminate\Database\Eloquent\Collection<int, \App\Models\Products> $produits
  * @property-read int|null $produits_count
@@ -307,13 +310,11 @@ namespace App\Models{
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Paiement whereNumTva($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Paiement whereNumero($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Paiement whereObservation($value)
- * @method static \Illuminate\Database\Eloquent\Builder<static>|Paiement wherePaysAcheteur($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Paiement wherePaysVendeur($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Paiement wherePeriodeCouverte($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Paiement whereSelect1($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Paiement whereStatutPaiement($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Paiement whereUpdatedAt($value)
- * @method static \Illuminate\Database\Eloquent\Builder<static>|Paiement whereVilleAcheteur($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Paiement whereVilleVendeur($value)
  */
 	class Paiement extends \Eloquent {}

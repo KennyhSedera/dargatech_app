@@ -12,6 +12,8 @@ import TypePaiement from "./TypePaiement";
 import HeaderPage from "@/Components/HeaderPage";
 import { TbEdit } from "react-icons/tb";
 import EmptyState from "@/Components/EmptyState";
+import { FaEye } from "react-icons/fa6";
+
 const PaiementPage = () => {
     const [search, setsearch] = useState("");
     const [dataToModify, setDataToModify] = useState({});
@@ -64,6 +66,12 @@ const PaiementPage = () => {
     ];
 
     const actions = [
+        {
+            label: <FaEye className="text-base" />,
+            color: "text-green-500",
+            hoverColor: "text-green-600",
+            handler: (row) => router.visit(`/paiement/${row.id}/view`),
+        },
         {
             label: <TbEdit className="text-lg" />,
             color: "text-blue-500",

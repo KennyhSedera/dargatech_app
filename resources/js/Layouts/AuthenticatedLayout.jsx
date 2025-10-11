@@ -1,4 +1,4 @@
-import AnimatedSolarText from "@/Components/AnimatedSolarText";
+import { AnimatedSolarText4 } from "@/Components/AnimatedSolarText";
 import NavLinkIcon from "@/Components/nav/NavLinkIcon";
 import ResponsiveNavLink from "@/Components/nav/ResponsiveNavLink";
 import ThemeDropdown from "@/Components/nav/ThemeDropdown";
@@ -232,7 +232,9 @@ export default function AuthenticatedLayout({ setId = () => {}, children }) {
                                 </div>
                             </div>
 
-                            <AnimatedSolarText />
+                            <div className="items-center hidden md:flex">
+                                <AnimatedSolarText4 />
+                            </div>
 
                             <div className="flex items-center">
                                 <div className="block md:hidden">
@@ -344,7 +346,7 @@ export default function AuthenticatedLayout({ setId = () => {}, children }) {
                 {isShowSetting && (
                     <div
                         ref={settingRef}
-                        className="fixed z-50 items-center justify-center hidden max-w-full gap-2 rounded-lg shadow-2xl md:flex top-14 right-1 min-w-96 min-h-36"
+                        className="fixed z-50 items-center justify-center hidden max-w-full gap-2 shadow-2xl rounded-2xl md:flex top-14 right-1 min-w-96 min-h-36"
                     >
                         <SettingComponent
                             isDrawerExpanded={isDrawerExpanded}

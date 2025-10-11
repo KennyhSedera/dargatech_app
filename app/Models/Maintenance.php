@@ -27,4 +27,9 @@ class Maintenance extends Model
     {
         return $this->belongsTo(Installation::class, 'installation_id');
     }
+
+    public function rapport_maintenance()
+    {
+        return $this->hasOne(rapportMaintenances::class, 'maintenanceId');
+    }
 }

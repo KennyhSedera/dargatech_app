@@ -31,8 +31,6 @@ class Paiement extends Model
         'nom_rue_vendeur',
         'ville_vendeur',
         'pays_vendeur',
-        'ville_acheteur',
-        'pays_acheteur',
     ];
 
     public function client()

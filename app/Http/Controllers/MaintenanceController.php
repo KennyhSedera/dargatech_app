@@ -5,6 +5,7 @@ use App\Http\Requests\MaintenanceRequest;
 use App\Models\Installation;
 use App\Models\Maintenance;
 use Illuminate\Support\Facades\DB;
+use Inertia\Inertia;
 
 class MaintenanceController extends Controller
 {
@@ -111,5 +112,15 @@ class MaintenanceController extends Controller
             ->where('status_intervention', '!=', 'terminée')
             ->get();
         return response()->json(['data' => $data], 200);
+    }
+
+    public function showDetail($id)
+    {
+        $data = Maintenance::with(['installation.client', 'rapport_maintenance'])
+            ->findOrFail($id);
+
+        return Inertia::render('InterventionDetailPage', [
+            'data' => $data
+        ]);
     }
 }

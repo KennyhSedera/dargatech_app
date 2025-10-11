@@ -13,6 +13,7 @@ import {
 } from "@/Services/maintenanceService";
 import { Head, router, usePage } from "@inertiajs/react";
 import React, { useEffect, useState } from "react";
+import { FaEye } from "react-icons/fa6";
 import { GoTrash } from "react-icons/go";
 import { RiTelegramFill } from "react-icons/ri";
 import { TbEdit, TbWorldCheck } from "react-icons/tb";
@@ -133,6 +134,12 @@ const InterventionPage = () => {
     ];
 
     const actions = [
+        {
+            label: <FaEye className="text-base" />,
+            color: "text-green-500",
+            hoverColor: "text-green-600",
+            handler: (row) => router.visit(`/intervention/${row.id}/view`),
+        },
         {
             label: <TbEdit className="text-lg" />,
             color: "text-blue-500",

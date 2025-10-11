@@ -1,6 +1,7 @@
 <!-- resources/views/pdf/paiement.blade.php -->
 <!DOCTYPE html>
 <html>
+
 <head>
     <meta charset="utf-8">
     <title>Reçu de paiement N°<?php echo e($data['numero']); ?></title>
@@ -12,78 +13,95 @@
             margin: 0;
             padding: 20px;
         }
+
         .container {
             max-width: 800px;
             margin: 0 auto;
             position: relative;
             font-size: 12px;
         }
+
         .header {
             width: 100%;
             margin-bottom: 30px;
             overflow: hidden;
         }
+
         .logo-container {
             float: left;
             width: 50%;
         }
+
         .logo-inner {
             display: inline-block;
             vertical-align: top;
         }
+
         .logo {
             width: 60px;
             height: 60px;
             margin-right: 5px;
             vertical-align: middle;
         }
+
         .logo-text {
             color: #999;
             font-size: 12px;
         }
+
         .document-info {
             float: right;
             width: 50%;
             text-align: right;
         }
+
         .blue-text {
             color: #3490dc;
         }
+
         .receipt-number {
             font-size: 18px;
             font-weight: bold;
         }
+
         .info-text {
             font-size: 10px;
             margin-top: 8px;
         }
+
         .info-sections {
             width: 100%;
             clear: both;
             margin-bottom: 24px;
             overflow: hidden;
         }
+
         .info-section {
             margin-bottom: 10px;
         }
+
         .info-section-left {
             float: left;
             width: 49%;
         }
+
         .info-section-right {
             float: right;
             width: 49%;
         }
+
         .info-header {
             background-color: #3490dc;
             color: white;
             padding: 8px;
         }
+
         .info-content {
             border: 1px solid #3490dc;
             border-top: none;
             padding: 8px;
         }
+
         .doc-title {
             text-align: center;
             color: #3490dc;
@@ -92,15 +110,18 @@
             margin-bottom: 16px;
             clear: both;
         }
+
         .table {
             width: 100%;
             clear: both;
         }
+
         .table table {
             width: 100%;
             border-collapse: collapse;
             margin-bottom: 24px;
         }
+
         .table th {
             background-color: #3490dc;
             color: white;
@@ -108,16 +129,20 @@
             padding: 8px;
             border: 1px solid #3490dc;
         }
+
         .table td {
             padding: 8px;
             border: 1px solid #3490dc;
         }
+
         .text-center {
             text-align: center;
         }
+
         .text-right {
             text-align: right;
         }
+
         .total-summary {
             float: right;
             margin-top: 16px;
@@ -125,9 +150,11 @@
             width: 50%;
             clear: both;
         }
+
         .total-table {
             width: 100%;
         }
+
         .payment-info {
             border: 1px solid #3490dc;
             margin-bottom: 24px;
@@ -136,11 +163,13 @@
             width: 100%;
             clear: both;
         }
+
         .signature {
             text-align: left;
             clear: both;
             margin-top: 20px;
         }
+
         .footer {
             text-align: center;
             font-size: 12px;
@@ -149,9 +178,11 @@
             border-top: 1px solid #ccc;
             clear: both;
         }
+
         .payment-info td {
             padding-bottom: 10px;
         }
+
         .clearfix:after {
             content: "";
             display: table;
@@ -159,21 +190,22 @@
         }
     </style>
 </head>
+
 <body>
     <div class="container">
         <!-- En-tête avec logo et informations du document -->
         <div class="clearfix header">
             <div class="logo-container">
                 <div class="logo-inner">
-                    <img src="<?php echo e(public_path('images/logo.png')); ?>" alt="logo" class="logo">
+                    <img src="<?php echo e(asset('images/logo.png')); ?>" alt="logo" class="logo">
                 </div>
                 <div class="logo-inner">
                     <div>
                         <div>
                             <span class="blue-text" style="font-size: 12px; padding: 0 4px 4px 4px;">TOGO</span>
-                            <img src="<?php echo e(public_path('images/togo.png')); ?>" alt="Togo Flag" style="height: 15px;">
+                            <img src="<?php echo e(asset('images/togo.png')); ?>" alt="Togo Flag" style="height: 15px;">
                         </div>
-                        <img src="<?php echo e(public_path('images/titre.png')); ?>" alt="logo" style="height: auto; width: 152px;">
+                        <img src="<?php echo e(asset('images/titre.png')); ?>" alt="logo" style="height: auto; width: 152px;">
                     </div>
                     <div class="logo-text">EXIGEZ LE MEILLEUR DU SOLAIRE</div>
                 </div>
@@ -225,43 +257,46 @@
 
         <!-- Tableau des produits -->
         <div class="table">
-        <table>
-            <thead>
-                <tr>
-                    <th>N°</th>
-                    <th>Désignation</th>
-                    <th>Réf.</th>
-                    <th>Qté</th>
-                    <th>PU HT</th>
-                    <th>Total HT</th>
-                    <th>TVA</th>
-                    <th>Montant TVA</th>
-                    <th>Total TTC</th>
-                </tr>
-            </thead>
-            <tbody>
-                <?php $__currentLoopData = $data['produits']; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $index => $produit): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
-                <tr>
-                    <td class="text-center"><?php echo e($index + 1); ?></td>
-                    <td><?php echo e($produit['designation']); ?></td>
-                    <td class="text-center"><?php echo e($produit['reference']); ?></td>
-                    <td class="text-center"><?php echo e($produit['quantite']); ?></td>
-                    <td class="text-right"><?php echo e(number_format($produit['prix_unitaire'], 0, ',', ' ')); ?></td>
-                    <td class="text-right"><?php echo e(number_format($produit['total_ht'], 0, ',', ' ')); ?></td>
-                    <td class="text-center"><?php echo e($produit['tva']); ?>%</td>
-                    <td class="text-right"><?php echo e(number_format($produit['montant_tva'], 0, ',', ' ')); ?></td>
-                    <td class="text-right"><?php echo e(number_format($produit['total_ttc'], 0, ',', ' ')); ?></td>
-                </tr>
-                <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?>
-                <tr>
-                    <td colspan="5" class="text-center" style="font-weight: bold;">TOTAL</td>
-                    <td class="text-right" style="font-weight: bold;"><?php echo e(number_format($data['total_ht'], 0, ',', ' ')); ?></td>
-                    <td></td>
-                    <td class="text-right" style="font-weight: bold;"><?php echo e(number_format($data['total_tva'], 0, ',', ' ')); ?></td>
-                    <td class="text-right" style="font-weight: bold;"><?php echo e(number_format($data['total_ttc'], 0, ',', ' ')); ?></td>
-                </tr>
-            </tbody>
-        </table>
+            <table>
+                <thead>
+                    <tr>
+                        <th>N°</th>
+                        <th>Désignation</th>
+                        <th>Réf.</th>
+                        <th>Qté</th>
+                        <th>PU HT</th>
+                        <th>Total HT</th>
+                        <th>TVA</th>
+                        <th>Montant TVA</th>
+                        <th>Total TTC</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <?php $__currentLoopData = $data['produits']; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $index => $produit): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
+                    <tr>
+                        <td class="text-center"><?php echo e($index + 1); ?></td>
+                        <td><?php echo e($produit['designation']); ?></td>
+                        <td class="text-center"><?php echo e($produit['reference']); ?></td>
+                        <td class="text-center"><?php echo e($produit['quantite']); ?></td>
+                        <td class="text-right"><?php echo e(number_format($produit['prix_unitaire'], 0, ',', ' ')); ?></td>
+                        <td class="text-right"><?php echo e(number_format($produit['total_ht'], 0, ',', ' ')); ?></td>
+                        <td class="text-center"><?php echo e($produit['tva']); ?>%</td>
+                        <td class="text-right"><?php echo e(number_format($produit['montant_tva'], 0, ',', ' ')); ?></td>
+                        <td class="text-right"><?php echo e(number_format($produit['total_ttc'], 0, ',', ' ')); ?></td>
+                    </tr>
+                    <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?>
+                    <tr>
+                        <td colspan="5" class="text-center" style="font-weight: bold;">TOTAL</td>
+                        <td class="text-right" style="font-weight: bold;"><?php echo e(number_format($data['total_ht'], 0, ',', '
+                            ')); ?></td>
+                        <td></td>
+                        <td class="text-right" style="font-weight: bold;"><?php echo e(number_format($data['total_tva'], 0, ',', '
+                            ')); ?></td>
+                        <td class="text-right" style="font-weight: bold;"><?php echo e(number_format($data['total_ttc'], 0, ',', '
+                            ')); ?></td>
+                    </tr>
+                </tbody>
+            </table>
         </div>
 
         <!-- Résumé totaux -->
@@ -323,5 +358,5 @@
         </div>
     </div>
 </body>
-</html>
-<?php /**PATH D:\ENI\Stage\dargatech_app\resources\views/pdf/paiement.blade.php ENDPATH**/ ?>
+
+</html><?php /**PATH D:\ENI\Stage\dargatech_app\resources\views/pdf/paiement.blade.php ENDPATH**/ ?>

@@ -140,6 +140,12 @@ const Calendar = ({ className, events = [] }) => {
         if (event.type === "installation") {
             router.visit(`/installation/${event.id}`);
         }
+        if (event.type === "paiement") {
+            router.visit(`/paiement/${event.id}/view`);
+        }
+        if (event.type === "maintenance") {
+            router.visit(`/intervention/${event.id}/view`);
+        }
     };
 
     return (

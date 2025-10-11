@@ -107,7 +107,9 @@ class ClientController extends Controller
                 'telephone' => $validatedData['telephone'],
                 'localisation' => $validatedData['localisation'],
                 'surface_cultivee' => $validatedData['surface_cultivee'],
-                'type_activite_agricole' => $validatedData['type_activite_agricole']
+                'type_activite_agricole' => $validatedData['type_activite_agricole'],
+                'ville_acheteur' => $validatedData['ville_acheteur'],
+                'pays_acheteur' => $validatedData['pays_acheteur'],
             ]);
 
             DB::commit();
