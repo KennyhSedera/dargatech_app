@@ -141,7 +141,7 @@ class CallBackService
                 'user_id' => $userId,
                 'chat_id' => $chatId,
                 'command' => 'new_maraicher',
-                'step' => 'nom',
+                'step' => 'data_maraicher',
                 'data' => json_encode([]),
                 'completed' => false,
                 'created_at' => now(),
@@ -150,7 +150,7 @@ class CallBackService
 
             $this->sendMessage->sendMessage(
                 $chatId,
-                "🌱 *Enregistrement d'un nouveau maraîcher*\n\nVeuillez entrer le *nom* du maraîcher :",
+                "🌱 *Enregistrement d'un nouveau maraîcher*\n\nVeillez entrer les informations successivement : \n nom;\n prenom;\n telephone;\n email;\n CIN;\n genre (Homme/Femme);\n adress;\n  type_activite_agricole;\n surface_cultivee (en hectares);\n date_contrat (AAAA-MM-JJ) \n\n👤 *Par exemple:*\n nom example;\n prenom example;\n 03424...;\n example@gmail.com;\n 202...;\n Homme;\n Rue...;\n Légumes;\n 0.5;\n 2025-01-01",
                 'Markdown'
             );
             return;

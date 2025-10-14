@@ -17,6 +17,9 @@ import ClientInfoCard from "@/Components/clients/ClientInfoCard";
 import EmptyState from "@/Components/EmptyState";
 import LoadingSpinner from "@/Components/clients/LoadingSpinner";
 import ClientHeader from "@/Components/clients/ClientHeader";
+import { FaTelegram, FaWordpress } from "react-icons/fa6";
+import { RiTelegramFill } from "react-icons/ri";
+import { TbWorldCheck } from "react-icons/tb";
 
 moment.locale("fr");
 
@@ -170,20 +173,34 @@ const ClientDetailPage = ({ client }) => {
                                         iconColor="text-teal-600 dark:text-teal-400"
                                     />
 
-                                    <div className="flex items-center space-x-3">
-                                        <div className="flex items-center justify-center flex-shrink-0 w-10 h-10 bg-gray-100 rounded-lg dark:bg-gray-900/50">
-                                            ⚙️
-                                        </div>
-                                        <div>
-                                            <p className="text-sm text-gray-500 dark:text-gray-400">
-                                                Créée via
-                                            </p>
-                                            <p className="text-base font-medium text-gray-900 dark:text-white">
-                                                {client.created_via ||
-                                                    "Non renseigné"}
-                                            </p>
-                                        </div>
-                                    </div>
+                                    <ClientInfoCard
+                                        icon={
+                                            client.created_via ===
+                                            "telegram_bot"
+                                                ? RiTelegramFill
+                                                : TbWorldCheck
+                                        }
+                                        label="Type d'activité agricole"
+                                        value={
+                                            client.created_via ===
+                                            "telegram_bot"
+                                                ? "Telegram"
+                                                : client.created_via ||
+                                                  "Non renseigné"
+                                        }
+                                        bgColor={
+                                            client.created_via ===
+                                            "telegram_bot"
+                                                ? "bg-blue-50 dark:bg-blue-900/20"
+                                                : "bg-black/5 dark:bg-white/10"
+                                        }
+                                        iconColor={
+                                            client.created_via ===
+                                            "telegram_bot"
+                                                ? "text-blue-600 dark:text-blue-400"
+                                                : "text-black dark:text-white"
+                                        }
+                                    />
                                 </div>
                             </div>
                         </div>

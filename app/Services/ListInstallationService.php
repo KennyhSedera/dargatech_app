@@ -73,7 +73,7 @@ class ListInstallationService
         $keyboard = Keyboard::make()->inline()
             ->row([
                 Keyboard::inlineButton(['text' => '🔍 Rechercher', 'callback_data' => 'search_installation']),
-                Keyboard::inlineButton(['text' => '➕ Ajouter nouveau', 'callback_data' => 'new_installation'])
+                Keyboard::inlineButton(['text' => '➕ Ajouter nouveau', 'callback_data' => 'button_create_installation'])
             ])
             ->row([
                 Keyboard::inlineButton(['text' => '🏠 Menu principale', 'callback_data' => 'menu'])
@@ -116,7 +116,7 @@ class ListInstallationService
         PaginationKeyboard::addAdvancedPagination($keyboard, $page, $totalPages, entityType: 'installation');
 
         $keyboard->row([
-            Keyboard::inlineButton(['text' => '➕ Nouveau', 'callback_data' => 'new_installation']),
+            Keyboard::inlineButton(['text' => '➕ Nouveau', 'callback_data' => 'button_create_installation']),
             Keyboard::inlineButton(['text' => '🔍 Rechercher', 'callback_data' => 'search_installation'])
         ]);
 

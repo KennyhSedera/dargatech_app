@@ -11,7 +11,7 @@ import sidebarPages, {
     titre,
 } from "@/constant";
 import { getInitials } from "@/hooks/letterInWord";
-import { usePage } from "@inertiajs/react";
+import { Link, usePage } from "@inertiajs/react";
 import { Settings } from "lucide-react";
 import React, { useRef } from "react";
 import { useEffect, useState } from "react";
@@ -170,7 +170,10 @@ export default function AuthenticatedLayout({ setId = () => {}, children }) {
 
                 {/* User info at bottom when expanded */}
                 {isDrawerExpanded && (
-                    <div className="px-3 py-4 mt-auto border-t border-gray-200 dark:border-gray-700">
+                    <Link
+                        href={route("profile.edit")}
+                        className="px-3 py-4 mt-auto border-t border-gray-200 dark:border-gray-700"
+                    >
                         <div className="flex items-center gap-3">
                             <div className="flex items-center justify-center flex-shrink-0 w-10 h-10 bg-gray-500 rounded-full ring-2 ring-gray-300 dark:ring-gray-600">
                                 {profile.photo ||
@@ -203,7 +206,7 @@ export default function AuthenticatedLayout({ setId = () => {}, children }) {
                                 </div>
                             </div>
                         </div>
-                    </div>
+                    </Link>
                 )}
             </div>
 
@@ -293,7 +296,10 @@ export default function AuthenticatedLayout({ setId = () => {}, children }) {
                         </div>
 
                         <div className="pt-4 pb-1 border-t border-gray-200 dark:border-gray-600">
-                            <div className="flex items-center gap-2 p-2">
+                            <Link
+                                href={route("profile.edit")}
+                                className="flex items-center gap-2 p-2 cursor-pointer"
+                            >
                                 <div className="flex items-center justify-center w-8 h-8 bg-gray-500 rounded-full ring-1 ring-gray-300">
                                     {profile.photo ||
                                     technicien.photo ||
@@ -324,7 +330,7 @@ export default function AuthenticatedLayout({ setId = () => {}, children }) {
                                         {user.email}
                                     </div>
                                 </div>
-                            </div>
+                            </Link>
 
                             <div className="mt-3 space-y-1">
                                 <ResponsiveNavLink href={route("profile.edit")}>

@@ -35,19 +35,22 @@ class StepService
                     'adress',
                     'type_activite_agricole',
                     'surface_cultivee',
-                    'date_contrat'
+                    'date_contrat',
+                    'data_maraicher',
                 ],
                 'prompts' => [
-                    'nom' => "🌱 Veuillez entrer le *nom* du maraîcher :",
-                    'prenom' => "✍️ Entrez maintenant le *prénom* :",
-                    'telephone' => "📞 Entrez le *téléphone* :",
-                    'adress' => "📍 Entrez la *localisation* ou *adresse* :",
-                    'genre' => "👤 Entrez le *genre* :",
-                    'email' => "📧 Entrez l'*email* :",
-                    'CIN' => "🪪 Entrez le *CIN* :",
-                    'date_contrat' => "📅 Entrez la *date de contrat* (AAAA-MM-JJ) :",
-                    'type_activite_agricole' => "🌾 Entrez le *type d'activité agricole* :",
-                    'surface_cultivee' => "📏 Entrez la *surface cultivée* (en hectares, ex : 0.5) :",
+                    'data_maraicher' => "
+                    🌱 *Veillez entrer les informations successivement :*\n nom;\n prenom;\n telephone;\n email;\n CIN;\n genre (Homme/Femme);\n adress;\n type_activite_agricole;\n surface_cultivee (en hectares);\n date_contrat (AAAA-MM-JJ)",
+                    'nom' => "👤 Veuillez entrer le *nom* du maraîcher :",
+                    'prenom' => "👤 Veuillez entrer le *prénom* du maraîcher :",
+                    'telephone' => "📞 Veuillez entrer le *numéric* du maraîcher :",
+                    'email' => "📧 Veuillez entrer l'adresse *email* du maraîcher :",
+                    'CIN' => "📝 Veuillez entrer le *CIN* du maraîcher :",
+                    'genre' => "👤 Veuillez entrer le *genre* du maraîcher :",
+                    'adress' => "🌱 Veuillez entrer l'adresse du maraîcher :",
+                    'type_activite_agricole' => "🌱 Veuillez entrer le type d'activité agricole du maraîcher :",
+                    'surface_cultivee' => "🌱 Veuillez entrer la surface cultivee du maraîcher :",
+                    'date_contrat' => "📆 Veuillez entrer la date du contrat du maraîcher (AAAA-MM-JJ):"
                 ],
                 'keyboards' => [
                     'genre' => [
@@ -70,18 +73,22 @@ class StepService
             'new_installation' => [
                 'steps' => [
                     'client_id',
-                    'numero_serie',
-                    'debit_nominal',
-                    'puissance_pompe',
-                    'profondeur_forage',
-                    'hmt',
-                    'source_eau',
+                    'data_installation',
+                    // 'numero_serie',
+                    // 'debit_nominal',
+                    // 'puissance_pompe',
+                    // 'profondeur_forage',
+                    // 'hmt',
+                    // 'source_eau',
                     'localisation',
                     'photo',
-                    'date_installation'
+                    'date_installation',
                 ],
                 'prompts' => [
-                    'client_id' => "👤 Veuillez entrer le *nom* du client :",
+                    'data_installation' => "
+                    📦 *Veillez entrer les informations successivement :*\n numéro de série;\n debit nominal (m³/h);\n Puissance crête installé (W);\n Distance maximale pompe champ PV (m);\n HMT de la pompe;\n source d'eau (Forage / Puits / Etang / Barrage / Rivière / Autre)',
+                    ",
+                    'client_id' => "👤 Veuillez entrer le *numero* du maraicher :",
                     'numero_serie' => "📦 Entrez le *numéro de série* de la pompe :",
                     'debit_nominal' => "📏 Entrez le *debit nominal (m³/h)* :",
                     'puissance_pompe' => "🔋 Entrez la *Puissance crête installé (W)* :",
@@ -290,6 +297,7 @@ class StepService
         $data[$step] = $messageText;
         $nextStep = $this->getNextStep($step, $command);
 
+
         if ($step === 'client_id') {
             $exist = DB::table('clients')->where('id', $messageText)->exists();
             if ($exist) {
@@ -350,6 +358,94 @@ class StepService
                 }
             } else {
                 $this->sendMessage->sendMessage($chatId, "❌ La maintenance de l'installation {$data[$step]} n'existe pas. Veuillez fournir une maintenance existante :");
+            }
+        } else if ($step === 'data_maraicher') {
+            $datam = TextService::segment($messageText);
+
+            $keys = [
+                'nom',
+                'prenom',
+                'telephone',
+                'email',
+                'CIN',
+                'genre',
+                'adress',
+                'type_activite_agricole',
+                'surface_cultivee',
+                'date_contrat'
+            ];
+
+            $maraicher = [];
+            foreach ($keys as $index => $key) {
+                $maraicher[$key] = $datam[$index] ?? null;
+            }
+
+            $data = $maraicher;
+
+            if ($nextStep) {
+                $this->updateSession($userId, $command, $nextStep, $data);
+                $this->sendStepMessage($chatId, $nextStep, $command);
+            } else {
+                $this->completeSession($userId, $command, $data);
+                if ($onComplete && is_callable($onComplete)) {
+                    $onComplete($data, $userId, $chatId);
+                }
+            }
+        } else if ($step === 'data_installation') {
+            $datam = TextService::segment($messageText);
+
+            $keys = [
+                'numero_serie',
+                'debit_nominal',
+                'puissance_pompe',
+                'profondeur_forage',
+                'hmt',
+                'source_eau',
+            ];
+
+            $installation = [];
+            foreach ($keys as $index => $key) {
+                $installation[$key] = $datam[$index] ?? null;
+            }
+
+            $data = $data + $installation;
+
+            if ($nextStep) {
+                $this->updateSession($userId, $command, $nextStep, $data);
+                $this->sendStepMessage($chatId, $nextStep, $command);
+            } else {
+                $this->completeSession($userId, $command, $data);
+                if ($onComplete && is_callable($onComplete)) {
+                    $onComplete($data, $userId, $chatId);
+                }
+            }
+        } else if ($step === 'data_intervention') {
+            $datam = TextService::segment($messageText);
+
+            $keys = [
+                'description_panne',
+                'description_probleme',
+                'date_panne',
+                'heure_panne',
+                'date_intervention',
+                'type_intervention',
+            ];
+
+            $intervention = [];
+            foreach ($keys as $index => $key) {
+                $intervention[$key] = $datam[$index] ?? null;
+            }
+
+            $data = $intervention;
+
+            if ($nextStep) {
+                $this->updateSession($userId, $command, $nextStep, $data);
+                $this->sendStepMessage($chatId, $nextStep, $command);
+            } else {
+                $this->completeSession($userId, $command, $data);
+                if ($onComplete && is_callable($onComplete)) {
+                    $onComplete($data, $userId, $chatId);
+                }
             }
         } else {
             if ($nextStep) {

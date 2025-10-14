@@ -204,7 +204,6 @@ const FormulairePaiement = ({ token_data, telegramback }) => {
                         objet: paiement.observation,
                         description: paiement.description,
                         mode_paiement: paiement.mode_paiement,
-                        date_echeance: paiement.echeance,
                         statut_paiement: paiement.statut_paiement,
                         produits: paiement.produits.map((el) => ({
                             ...el,
@@ -341,7 +340,30 @@ const FormulairePaiement = ({ token_data, telegramback }) => {
             const nextEcheance = `T${String(lastValid + 1).padStart(2, "0")}`;
             setData("echeance", nextEcheance);
         } else {
-            setData("echeance", "T01");
+            setData((prevData) => ({
+                ...prevData,
+                produits: [
+                    ...prevData.produits,
+                    {
+                        designation:
+                            "Acompte pour signature de contrat et installation",
+                        reference: "",
+                        quantite: 1,
+                        unite: "",
+                        tva: 0,
+                        prix_unitaire: 30000,
+                        total_ht: 30000,
+                        total_ttc: 30000,
+                    },
+                ],
+                montant_paye: "30000",
+                description:
+                    "Acompte pour signature de contrat et installation",
+                objet: "Frais de l'installation du pompage solaire.",
+                date_paiement: new Date().toISOString().split("T")[0],
+                date_echeance: new Date().toISOString().split("T")[0],
+                echeance: "Installation",
+            }));
         }
     };
 
@@ -411,10 +433,15 @@ const FormulairePaiement = ({ token_data, telegramback }) => {
                     token_data
                         ? telegramback(response.message)
                         : window.history.back();
-                    if (client_id && amount && designation) {
+                    if (
+                        (client_id && amount && designation) ||
+                        data.objet ===
+                            "Frais de l'installation du pompage solaire."
+                    ) {
+                        const id = client_id || data.client_id;
                         try {
                             const res = await fetch(
-                                `/api/paiement/client/${client_id}`,
+                                `/api/paiement/client/${id}`,
                                 {
                                     method: "GET",
                                 }

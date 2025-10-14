@@ -98,11 +98,11 @@ const InterventionDetailPage = ({ data }) => {
         const opt = {
             margin: 0.5,
             filename: `rapport-maintenance-${
-                rapport?.id +
+                rapportDataPdf?.id +
                     "-du-" +
-                    rapport?.client?.nom +
+                    rapportDataPdf?.client?.nom +
                     "-" +
-                    rapport?.client?.prenom || "undefined"
+                    rapportDataPdf?.client?.prenom || "undefined"
             }.pdf`,
             image: { type: "jpeg", quality: 0.98 },
             html2canvas: { scale: 2 },
@@ -114,13 +114,8 @@ const InterventionDetailPage = ({ data }) => {
 
     const photosProbleme = parsePhotos(intervention.photo_probleme);
     const photosRapport = parsePhotos(rapport?.photo_probleme);
-    const photosInstallation = parsePhotos(installation?.photos_installation);
 
-    const allPhotos = [
-        ...photosProbleme,
-        ...photosRapport,
-        ...photosInstallation,
-    ];
+    const allPhotos = [...photosProbleme, ...photosRapport];
 
     const getStatusConfig = (status) => {
         const configs = {

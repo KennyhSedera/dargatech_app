@@ -71,7 +71,7 @@ class ListMaraicherService
         $keyboard = Keyboard::make()->inline()
             ->row([
                 Keyboard::inlineButton(['text' => '🔍 Rechercher', 'callback_data' => 'search_maraicher']),
-                Keyboard::inlineButton(['text' => '➕ Ajouter nouveau', 'callback_data' => 'new_maraicher'])
+                Keyboard::inlineButton(['text' => '➕ Ajouter nouveau', 'callback_data' => 'button_create_maraicher'])
             ])
             ->row([
                 Keyboard::inlineButton(['text' => '🏠 Menu principale', 'callback_data' => 'menu'])
@@ -123,7 +123,7 @@ class ListMaraicherService
         PaginationKeyboard::addAdvancedPagination($keyboard, $page, $totalPages, 'maraicher');
 
         $keyboard->row([
-            Keyboard::inlineButton(['text' => '➕ Nouveau', 'callback_data' => 'new_maraicher']),
+            Keyboard::inlineButton(['text' => '➕ Nouveau', 'callback_data' => 'button_create_maraicher']),
             Keyboard::inlineButton(['text' => '🔍 Rechercher', 'callback_data' => 'search_maraicher'])
         ]);
 
