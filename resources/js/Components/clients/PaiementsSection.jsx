@@ -230,7 +230,7 @@ const CalendrierPaiements = ({
     </div>
 );
 
-const PaiementsSection = ({ paiements, client }) => {
+const PaiementsSection = ({ paiements, installation }) => {
     if (!paiements || paiements.length === 0) return null;
 
     const dureeAnnees = 3;
@@ -245,6 +245,7 @@ const PaiementsSection = ({ paiements, client }) => {
         p.echeance?.match(/^T\d+$/i)
     );
     const dateInstallation =
+        installation[0].date_installation ||
         paiementInstallation?.date_paiement ||
         paiementsTrimestrielsExistants[0]?.date_paiement ||
         new Date();

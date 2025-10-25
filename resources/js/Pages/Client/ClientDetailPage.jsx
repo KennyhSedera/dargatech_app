@@ -17,7 +17,6 @@ import ClientInfoCard from "@/Components/clients/ClientInfoCard";
 import EmptyState from "@/Components/EmptyState";
 import LoadingSpinner from "@/Components/clients/LoadingSpinner";
 import ClientHeader from "@/Components/clients/ClientHeader";
-import { FaTelegram, FaWordpress } from "react-icons/fa6";
 import { RiTelegramFill } from "react-icons/ri";
 import { TbWorldCheck } from "react-icons/tb";
 
@@ -208,6 +207,7 @@ const ClientDetailPage = ({ client }) => {
                         <PaiementsSection
                             paiements={paiement}
                             client={client}
+                            installation={installation}
                         />
                     </div>
                 </div>
