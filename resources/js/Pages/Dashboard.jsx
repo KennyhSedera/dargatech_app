@@ -81,7 +81,7 @@ export default function Dashboard() {
     useEffect(() => {
         getDataDB();
         getEvenement();
-    }, []);
+    }, [data]);
 
     const alertcount = data?.alertcount ?? [];
     const installationcount = data?.installationcount ?? [];

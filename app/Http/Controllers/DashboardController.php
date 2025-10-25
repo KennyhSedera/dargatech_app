@@ -81,13 +81,13 @@ class DashboardController extends Controller
         $new_maraicher = DB::table('clients')
             ->selectRaw('DATE(created_at) as date, nom, prenom, id, is_payed, genre')
             ->whereIn(DB::raw('DATE(created_at)'), function ($query) {
-                $query->selectRaw('DISTINCT DATE(created_at)')
+                $query->selectRaw('DATE(created_at)')
                     ->from('clients')
+                    ->groupBy(DB::raw('DATE(created_at)'))
                     ->orderBy(DB::raw('DATE(created_at)'), 'desc')
                     ->limit(3);
             })
             ->orderBy('created_at', 'desc')
-            ->limit(3)
             ->get();
 
         $data = [
