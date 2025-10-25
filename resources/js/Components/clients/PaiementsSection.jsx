@@ -6,7 +6,12 @@ import { formatMontant } from "@/constant";
 
 moment.locale("fr");
 
-const PaiementInstallation = ({ paiement, getStatusColor, getStatusBadge }) => {
+const PaiementInstallation = ({
+    paiement,
+    getStatusColor,
+    getStatusBadge,
+    installation,
+}) => {
     if (!paiement) return null;
 
     const getRemarkPaiement = (datePaiement, dateEcheance) => {
@@ -37,9 +42,10 @@ const PaiementInstallation = ({ paiement, getStatusColor, getStatusBadge }) => {
                     </p>
                     {paiement.date_paiement && (
                         <p className="text-sm text-gray-500 dark:text-gray-400">
-                            {moment(paiement.date_paiement).format(
-                                "DD MMM YYYY"
-                            )}
+                            {moment(
+                                installation[0].date_installation ||
+                                    paiement.date_paiement
+                            ).format("DD MMM YYYY")}
                         </p>
                     )}
                 </div>
@@ -52,16 +58,16 @@ const PaiementInstallation = ({ paiement, getStatusColor, getStatusBadge }) => {
                             paiement.statut_paiement,
                             paiement.date_echeance
                         )}
-                        <span className={`${remarque.color} text-xs`}>
+                        {/* <span className={`${remarque.color} text-xs`}>
                             {remarque.text}
-                        </span>
+                        </span> */}
                     </div>
 
-                    {paiement.date_paiement &&
+                    {paiement.date_echeance &&
                         paiement.statut_paiement?.toLowerCase() === "payé" && (
                             <p className="text-xs text-gray-500 dark:text-gray-400">
                                 le{" "}
-                                {moment(paiement.date_paiement).format(
+                                {moment(paiement.date_echeance).format(
                                     "DD MMM YYYY"
                                 )}{" "}
                             </p>
@@ -189,7 +195,9 @@ const TrimestreCard = ({
                 {isPaye && trimestre.date_paiement && (
                     <p className="mt-1 text-xs text-gray-500 dark:text-gray-400">
                         le{" "}
-                        {moment(trimestre.date_paiement).format("DD MMM YYYY")}
+                        {moment(
+                            trimestre.date_paiement || trimestre.date_echeance
+                        ).format("DD MMM YYYY")}
                     </p>
                 )}
             </div>
@@ -204,6 +212,7 @@ const CalendrierPaiements = ({
     getStatusColor,
     getStatusBadge,
     nombreTrimestres,
+    installation,
 }) => (
     <div className="p-6">
         <h4 className="mb-4 text-sm font-semibold text-gray-700 dark:text-gray-300">
@@ -214,6 +223,7 @@ const CalendrierPaiements = ({
             paiement={paiementInstallation}
             getStatusColor={getStatusColor}
             getStatusBadge={getStatusBadge}
+            installation={installation}
         />
 
         <div className="grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-4">
@@ -300,10 +310,10 @@ const PaiementsSection = ({ paiements, installation }) => {
                 .filter((p) => p.statut_paiement?.toLowerCase() === "payé")
                 .sort(
                     (a, b) =>
-                        new Date(b.date_paiement) - new Date(a.date_paiement)
+                        new Date(b.date_echeance) - new Date(a.date_echeance)
                 )[0];
             const dateDernierPaiement = dernierPaiement
-                ? dernierPaiement.date_paiement
+                ? dernierPaiement.date_echeance
                 : null;
 
             const debutTrimestre = moment(dateInstallation).add(
@@ -453,6 +463,7 @@ const PaiementsSection = ({ paiements, installation }) => {
                 getStatusColor={getStatusColor}
                 getStatusBadge={getStatusBadge}
                 nombreTrimestres={nombreTrimestres}
+                installation={installation}
             />
 
             <div className="grid grid-cols-2 gap-4 py-6 border-t-2 border-gray-200 md:grid-cols-4 dark:border-gray-700">

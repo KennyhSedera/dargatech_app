@@ -399,7 +399,7 @@ const FormulairePaiement = ({ token_data, telegramback }) => {
               moment(data.date).format("DD/MM/YYYY");
         data.date_paiement = data.date_paiement
             ? new Date(data.date_paiement).toISOString().split("T")[0]
-            : new Date().toISOString().split("T")[0];
+            : new Date(data.date_echeance).toISOString().split("T")[0];
         data.observation = data.objet;
         data.statut_paiement = data.etat_paiment;
         data.montant_paye = data.montant_paye || "0";

@@ -102,7 +102,7 @@ const PaiementPage = () => {
                 montant: el.montant,
                 mode_paiement: el.mode_paiement,
                 periode_couverte: el.periode_couverte,
-                date_paiement: formatdate(el.date_paiement),
+                date_paiement: formatdate(el.date_echeance),
                 statut_paiement: el.statut_paiement,
                 observation: el.observation,
             }));
