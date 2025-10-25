@@ -90,6 +90,7 @@ class DashboardController extends Controller
             )
             ->selectRaw('DATE(clients.created_at) as date, nom, prenom, id, is_payed, genre')
             ->orderBy('clients.created_at', 'desc')
+            ->limit(3)
             ->get();
 
         $data = [
