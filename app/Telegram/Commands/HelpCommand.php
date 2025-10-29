@@ -17,7 +17,7 @@ class HelpCommand extends Command
         $this->sendHelpMenu($this->telegram, $chatId);
     }
 
-    public function sendHelpMenu(Api $telegram, $chatId)
+    public function sendHelpMenu(Api $telegram, $chatId, $messageId = null)
     {
         $commands = [
             [
@@ -66,10 +66,17 @@ class HelpCommand extends Command
 
         $helpText .= "\n💡 <i>Tapez une commande pour commencer !</i>";
 
-        $telegram->sendMessage([
+        $params = [
             'chat_id' => $chatId,
             'text' => $helpText,
             'parse_mode' => 'HTML',
-        ]);
+        ];
+
+        if ($messageId) {
+            $params['message_id'] = $messageId;
+            $telegram->editMessageText($params);
+        } else {
+            $telegram->sendMessage($params);
+        }
     }
 }

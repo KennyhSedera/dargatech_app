@@ -68,9 +68,9 @@ class CallBackService
         return true;
     }
 
-    public function handleMaraicher($chatId)
+    public function handleMaraicher($chatId, $messageId = null)
     {
-        $this->maraicherCommand->sendMaraicherMenu($this->telegram, $chatId);
+        $this->maraicherCommand->sendMaraicherMenu($this->telegram, $chatId, $messageId);
     }
 
     private function getExistingSession($chatId, $userId)
@@ -244,9 +244,9 @@ class CallBackService
         }
     }
 
-    public function handleInstallations($chatId)
+    public function handleInstallations($chatId, $messageId = null)
     {
-        $this->installationCommand->sendInstallationMenu($this->telegram, $chatId);
+        $this->installationCommand->sendInstallationMenu($this->telegram, $chatId, $messageId);
     }
 
     public function handleSendButtonNewIntsallation($chatId, $userId)
@@ -269,57 +269,58 @@ class CallBackService
         $this->listInstallationService->sendButtonNew($chatId, text: "🌱 Enregistrer une nouvelle rapport intervention \n\n Choississez une option :", userId: $userId, action: 'create_rapport', route: 'telegram.rapport.form', callack_data: 'new_rapport_maintenance');
     }
 
-    public function handleListInstallation($chatId)
+    public function handleListInstallation($chatId, $messageId = null)
     {
-        $this->listInstallationService->showFullList($chatId);
+        $this->listInstallationService->showFullList($chatId, $messageId);
     }
 
-    public function handleIntervention($chatId)
+    public function handleIntervention($chatId, $messageId = null)
     {
-        $this->interventionCommand->sendInterventionMenu($this->telegram, $chatId);
+        $this->interventionCommand->sendInterventionMenu($this->telegram, $chatId, $messageId);
     }
 
-    public function handleRapportMaintenance($chatId)
+    public function handleRapportMaintenance($chatId, $messageId = null)
     {
-        $this->rapportMaintenanceCommand->sendRapportMaintenanceMenu($this->telegram, $chatId);
+        $this->rapportMaintenanceCommand->sendRapportMaintenanceMenu($this->telegram, $chatId, $messageId);
     }
 
-    public function handleListFull($chatId)
+    public function handleListFull($chatId, $messageId = null)
     {
-        $this->listMaraicherService->showFullList($chatId);
+        $this->listMaraicherService->showFullList($chatId, $messageId);
     }
 
-    public function handleListInterventions($chatId)
+    public function handleListInterventions($chatId, $messageId = null)
     {
-        $this->interventionService->showFullList($chatId);
+        $this->interventionService->showFullList($chatId, $messageId);
     }
 
-    public function handleListRapportsMaintenance($chatId)
+    public function handleListRapportsMaintenance($chatId, $messageId = null)
     {
-        $this->rapportMaintenanceService->showFullList($chatId);
+        $this->rapportMaintenanceService->showFullList($chatId, $messageId);
     }
 
-    public function handleHelp($chatId)
+    public function handleHelp($chatId, $messageId = null)
     {
-        $this->helpCommand->sendHelpMenu($this->telegram, $chatId);
+        $this->helpCommand->sendHelpMenu($this->telegram, $chatId, $messageId);
     }
 
-    public function handleListDetailed($chatId)
+    public function handleListDetailed($chatId, $messageId = null)
     {
-        $this->listMaraicherService->showFullList($chatId);
+        $this->listMaraicherService->showFullList($chatId, $messageId);
     }
 
-    public function handleMaraicherListPage($chatId, $page)
+    public function handleMaraicherListPage($chatId, $page, $messageId = null)
     {
         try {
-            $maraichers = DB::table('clients')->orderBy('created_at', 'desc')->get();
-            $this->listMaraicherService->showPaginatedList($chatId, $maraichers, (int) $page);
+            $this->listMaraicherService->showPaginatedList($chatId, null, (int) $page, $messageId);
         } catch (\Exception $e) {
-            $this->sendMessage->sendMessage(
-                $chatId,
-                "❌ Erreur lors de l'affichage de la page.",
-                'Markdown'
-            );
+            $message = "❌ Erreur lors de l'affichage de la page.";
+
+            if ($messageId) {
+                $this->sendMessage->editMessage($chatId, $messageId, $message, 'Markdown');
+            } else {
+                $this->sendMessage->sendMessage($chatId, $message, 'Markdown');
+            }
         }
     }
 
@@ -398,20 +399,20 @@ class CallBackService
         }
     }
 
-    public function handleEntityListPage($chatId, $entityType, $page)
+    public function handleEntityListPage($chatId, $entityType, $page, $messageId = null)
     {
         switch ($entityType) {
             case 'maraicher':
-                return $this->handleMaraicherListPage($chatId, $page);
+                return $this->handleMaraicherListPage($chatId, $page, $messageId);
 
             case 'installation':
-                return $this->handleInstallationListPage($chatId, $page);
+                return $this->handleInstallationListPage($chatId, $page, $messageId);
 
             case 'intervention':
-                return $this->handleInterventionListPage($chatId, $page);
+                return $this->handleInterventionListPage($chatId, $page, $messageId);
 
             case 'rapport':
-                return $this->handleRapportListPage($chatId, $page);
+                return $this->handleRapportListPage($chatId, $page, $messageId);
 
             default:
                 Log::warning("Unknown entity type for pagination: {$entityType}");
@@ -419,57 +420,48 @@ class CallBackService
         }
     }
 
-    public function handleInstallationListPage($chatId, $page)
+    public function handleInstallationListPage($chatId, $page, $messageId = null)
     {
         try {
-            $installations = DB::table('installations')->orderBy('created_at', 'desc')->get();
-            $this->listInstallationService->showPaginatedList($chatId, $installations, (int) $page);
+            $this->listInstallationService->showPaginatedList($chatId, null, (int) $page, $messageId);
         } catch (\Exception $e) {
-            $this->sendMessage->sendMessage(
-                $chatId,
-                "❌ Erreur lors de l'affichage de la page.",
-                'Markdown'
-            );
+            $message = "❌ Erreur lors de l'affichage de la page.";
+
+            if ($messageId) {
+                $this->sendMessage->editMessage($chatId, $messageId, $message, 'Markdown');
+            } else {
+                $this->sendMessage->sendMessage($chatId, $message, 'Markdown');
+            }
         }
     }
 
-    public function handleInterventionListPage($chatId, $page)
+    public function handleInterventionListPage($chatId, $page, $messageId = null)
     {
         try {
-            $interventions = DB::table('maintenances')
-                ->leftJoin('installations', 'maintenances.installation_id', '=', 'installations.id')
-                ->select(
-                    'maintenances.*',
-                    'installations.code_installation as installation_code',
-                    'installations.numero_serie as installation_numero_serie',
-                    'installations.source_eau'
-                )
-                ->orderBy('maintenances.created_at', 'desc')
-                ->get();
-            $this->interventionService->showPaginatedList($chatId, $interventions, (int) $page);
+            $this->interventionService->showPaginatedList($chatId, null, (int) $page, $messageId);
         } catch (\Exception $e) {
-            $this->sendMessage->sendMessage(
-                $chatId,
-                "❌ Erreur lors de l'affichage de la page.",
-                'Markdown'
-            );
+            $message = "❌ Erreur lors de l'affichage de la page.";
+
+            if ($messageId) {
+                $this->sendMessage->editMessage($chatId, $messageId, $message, 'Markdown');
+            } else {
+                $this->sendMessage->sendMessage($chatId, $message, 'Markdown');
+            }
         }
     }
 
-    public function handleRapportListPage($chatId, $page)
+    public function handleRapportListPage($chatId, $page, $messageId = null)
     {
         try {
-            $rapports = rapportMaintenances::with('client', 'maintenance')
-                ->whereHas('maintenance')
-                ->orderBy('created_at', 'desc')
-                ->get();
-            $this->rapportMaintenanceService->showPaginatedList($chatId, $rapports, (int) $page);
+            $this->rapportMaintenanceService->showPaginatedList($chatId, null, (int) $page, $messageId);
         } catch (\Exception $e) {
-            $this->sendMessage->sendMessage(
-                $chatId,
-                "❌ Erreur lors de l'affichage de la page.",
-                'Markdown'
-            );
+            $message = "❌ Erreur lors de l'affichage de la page.";
+
+            if ($messageId) {
+                $this->sendMessage->editMessage($chatId, $messageId, $message, 'Markdown');
+            } else {
+                $this->sendMessage->sendMessage($chatId, $message, 'Markdown');
+            }
         }
     }
 
@@ -530,4 +522,3 @@ class CallBackService
         $this->dashboardService->showDashboard($chatId);
     }
 }
-

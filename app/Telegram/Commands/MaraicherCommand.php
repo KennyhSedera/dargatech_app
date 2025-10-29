@@ -18,7 +18,7 @@ class MaraicherCommand extends Command
         $this->sendMaraicherMenu($this->telegram, $chatId);
     }
 
-    public function sendMaraicherMenu(Api $telegram, $chatId)
+    public function sendMaraicherMenu(Api $telegram, $chatId, $messageId = null)
     {
         $keyboard = Keyboard::make()
             ->inline()
@@ -30,12 +30,19 @@ class MaraicherCommand extends Command
                 Keyboard::inlineButton(['text' => '🔍 Rechercher', 'callback_data' => 'search_maraicher']),
             ]);
 
-        $telegram->sendMessage([
+        $params = [
             'chat_id' => $chatId,
             'text' => '📋 <b>Menu Principal Maraîcher</b> — Choisissez une action :',
             'reply_markup' => $keyboard,
             'parse_mode' => 'HTML',
-        ]);
+        ];
+
+        if ($messageId) {
+            $params['message_id'] = $messageId;
+            $telegram->editMessageText($params);
+        } else {
+            $telegram->sendMessage($params);
+        }
     }
 
 }

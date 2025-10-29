@@ -18,7 +18,7 @@ class RapportMaintenanceCommand extends Command
         $this->sendRapportMaintenanceMenu($this->telegram, $chatId);
     }
 
-    public function sendRapportMaintenanceMenu(Api $telegram, $chatId)
+    public function sendRapportMaintenanceMenu(Api $telegram, $chatId, $messageId = null)
     {
         $keyboard = Keyboard::make()
             ->inline()
@@ -30,11 +30,18 @@ class RapportMaintenanceCommand extends Command
                 Keyboard::inlineButton(['text' => '🔍 Rechercher', 'callback_data' => 'search_rapport']),
             ]);
 
-        $telegram->sendMessage([
+        $params = [
             'chat_id' => $chatId,
             'text' => '📋 <b>Menu Principal Rapport Maintenance</b> - Choisissez une action :',
             'reply_markup' => $keyboard,
             'parse_mode' => 'HTML',
-        ]);
+        ];
+
+        if ($messageId) {
+            $params['message_id'] = $messageId;
+            $telegram->editMessageText($params);
+        } else {
+            $telegram->sendMessage($params);
+        }
     }
 }

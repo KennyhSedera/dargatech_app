@@ -10,42 +10,46 @@ use Telegram\Bot\Keyboard\Keyboard;
 class ListInstallationService
 {
     protected SendMessageService $sendMessage;
+
     public function __construct(SendMessageService $sendMessage)
     {
         $this->sendMessage = $sendMessage;
     }
 
-    public function showFullList($chatId)
+    public function showFullList($chatId, $messageId = null)
     {
         try {
-
             $installations = DB::table('installations')->orderBy('created_at', 'desc')->get();
 
             if ($installations->isEmpty()) {
-                $this->sendMessage->sendMessage(
-                    $chatId,
-                    "📋 *Liste des installations*\n\n❌ Aucun installation enregistré pour le moment.\n\n💡 Utilisez le menu principal pour ajouter un nouveau installation.",
-                    'Markdown'
-                );
+                $message = "📋 *Liste des installations*\n\n❌ Aucun installation enregistré pour le moment.\n\n💡 Utilisez le menu principal pour ajouter un nouveau installation.";
+
+                if ($messageId) {
+                    $this->sendMessage->editMessage($chatId, $messageId, $message, 'Markdown');
+                } else {
+                    $this->sendMessage->sendMessage($chatId, $message, 'Markdown');
+                }
                 return;
             }
 
             if ($installations->count() > 5) {
-                $this->showPaginatedList($chatId, $installations, 1);
+                $this->showPaginatedList($chatId, $installations, 1, $messageId);
             } else {
-                $this->showSimpleList($chatId, $installations);
+                $this->showSimpleList($chatId, $installations, $messageId);
             }
 
         } catch (\Exception $e) {
-            $this->sendMessage->sendMessage(
-                $chatId,
-                "❌ *Erreur*\n\nImpossible de récupérer la liste des installations.\n\nVeuillez réessayer plus tard.",
-                'Markdown'
-            );
+            $message = "❌ *Erreur*\n\nImpossible de récupérer la liste des installations.\n\nVeuillez réessayer plus tard.";
+
+            if ($messageId) {
+                $this->sendMessage->editMessage($chatId, $messageId, $message, 'Markdown');
+            } else {
+                $this->sendMessage->sendMessage($chatId, $message, 'Markdown');
+            }
         }
     }
 
-    public function showSimpleList($chatId, $installations)
+    public function showSimpleList($chatId, $installations, $messageId = null)
     {
         $message = "🌾 *Vos installations* • SISAM\n";
         $message .= "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━\n\n";
@@ -69,7 +73,6 @@ class ListInstallationService
         $message .= "📊 *Total: {$total} installation(s) enregistré(s)*\n";
         $message .= "🕐 *Mise à jour:* " . date('d/m/Y à H:i') . "\n\n";
 
-        // Keyboard amélioré
         $keyboard = Keyboard::make()->inline()
             ->row([
                 Keyboard::inlineButton(['text' => '🔍 Rechercher', 'callback_data' => 'search_installation']),
@@ -79,14 +82,27 @@ class ListInstallationService
                 Keyboard::inlineButton(['text' => '🏠 Menu principale', 'callback_data' => 'menu'])
             ]);
 
-        $this->sendMessage->sendMessageWithKeyboard($chatId, $message, $keyboard, 'Markdown');
+        if ($messageId) {
+            $this->sendMessage->editMessage($chatId, $messageId, $message, 'Markdown', $keyboard);
+        } else {
+            $this->sendMessage->sendMessageWithKeyboard($chatId, $message, $keyboard, 'Markdown');
+        }
     }
 
-    public function showPaginatedList($chatId, $installations, $page = 1)
+    public function showPaginatedList($chatId, $installations = null, $page = 1, $messageId = null)
     {
+        // Si $installations n'est pas fourni, récupérer les données
+        if ($installations === null) {
+            $installations = DB::table('installations')->orderBy('created_at', 'desc')->get();
+        }
+
         $perPage = 5;
         $total = $installations->count();
         $totalPages = ceil($total / $perPage);
+
+        // Validation de la page
+        $page = max(1, min($page, $totalPages));
+
         $offset = ($page - 1) * $perPage;
         $currentinstallations = $installations->slice($offset, $perPage);
 
@@ -113,7 +129,7 @@ class ListInstallationService
 
         $keyboard = Keyboard::make()->inline();
 
-        PaginationKeyboard::addAdvancedPagination($keyboard, $page, $totalPages, entityType: 'installation');
+        PaginationKeyboard::addAdvancedPagination($keyboard, $page, $totalPages, 'installation');
 
         $keyboard->row([
             Keyboard::inlineButton(['text' => '➕ Nouveau', 'callback_data' => 'button_create_installation']),
@@ -124,10 +140,14 @@ class ListInstallationService
             Keyboard::inlineButton(['text' => '🏠 Menu principale', 'callback_data' => 'menu'])
         ]);
 
-        $this->sendMessage->sendMessageWithKeyboard($chatId, $message, $keyboard, 'Markdown');
+        if ($messageId) {
+            $this->sendMessage->editMessage($chatId, $messageId, $message, 'Markdown', $keyboard);
+        } else {
+            $this->sendMessage->sendMessageWithKeyboard($chatId, $message, $keyboard, 'Markdown');
+        }
     }
 
-    public function searchinstallations($chatId, $searchTerm)
+    public function searchinstallations($chatId, $searchTerm, $messageId = null)
     {
         try {
             $like = 'LIKE';
@@ -149,11 +169,13 @@ class ListInstallationService
                 ->get();
 
             if ($installations->isEmpty()) {
-                $this->sendMessage->sendMessage(
-                    $chatId,
-                    "🔍 *Résultat de Recherche*\n\n❌ Aucun résultat pour: *\"{$searchTerm}\"*\n\n💡 *Suggestions:*\n• Vérifiez l'orthographe\n• Utilisez des termes plus courts\n• Essayez le code installation, numero série ou source d'eau ...\n\n🔄 Relancez une nouvelle recherche",
-                    'Markdown'
-                );
+                $message = "🔍 *Résultat de Recherche*\n\n❌ Aucun résultat pour: *\"{$searchTerm}\"*\n\n💡 *Suggestions:*\n• Vérifiez l'orthographe\n• Utilisez des termes plus courts\n• Essayez le code installation, numero série ou source d'eau ...\n\n🔄 Relancez une nouvelle recherche";
+
+                if ($messageId) {
+                    $this->sendMessage->editMessage($chatId, $messageId, $message, 'Markdown');
+                } else {
+                    $this->sendMessage->sendMessage($chatId, $message, 'Markdown');
+                }
                 return;
             }
 
@@ -189,17 +211,22 @@ class ListInstallationService
                     Keyboard::inlineButton(['text' => '🏠 Menu princpale', 'callback_data' => 'menu'])
                 ]);
 
-            $this->sendMessage->sendMessageWithKeyboard($chatId, $message, $keyboard, 'Markdown');
+            if ($messageId) {
+                $this->sendMessage->editMessage($chatId, $messageId, $message, 'Markdown', $keyboard);
+            } else {
+                $this->sendMessage->sendMessageWithKeyboard($chatId, $message, $keyboard, 'Markdown');
+            }
 
         } catch (\Exception $e) {
-            $this->sendMessage->sendMessage(
-                $chatId,
-                "⚠️ *Erreur de Recherche*\n\nUne erreur s'est produite lors de la recherche installation.\n\n🔄 Veuillez réessayer ou contactez le support.",
-                'Markdown'
-            );
+            $message = "⚠️ *Erreur de Recherche*\n\nUne erreur s'est produite lors de la recherche installation.\n\n🔄 Veuillez réessayer ou contactez le support.";
+
+            if ($messageId) {
+                $this->sendMessage->editMessage($chatId, $messageId, $message, 'Markdown');
+            } else {
+                $this->sendMessage->sendMessage($chatId, $message, 'Markdown');
+            }
         }
     }
-
 
     public function sendButtonNew($chatId, $text, $userId, $action = 'create_installation', $route = 'telegram.installation.form', $callack_data = 'new_installation')
     {

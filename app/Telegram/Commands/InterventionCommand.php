@@ -18,7 +18,7 @@ class InterventionCommand extends Command
         $this->sendInterventionMenu($this->telegram, $chatId);
     }
 
-    public function sendInterventionMenu(Api $telegram, $chatId)
+    public function sendInterventionMenu(Api $telegram, $chatId, $messageId = null)
     {
         $keyboard = Keyboard::make()
             ->inline()
@@ -29,12 +29,19 @@ class InterventionCommand extends Command
             ->row([
                 Keyboard::inlineButton(['text' => '🔍 Rechercher', 'callback_data' => 'search_intervention']),
             ]);
-        $telegram->sendMessage([
+        $params = [
             'chat_id' => $chatId,
             'text' => '📋 <b>Menu Principal Intervention</b> — Choisissez une action :',
             'reply_markup' => $keyboard,
             'parse_mode' => 'HTML',
-        ]);
+        ];
+
+        if ($messageId) {
+            $params['message_id'] = $messageId;
+            $telegram->editMessageText($params);
+        } else {
+            $telegram->sendMessage($params);
+        }
     }
 
 }

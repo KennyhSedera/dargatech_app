@@ -66,7 +66,7 @@ class TelegramBotController extends Controller
                 }
 
                 if (!$existingCompte->bot_active) {
-                    $this->sendMessageService->sendErrorMessage($chatId, "🚫 Votre accès à cette bot est désactivé \n Veuillez contacter les administrateurs.");
+                    $this->sendMessageService->sendErrorMessage($chatId, "🚫 Votre accès à cette bot est désactivé \n Veuillez contacter les administrateurs.");
                 }
 
                 if ($existingCompte->bot_active) {
@@ -77,11 +77,14 @@ class TelegramBotController extends Controller
                         $data = $callback->getData();
                         $callbackId = $callback->getId();
 
+                        // IMPORTANT: Récupérer le messageId pour pouvoir éditer le message
+                        $messageId = $callback->getMessage()->getMessageId();
+
                         if (preg_match('/^(\w+)_page_(\d+)$/', $data, $matches)) {
                             $entityType = $matches[1];
                             $page = (int) $matches[2];
 
-                            $this->callBackService->handleEntityListPage($chatId, $entityType, $page);
+                            $this->callBackService->handleEntityListPage($chatId, $entityType, $page, $messageId);
 
                             $this->telegram->answerCallbackQuery([
                                 'callback_query_id' => $callbackId,
@@ -94,22 +97,22 @@ class TelegramBotController extends Controller
 
                         try {
                             match ($data) {
-                                'maraicher' => $this->callBackService->handleMaraicher($chatId),
-                                'installation' => $this->callBackService->handleInstallations($chatId),
-                                'intervention' => $this->callBackService->handleIntervention($chatId),
-                                'rapport_maintenance' => $this->callBackService->handleRapportMaintenance($chatId),
+                                'maraicher' => $this->callBackService->handleMaraicher($chatId, $messageId),
+                                'installation' => $this->callBackService->handleInstallations($chatId, $messageId),
+                                'intervention' => $this->callBackService->handleIntervention($chatId, $messageId),
+                                'rapport_maintenance' => $this->callBackService->handleRapportMaintenance($chatId, $messageId),
                                 'new_maraicher' => $this->callBackService->handleNewMaraicher($chatId, $userId),
                                 'new_installation' => $this->callBackService->handleNewInstallations($chatId, $userId),
                                 'new_intervention' => $this->callBackService->handleNewIntervention($chatId, $userId),
                                 'new_rapport_maintenance' => $this->callBackService->handleNewRapportMaintenance($chatId, $userId),
-                                'list_installation' => $this->callBackService->handleListInstallation($chatId),
-                                'list_maraicher' => $this->callBackService->handleListFull($chatId),
-                                'list_interventions' => $this->callBackService->handleListInterventions($chatId),
-                                'list_rapport_maintenance' => $this->callBackService->handleListRapportsMaintenance($chatId),
+                                'list_installation' => $this->callBackService->handleListInstallation($chatId, $messageId),
+                                'list_maraicher' => $this->callBackService->handleListFull($chatId, $messageId),
+                                'list_interventions' => $this->callBackService->handleListInterventions($chatId, $messageId),
+                                'list_rapport_maintenance' => $this->callBackService->handleListRapportsMaintenance($chatId, $messageId),
                                 'enregistrer_paiement' => $this->callBackService->handlePaiement($chatId, $userId),
                                 'generer_recu' => $this->callBackService->handleGenerateRecu($chatId),
-                                'help' => $this->callBackService->handleHelp($chatId),
-                                'list_detailed' => $this->callBackService->handleListDetailed($chatId),
+                                'help' => $this->callBackService->handleHelp($chatId, $messageId),
+                                'list_detailed' => $this->callBackService->handleListDetailed($chatId, $messageId),
                                 'search_maraicher' => $this->callBackService->handleSearch($chatId, $userId, 'search_maraicher', 'de Maraîcher'),
                                 'search_installation' => $this->callBackService->handleSearch($chatId, $userId, 'search_installation', 'd\'Installation'),
                                 'search_intervention' => $this->callBackService->handleSearch($chatId, $userId, 'search_intervention', 'd\'Intervention'),

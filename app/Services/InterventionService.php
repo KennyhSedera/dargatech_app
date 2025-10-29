@@ -91,7 +91,7 @@ class InterventionService
         }
     }
 
-    public function showFullList($chatId)
+    public function showFullList($chatId, $messageId = null)
     {
         try {
 
@@ -107,30 +107,33 @@ class InterventionService
                 ->get();
 
             if ($interventions->isEmpty()) {
-                $this->sendMessage->sendMessage(
-                    $chatId,
-                    "📋 *Liste des interventions*\n\n❌ Aucun intervention enregistré pour le moment.\n\n💡 Utilisez le menu principal pour ajouter un nouveau intervention.",
-                    'Markdown'
-                );
+                $message = "📋 *Liste des interventions*\n\n❌ Aucun intervention enregistré pour le moment.\n\n💡 Utilisez le menu principal pour ajouter un nouveau intervention.";
+                if ($messageId) {
+                    $this->sendMessage->editMessage($chatId, $messageId, $message, 'Markdown');
+                } else {
+                    $this->sendMessage->sendMessage($chatId, $message, 'Markdown');
+                }
                 return;
             }
 
             if ($interventions->count() > 5) {
-                $this->showPaginatedList($chatId, $interventions, 1);
+                $this->showPaginatedList($chatId, $interventions, 1, $messageId);
             } else {
-                $this->showSimpleList($chatId, $interventions);
+                $this->showSimpleList($chatId, $interventions, $messageId);
             }
 
         } catch (\Exception $e) {
-            $this->sendMessage->sendMessage(
-                $chatId,
-                "❌ *Erreur*\n\nImpossible de récupérer la liste des interventions.\n\nVeuillez réessayer plus tard.",
-                'Markdown'
-            );
+            $message =
+                "❌ *Erreur*\n\nImpossible de récupérer la liste des interventions.\n\nVeuillez réessayer plus tard.";
+            if ($messageId) {
+                $this->sendMessage->editMessage($chatId, $messageId, $message, 'Markdown');
+            } else {
+                $this->sendMessage->sendMessage($chatId, $message, 'Markdown');
+            }
         }
     }
 
-    public function showSimpleList($chatId, $interventions)
+    public function showSimpleList($chatId, $interventions, $messageId = null)
     {
         $message = "🔧 *Vos interventions* • SISAM\n";
         $message .= "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━\n\n";
@@ -173,10 +176,14 @@ class InterventionService
                 Keyboard::inlineButton(['text' => '🏠 Menu principal', 'callback_data' => 'menu'])
             ]);
 
-        $this->sendMessage->sendMessageWithKeyboard($chatId, $message, $keyboard, 'Markdown');
+        if ($messageId) {
+            $this->sendMessage->editMessage($chatId, $messageId, $message, 'Markdown', $keyboard);
+        } else {
+            $this->sendMessage->sendMessageWithKeyboard($chatId, $message, $keyboard, 'Markdown');
+        }
     }
 
-    public function showPaginatedList($chatId, $interventions, $page = 1)
+    public function showPaginatedList($chatId, $interventions, $page = 1, $messageId = null)
     {
         $perPage = 5;
         $total = $interventions->count();
@@ -227,13 +234,17 @@ class InterventionService
             Keyboard::inlineButton(['text' => '🏠 Menu principal', 'callback_data' => 'menu'])
         ]);
 
-        $this->sendMessage->sendMessageWithKeyboard($chatId, $message, $keyboard, 'Markdown');
+
+        if ($messageId) {
+            $this->sendMessage->editMessage($chatId, $messageId, $message, 'Markdown', $keyboard);
+        } else {
+            $this->sendMessage->sendMessageWithKeyboard($chatId, $message, $keyboard, 'Markdown');
+        }
     }
 
     public function searchInterventions($chatId, $searchTerm)
     {
         try {
-            // Nettoyer et valider le terme de recherche
             $searchTerm = trim($searchTerm);
             if (empty($searchTerm)) {
                 $this->sendMessage->sendMessage(

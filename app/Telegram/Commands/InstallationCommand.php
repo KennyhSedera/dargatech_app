@@ -19,7 +19,7 @@ class InstallationCommand extends Command
         $this->sendInstallationMenu($this->telegram, $chatId);
     }
 
-    public function sendInstallationMenu(Api $telegram, $chatId)
+    public function sendInstallationMenu(Api $telegram, $chatId, $messageId = null)
     {
         $keyboard = Keyboard::make()
             ->inline()
@@ -40,12 +40,19 @@ class InstallationCommand extends Command
                 ]),
             ]);
 
-        $telegram->sendMessage([
+        $params = [
             'chat_id' => $chatId,
             'text' => "🏭 <b>Menu Principal Installation</b>\n\n" .
                 "📋 Choisissez une action :",
             'reply_markup' => $keyboard,
             'parse_mode' => 'HTML',
-        ]);
+        ];
+
+        if ($messageId) {
+            $params['message_id'] = $messageId;
+            $telegram->editMessageText($params);
+        } else {
+            $telegram->sendMessage($params);
+        }
     }
 }

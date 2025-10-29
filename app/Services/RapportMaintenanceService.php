@@ -15,6 +15,7 @@ class RapportMaintenanceService
 {
     protected SendMessageService $sendMessage;
     protected StepService $globalStepService;
+
     public function __construct(SendMessageService $sendMessage, StepService $globalStepService)
     {
         $this->sendMessage = $sendMessage;
@@ -95,39 +96,43 @@ class RapportMaintenanceService
         }
     }
 
-    public function showFullList($chatId)
+    public function showFullList($chatId, $messageId = null)
     {
         try {
-
             $rapports = rapportMaintenances::with('client', 'maintenance')
                 ->whereHas('maintenance')
                 ->orderBy('created_at', 'desc')
                 ->get();
 
             if ($rapports->isEmpty()) {
-                $this->sendMessage->sendMessage(
-                    $chatId,
-                    "📋 *Liste des rapports maintenances*\n\n❌ Aucun rapport maintenance enregistré pour le moment.\n\n💡 Utilisez le menu principal pour ajouter un nouveau rapport.",
-                    'Markdown'
-                );
+                $message = "📋 *Liste des rapports maintenances*\n\n❌ Aucun rapport maintenance enregistré pour le moment.\n\n💡 Utilisez le menu principal pour ajouter un nouveau rapport.";
+
+                if ($messageId) {
+                    $this->sendMessage->editMessage($chatId, $messageId, $message, 'Markdown');
+                } else {
+                    $this->sendMessage->sendMessage($chatId, $message, 'Markdown');
+                }
                 return;
             }
 
             if ($rapports->count() > 5) {
-                $this->showPaginatedList($chatId, $rapports, 1);
+                $this->showPaginatedList($chatId, $rapports, 1, $messageId);
             } else {
-                $this->showSimpleList($chatId, $rapports);
+                $this->showSimpleList($chatId, $rapports, $messageId);
             }
 
         } catch (\Exception $e) {
-            $this->sendMessage->sendMessage(
-                $chatId,
-                "❌ *Erreur*\n\nImpossible de récupérer la liste des rapports maintenances.\n\nVeuillez réessayer plus tard.",
-                'Markdown'
-            );
+            $message = "❌ *Erreur*\n\nImpossible de récupérer la liste des rapports maintenances.\n\nVeuillez réessayer plus tard.";
+
+            if ($messageId) {
+                $this->sendMessage->editMessage($chatId, $messageId, $message, 'Markdown');
+            } else {
+                $this->sendMessage->sendMessage($chatId, $message, 'Markdown');
+            }
         }
     }
-    public function showSimpleList($chatId, $rapports)
+
+    public function showSimpleList($chatId, $rapports, $messageId = null)
     {
         $message = "🔧 *Vos rapports de maintenance* • SISAM\n";
         $message .= "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━\n\n";
@@ -193,14 +198,30 @@ class RapportMaintenanceService
                 Keyboard::inlineButton(['text' => '🏠 Menu principal', 'callback_data' => 'menu'])
             ]);
 
-        $this->sendMessage->sendMessageWithKeyboard($chatId, $message, $keyboard, 'Markdown');
+        if ($messageId) {
+            $this->sendMessage->editMessage($chatId, $messageId, $message, 'Markdown', $keyboard);
+        } else {
+            $this->sendMessage->sendMessageWithKeyboard($chatId, $message, $keyboard, 'Markdown');
+        }
     }
 
-    public function showPaginatedList($chatId, $rapports, $page = 1)
+    public function showPaginatedList($chatId, $rapports = null, $page = 1, $messageId = null)
     {
+        // Si $rapports n'est pas fourni, récupérer les données
+        if ($rapports === null) {
+            $rapports = rapportMaintenances::with('client', 'maintenance')
+                ->whereHas('maintenance')
+                ->orderBy('created_at', 'desc')
+                ->get();
+        }
+
         $perPage = 5;
         $total = $rapports->count();
         $totalPages = ceil($total / $perPage);
+
+        // Validation de la page
+        $page = max(1, min($page, $totalPages));
+
         $offset = ($page - 1) * $perPage;
         $currentRapports = $rapports->slice($offset, $perPage);
 
@@ -258,7 +279,7 @@ class RapportMaintenanceService
 
         $keyboard = Keyboard::make()->inline();
 
-        PaginationKeyboard::addAdvancedPagination($keyboard, $page, $totalPages, entityType: 'rapport');
+        PaginationKeyboard::addAdvancedPagination($keyboard, $page, $totalPages, 'rapport');
 
         $keyboard->row([
             Keyboard::inlineButton(['text' => '➕ Nouveau', 'callback_data' => 'new_rapport']),
@@ -269,19 +290,25 @@ class RapportMaintenanceService
             Keyboard::inlineButton(['text' => '🏠 Menu principal', 'callback_data' => 'menu'])
         ]);
 
-        $this->sendMessage->sendMessageWithKeyboard($chatId, $message, $keyboard, 'Markdown');
+        if ($messageId) {
+            $this->sendMessage->editMessage($chatId, $messageId, $message, 'Markdown', $keyboard);
+        } else {
+            $this->sendMessage->sendMessageWithKeyboard($chatId, $message, $keyboard, 'Markdown');
+        }
     }
 
-    public function searchRapports($chatId, $searchTerm)
+    public function searchRapports($chatId, $searchTerm, $messageId = null)
     {
         try {
             $searchTerm = trim($searchTerm);
             if (empty($searchTerm)) {
-                $this->sendMessage->sendMessage(
-                    $chatId,
-                    "⚠️ *Terme de recherche vide*\n\nVeuillez saisir un terme pour effectuer la recherche.",
-                    'Markdown'
-                );
+                $message = "⚠️ *Terme de recherche vide*\n\nVeuillez saisir un terme pour effectuer la recherche.";
+
+                if ($messageId) {
+                    $this->sendMessage->editMessage($chatId, $messageId, $message, 'Markdown');
+                } else {
+                    $this->sendMessage->sendMessage($chatId, $message, 'Markdown');
+                }
                 return;
             }
 
@@ -311,11 +338,11 @@ class RapportMaintenanceService
                 ->get();
 
             if ($rapports->isEmpty()) {
-                $this->sendNoRapportResultsMessage($chatId, $searchTerm);
+                $this->sendNoRapportResultsMessage($chatId, $searchTerm, $messageId);
                 return;
             }
 
-            $this->sendRapportSearchResults($chatId, $rapports, $searchTerm);
+            $this->sendRapportSearchResults($chatId, $rapports, $searchTerm, $messageId);
 
         } catch (\Exception $e) {
             Log::error('Erreur lors de la recherche de rapports', [
@@ -324,16 +351,20 @@ class RapportMaintenanceService
                 'error' => $e->getMessage()
             ]);
 
-            $this->sendMessage->sendMessage(
-                $chatId,
-                "⚠️ *Erreur de Recherche*\n\nUne erreur s'est produite lors de la recherche des rapports.\n\n🔄 Veuillez réessayer ou contactez le support.",
-                'Markdown'
-            );
+            $message = "⚠️ *Erreur de Recherche*\n\nUne erreur s'est produite lors de la recherche des rapports.\n\n🔄 Veuillez réessayer ou contactez le support.";
+
+            if ($messageId) {
+                $this->sendMessage->editMessage($chatId, $messageId, $message, 'Markdown');
+            } else {
+                $this->sendMessage->sendMessage($chatId, $message, 'Markdown');
+            }
         }
     }
 
-    private function sendNoRapportResultsMessage($chatId, $searchTerm)
+    private function sendNoRapportResultsMessage($chatId, $searchTerm, $messageId = null)
     {
+        $message = "🔍 *Résultat de Recherche de Rapports*\n\n❌ Aucun rapport trouvé pour: *\"{$searchTerm}\"*\n\n💡 *Suggestions:*\n• Vérifiez l'orthographe\n• Utilisez des termes plus courts\n• Essayez le type d'intervention (préventive, curative)\n• Recherchez par statut (terminée, en cours, en attente)\n• Utilisez une partie de la description du problème\n• Essayez le code d'installation\n• Recherchez dans les commentaires du rapport\n\n🔄 Relancez une nouvelle recherche";
+
         $keyboard = Keyboard::make()->inline()
             ->row([
                 Keyboard::inlineButton(['text' => '🔍 Nouvelle Recherche', 'callback_data' => 'search_rapport']),
@@ -343,15 +374,14 @@ class RapportMaintenanceService
                 Keyboard::inlineButton(['text' => '🏠 Menu principal', 'callback_data' => 'menu'])
             ]);
 
-        $this->sendMessage->sendMessageWithKeyboard(
-            $chatId,
-            "🔍 *Résultat de Recherche de Rapports*\n\n❌ Aucun rapport trouvé pour: *\"{$searchTerm}\"*\n\n💡 *Suggestions:*\n• Vérifiez l'orthographe\n• Utilisez des termes plus courts\n• Essayez le type d'intervention (préventive, curative)\n• Recherchez par statut (terminée, en cours, en attente)\n• Utilisez une partie de la description du problème\n• Essayez le code d'installation\n• Recherchez dans les commentaires du rapport\n\n🔄 Relancez une nouvelle recherche",
-            $keyboard,
-            'Markdown'
-        );
+        if ($messageId) {
+            $this->sendMessage->editMessage($chatId, $messageId, $message, 'Markdown', $keyboard);
+        } else {
+            $this->sendMessage->sendMessageWithKeyboard($chatId, $message, $keyboard, 'Markdown');
+        }
     }
 
-    private function sendRapportSearchResults($chatId, $rapports, $searchTerm)
+    private function sendRapportSearchResults($chatId, $rapports, $searchTerm, $messageId = null)
     {
         $total = 0;
         $message = "🎯 *Résultats rapports pour: \"{$searchTerm}\"*\n";
@@ -373,7 +403,12 @@ class RapportMaintenanceService
         $message .= "🕐 Recherche effectuée à " . date('H:i');
 
         $keyboard = $this->getRapportSearchKeyboard();
-        $this->sendMessage->sendMessageWithKeyboard($chatId, $message, $keyboard, 'Markdown');
+
+        if ($messageId) {
+            $this->sendMessage->editMessage($chatId, $messageId, $message, 'Markdown', $keyboard);
+        } else {
+            $this->sendMessage->sendMessageWithKeyboard($chatId, $message, $keyboard, 'Markdown');
+        }
     }
 
     private function formatRapportResult($rapport)
@@ -487,5 +522,4 @@ class RapportMaintenanceService
                 Keyboard::inlineButton(['text' => '🏠 Menu principal', 'callback_data' => 'menu'])
             ]);
     }
-
 }
