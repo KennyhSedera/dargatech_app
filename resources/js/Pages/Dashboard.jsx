@@ -265,7 +265,7 @@ export default function Dashboard() {
                 )}
                 <div className="bg-white dark:bg-gray-800 rounded-xl shadow-lg p-4">
                     <h3 className="text-xl font-bold text-gray-900 text-center dark:text-white mb-2">
-                        Estimation qualité de
+                        Estimation quantité de
                     </h3>
                     <div className="grid gap-3">
                         {Estimation.map((item, index) => (
