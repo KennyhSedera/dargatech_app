@@ -46,6 +46,8 @@ const FormulaireInstallation = ({
         ville: "",
         statuts: "installée",
         photos_installation: [],
+        qte_eau: "",
+        qte_co2: "",
     });
 
     const generateNextInstallationCode = useCallback((installations) => {
@@ -117,6 +119,8 @@ const FormulaireInstallation = ({
             ville: "",
             statuts: "installée",
             photos_installation: [],
+            qte_eau: "",
+            qte_co2: "",
         });
         setLoad(false);
         setBtnTitle("Enregistrer");
@@ -153,6 +157,8 @@ const FormulaireInstallation = ({
                 statuts: dataModify.statuts || "installée",
                 photos_installation: dataModify.photos_installation || [],
                 created_via: dataModify.created_via || "web",
+                qte_eau: dataModify.qte_eau || 0,
+                qte_co2: dataModify.qte_co2 || 0,
             });
             setBtnTitle("Modifier");
         } else {
@@ -252,6 +258,14 @@ const FormulaireInstallation = ({
                 "La date d'installation ne peut pas être dans le futur";
         }
 
+        if (!formData.qte_co2 || formData.qte_co2 === 0) {
+            errors.qte_co2 = "La quantité de CO2 evité est requise";
+        }
+
+        if (!formData.qte_eau || formData.qte_eau === 0) {
+            errors.qte_eau = "La quantité d'eau pompée est requise";
+        }
+
         return { isValid: Object.keys(errors).length === 0, errors };
     };
 
@@ -304,12 +318,13 @@ const FormulaireInstallation = ({
                     token_data ? "telegram_bot" : "web"
                 );
 
-                // ✅ Boucle sur les fichiers
                 data.photos_installation.forEach((file) => {
                     submitData.append("photos_installation[]", file);
                 });
+
+                submitData.append("qte_co2", parseFloat(data.qte_co2));
+                submitData.append("qte_eau", parseFloat(data.qte_eau));
             } else {
-                // Si pas de fichier -> JSON classique
                 submitData = {
                     client_id: parseInt(data.client_id),
                     date_installation: data.date_installation,
@@ -326,6 +341,8 @@ const FormulaireInstallation = ({
                     ville: data.ville || "",
                     statuts: data.statuts,
                     created_via: token_data ? "telegram_bot" : "web",
+                    qte_co2: parseFloat(data.qte_co2),
+                    qte_eau: parseFloat(data.qte_eau),
                 };
             }
 
@@ -582,6 +599,56 @@ const FormulaireInstallation = ({
                 </div>
 
                 <div>
+                    <InputLabel
+                        htmlFor="qte_eau"
+                        value="Quantité d'eau pompée (m³) *"
+                    />
+                    <TextInput
+                        id="qte_eau"
+                        name="qte_eau"
+                        value={data.qte_eau}
+                        className="block w-full mt-1"
+                        autoComplete="qte_eau"
+                        onChange={(e) =>
+                            handleInputChange("qte_eau", e.target.value)
+                        }
+                        required
+                        type="number"
+                        min="0"
+                        onFocus={() => clearFieldError("qte_eau")}
+                    />
+                    <InputError
+                        message={validationErrors.qte_eau || errors.qte_eau}
+                        className="mt-2"
+                    />
+                </div>
+
+                <div>
+                    <InputLabel
+                        htmlFor="qte_co2"
+                        value="Quantité de CO2 evité (Kg) *"
+                    />
+                    <TextInput
+                        id="qte_co2"
+                        name="qte_co2"
+                        value={data.qte_co2}
+                        className="block w-full mt-1"
+                        autoComplete="qte_co2"
+                        onChange={(e) =>
+                            handleInputChange("qte_co2", e.target.value)
+                        }
+                        required
+                        type="number"
+                        min="0"
+                        onFocus={() => clearFieldError("qte_co2")}
+                    />
+                    <InputError
+                        message={validationErrors.qte_co2 || errors.qte_co2}
+                        className="mt-2"
+                    />
+                </div>
+
+                <div>
                     <InputLabel htmlFor="latitude" value="Latitude *" />
                     <TextInput
                         id="latitude"
@@ -650,7 +717,7 @@ const FormulaireInstallation = ({
                     />
                 </div>
 
-                <div>
+                <div className="md:col-span-2">
                     <InputLabel
                         htmlFor="photos_installation"
                         value="Photo de l'installation"

@@ -228,13 +228,13 @@ class ListInstallationService
         }
     }
 
-    public function sendButtonNew($chatId, $text, $userId, $action = 'create_installation', $route = 'telegram.installation.form', $callack_data = 'new_installation')
+    public function sendButtonNew($chatId, $text, $userId, $action = 'create_installation', $route = 'telegram.installation.form', $callack_data = 'new_installation', $messageId = null)
     {
         $tokenService = new TokenService();
         $secureToken = $tokenService->generateSecureToken($userId, $action, $chatId);
 
         $keyboard = new NewChoiceKeyboard();
         $keyboards = $keyboard->getNewChoiceKeyboard('Avec message telegram', $callack_data, 'Avec interface web', route($route, ['token' => $secureToken]));
-        $this->sendMessage->sendMessageWithKeyboard($chatId, $text, $keyboards, 'HTML');
+        $this->sendMessage->sendMessageWithKeyboard($chatId, $text, $keyboards, 'HTML', $messageId);
     }
 }

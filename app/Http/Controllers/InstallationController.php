@@ -67,7 +67,9 @@ class InstallationController extends Controller
                 'source_eau' => $validatedData['source_eau'],
                 'hmt' => $validatedData['hmt'],
                 'created_via' => $validatedData['created_via'] ?? 'web',
-                'photos_installation' => json_encode($photos), // tableau en JSON
+                'photos_installation' => json_encode($photos),
+                'qte_eau' => $validatedData['qte_eau'] ?? 0,
+                'qte_co2' => $validatedData['qte_co2'] ?? 0
             ]);
 
             DB::commit();
@@ -78,7 +80,7 @@ class InstallationController extends Controller
 
         } catch (\Exception $e) {
             DB::rollBack();
-            \Log::error('Erreur création installation: ' . $e->getMessage());
+            Log::error('Erreur création installation: ' . $e->getMessage());
 
             return response()->json([
                 'message' => 'Erreur lors de la création de l\'installation',
@@ -153,6 +155,8 @@ class InstallationController extends Controller
                 'localisation_id' => $validatedData['localisation_id'] ?? $installation->localisation_id,
                 'source_eau' => $validatedData['source_eau'] ?? $installation->source_eau,
                 'hmt' => $validatedData['hmt'] ?? $installation->hmt,
+                'qte_eau' => $validatedData['qte_eau'] ?? $installation->qte_eau,
+                'qte_co2' => $validatedData['qte_co2'] ?? $installation->qte_co2
             ]);
 
             DB::commit();
@@ -164,7 +168,7 @@ class InstallationController extends Controller
 
         } catch (\Exception $e) {
             DB::rollBack();
-            \Log::error('Erreur modification installation: ' . $e->getMessage());
+            Log::error('Erreur modification installation: ' . $e->getMessage());
 
             return response()->json([
                 'message' => 'Erreur lors de la modification de l\'installation',

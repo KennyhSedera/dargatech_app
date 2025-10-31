@@ -86,7 +86,7 @@ class StepService
                 ],
                 'prompts' => [
                     'data_installation' => "
-                    📦 *Veillez entrer les informations successivement :*\n numéro de série;\n debit nominal (m³/h);\n Puissance crête installé (W);\n Distance maximale pompe champ PV (m);\n HMT de la pompe;\n source d'eau (Forage / Puits / Etang / Barrage / Rivière / Autre)',
+                    📦 *Veillez entrer les informations successivement :*\n numéro de série;\n debit nominal (m³/h);\n Puissance crête installé (W);\n Distance maximale pompe champ PV (m);\n HMT de la pompe;\n source d'eau (Forage / Puits / Etang / Barrage / Rivière / Autre;\n quantité eau pompée (m³);\n quantité CO2 evitée (Kg)',
                     ",
                     'client_id' => "👤 Veuillez entrer le *numero* du maraicher :",
                     'numero_serie' => "📦 Entrez le *numéro de série* de la pompe :",
@@ -401,6 +401,8 @@ class StepService
                 'profondeur_forage',
                 'hmt',
                 'source_eau',
+                'qte_eau',
+                'qte_co2',
             ];
 
             $installation = [];

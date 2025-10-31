@@ -23,7 +23,7 @@ class SendMessageService
         ]);
     }
 
-    public function sendMessageWithKeyboard($chatId, $message = '', $keyboard, $parseMode = null)
+    public function sendMessageWithKeyboard($chatId, $message = '', $keyboard, $parseMode = null, $messageId = null)
     {
         try {
             $params = [
@@ -36,7 +36,13 @@ class SendMessageService
                 $params['parse_mode'] = $parseMode;
             }
 
-            return $this->telegram->sendMessage($params);
+
+            if ($messageId) {
+                $params['message_id'] = $messageId;
+                $this->telegram->editMessageText($params);
+            } else {
+                $this->telegram->sendMessage($params);
+            }
         } catch (\Exception $e) {
             \Log::error('SendMessageWithKeyboard error: ' . $e->getMessage());
             throw $e;

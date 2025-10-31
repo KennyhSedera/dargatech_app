@@ -24,6 +24,8 @@ const Icons = {
     Chart: () => <span className="text-lg">📊</span>,
     Sun: () => <span className="text-xl">☀️</span>,
     Moon: () => <span className="text-xl">🌙</span>,
+    Water: () => <span className="text-xl">💧</span>,
+    CO2: () => <span className="text-xl">💨</span>,
     Telegram: () => (
         <RiTelegramFill
             className={`text-2xl text-blue-600 dark:text-blue-400`}
@@ -262,6 +264,16 @@ const InstallationDetailsPage = ({ installation }) => {
                                     icon={Icons.Bolt}
                                     label="Puissance crête installé "
                                     value={`${installation.puissance_pompe} W`}
+                                />
+                                <InfoCard
+                                    icon={Icons.Water}
+                                    label="Quantité d'eau pompée"
+                                    value={`${installation.qte_eau} m³`}
+                                />
+                                <InfoCard
+                                    icon={Icons.CO2}
+                                    label="Quantité de CO2 evitée"
+                                    value={`${installation.qte_co2} Kg`}
                                 />
                             </div>
                             <div className="mt-4">

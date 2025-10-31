@@ -37,6 +37,8 @@ class InstallationRequest extends FormRequest
             'created_via' => 'required|string',
             'photos_installation' => 'nullable|array',
             'photos_installation.*' => 'image|mimes:jpg,jpeg,png,gif|max:5120',
+            'qte_eau' => 'nullable|numeric',
+            'qte_co2' => 'nullable|numeric',
         ];
     }
 
@@ -52,6 +54,8 @@ class InstallationRequest extends FormRequest
             'photos_installation.image' => 'Le fichier doit être une image.',
             'photos_installation.mimes' => 'L\'image doit être au format: jpeg, png, jpg ou gif.',
             'photos_installation.max' => 'L\'image ne doit pas dépasser 2MB.',
+            'qte_eau.numeric' => 'La quantité d\'eau doit être un nombre.',
+            'qte_co2.numeric' => 'La quantité de CO2 doit être un nombre.',
         ];
     }
 }

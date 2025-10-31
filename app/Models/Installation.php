@@ -22,6 +22,8 @@ class Installation extends Model
         'hmt',
         'created_via',
         'photos_installation',
+        'qte_eau',
+        'qte_co2',
     ];
 
     public function client()

@@ -75,7 +75,7 @@ class DashboardController extends Controller
                 'clients.prenom'
             )
             ->orderBy('date', 'desc')
-            ->limit(3)
+            ->limit(5)
             ->get();
 
         $new_maraicher = DB::table('clients')
@@ -83,15 +83,19 @@ class DashboardController extends Controller
                 DB::raw('(SELECT DISTINCT DATE(created_at) as date
                       FROM clients
                       ORDER BY DATE(created_at) DESC
-                      LIMIT 3) as recent_dates'),
+                      LIMIT 5) as recent_dates'),
                 DB::raw('DATE(clients.created_at)'),
                 '=',
                 'recent_dates.date'
             )
             ->selectRaw('DATE(clients.created_at) as date, nom, prenom, id, is_payed, genre')
             ->orderBy('clients.created_at', 'desc')
-            ->limit(3)
+            ->limit(5)
             ->get();
+
+        $minmaxeau_co2 = DB::table('installations')
+            ->selectRaw('MIN(qte_eau) as min_eau, MAX(qte_eau) as max_eau, MIN(qte_co2) as min_co2, MAX(qte_co2) as max_co2')
+            ->first();
 
         $data = [
             'client' => $client,
@@ -108,6 +112,7 @@ class DashboardController extends Controller
             'enpanne' => $enpanne,
             'new_installation' => $new_installation,
             'new_maraicher' => $new_maraicher,
+            'minmaxeau_co2' => $minmaxeau_co2
         ];
 
         return response()->json(['data' => $data], 200);

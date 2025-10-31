@@ -72,6 +72,8 @@ class NewInstallationService
                 'statuts' => 'installée',
                 'created_at' => now(),
                 'updated_at' => now(),
+                'qte_eau' => $data['qte_eau'],
+                'qte_co2' => $data['qte_co2'],
             ]);
 
             DB::commit();

@@ -19,6 +19,7 @@ import { all } from "axios";
 import { getinstallations } from "@/Services/installationService";
 import TableNew from "@/Components/dashboard/TableNew";
 import { formatMontant } from "@/constant";
+import { min } from "lodash";
 
 export default function Dashboard() {
     const [data, setData] = useState({});
@@ -81,7 +82,7 @@ export default function Dashboard() {
     useEffect(() => {
         getDataDB();
         getEvenement();
-    }, [data]);
+    }, []);
 
     const alertcount = data?.alertcount ?? [];
     const installationcount = data?.installationcount ?? [];
@@ -196,6 +197,29 @@ export default function Dashboard() {
         },
     };
 
+    const Estimation = [
+        {
+            title: "Eau pompée",
+            icon: <span className="">💧</span>,
+            data: [
+                {
+                    max: data.minmaxeau_co2?.max_eau,
+                    min: data.minmaxeau_co2?.min_eau,
+                },
+            ],
+        },
+        {
+            title: "CO2 evitée",
+            icon: <span className="">💨</span>,
+            data: [
+                {
+                    max: data.minmaxeau_co2?.max_co2,
+                    min: data.minmaxeau_co2?.min_co2,
+                },
+            ],
+        },
+    ];
+
     return (
         <AuthenticatedLayout>
             <Head title="Tableau de bord" />
@@ -225,20 +249,61 @@ export default function Dashboard() {
                     </Link>
                 ))}
             </div>
-            <div className="grid grid-cols-1 gap-2 md:grid-cols-2">
+            <div className="grid grid-cols-1 gap-2 md:grid-cols-5">
                 {new_maraichers?.length > 0 && (
-                    <div className="w-full h-full p-2 bg-white rounded-md shadow-md dark:bg-gray-800">
+                    <div className="w-full h-full p-2 bg-white rounded-md shadow-md md:col-span-2 dark:bg-gray-800">
                         <TableNew title="Maraichers" data={new_maraichers} />
                     </div>
                 )}
                 {new_installations?.length > 0 && (
-                    <div className="w-full h-full p-2 bg-white rounded-md shadow-md dark:bg-gray-800">
+                    <div className="w-full h-full p-2 bg-white rounded-md shadow-md md:col-span-2 dark:bg-gray-800">
                         <TableNew
                             title="Installations"
                             data={new_installations}
                         />
                     </div>
                 )}
+                <div className="bg-white dark:bg-gray-800 rounded-xl shadow-lg p-4">
+                    <h3 className="text-xl font-bold text-gray-900 text-center dark:text-white mb-2">
+                        Estimation qualité de
+                    </h3>
+                    <div className="grid gap-3">
+                        {Estimation.map((item, index) => (
+                            <div key={index}>
+                                <div className="font-medium text-gray-700 dark:text-gray-200">
+                                    {item.title}
+                                </div>
+                                <div className="flex items-center gap-4 p-4 rounded-xl bg-gradient-to-r from-gray-50 to-gray-100 dark:from-gray-900 dark:to-gray-750 border border-gray-200 dark:border-gray-600">
+                                    <div className="flex items-center gap-3">
+                                        <div className="text-3xl bg-white dark:bg-gray-800 rounded-full w-12 h-12 flex items-center justify-center">
+                                            {item.icon}
+                                        </div>
+                                    </div>
+                                    <div className="text-left">
+                                        <div className="text-sm text-gray-500 dark:text-gray-400">
+                                            Min:{" "}
+                                            <span className="font-semibold text-gray-900 dark:text-white">
+                                                {item.data[0].min}{" "}
+                                                {item.title === "Eau pompée"
+                                                    ? "m³"
+                                                    : "Kg"}
+                                            </span>
+                                        </div>
+                                        <div className="text-sm text-gray-500 dark:text-gray-400">
+                                            Max:{" "}
+                                            <span className="font-semibold text-gray-900 dark:text-white">
+                                                {item.data[0].max}{" "}
+                                                {item.title === "Eau pompée"
+                                                    ? "m³"
+                                                    : "Kg"}
+                                            </span>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        ))}
+                    </div>
+                </div>
             </div>
             <Calendar className="mt-2" events={events} />
             <div className="grid grid-cols-1 gap-2 mt-2 md:grid-cols-3">
