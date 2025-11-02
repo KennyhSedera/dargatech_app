@@ -197,15 +197,15 @@
         <div class="clearfix header">
             <div class="logo-container">
                 <div class="logo-inner">
-                    <img src="<?php echo e(asset('images/logo.png')); ?>" alt="logo" class="logo">
+                    <img src="<?php echo e(public_path('images/logo.png')); ?>" alt="logo" class="logo">
                 </div>
                 <div class="logo-inner">
                     <div>
                         <div>
                             <span class="blue-text" style="font-size: 12px; padding: 0 4px 4px 4px;">TOGO</span>
-                            <img src="<?php echo e(asset('images/togo.png')); ?>" alt="Togo Flag" style="height: 15px;">
+                            <img src="<?php echo e(public_path('images/togo.png')); ?>" alt="Togo Flag" style="height: 15px;">
                         </div>
-                        <img src="<?php echo e(asset('images/titre.png')); ?>" alt="logo" style="height: auto; width: 152px;">
+                        <img src="<?php echo e(public_path('images/titre.png')); ?>" alt="logo" style="height: auto; width: 152px;">
                     </div>
                     <div class="logo-text">EXIGEZ LE MEILLEUR DU SOLAIRE</div>
                 </div>
