@@ -50,10 +50,10 @@ const Calendar = ({ className, events = [] }) => {
 
     const calendarDays = [];
 
-    const prevMonth = new Date(year, month - 1, 0);
-    const daysInPrevMonth = prevMonth.getDate();
     const prevMonthYear = month === 0 ? year - 1 : year;
     const prevMonthIndex = month === 0 ? 11 : month - 1;
+    const prevMonth = new Date(prevMonthYear, prevMonthIndex + 1, 0);
+    const daysInPrevMonth = prevMonth.getDate();
 
     for (let i = firstDayWeekday - 1; i >= 0; i--) {
         const day = daysInPrevMonth - i;

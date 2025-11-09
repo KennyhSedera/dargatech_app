@@ -1,5 +1,6 @@
 import { usePage } from "@inertiajs/react";
 import React, { useState, useMemo, useEffect } from "react";
+import { FaEye } from "react-icons/fa6";
 
 export default function DataTable({
     headers,
@@ -219,12 +220,11 @@ export default function DataTable({
                                         </th>
                                     )
                             )}
-                            {actions.length > 0 &&
-                                user.user_role?.name !== "partenaire" && (
-                                    <th className="px-6 py-3 text-xs font-medium tracking-wider text-center text-gray-500 uppercase dark:text-gray-300">
-                                        Actions
-                                    </th>
-                                )}
+                            {actions.length > 0 && (
+                                <th className="px-6 py-3 text-xs font-medium tracking-wider text-center text-gray-500 uppercase dark:text-gray-300">
+                                    Actions
+                                </th>
+                            )}
                         </tr>
                     </thead>
 
@@ -269,6 +269,32 @@ export default function DataTable({
                                                         </button>
                                                     )
                                                 )}
+                                            </div>
+                                        </td>
+                                    )}
+                                {actions.length > 0 &&
+                                    user.user_role?.name === "partenaire" && (
+                                        <td className="px-4 py-2 text-sm text-gray-900 whitespace-nowrap dark:text-gray-200">
+                                            <div className="flex flex-wrap justify-center gap-2">
+                                                {actions
+                                                    .filter(
+                                                        (action) =>
+                                                            action.action ===
+                                                            true
+                                                    )
+                                                    .map((action, index) => (
+                                                        <button
+                                                            key={index}
+                                                            onClick={() =>
+                                                                action.handler(
+                                                                    row
+                                                                )
+                                                            }
+                                                            className={`${action.color} rounded-md hover:${action.hoverColor} transition`}
+                                                        >
+                                                            {action.label}
+                                                        </button>
+                                                    ))}
                                             </div>
                                         </td>
                                     )}

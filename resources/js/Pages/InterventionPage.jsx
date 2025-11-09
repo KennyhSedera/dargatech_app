@@ -135,6 +135,7 @@ const InterventionPage = () => {
 
     const actions = [
         {
+            action: true,
             label: <FaEye className="text-base" />,
             color: "text-green-500",
             hoverColor: "text-green-600",
