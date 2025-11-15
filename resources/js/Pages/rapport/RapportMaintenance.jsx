@@ -652,35 +652,54 @@ const RapportMaintenance = ({ intervention_id }) => {
                                                                         : ""
                                                                 }`}
                                                             >
-                                                                {photoRapports.map(
-                                                                    (
-                                                                        path,
-                                                                        index
-                                                                    ) => (
-                                                                        <div
-                                                                            className="relative cursor-pointer group"
-                                                                            onClick={() =>
-                                                                                setSelectedImage(
-                                                                                    path
-                                                                                )
-                                                                            }
-                                                                        >
-                                                                            <img
-                                                                                key={
-                                                                                    index
+                                                                {photoRapports.length >
+                                                                0 ? (
+                                                                    photoRapports.map(
+                                                                        (
+                                                                            path,
+                                                                            index
+                                                                        ) => (
+                                                                            <div
+                                                                                className="relative cursor-pointer group"
+                                                                                onClick={() =>
+                                                                                    setSelectedImage(
+                                                                                        path
+                                                                                    )
                                                                                 }
-                                                                                src={`/${path}`}
-                                                                                alt={`Photo du problème ${
-                                                                                    index +
-                                                                                    1
-                                                                                }`}
-                                                                                className="object-cover w-full h-auto transition duration-300 ease-in-out rounded-lg shadow-md group-hover:scale-105 md:h-56"
-                                                                            />
-                                                                            <div className="absolute top-0 flex items-center justify-center w-full h-full transition duration-300 ease-in-out rounded-lg opacity-0 group-hover:scale-105 md:h-56 bg-black/50 group-hover:opacity-100">
-                                                                                <Camera className="w-10 h-10 text-white transition opacity-0 group-hover:opacity-100" />
+                                                                            >
+                                                                                <img
+                                                                                    key={
+                                                                                        index
+                                                                                    }
+                                                                                    src={`/${path}`}
+                                                                                    alt={`Photo du problème ${
+                                                                                        index +
+                                                                                        1
+                                                                                    }`}
+                                                                                    className="object-cover w-full h-auto transition duration-300 ease-in-out rounded-lg shadow-md group-hover:scale-105 md:h-56"
+                                                                                />
+                                                                                <div className="absolute top-0 flex items-center justify-center w-full h-full transition duration-300 ease-in-out rounded-lg opacity-0 group-hover:scale-105 md:h-56 bg-black/50 group-hover:opacity-100">
+                                                                                    <Camera className="w-10 h-10 text-white transition opacity-0 group-hover:opacity-100" />
+                                                                                </div>
                                                                             </div>
-                                                                        </div>
+                                                                        )
                                                                     )
+                                                                ) : (
+                                                                    <div>
+                                                                        <h3 className="mb-3 text-lg font-medium">
+                                                                            Documentation
+                                                                            visuelle
+                                                                        </h3>
+                                                                        <div
+                                                                            className={`bg-slate-50 dark:bg-slate-700/40 rounded-lg p-4 flex items-center`}
+                                                                        >
+                                                                            <Camera className="mr-2 w-7 h-7" />
+                                                                            Pas
+                                                                            de
+                                                                            documentation
+                                                                            visuelle
+                                                                        </div>
+                                                                    </div>
                                                                 )}
                                                             </div>
                                                         </div>

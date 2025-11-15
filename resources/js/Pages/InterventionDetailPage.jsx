@@ -480,7 +480,7 @@ const InterventionDetailPage = ({ data }) => {
                                 </div>
                             ))}
 
-                        {activeTab === "photos" && allPhotos.length > 0 && (
+                        {/* {activeTab === "photos" && allPhotos.length > 0 && (
                             <div className="p-8 transition bg-white shadow-xl rounded-2xl dark:bg-gray-800 hover:shadow-2xl">
                                 <div className="flex items-start gap-4 mb-8">
                                     <div className="p-3 bg-purple-100 rounded-xl dark:bg-purple-900/30">
@@ -518,7 +518,84 @@ const InterventionDetailPage = ({ data }) => {
                                     ))}
                                 </div>
                             </div>
-                        )}
+                        )} */}
+                        {activeTab === "photos" &&
+                            (allPhotos.length > 0 ? (
+                                <div className="p-8 transition bg-white shadow-xl rounded-2xl dark:bg-gray-800 hover:shadow-2xl">
+                                    <div className="flex items-start gap-4 mb-8">
+                                        <div className="p-3 bg-purple-100 rounded-xl dark:bg-purple-900/30">
+                                            <Camera className="w-6 h-6 text-purple-600" />
+                                        </div>
+                                        <div className="flex-1">
+                                            <h3 className="mb-2 text-2xl font-bold text-gray-900 dark:text-white">
+                                                Galerie photos (
+                                                {allPhotos.length})
+                                            </h3>
+                                            <div className="w-20 h-1 rounded-full bg-gradient-to-r from-purple-500 to-pink-500"></div>
+                                        </div>
+                                    </div>
+                                    <div className="grid grid-cols-2 gap-4 md:grid-cols-3">
+                                        {allPhotos.map((photo, index) => (
+                                            <div
+                                                key={index}
+                                                onClick={() =>
+                                                    setSelectedImage(photo)
+                                                }
+                                                className="relative overflow-hidden transition bg-gray-200 cursor-pointer group rounded-2xl aspect-square dark:bg-gray-700 hover:shadow-2xl hover:scale-105"
+                                            >
+                                                <img
+                                                    src={`/${photo}`}
+                                                    alt={`Photo ${index + 1}`}
+                                                    className="object-cover w-full h-full"
+                                                    onError={(e) => {
+                                                        e.target.src =
+                                                            'data:image/svg+xml,%3Csvg xmlns="http://www.w3.org/2000/svg" width="200" height="200"%3E%3Crect fill="%23ddd" width="200" height="200"/%3E%3Ctext fill="%23999" x="50%25" y="50%25" text-anchor="middle" dy=".3em"%3EImage%3C/text%3E%3C/svg%3E';
+                                                    }}
+                                                />
+                                                <div className="absolute inset-0 flex items-center justify-center transition bg-black bg-opacity-0 group-hover:bg-opacity-40">
+                                                    <Camera className="w-10 h-10 text-white transition opacity-0 group-hover:opacity-100" />
+                                                </div>
+                                            </div>
+                                        ))}
+                                    </div>
+                                </div>
+                            ) : (
+                                <div className="p-12 text-center transition bg-white shadow-xl rounded-2xl dark:bg-gray-800 hover:shadow-2xl">
+                                    <div className="relative inline-block mb-6">
+                                        <div className="absolute inset-0 bg-purple-200 rounded-full opacity-50 animate-pulse blur-xl dark:bg-purple-900"></div>
+                                        <div className="relative p-6 bg-purple-100 rounded-full dark:bg-purple-900/30">
+                                            <Camera className="w-16 h-16 text-purple-500 dark:text-purple-400" />
+                                        </div>
+                                    </div>
+
+                                    <h3 className="mb-3 text-2xl font-bold text-gray-900 dark:text-white">
+                                        Aucune photo disponible
+                                    </h3>
+
+                                    <p className="max-w-md mx-auto mb-6 text-gray-600 dark:text-gray-400">
+                                        Aucune photo n'a été ajoutée pour cette
+                                        intervention. Les photos seront visibles
+                                        ici une fois qu'elles auront été
+                                        téléchargées.
+                                    </p>
+
+                                    <div className="inline-flex items-center gap-2 px-6 py-3 font-semibold text-purple-700 bg-purple-100 rounded-xl dark:bg-purple-900/30 dark:text-purple-300">
+                                        <AlertCircle className="w-5 h-5" />
+                                        Galerie vide
+                                    </div>
+
+                                    <div className="flex items-center justify-center gap-3 mt-8">
+                                        <div className="w-20 h-1 bg-purple-200 rounded-full dark:bg-purple-800"></div>
+                                        <Camera className="w-5 h-5 text-purple-400" />
+                                        <div className="w-20 h-1 bg-purple-200 rounded-full dark:bg-purple-800"></div>
+                                    </div>
+
+                                    <p className="mt-6 text-sm text-gray-500 dark:text-gray-500">
+                                        Les photos du problème et du rapport
+                                        apparaîtront ici
+                                    </p>
+                                </div>
+                            ))}
 
                         {activeTab === "client" && (
                             <div className="p-8 transition bg-white shadow-xl rounded-2xl dark:bg-gray-800 hover:shadow-2xl">
