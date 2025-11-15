@@ -83,7 +83,7 @@ const InstallationPage = () => {
                     {value === "web" ? (
                         <TbWorldCheck />
                     ) : (
-                        <RiTelegramFill className="text-blue-400 bg-white" />
+                        <RiTelegramFill className="text-blue-400 bg-white rounded-full" />
                     )}
                 </span>
             ),

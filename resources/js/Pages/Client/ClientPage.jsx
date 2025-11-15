@@ -124,7 +124,7 @@ const ClientPage = () => {
                     {row === "web" ? (
                         <TbWorldCheck />
                     ) : (
-                        <RiTelegramFill className="text-blue-400" />
+                        <RiTelegramFill className="text-blue-400 bg-white rounded-full" />
                     )}
                 </span>
             ),
