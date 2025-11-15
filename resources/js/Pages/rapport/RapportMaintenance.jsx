@@ -376,11 +376,11 @@ const RapportMaintenance = ({ intervention_id }) => {
 
                         {/* Main Content Area - Scrollable */}
                         <div
-                            className={`flex-1 md:ml-64 ${
+                            className={`flex-1 md:ml-64 bg-gray-50 dark:bg-slate-900 ${
                                 isPrinting ? "print-content" : ""
                             }`}
                         >
-                            <div className="h-full overflow-y-auto">
+                            <div className="h-full overflow-y-auto ">
                                 <div className="px-4 py-8 mx-auto max-w-7xl sm:px-6 lg:px-8">
                                     {/* Content */}
                                     <div

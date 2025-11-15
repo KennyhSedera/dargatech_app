@@ -131,7 +131,10 @@ const PaiementDetail = ({ data = {} }) => {
                         </thead>
                         <tbody>
                             {data.produits?.map((produit, index) => (
-                                <tr key={index} className="hover:bg-blue-50">
+                                <tr
+                                    key={index}
+                                    className="hover:bg-blue-50 hover:dark:bg-gray-700"
+                                >
                                     <td className="p-2 text-center border border-blue-500">
                                         {index + 1}
                                     </td>
