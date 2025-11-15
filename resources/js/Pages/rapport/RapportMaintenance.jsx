@@ -33,6 +33,8 @@ const RapportMaintenance = ({ intervention_id }) => {
     const contentRef = useRef(null);
     const [selectedImage, setSelectedImage] = useState(null);
 
+    const photoRapports = rapport ? JSON.parse(rapport?.photo_probleme) : [];
+
     useEffect(() => {
         setTheme(theme || "light");
     }, [theme]);
@@ -650,9 +652,7 @@ const RapportMaintenance = ({ intervention_id }) => {
                                                                         : ""
                                                                 }`}
                                                             >
-                                                                {JSON.parse(
-                                                                    rapport?.photo_probleme
-                                                                ).map(
+                                                                {photoRapports.map(
                                                                     (
                                                                         path,
                                                                         index
@@ -912,10 +912,13 @@ const RapportMaintenance = ({ intervention_id }) => {
                 </>
             )}
 
-            <ShowImage
-                selectedImage={selectedImage}
-                setSelectedImage={setSelectedImage}
-            />
+            {selectedImage && photoRapports.includes(selectedImage) && (
+                <ShowImage
+                    selectedImage={selectedImage}
+                    setSelectedImage={setSelectedImage}
+                    listImages={photoRapports.length > 1 && photoRapports}
+                />
+            )}
 
             <div className="hidden">
                 <RapportPdf data={rapport} ref={contentRef} />

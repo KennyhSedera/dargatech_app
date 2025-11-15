@@ -755,11 +755,13 @@ const InterventionDetailPage = ({ data }) => {
                     </div>
                 </div>
             </div>
-
-            <ShowImage
-                selectedImage={selectedImage}
-                setSelectedImage={setSelectedImage}
-            />
+            {selectedImage && allPhotos.includes(selectedImage) && (
+                <ShowImage
+                    selectedImage={selectedImage}
+                    setSelectedImage={setSelectedImage}
+                    listImages={allPhotos.length > 1 && allPhotos}
+                />
+            )}
 
             <div className="hidden">
                 <RapportPdf data={rapportDataPdf} ref={contentRef} />

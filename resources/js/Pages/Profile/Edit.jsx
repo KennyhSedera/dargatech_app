@@ -24,6 +24,7 @@ import {
 import { getInitials } from "@/hooks/letterInWord";
 import { useState } from "react";
 import { toast } from "react-toastify";
+import ShowImage from "@/Components/ShowImage";
 export default function Edit({ mustVerifyEmail, status }) {
     const user = usePage().props.auth.user;
     const profile = user.profile || {};
@@ -33,6 +34,7 @@ export default function Edit({ mustVerifyEmail, status }) {
     const [activeTab, setActiveTab] = useState("profile");
     const [isEditing, setIsEditing] = useState(false);
     const { post } = useForm();
+    const [selectedImage, setSelectedImage] = useState(null);
 
     const submit = (e) => {
         e.preventDefault();
@@ -43,6 +45,8 @@ export default function Edit({ mustVerifyEmail, status }) {
             },
         });
     };
+
+    console.log(selectedImage);
 
     return (
         <AuthenticatedLayout>
@@ -64,7 +68,16 @@ export default function Edit({ mustVerifyEmail, status }) {
                             <div className="relative mx-auto w-60 h-60">
                                 <div className="absolute inset-0 rounded-full bg-gradient-to-r from-orange-500 to-pink-500 dark:from-indigo-500 dark:to-purple-500 animate-spin-slow"></div>
                                 <div className="absolute bg-white rounded-full inset-1 dark:bg-gray-800">
-                                    <div className="flex items-center justify-center w-full h-full overflow-hidden transition-transform duration-300 border-4 border-white rounded-full bg-gray-200/30 dark:border-gray-800 group-hover:scale-105">
+                                    <div
+                                        className="flex items-center justify-center w-full h-full overflow-hidden transition-transform duration-300 border-4 border-white rounded-full cursor-pointer bg-gray-200/30 dark:border-gray-800 group-hover:scale-105"
+                                        onClick={() =>
+                                            setSelectedImage(
+                                                profile.photo ||
+                                                    technicien.photo ||
+                                                    partenaire.logo
+                                            )
+                                        }
+                                    >
                                         {profile.photo ||
                                         technicien.photo ||
                                         partenaire.logo ? (
@@ -466,6 +479,10 @@ export default function Edit({ mustVerifyEmail, status }) {
                     )}
                 </div>
             </div>
+            <ShowImage
+                selectedImage={selectedImage}
+                setSelectedImage={setSelectedImage}
+            />
         </AuthenticatedLayout>
     );
 }

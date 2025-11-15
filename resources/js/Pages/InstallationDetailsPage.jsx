@@ -529,10 +529,13 @@ const InstallationDetailsPage = ({ installation }) => {
                                 </div>
                             </div>
                         </SectionCard>
-                        <ShowImage
-                            selectedImage={selectedImage}
-                            setSelectedImage={setSelectedImage}
-                        />
+                        {selectedImage && photo.includes(selectedImage) && (
+                            <ShowImage
+                                selectedImage={selectedImage}
+                                setSelectedImage={setSelectedImage}
+                                listImages={photo.length > 1 && photo}
+                            />
+                        )}
                     </div>
                 </div>
             </div>

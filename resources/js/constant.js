@@ -132,3 +132,7 @@ export function addFavicon() {
         document.head.removeChild(favicon);
     };
 }
+
+export function hasLeadingSlash(path) {
+    return path.startsWith("/");
+}

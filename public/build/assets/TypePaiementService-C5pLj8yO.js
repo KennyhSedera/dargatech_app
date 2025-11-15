@@ -1,0 +1,1 @@
+import{a as t}from"./api-DgishJ6i.js";const a=async()=>{try{return(await t.get("/type_paiement")).data}catch(e){throw console.error("Erreur lors de la récupération des type paiements",e),e}},o=async e=>{try{return(await t.delete(`/type_paiement/${e}`)).data}catch(r){throw console.error("Erreur lors de la suppression du type paiement",r),r}};export{o as d,a as g};
