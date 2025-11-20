@@ -183,8 +183,20 @@ class InterventionService
         }
     }
 
-    public function showPaginatedList($chatId, $interventions, $page = 1, $messageId = null)
+    public function showPaginatedList($chatId, $interventions = null, $page = 1, $messageId = null)
     {
+        if ($interventions === null) {
+            $interventions = DB::table('maintenances')
+                ->leftJoin('installations', 'maintenances.installation_id', '=', 'installations.id')
+                ->select(
+                    'maintenances.*',
+                    'installations.code_installation as installation_code',
+                    'installations.numero_serie as installation_numero_serie',
+                    'installations.source_eau'
+                )
+                ->orderBy('maintenances.created_at', 'desc')
+                ->get();
+        }
         $perPage = 5;
         $total = $interventions->count();
         $totalPages = ceil($total / $perPage);
