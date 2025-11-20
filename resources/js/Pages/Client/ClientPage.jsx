@@ -188,7 +188,7 @@ const ClientPage = () => {
         <AuthenticatedLayout>
             <Head title="Maraîchers" />
             <HeaderPage
-                title={`Liste des Maraîchers ( Total: ${clients.length} )`}
+                title={`Liste des maraîchers ( Total: ${clients.length} )`}
                 handleClick={handleNewClient}
                 onSearch={onFiltredData}
                 search={search}

@@ -210,7 +210,7 @@ const InstallationPage = () => {
         <AuthenticatedLayout>
             <Head title="Installations" />
             <HeaderPage
-                title={`Liste des Installations ( Total: ${installations.length} )`}
+                title={`Liste des installations ( Total: ${installations.length} )`}
                 handleClick={handleNewInstallation}
                 onSearch={onFiltredData}
                 search={search}

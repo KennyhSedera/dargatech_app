@@ -126,7 +126,7 @@ const UsersPage = () => {
         <AuthenticatedLayout>
             <Head title="Users" />
             <HeaderPage
-                title="Liste des utilisateurs"
+                title={`Liste des utilisateurs ( Total: ${users.length} )`}
                 onSearch={handleSearch}
                 search={search}
                 handleClick={() => setopen(true)}

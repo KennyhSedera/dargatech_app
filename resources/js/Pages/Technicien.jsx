@@ -85,7 +85,6 @@ const Technicien = () => {
     };
 
     const showDetail = (id) => {
-        // Handle view detail functionality
         console.log("View details for ID:", id);
     };
 
@@ -132,7 +131,7 @@ const Technicien = () => {
             <Head title="Technicien" />
             <HeaderPage
                 handleClick={() => setopen(true)}
-                title={`Liste des Techniciens ( Total: ${techniciens.length} )`}
+                title={`Liste des techniciens ( Total: ${techniciens.length} )`}
                 search={search}
                 onSearch={onFiltered}
             />

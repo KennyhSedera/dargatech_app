@@ -215,7 +215,7 @@ const CalendrierPaiements = ({
     installation,
 }) => (
     <div className="p-6">
-        <h4 className="mb-4 text-sm font-semibold text-gray-700 dark:text-gray-300">
+        <h4 className="mb-4 font-semibold text-gray-700 text-md dark:text-gray-300">
             Calendrier des Paiements
         </h4>
 
@@ -403,7 +403,10 @@ const PaiementsSection = ({ paiements, installation }) => {
 
     return (
         <div className="overflow-hidden bg-white rounded-lg shadow-lg dark:bg-slate-800">
-            <div className="grid grid-cols-2 gap-4 p-6 border-b border-gray-200 md:grid-cols-4 dark:border-gray-700">
+            <div className="py-4 text-base font-bold text-center text-gray-500 uppercase md:text-2xl dark:text-gray-300">
+                État récapitulatif des paiements
+            </div>
+            <div className="grid grid-cols-2 gap-4 p-6 border-gray-200 border-y md:grid-cols-4 dark:border-gray-700">
                 <div className="text-center">
                     <p className="text-sm text-gray-500 dark:text-gray-400">
                         Total
@@ -446,7 +449,6 @@ const PaiementsSection = ({ paiements, installation }) => {
                     </p>
                 </div>
             </div>
-
             <VueEnsemble
                 montantPaye={montantPaye}
                 montantRestant={montantRestant}
@@ -456,7 +458,6 @@ const PaiementsSection = ({ paiements, installation }) => {
                 montantTrimestrielNormal={montantTrimestrielNormal}
                 nombreTrimestres={nombreTrimestres}
             />
-
             <CalendrierPaiements
                 paiementsTrimestres={tousLesTrimestres}
                 paiementInstallation={paiementInstallation}
@@ -465,7 +466,6 @@ const PaiementsSection = ({ paiements, installation }) => {
                 nombreTrimestres={nombreTrimestres}
                 installation={installation}
             />
-
             <div className="grid grid-cols-2 gap-4 py-6 border-t-2 border-gray-200 md:grid-cols-4 dark:border-gray-700">
                 <div className="text-center">
                     <p className="text-sm text-gray-500 dark:text-gray-400">

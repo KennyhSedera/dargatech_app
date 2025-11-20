@@ -5,7 +5,7 @@ import {
     Popup,
     TileLayer,
     GeoJSON,
-    useMapEvents
+    useMapEvents,
 } from "react-leaflet";
 import "leaflet/dist/leaflet.css";
 import L from "leaflet";
@@ -57,7 +57,9 @@ export const GeolocationTogoComponent = () => {
     useEffect(() => {
         findClient();
 
-        fetch("https://raw.githubusercontent.com/datasets/geo-countries/master/data/countries.geojson")
+        fetch(
+            "https://raw.githubusercontent.com/datasets/geo-countries/master/data/countries.geojson"
+        )
             .then((res) => res.json())
             .then((data) => {
                 const togo = data.features.find(
@@ -72,8 +74,14 @@ export const GeolocationTogoComponent = () => {
 
     return (
         <div className="p-4 mt-4 bg-white rounded-md shadow-md dark:bg-gray-800">
-            <h2 className="pb-2 text-lg font-bold">Carte pour localisation des maraîchers (Togo)</h2>
-            <MapContainer center={[7.524803807888611, 1.1665560098619567]} zoom={12} style={{ height: "500px", width: "100%", borderRadius: 6 }}>
+            <h2 className="pb-2 text-lg font-bold">
+                Carte pour localisation des installations (Togo)
+            </h2>
+            <MapContainer
+                center={[7.524803807888611, 1.1665560098619567]}
+                zoom={12}
+                style={{ height: "500px", width: "100%", borderRadius: 6 }}
+            >
                 <TileLayer
                     url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
                     attribution="&copy; OpenStreetMap contributors"
@@ -92,18 +100,30 @@ export const GeolocationTogoComponent = () => {
                 )}
 
                 {neighborhoods.map((q, index) => (
-                    <Marker key={index} position={[q.lat, q.lon]} icon={customIcon}>
+                    <Marker
+                        key={index}
+                        position={[q.lat, q.lon]}
+                        icon={customIcon}
+                    >
                         <Popup>{q.name}</Popup>
                     </Marker>
                 ))}
 
                 {clickedPosition && (
-                    <Marker position={[clickedPosition.lat, clickedPosition.lng]} icon={customIcon2}>
-                        <Popup>Position sélectionnée : {clickedPosition.lat}, {clickedPosition.lng}</Popup>
+                    <Marker
+                        position={[clickedPosition.lat, clickedPosition.lng]}
+                        icon={customIcon2}
+                    >
+                        <Popup>
+                            Position sélectionnée : {clickedPosition.lat},{" "}
+                            {clickedPosition.lng}
+                        </Popup>
                     </Marker>
                 )}
 
-                <ClickHandler onClick={(lat, lng) => setClickedPosition({ lat, lng })} />
+                <ClickHandler
+                    onClick={(lat, lng) => setClickedPosition({ lat, lng })}
+                />
             </MapContainer>
         </div>
     );

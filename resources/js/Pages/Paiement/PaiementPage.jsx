@@ -233,7 +233,7 @@ const PaiementPage = () => {
             {!isType ? (
                 <div>
                     <HeaderPage
-                        title={`Liste des Paiements ( Total : ${paiements.length} )`}
+                        title={`Liste des paiements ( Total : ${paiements.length} )`}
                         handleClick={handleNewPaiement}
                         search={search}
                         onSearch={onFilteredData}
