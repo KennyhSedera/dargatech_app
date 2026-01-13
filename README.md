@@ -1,6 +1,6 @@
 # 📱 Dargatech App
 
-> Application web développée avec **Laravel** pour le backend et **JavaScript** pour le frontend, destinée à la gestion des fonctionnalités métiers de Dargatech.
+> Application web avec bot telegram développée avec **Laravel** pour le backend et **ReactJs** pour le frontend, destinée à la gestion des fonctionnalités pour la gestion et suivi des pompage solaire de l'entreprise DargaTech à Burkina Faso.
 
 ---
 
@@ -14,10 +14,10 @@ Elle repose sur une architecture moderne avec une API backend robuste et une int
 ## 🧰 Technologies utilisées
 
 - **Backend** : Laravel (PHP)
-- **Frontend** : JavaScript (Vite / React ou JS natif selon configuration)
-- **Base de données** : MySQL ou PostgreSQL
+- **Frontend** : ReactJS
+- **Base de données** : PostgreSQL
 - **Gestion des assets** : Vite
-- **Style** : CSS / Tailwind CSS
+- **Style** : Tailwind CSS
 - **Tests** : PHPUnit
 
 ---
@@ -33,10 +33,4 @@ Elle repose sur une architecture moderne avec une API backend robuste et une int
 
 ---
 
-## 📦 Installation
 
-### 1️⃣ Cloner le projet
-
-```bash
-git clone https://github.com/KennyhSedera/dargatech_app.git
-cd dargatech_app
