@@ -30,7 +30,3 @@ Elle repose sur une architecture moderne avec une API backend robuste et une int
 - API REST sécurisée
 - Tableau de bord dynamique
 - Interface responsive
-
----
-
-
