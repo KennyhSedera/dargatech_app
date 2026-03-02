@@ -176,7 +176,17 @@ class TelegramBotController extends Controller
                     Telegram::commandsHandler(true);
                 }
             } else {
-                $this->sendMessageService->sendErrorMessage($chatId, "🚫 Vous n'avez pas le droit d'acceder à cette bot! \n Veuillez contacter les administrateurs.");
+                $messageText = $update->getMessage();
+                if (str_starts_with($messageText->getText(), '/')) {
+                    $this->sendMessageService->sendErrorMessage($chatId, "🚫 Vous n'avez pas le droit d'acceder à cette bot! \n Veuillez contacter les administrateurs.");
+                    $this->callBackService->handleLogin($userId);
+                } else if (filter_var($messageText->getText(), FILTER_VALIDATE_EMAIL)) {
+                    $this->callBackService->verifyEmail($chatId, $messageText->getText());
+                } else {
+                    $username = $update->getMessage()->getChat()->first_name . ' ' . $update->getMessage()->getChat()->last_name;
+                    $messageId = $update->getMessage()->getMessageId();
+                    $this->callBackService->verifyPassword($chatId, $messageText->getText(), $messageId, $username);
+                }
             }
             return response('OK', 200);
         } catch (\Exception $e) {

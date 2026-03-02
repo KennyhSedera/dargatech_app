@@ -2,7 +2,6 @@
 
 namespace App\Services;
 
-use App\Models\rapportMaintenances;
 use App\Services\SendMessageService;
 use App\Telegram\Commands\HelpCommand;
 use App\Telegram\Commands\InstallationCommand;
@@ -30,6 +29,7 @@ class CallBackService
     protected RapportMaintenanceService $rapportMaintenanceService;
     protected DashboardService $dashboardService;
     protected StepService $stepService;
+    protected LoginByTelegramService $loginByTelegramService;
 
     public function __construct(
         Api $telegram,
@@ -46,6 +46,7 @@ class CallBackService
         RapportMaintenanceService $rapportMaintenanceService,
         DashboardService $dashboardService,
         StepService $stepService,
+        LoginByTelegramService $loginByTelegramService,
     ) {
         $this->telegram = $telegram;
         $this->maraicherService = $maraicherService;
@@ -61,6 +62,7 @@ class CallBackService
         $this->rapportMaintenanceService = $rapportMaintenanceService;
         $this->dashboardService = $dashboardService;
         $this->stepService = $stepService;
+        $this->loginByTelegramService = $loginByTelegramService;
     }
 
     public function handleCurrentPage($chatId)
@@ -520,5 +522,20 @@ class CallBackService
     public function handleDashboard($chatId)
     {
         $this->dashboardService->showDashboard($chatId);
+    }
+
+    public function handleLogin($chatId)
+    {
+        $this->loginByTelegramService->MessageDemandeEmail($chatId);
+    }
+
+    public function verifyEmail($chatId, $email)
+    {
+        $this->loginByTelegramService->verifyEmail($chatId, $email);
+    }
+
+    public function verifyPassword($chatId, $password, $messageId, $username)
+    {
+        $this->loginByTelegramService->verifyPassword($chatId, $password, $messageId, $username);
     }
 }
