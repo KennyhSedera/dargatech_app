@@ -21,7 +21,8 @@ class LoginByTelegramService
 
     public function MessageDemandeEmail($chatId)
     {
-        return $this->sendMessage->sendMessage($chatId, "Pour vous connecter, veuillez entrer votre adresse email du compte créé par l'administrateur.", 'Markdown');
+        return $this->sendMessage->sendMessage($chatId, "Pour vous connecter, veuillez entrer votre adresse email du compte créé par l'administrateur. \n\nVerifier dans votre boite de reception email si vous avez oubliez votre mot de passe.
+    ", 'Markdown');
     }
 
     public function MessageDemandePassword($chatId, $email)
