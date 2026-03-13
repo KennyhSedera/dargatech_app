@@ -16,6 +16,7 @@ use App\Http\Controllers\UserRoleController;
 use App\Http\Controllers\UserController;
 use App\Http\Controllers\PartenaireController;
 use App\Http\Controllers\PaiementPdfController;
+use App\Http\Controllers\PompageController;
 use App\Http\Controllers\TelegramFormController;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Route;
@@ -151,4 +152,11 @@ Route::group(['prefix' => 'api'], function () {
     Route::get('/telegram/delete-webhook', [TelegramBotController::class, 'deleteWebhook']);
 
     Route::post('/telegram/send-message/{telegram_user_id}', [TelegramFormController::class, 'cancelForm']);
+
+
+    Route::get('/installations/{id}/calcul', [PompageController::class, 'calcul']);
+    Route::post('/installations/{id}/calcul-personnalise', [PompageController::class, 'calculPersonnalise']);
+    Route::put('/installations/{id}/mise-a-jour-cumuls', [PompageController::class, 'miseAJourCumuls']);
+    Route::get('/installations/calcul-tous', [PompageController::class, 'calculTous']);
+
 });

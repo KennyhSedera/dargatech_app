@@ -19,7 +19,6 @@ import { all } from "axios";
 import { getinstallations } from "@/Services/installationService";
 import TableNew from "@/Components/dashboard/TableNew";
 import { formatMontant } from "@/constant";
-import { min } from "lodash";
 
 export default function Dashboard() {
     const [data, setData] = useState({});
@@ -91,8 +90,8 @@ export default function Dashboard() {
     const allDatesFormated = [
         ...new Set(
             [...alertcount, ...installationcount, ...interventioncount].map(
-                (d) => d.date
-            )
+                (d) => d.date,
+            ),
         ),
     ]
         .sort((a, b) => new Date(a) - new Date(b))
@@ -101,8 +100,8 @@ export default function Dashboard() {
     const allDates = [
         ...new Set(
             [...alertcount, ...installationcount, ...interventioncount].map(
-                (d) => d.date
-            )
+                (d) => d.date,
+            ),
         ),
     ].sort();
 
@@ -123,9 +122,9 @@ export default function Dashboard() {
         setPercentenpanne(
             data?.installation > 0
                 ? parseFloat(
-                      ((data?.enpanne * 100) / data?.installation).toFixed(2)
+                      ((data?.enpanne * 100) / data?.installation).toFixed(2),
                   )
-                : 0
+                : 0,
         );
         newData(data);
     }, [data]);
@@ -201,22 +200,12 @@ export default function Dashboard() {
         {
             title: "Eau pompée",
             icon: <span className="">💧</span>,
-            data: [
-                {
-                    max: data.minmaxeau_co2?.max_eau,
-                    min: data.minmaxeau_co2?.min_eau,
-                },
-            ],
+            data: data.volume_totaux?.volume_total_m3,
         },
         {
             title: "CO2 evitée",
-            icon: <span className="">💨</span>,
-            data: [
-                {
-                    max: data.minmaxeau_co2?.max_co2,
-                    min: data.minmaxeau_co2?.min_co2,
-                },
-            ],
+            icon: <span className="">🌱</span>,
+            data: data.volume_totaux?.co2_total_kg,
         },
     ];
 
@@ -263,47 +252,48 @@ export default function Dashboard() {
                         />
                     </div>
                 )}
-                <div className="bg-white dark:bg-gray-800 rounded-xl shadow-lg p-4">
-                    <h3 className="text-xl font-bold text-gray-900 text-center dark:text-white mb-2">
-                        Estimation Quantités
-                    </h3>
-                    <div className="grid gap-3">
-                        {Estimation.map((item, index) => (
-                            <div key={index}>
-                                <div className="font-medium text-gray-700 dark:text-gray-200">
-                                    {item.title}
-                                </div>
-                                <div className="flex items-center gap-4 p-4 rounded-xl bg-gradient-to-r from-gray-50 to-gray-100 dark:from-gray-900 dark:to-gray-750 border border-gray-200 dark:border-gray-600">
-                                    <div className="flex items-center gap-3">
-                                        <div className="text-3xl bg-white dark:bg-gray-800 rounded-full w-12 h-12 flex items-center justify-center">
-                                            {item.icon}
+                {data.volume_totaux && (
+                    <div className="p-4 bg-white shadow-lg dark:bg-gray-800 rounded-xl">
+                        <h3 className="mb-2 text-xl font-bold text-center text-gray-900 dark:text-white">
+                            Quantités totaux
+                        </h3>
+                        <div className="grid gap-3">
+                            {Estimation.map((item, index) => (
+                                <div key={index}>
+                                    <div className="font-medium text-gray-700 dark:text-gray-200">
+                                        {item.title}
+                                    </div>
+                                    <div className="flex items-center gap-4 p-4 border border-gray-200 rounded-xl bg-gradient-to-r from-gray-50 to-gray-100 dark:from-gray-900 dark:to-gray-750 dark:border-gray-600">
+                                        <div className="flex items-center gap-3">
+                                            <div className="flex items-center justify-center w-12 h-12 text-3xl bg-white rounded-full dark:bg-gray-800">
+                                                {item.icon}
+                                            </div>
+                                        </div>
+                                        <div className="text-left">
+                                            <div>
+                                                <div>
+                                                    {" "}
+                                                    {item.data}{" "}
+                                                    {item.title === "Eau pompée"
+                                                        ? "m³"
+                                                        : "Kg"}
+                                                </div>
+                                                <div className="text-sm text-gray-500 dark:text-gray-400">
+                                                    Sur{" "}
+                                                    {
+                                                        data.volume_totaux
+                                                            ?.total_installations
+                                                    }{" "}
+                                                    installations
+                                                </div>
+                                            </div>
                                         </div>
                                     </div>
-                                    <div className="text-left">
-                                        <div className="text-sm text-gray-500 dark:text-gray-400">
-                                            Min:{" "}
-                                            <span className="font-semibold text-gray-900 dark:text-white">
-                                                {item.data[0].min}{" "}
-                                                {item.title === "Eau pompée"
-                                                    ? "m³"
-                                                    : "Kg"}
-                                            </span>
-                                        </div>
-                                        <div className="text-sm text-gray-500 dark:text-gray-400">
-                                            Max:{" "}
-                                            <span className="font-semibold text-gray-900 dark:text-white">
-                                                {item.data[0].max}{" "}
-                                                {item.title === "Eau pompée"
-                                                    ? "m³"
-                                                    : "Kg"}
-                                            </span>
-                                        </div>
-                                    </div>
                                 </div>
-                            </div>
-                        ))}
+                            ))}
+                        </div>
                     </div>
-                </div>
+                )}
             </div>
             <Calendar className="mt-2" events={events} />
             <div className="grid grid-cols-1 gap-2 mt-2 md:grid-cols-3">

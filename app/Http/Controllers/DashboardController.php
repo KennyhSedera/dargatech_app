@@ -93,9 +93,9 @@ class DashboardController extends Controller
             ->limit(5)
             ->get();
 
-        $minmaxeau_co2 = DB::table('installations')
-            ->selectRaw('MIN(qte_eau) as min_eau, MAX(qte_eau) as max_eau, MIN(qte_co2) as min_co2, MAX(qte_co2) as max_co2')
-            ->first();
+
+        $pompageController = new PompageController();
+        $totaux = $pompageController->getTotaux()->getData()->totaux;
 
         $data = [
             'client' => $client,
@@ -112,7 +112,7 @@ class DashboardController extends Controller
             'enpanne' => $enpanne,
             'new_installation' => $new_installation,
             'new_maraicher' => $new_maraicher,
-            'minmaxeau_co2' => $minmaxeau_co2
+            'volume_totaux' => $totaux,
         ];
 
         return response()->json(['data' => $data], 200);

@@ -19,7 +19,6 @@ export default function DataTable({
     });
     const user = usePage().props.auth.user;
 
-    // Fonction pour récupérer le itemsPerPage de l'utilisateur actuel
     const getUserItemsPerPage = () => {
         try {
             const stored = localStorage.getItem("itemsPerPageSettings");
@@ -36,31 +35,27 @@ export default function DataTable({
 
     const [itemsPerPage, setitemsPerPage] = useState(getUserItemsPerPage());
 
-    // Fonction pour sauvegarder le itemsPerPage de l'utilisateur actuel
     const saveUserItemsPerPage = (nb) => {
         try {
             const stored = localStorage.getItem("itemsPerPageSettings");
             let settings = stored ? JSON.parse(stored) : [];
 
-            // Trouver l'index de l'utilisateur actuel
             const userIndex = settings.findIndex((s) => s.user === user.id);
 
             if (userIndex !== -1) {
-                // Mettre à jour l'entrée existante
                 settings[userIndex].nb = nb;
             } else {
-                // Ajouter une nouvelle entrée
                 settings.push({ nb: nb, user: user.id });
             }
 
             localStorage.setItem(
                 "itemsPerPageSettings",
-                JSON.stringify(settings)
+                JSON.stringify(settings),
             );
         } catch (error) {
             console.error(
                 "Erreur lors de la sauvegarde dans localStorage:",
-                error
+                error,
             );
         }
     };
@@ -218,7 +213,7 @@ export default function DataTable({
                                                     getSortIcon(header.key)}
                                             </div>
                                         </th>
-                                    )
+                                    ),
                             )}
                             {actions.length > 0 && (
                                 <th className="px-6 py-3 text-xs font-medium tracking-wider text-center text-gray-500 uppercase dark:text-gray-300">
@@ -244,11 +239,11 @@ export default function DataTable({
                                                 {header.customRender
                                                     ? header.customRender(
                                                           row[header.key],
-                                                          row
+                                                          row,
                                                       )
                                                     : row[header.key]}
                                             </td>
-                                        )
+                                        ),
                                 )}
                                 {actions.length > 0 &&
                                     user.user_role?.name !== "partenaire" && (
@@ -260,14 +255,14 @@ export default function DataTable({
                                                             key={index}
                                                             onClick={() =>
                                                                 action.handler(
-                                                                    row
+                                                                    row,
                                                                 )
                                                             }
                                                             className={`${action.color} rounded-md hover:${action.hoverColor} transition`}
                                                         >
                                                             {action.label}
                                                         </button>
-                                                    )
+                                                    ),
                                                 )}
                                             </div>
                                         </td>
@@ -280,14 +275,14 @@ export default function DataTable({
                                                     .filter(
                                                         (action) =>
                                                             action.action ===
-                                                            true
+                                                            true,
                                                     )
                                                     .map((action, index) => (
                                                         <button
                                                             key={index}
                                                             onClick={() =>
                                                                 action.handler(
-                                                                    row
+                                                                    row,
                                                                 )
                                                             }
                                                             className={`${action.color} rounded-md hover:${action.hoverColor} transition`}
@@ -304,7 +299,7 @@ export default function DataTable({
                 </table>
             </div>
 
-            <div className="flex flex-col items-center justify-between mt-4 space-y-3 sm:flex-row sm:space-y-0">
+            <div className="flex flex-col items-center justify-between p-2 mt-4 space-y-3 bg-white rounded-lg shadow-sm dark:bg-gray-800 sm:flex-row sm:space-y-0">
                 <div className="text-sm text-gray-700 dark:text-gray-300">
                     Page {currentPage} sur {totalPages} (éléments{" "}
                     {indexOfFirstItem + 1} à{" "}

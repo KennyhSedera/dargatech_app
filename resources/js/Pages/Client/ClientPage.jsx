@@ -40,7 +40,7 @@ const ClientPage = () => {
             id: el.id,
             nom: el.nom,
             prenom: el.prenom,
-            CIN: el.CIN,
+            // CIN: el.CIN,
             email: el.email,
             telephone: el.telephone,
             localisation: el.localisation,
@@ -75,7 +75,7 @@ const ClientPage = () => {
                 el?.type_activite_agricole
                     ?.toLowerCase()
                     .includes(value.toLowerCase()) ||
-                el?.localisation?.toLowerCase().includes(value.toLowerCase())
+                el?.localisation?.toLowerCase().includes(value.toLowerCase()),
         );
 
         setFilteredData(filteredData);
@@ -98,7 +98,7 @@ const ClientPage = () => {
         },
         { key: "nom", label: "Nom", sortable: true },
         { key: "prenom", label: "Prénom", sortable: true },
-        { key: "CIN", label: "CIN" },
+        // { key: "CIN", label: "CIN" },
         { key: "email", label: "Email", sortable: true },
         { key: "telephone", label: "Téléphone" },
         { key: "localisation", label: "Localisation", sortable: true },

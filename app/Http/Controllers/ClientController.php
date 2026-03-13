@@ -3,11 +3,9 @@ namespace App\Http\Controllers;
 
 use App\Http\Requests\ClientRequest;
 use App\Models\Client;
-use App\Models\Localisation;
 use Carbon\Carbon;
 use Illuminate\Support\Facades\DB;
 use Log;
-use Request;
 
 class ClientController extends Controller
 {

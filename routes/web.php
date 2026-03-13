@@ -118,5 +118,9 @@ Route::middleware(['web', 'telegram.token'])->group(function () {
         ->name('telegram.paiement.form');
 });
 
+Route::get('/pompage', function () {
+    return Inertia::render('PompagePage');
+})->middleware(['auth', 'verified'])->name('pompage');
+
 require __DIR__ . '/auth.php';
 require __DIR__ . '/api.php';

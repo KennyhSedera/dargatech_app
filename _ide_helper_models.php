@@ -132,9 +132,15 @@ namespace App\Models{
  * @property int $localisation_id
  * @property string $created_via
  * @property string|null $photos_installation
+ * @property float $qte_eau
+ * @property float $qte_co2
  * @property-read \Illuminate\Database\Eloquent\Collection<int, \App\Models\Alerts> $alert
  * @property-read int|null $alert_count
  * @property-read \App\Models\Client $client
+ * @property-read float $co2_cumule
+ * @property-read float $co2_par_jour
+ * @property-read float $volume_cumule
+ * @property-read float $volume_eau_par_jour
  * @property-read \App\Models\Localisation $localisation
  * @property-read \Illuminate\Database\Eloquent\Collection<int, \App\Models\Maintenance> $maintenance
  * @property-read int|null $maintenance_count
@@ -154,6 +160,8 @@ namespace App\Models{
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Installation wherePhotosInstallation($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Installation whereProfondeurForage($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Installation wherePuissancePompe($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Installation whereQteCo2($value)
+ * @method static \Illuminate\Database\Eloquent\Builder<static>|Installation whereQteEau($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Installation whereSourceEau($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Installation whereStatuts($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Installation whereUpdatedAt($value)

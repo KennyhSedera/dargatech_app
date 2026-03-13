@@ -198,28 +198,6 @@ const FormulaireClient = ({
                     <InputError message={errors.genre} className="mt-2" />
                 </div>
                 <div>
-                    <InputLabel htmlFor="CIN" value="Pièce d'identité" />
-                    <TextInput
-                        id="CIN"
-                        name="CIN"
-                        value={data.CIN}
-                        className="block w-full mt-1"
-                        autoComplete="CIN"
-                        onChange={(e) => setData("CIN", e.target.value)}
-                        required
-                        onFocus={() =>
-                            setValidationErrors({
-                                ...validationErrors,
-                                CIN: "",
-                            })
-                        }
-                    />
-                    <InputError
-                        message={validationErrors.CIN || errors.CIN}
-                        className="mt-2"
-                    />
-                </div>
-                <div>
                     <InputLabel htmlFor="telephone" value="Téléphone" />
                     <TextInput
                         id="telephone"

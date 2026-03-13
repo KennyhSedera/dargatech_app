@@ -100,7 +100,7 @@ const ShowImage = ({ selectedImage, setSelectedImage, listImages = null }) => {
                     <img
                         src={formatImageSrc(currentImage)}
                         alt="Photo agrandie"
-                        className="object-contain w-auto max-w-[85vw] md:min-w-[500px] shadow-2xl max-h-[90vh] rounded-2xl"
+                        className="object-contain w-auto max-w-[85vw] md:min-w-[500px] shadow-2xl max-h-[90vh] "
                         onClick={(e) => e.stopPropagation()}
                     />
                 </div>

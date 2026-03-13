@@ -19,13 +19,13 @@ export default function Modal({
     };
 
     const maxWidthClass = {
-        sm: "sm:max-w-sm",
-        md: "sm:max-w-md",
-        lg: "sm:max-w-lg",
-        xl: "sm:max-w-xl",
-        "2xl": "sm:max-w-2xl",
-        "3xl": "sm:max-w-3xl",
-        "4xl": "sm:max-w-4xl",
+        sm: "sm:max-w-sm md:w-2xl",
+        md: "sm:max-w-md md:w-2xl",
+        lg: "sm:max-w-lg md:w-2xl",
+        xl: "sm:max-w-xl md:w-2xl",
+        "2xl": "sm:max-w-2xl md:w-2xl",
+        "3xl": "sm:max-w-3xl md:w-2xl",
+        "4xl": "sm:max-w-4xl md:w-2xl",
     }[maxWidth];
 
     return (

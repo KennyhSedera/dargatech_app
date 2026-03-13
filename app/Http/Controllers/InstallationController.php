@@ -33,10 +33,7 @@ class InstallationController extends Controller
 
             $validatedData = $request->validated();
 
-            Log::info($validatedData);
-
             $photos = [];
-
 
             /** @var \Illuminate\Http\Request $request */
             if ($request->hasFile('photos_installation')) {
@@ -68,8 +65,8 @@ class InstallationController extends Controller
                 'hmt' => $validatedData['hmt'],
                 'created_via' => $validatedData['created_via'] ?? 'web',
                 'photos_installation' => json_encode($photos),
-                'qte_eau' => $validatedData['qte_eau'] ?? 0,
-                'qte_co2' => $validatedData['qte_co2'] ?? 0
+                'qte_eau' => Installation::HEURES_PAR_JOUR * $validatedData['debit_nominal'],
+                'qte_co2' => (Installation::HEURES_PAR_JOUR * $validatedData['debit_nominal']) * Installation::CO2_PAR_M3,
             ]);
 
             DB::commit();

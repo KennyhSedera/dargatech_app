@@ -32,7 +32,7 @@ const PaiementInstallation = ({
     return (
         <div
             className={`p-4 mb-4 border-2 rounded-lg ${getStatusColor(
-                paiement.statut_paiement
+                paiement.statut_paiement,
             )}`}
         >
             <div className="flex items-center justify-between">
@@ -44,7 +44,7 @@ const PaiementInstallation = ({
                         <p className="text-sm text-gray-500 dark:text-gray-400">
                             {moment(
                                 installation[0].date_installation ||
-                                    paiement.date_paiement
+                                    paiement.date_paiement,
                             ).format("DD MMM YYYY")}
                         </p>
                     )}
@@ -56,7 +56,7 @@ const PaiementInstallation = ({
                     <div className="flex items-center space-x-2">
                         {getStatusBadge(
                             paiement.statut_paiement,
-                            paiement.date_echeance
+                            paiement.date_echeance,
                         )}
                         {/* <span className={`${remarque.color} text-xs`}>
                             {remarque.text}
@@ -68,7 +68,7 @@ const PaiementInstallation = ({
                             <p className="text-xs text-gray-500 dark:text-gray-400">
                                 le{" "}
                                 {moment(paiement.date_echeance).format(
-                                    "DD MMM YYYY"
+                                    "DD MMM YYYY",
                                 )}{" "}
                             </p>
                         )}
@@ -153,7 +153,7 @@ const TrimestreCard = ({
         <div
             className={`p-4 border-2 rounded-lg transition-all ${getStatusColor(
                 trimestre.statut_paiement,
-                trimestre.estIncomplet
+                trimestre.estIncomplet,
             )}`}
         >
             <div className="mb-2">
@@ -186,7 +186,7 @@ const TrimestreCard = ({
                     {getStatusBadge(
                         trimestre.statut_paiement,
                         trimestre.date_echeance,
-                        trimestre.estIncomplet
+                        trimestre.estIncomplet,
                     )}
                     <span className={`text-xs ${trimestre.remarque.color}`}>
                         {trimestre.remarque.text}
@@ -196,7 +196,7 @@ const TrimestreCard = ({
                     <p className="mt-1 text-xs text-gray-500 dark:text-gray-400">
                         le{" "}
                         {moment(
-                            trimestre.date_paiement || trimestre.date_echeance
+                            trimestre.date_paiement || trimestre.date_echeance,
                         ).format("DD MMM YYYY")}
                     </p>
                 )}
@@ -249,10 +249,10 @@ const PaiementsSection = ({ paiements, installation }) => {
     const montantDernierTrimestre = 22000;
 
     const paiementInstallation = paiements.find(
-        (p) => p.echeance?.toLowerCase() === "installation"
+        (p) => p.echeance?.toLowerCase() === "installation",
     );
     const paiementsTrimestrielsExistants = paiements.filter((p) =>
-        p.echeance?.match(/^T\d+$/i)
+        p.echeance?.match(/^T\d+$/i),
     );
     const dateInstallation =
         installation[0].date_installation ||
@@ -295,7 +295,7 @@ const PaiementsSection = ({ paiements, installation }) => {
                     p.statut_paiement?.toLowerCase() === "payé"
                         ? sum + parseFloat(p.montant || 0)
                         : sum,
-                0
+                0,
             );
             const estIncomplet =
                 montantTotalPaye > 0 && montantTotalPaye < montantTrimestre;
@@ -303,14 +303,14 @@ const PaiementsSection = ({ paiements, installation }) => {
                 montantTotalPaye >= montantTrimestre
                     ? "payé"
                     : montantTotalPaye > 0
-                    ? "incomplet"
-                    : "en attente";
+                      ? "incomplet"
+                      : "en attente";
 
             const dernierPaiement = paiementsTrimestre
                 .filter((p) => p.statut_paiement?.toLowerCase() === "payé")
                 .sort(
                     (a, b) =>
-                        new Date(b.date_echeance) - new Date(a.date_echeance)
+                        new Date(b.date_echeance) - new Date(a.date_echeance),
                 )[0];
             const dateDernierPaiement = dernierPaiement
                 ? dernierPaiement.date_echeance
@@ -318,11 +318,11 @@ const PaiementsSection = ({ paiements, installation }) => {
 
             const debutTrimestre = moment(dateInstallation).add(
                 index * 3,
-                "months"
+                "months",
             );
             const finTrimestre = moment(debutTrimestre).add(2, "months");
             const periode = `${debutTrimestre.format(
-                "MMM YYYY"
+                "MMM YYYY",
             )} – ${finTrimestre.format("MMM YYYY")}`;
             const remarque =
                 statut_paiement?.toLowerCase() === "payé"
@@ -341,7 +341,7 @@ const PaiementsSection = ({ paiements, installation }) => {
                 estIncomplet,
                 remarque,
             };
-        }
+        },
     );
 
     const totalTrimestres =
@@ -357,7 +357,7 @@ const PaiementsSection = ({ paiements, installation }) => {
     const pourcentagePaye =
         totalMontant > 0 ? Math.round((montantPaye / totalMontant) * 100) : 0;
     const trimestresPayes = tousLesTrimestres.filter(
-        (t) => t.statut_paiement?.toLowerCase() === "payé"
+        (t) => t.statut_paiement?.toLowerCase() === "payé",
     ).length;
     const trimestresRestants = nombreTrimestres - trimestresPayes;
 
@@ -402,7 +402,7 @@ const PaiementsSection = ({ paiements, installation }) => {
     };
 
     return (
-        <div className="overflow-hidden bg-white rounded-lg shadow-lg dark:bg-slate-800">
+        <div className="overflow-hidden bg-white rounded-lg shadow-md dark:bg-slate-800">
             <div className="py-4 text-base font-bold text-center text-gray-500 uppercase md:text-2xl dark:text-gray-300">
                 État récapitulatif des paiements
             </div>

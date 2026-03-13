@@ -46,8 +46,8 @@ const FormulaireInstallation = ({
         ville: "",
         statuts: "installée",
         photos_installation: [],
-        qte_eau: "",
-        qte_co2: "",
+        qte_eau: 0,
+        qte_co2: 0,
     });
 
     const generateNextInstallationCode = useCallback((installations) => {
@@ -99,7 +99,7 @@ const FormulaireInstallation = ({
             clearForm();
             onCloseFormulaire(message);
         },
-        [setOpen, onCloseFormulaire]
+        [setOpen, onCloseFormulaire],
     );
 
     const clearForm = useCallback(() => {
@@ -170,7 +170,7 @@ const FormulaireInstallation = ({
         async (lat, lng) => {
             if (!lat || !lng) {
                 console.warn(
-                    "Latitude and longitude are required for location lookup"
+                    "Latitude and longitude are required for location lookup",
                 );
                 return;
             }
@@ -181,9 +181,9 @@ const FormulaireInstallation = ({
                 setData((prevData) => ({
                     ...prevData,
                     ville:
-                        loc.region ||
-                        loc.village ||
                         loc.adresse ||
+                        loc.village ||
+                        loc.region ||
                         prevData.ville,
                     pays: loc.pays || prevData.pays,
                 }));
@@ -193,8 +193,10 @@ const FormulaireInstallation = ({
                 setLocationLoading(false);
             }
         },
-        [setData]
+        [setData],
     );
+
+    const localisation = [data.ville, data.pays].filter(Boolean).join(", ");
 
     const validateForm = (formData) => {
         const errors = {};
@@ -258,13 +260,13 @@ const FormulaireInstallation = ({
                 "La date d'installation ne peut pas être dans le futur";
         }
 
-        if (!formData.qte_co2 || formData.qte_co2 === 0) {
-            errors.qte_co2 = "La quantité de CO2 evité est requise";
-        }
+        // if (!formData.qte_co2 || formData.qte_co2 === 0) {
+        //     errors.qte_co2 = "La quantité de CO2 evité est requise";
+        // }
 
-        if (!formData.qte_eau || formData.qte_eau === 0) {
-            errors.qte_eau = "La quantité d'eau pompée est requise";
-        }
+        // if (!formData.qte_eau || formData.qte_eau === 0) {
+        //     errors.qte_eau = "La quantité d'eau pompée est requise";
+        // }
 
         return { isValid: Object.keys(errors).length === 0, errors };
     };
@@ -294,15 +296,15 @@ const FormulaireInstallation = ({
                 submitData.append("date_installation", data.date_installation);
                 submitData.append(
                     "puissance_pompe",
-                    parseFloat(data.puissance_pompe)
+                    parseFloat(data.puissance_pompe),
                 );
                 submitData.append(
                     "profondeur_forage",
-                    parseFloat(data.profondeur_forage)
+                    parseFloat(data.profondeur_forage),
                 );
                 submitData.append(
                     "debit_nominal",
-                    parseFloat(data.debit_nominal)
+                    parseFloat(data.debit_nominal),
                 );
                 submitData.append("numero_serie", data.numero_serie);
                 submitData.append("code_installation", data.code_installation);
@@ -315,7 +317,7 @@ const FormulaireInstallation = ({
                 submitData.append("statuts", data.statuts);
                 submitData.append(
                     "created_via",
-                    token_data ? "telegram_bot" : "web"
+                    token_data ? "telegram_bot" : "web",
                 );
 
                 data.photos_installation.forEach((file) => {
@@ -352,7 +354,7 @@ const FormulaireInstallation = ({
             } else {
                 ({ message } = await updateinstallations(
                     dataModify.id,
-                    submitData
+                    submitData,
                 ));
             }
             onClose(message);
@@ -387,7 +389,7 @@ const FormulaireInstallation = ({
             setData("client_id", item.id);
             clearFieldError("client_id");
         },
-        [setData, clearFieldError]
+        [setData, clearFieldError],
     );
 
     const handleInputChange = useCallback(
@@ -395,7 +397,7 @@ const FormulaireInstallation = ({
             setData(field, value);
             clearFieldError(field);
         },
-        [setData, clearFieldError]
+        [setData, clearFieldError],
     );
 
     const onLoadFile = (file) => {
@@ -522,7 +524,7 @@ const FormulaireInstallation = ({
                         onChange={(e) =>
                             handleInputChange(
                                 "profondeur_forage",
-                                e.target.value
+                                e.target.value,
                             )
                         }
                         required
@@ -599,56 +601,6 @@ const FormulaireInstallation = ({
                 </div>
 
                 <div>
-                    <InputLabel
-                        htmlFor="qte_eau"
-                        value="Quantité d'eau pompée (m³) *"
-                    />
-                    <TextInput
-                        id="qte_eau"
-                        name="qte_eau"
-                        value={data.qte_eau}
-                        className="block w-full mt-1"
-                        autoComplete="qte_eau"
-                        onChange={(e) =>
-                            handleInputChange("qte_eau", e.target.value)
-                        }
-                        required
-                        type="number"
-                        min="0"
-                        onFocus={() => clearFieldError("qte_eau")}
-                    />
-                    <InputError
-                        message={validationErrors.qte_eau || errors.qte_eau}
-                        className="mt-2"
-                    />
-                </div>
-
-                <div>
-                    <InputLabel
-                        htmlFor="qte_co2"
-                        value="Quantité de CO2 evité (Kg) *"
-                    />
-                    <TextInput
-                        id="qte_co2"
-                        name="qte_co2"
-                        value={data.qte_co2}
-                        className="block w-full mt-1"
-                        autoComplete="qte_co2"
-                        onChange={(e) =>
-                            handleInputChange("qte_co2", e.target.value)
-                        }
-                        required
-                        type="number"
-                        min="0"
-                        onFocus={() => clearFieldError("qte_co2")}
-                    />
-                    <InputError
-                        message={validationErrors.qte_co2 || errors.qte_co2}
-                        className="mt-2"
-                    />
-                </div>
-
-                <div>
                     <InputLabel htmlFor="latitude" value="Latitude *" />
                     <TextInput
                         id="latitude"
@@ -701,7 +653,7 @@ const FormulaireInstallation = ({
                     <TextInput
                         id="pays"
                         name="pays"
-                        value={data.pays + ", " + data.ville}
+                        value={localisation}
                         readOnly
                         className="block w-full mt-1 bg-gray-50"
                         autoComplete="pays"
@@ -717,7 +669,7 @@ const FormulaireInstallation = ({
                     />
                 </div>
 
-                <div className="md:col-span-2">
+                <div className="">
                     <InputLabel
                         htmlFor="photos_installation"
                         value="Photo de l'installation"
@@ -755,7 +707,7 @@ const FormulaireInstallation = ({
                         onChange={(e) =>
                             handleInputChange(
                                 "date_installation",
-                                e.target.value
+                                e.target.value,
                             )
                         }
                         required

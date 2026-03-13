@@ -19,6 +19,8 @@ import LoadingSpinner from "@/Components/clients/LoadingSpinner";
 import ClientHeader from "@/Components/clients/ClientHeader";
 import { RiTelegramFill } from "react-icons/ri";
 import { TbWorldCheck } from "react-icons/tb";
+import { formatDate } from "@/hooks/fomatDate";
+import PompageComponent from "@/Components/installations/PompageComponent";
 
 moment.locale("fr");
 
@@ -28,6 +30,7 @@ const ClientDetailPage = ({ client }) => {
     const [clients, setClients] = useState(null);
     const [loading, setLoading] = useState(true);
     const [isLoading, setIsLoading] = useState(true);
+    const [id, setId] = useState(0);
 
     const getDataDB = async (id) => {
         try {
@@ -37,6 +40,7 @@ const ClientDetailPage = ({ client }) => {
                 setInstallation(data.client?.installations || []);
                 setPaiement(data.client?.paiement || []);
                 setClients(data.client);
+                setId(data.client?.installations[0]?.id);
             }
         } catch (error) {
             console.error("Erreur lors de la récupération des données:", error);
@@ -76,7 +80,7 @@ const ClientDetailPage = ({ client }) => {
             ) : (
                 <div className="px-4 py-6 sm:px-6 lg:px-8">
                     <div className="space-y-6">
-                        <div className="overflow-hidden bg-white rounded-lg shadow-lg dark:bg-slate-800">
+                        <div className="overflow-hidden bg-white rounded-lg shadow-md dark:bg-slate-800">
                             <ClientHeader
                                 client={client}
                                 installation={installation}
@@ -148,7 +152,7 @@ const ClientDetailPage = ({ client }) => {
                                             </p>
                                             <p className="text-base font-medium text-gray-900 dark:text-white">
                                                 {moment(
-                                                    client.date_contrat
+                                                    client.date_contrat,
                                                 ).format("DD MMM YYYY")}
                                             </p>
                                         </div>
@@ -179,7 +183,7 @@ const ClientDetailPage = ({ client }) => {
                                                 ? RiTelegramFill
                                                 : TbWorldCheck
                                         }
-                                        label="Type d'activité agricole"
+                                        label="Créer via"
                                         value={
                                             client.created_via ===
                                             "telegram_bot"
@@ -203,12 +207,12 @@ const ClientDetailPage = ({ client }) => {
                                 </div>
                             </div>
                         </div>
-
                         <PaiementsSection
                             paiements={paiement}
                             client={client}
                             installation={installation}
                         />
+                        <PompageComponent id={id} />
                     </div>
                 </div>
             )}

@@ -65,7 +65,7 @@ const TechnicienFormulaire = ({
     };
 
     return (
-        <Modal show={open} closeable={false} onClose={onClose} maxWidth="4xl">
+        <Modal show={open} closeable={false} onClose={onClose} maxWidth="xl">
             <div className="text-2xl font-semibold text-center">
                 Nouveau Technicien
             </div>

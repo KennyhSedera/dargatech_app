@@ -1,4 +1,6 @@
+import PompageComponent from "@/Components/installations/PompageComponent";
 import ShowImage from "@/Components/ShowImage";
+import { formatDate } from "@/hooks/fomatDate";
 import AuthenticatedLayout from "@/Layouts/AuthenticatedLayout";
 import { Head } from "@inertiajs/react";
 import { useEffect, useState } from "react";
@@ -45,15 +47,6 @@ const InstallationDetailsPage = ({ installation }) => {
             setLoading(false);
         }
     }, [installation]);
-
-    const formatDate = (dateString) => {
-        if (!dateString) return "N/A";
-        return new Date(dateString).toLocaleDateString("fr-FR", {
-            year: "numeric",
-            month: "long",
-            day: "numeric",
-        });
-    };
 
     const getStatusBadgeClass = (status) => {
         switch (status?.toLowerCase()) {
@@ -151,7 +144,7 @@ const InstallationDetailsPage = ({ installation }) => {
                                                 <p className="mt-2 text-lg font-medium text-blue-400 dark:text-blue-200">
                                                     Installée le{" "}
                                                     {formatDate(
-                                                        installation.date_installation
+                                                        installation.date_installation,
                                                     )}
                                                 </p>
                                             </div>
@@ -161,7 +154,7 @@ const InstallationDetailsPage = ({ installation }) => {
                                         className={
                                             "flex items-center flex-shrink-0 transition-transform duration-200 transform rounded-lg px-2 " +
                                             `bg-${getStatusBadgeClass(
-                                                installation.statuts
+                                                installation.statuts,
                                             )}/10`
                                         }
                                     >
@@ -169,19 +162,19 @@ const InstallationDetailsPage = ({ installation }) => {
                                         "installée" ? (
                                             <FaCheckCircle
                                                 className={`w-5 h-5 text-${getStatusBadgeClass(
-                                                    installation.statuts
+                                                    installation.statuts,
                                                 )}`}
                                             />
                                         ) : (
                                             <IoCloseCircleSharp
                                                 className={`w-6 h-6 text-${getStatusBadgeClass(
-                                                    installation.statuts
+                                                    installation.statuts,
                                                 )}`}
                                             />
                                         )}
                                         <span
                                             className={`px-2 py-3 rounded-lg text-base font-bold text-${getStatusBadgeClass(
-                                                installation.statuts
+                                                installation.statuts,
                                             )} capitalize `}
                                         >
                                             {installation.statuts || "N/A"}
@@ -264,16 +257,6 @@ const InstallationDetailsPage = ({ installation }) => {
                                     icon={Icons.Bolt}
                                     label="Puissance crête installé "
                                     value={`${installation.puissance_pompe} W`}
-                                />
-                                <InfoCard
-                                    icon={Icons.Water}
-                                    label="Quantité d'eau pompée"
-                                    value={`${installation.qte_eau} m³`}
-                                />
-                                <InfoCard
-                                    icon={Icons.CO2}
-                                    label="Quantité de CO2 evitée"
-                                    value={`${installation.qte_co2} Kg`}
                                 />
                             </div>
                             <div className="mt-4">
@@ -369,13 +352,13 @@ const InstallationDetailsPage = ({ installation }) => {
                                     />
                                 </div>
 
-                                <InfoCard
+                                {/* <InfoCard
                                     icon={Icons.Calendar}
                                     label="Date de Contrat"
                                     value={formatDate(
-                                        installation.client?.date_contrat
+                                        installation.client?.date_contrat,
                                     )}
-                                />
+                                /> */}
                             </div>
                         </SectionCard>
 
@@ -407,7 +390,7 @@ const InstallationDetailsPage = ({ installation }) => {
                                             <div className="text-2xl font-bold text-green-600 dark:text-green-400">
                                                 {parseFloat(
                                                     installation.localisation
-                                                        ?.latitude
+                                                        ?.latitude,
                                                 ).toFixed(8)}
                                                 °
                                             </div>
@@ -419,7 +402,7 @@ const InstallationDetailsPage = ({ installation }) => {
                                             <div className="text-2xl font-bold text-blue-600 dark:text-blue-400">
                                                 {parseFloat(
                                                     installation.localisation
-                                                        ?.longitude
+                                                        ?.longitude,
                                                 ).toFixed(8)}
                                                 °
                                             </div>
@@ -450,7 +433,7 @@ const InstallationDetailsPage = ({ installation }) => {
                                             </span>
                                             <span className="text-gray-700 dark:text-gray-300">
                                                 {formatDate(
-                                                    installation.date_installation
+                                                    installation.date_installation,
                                                 )}
                                             </span>
                                         </div>
@@ -461,7 +444,7 @@ const InstallationDetailsPage = ({ installation }) => {
                                             </span>
                                             <span className="text-gray-700 dark:text-gray-300">
                                                 {formatDate(
-                                                    installation.created_at
+                                                    installation.created_at,
                                                 )}
                                             </span>
                                         </div>
@@ -472,7 +455,7 @@ const InstallationDetailsPage = ({ installation }) => {
                                             </span>
                                             <span className="text-gray-700 dark:text-gray-300">
                                                 {formatDate(
-                                                    installation.updated_at
+                                                    installation.updated_at,
                                                 )}
                                             </span>
                                         </div>
@@ -491,7 +474,7 @@ const InstallationDetailsPage = ({ installation }) => {
                                                 <div
                                                     onClick={() =>
                                                         setSelectedImage(
-                                                            photoUrl
+                                                            photoUrl,
                                                         )
                                                     }
                                                     key={index}
@@ -536,6 +519,9 @@ const InstallationDetailsPage = ({ installation }) => {
                                 listImages={photo.length > 1 && photo}
                             />
                         )}
+                    </div>
+                    <div className="mt-4">
+                        <PompageComponent id={installation.id} />
                     </div>
                 </div>
             </div>

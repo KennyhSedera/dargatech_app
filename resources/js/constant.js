@@ -5,12 +5,14 @@ import { FaMoneyCheckDollar, FaPersonDigging } from "react-icons/fa6";
 import { ImCogs } from "react-icons/im";
 import { FaUserCircle } from "react-icons/fa";
 import { LuHandshake } from "react-icons/lu";
+import { MdWaterDrop } from "react-icons/md";
 
 const sidebarPages = [
     { route: "dashboard", label: "Tableau de bord", icon: HiHome },
     { route: "clients", label: "Maraîchers", icon: HiMiniUsers },
     { route: "technicien", label: "Techniciens", icon: FaPersonDigging },
     { route: "installations", label: "Installations", icon: IoBuild },
+    { route: "pompage", label: "Pompages", icon: MdWaterDrop },
     { route: "interventions", label: "Maintenances", icon: ImCogs },
     { route: "paiements", label: "Paiements", icon: FaMoneyCheckDollar },
     { route: "users", label: "Utilisateurs", icon: FaUserCircle },
@@ -21,6 +23,7 @@ export const sidebarPagestech = [
     { route: "dashboard", label: "Tableau de bord", icon: HiHome },
     { route: "clients", label: "Maraîchers", icon: HiMiniUsers },
     { route: "installations", label: "Installations", icon: IoBuild },
+    { route: "pompage", label: "Pompages", icon: MdWaterDrop },
     { route: "interventions", label: "Maintenances", icon: ImCogs },
     { route: "paiements", label: "Paiements", icon: FaMoneyCheckDollar },
 ];
@@ -29,6 +32,7 @@ export const sidebarPagespart = [
     { route: "dashboard", label: "Tableau de bord", icon: HiHome },
     { route: "clients", label: "Maraîchers", icon: HiMiniUsers },
     { route: "installations", label: "Installations", icon: IoBuild },
+    { route: "pompage", label: "Pompages", icon: MdWaterDrop },
     { route: "interventions", label: "Maintenances", icon: ImCogs },
 ];
 export default sidebarPages;
