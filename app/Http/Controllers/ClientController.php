@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 use App\Http\Requests\ClientRequest;
 use App\Models\Client;
 use Carbon\Carbon;
+use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Log;
 
@@ -164,5 +165,21 @@ class ClientController extends Controller
         ]);
 
         return response()->json(['client' => $client, 'success' => true, 'message' => 'Client mis à jour avec succès !']);
+    }
+
+    public function destroyMany(Request $request)
+    {
+        $request->validate([
+            'ids' => 'required|array',
+            'ids.*' => 'exists:clients,id'
+        ]);
+
+        $ids = $request->input('ids');
+
+        Client::whereIn('id', $ids)->delete();
+
+        return response()->json([
+            'message' => 'Clients supprimées avec succès.'
+        ]);
     }
 }

@@ -192,4 +192,20 @@ class InstallationController extends Controller
             'success' => true,
         ], 201);
     }
+
+    public function destroyMany(Request $request)
+    {
+        $request->validate([
+            'ids' => 'required|array',
+            'ids.*' => 'exists:installations,id'
+        ]);
+
+        $ids = $request->input('ids');
+
+        Installation::whereIn('id', $ids)->delete();
+
+        return response()->json([
+            'message' => 'Installations supprimées avec succès.'
+        ]);
+    }
 }

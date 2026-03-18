@@ -9,6 +9,7 @@ import { formatdate, parsedate } from "@/constant";
 import AuthenticatedLayout from "@/Layouts/AuthenticatedLayout";
 import {
     deletemaintenances,
+    deletemanymaintenances,
     getmaintenances,
 } from "@/Services/maintenanceService";
 import { Head, router, usePage } from "@inertiajs/react";
@@ -41,6 +42,7 @@ const InterventionPage = () => {
     });
     const user = usePage().props.auth.user;
     const [itemsPerPage, setItemsPerPage] = useState(10);
+    const [selectedIds, setSelectedIds] = useState([]);
 
     const headers = [
         { key: "id", label: "ID", sortable: true },
@@ -74,8 +76,8 @@ const InterventionPage = () => {
                         value === "terminée"
                             ? "bg-green-500/50"
                             : value === "en attente"
-                            ? "bg-blue-500/50"
-                            : "bg-red-500/50"
+                              ? "bg-blue-500/50"
+                              : "bg-red-500/50"
                     }`}
                 >
                     {value}
@@ -94,8 +96,8 @@ const InterventionPage = () => {
                                   data: { intervention_id: row.id },
                               })
                             : user.user_role?.name === "partenaire"
-                            ? null
-                            : handleNewRapport(row)
+                              ? null
+                              : handleNewRapport(row)
                     }
                     className={`px-2 py-1 rounded-full flex text-nowrap ${
                         user.user_role?.name === "partenaire" &&
@@ -106,15 +108,15 @@ const InterventionPage = () => {
                         value === "terminée"
                             ? "text-green-500"
                             : user.user_role?.name === "partenaire"
-                            ? "text-gray-300"
-                            : "text-blue-500"
+                              ? "text-gray-300"
+                              : "text-blue-500"
                     }`}
                 >
                     {value === "terminée"
                         ? "Consulter"
                         : user.user_role?.name === "partenaire"
-                        ? "En attente"
-                        : "Ajouter"}
+                          ? "En attente"
+                          : "Ajouter"}
                 </span>
             ),
         },
@@ -216,7 +218,7 @@ const InterventionPage = () => {
                     .includes(value.toLowerCase()) ||
                 el?.code_installation
                     ?.toLowerCase()
-                    .includes(value.toLowerCase())
+                    .includes(value.toLowerCase()),
         );
 
         setFilteredData(filteredData);
@@ -235,19 +237,30 @@ const InterventionPage = () => {
     };
 
     const handleDelete = (item) => {
-        setSuppression({
-            open: true,
-            message: `Êtes-vous sûr de vouloir supprimer l'intervention du ${item.nom} le ${item.date_intervention} ?`,
-            id: item.id,
-        });
+        if (selectedIds.length > 0) {
+            setSuppression({
+                open: true,
+                message: `Êtes-vous sûr de vouloir supprimer ces ${selectedIds.length} interventions  ?`,
+            });
+        } else {
+            setSuppression({
+                open: true,
+                message: `Êtes-vous sûr de vouloir supprimer l'intervention du ${item.nom} le ${item.date_intervention} ?`,
+                id: item.id,
+            });
+        }
     };
 
     const confirmDelete = async () => {
-        const { message } = await deletemaintenances(suppression.id);
+        const { message } =
+            selectedIds.length > 0
+                ? await deletemanymaintenances(selectedIds)
+                : await deletemaintenances(suppression.id);
         setAlert({ ...alert, message, open: true });
         setSuppression({ ...suppression, open: false, id: 0 });
         fetchDataDB();
         setCurrentPage(1);
+        setSelectedIds([]);
     };
 
     const editItem = (item) => {
@@ -317,6 +330,9 @@ const InterventionPage = () => {
                             onPageChange={setCurrentPage}
                             masqueColumns={["client_id"]}
                             onItemsPerPageChange={(n) => setItemsPerPage(n)}
+                            selectedIds={selectedIds}
+                            setSelectedIds={setSelectedIds}
+                            selectable
                         />
                     ) : (
                         <EmptyState nom="intervention" search={search} />

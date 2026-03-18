@@ -5,7 +5,10 @@ export const getinstallations = async () => {
         const response = await api.get("/installation");
         return response.data;
     } catch (error) {
-        console.error("Erreur lors de la récupération des installations", error);
+        console.error(
+            "Erreur lors de la récupération des installations",
+            error,
+        );
         throw error;
     }
 };
@@ -15,7 +18,10 @@ export const getinstallationsenpanne = async () => {
         const response = await api.get("/installation/en/panne");
         return response.data;
     } catch (error) {
-        console.error("Erreur lors de la récupération des installations", error);
+        console.error(
+            "Erreur lors de la récupération des installations",
+            error,
+        );
         throw error;
     }
 };
@@ -53,6 +59,18 @@ export const updateinstallations = async (id, data) => {
 export const deleteinstallations = async (id) => {
     try {
         const response = await api.delete(`/installation/${id}`);
+        return response.data;
+    } catch (error) {
+        console.error("Erreur lors de la suppression du installation", error);
+        throw error;
+    }
+};
+
+export const deleteManyInstallations = async (ids) => {
+    try {
+        const response = await api.delete(`/installation/delete/destroy-many`, {
+            data: { ids },
+        });
         return response.data;
     } catch (error) {
         console.error("Erreur lors de la suppression du installation", error);

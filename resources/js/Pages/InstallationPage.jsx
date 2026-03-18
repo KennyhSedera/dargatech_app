@@ -7,6 +7,7 @@ import { formatdate, parsedate } from "@/constant";
 import AuthenticatedLayout from "@/Layouts/AuthenticatedLayout";
 import {
     deleteinstallations,
+    deleteManyInstallations,
     getinstallations,
 } from "@/Services/installationService";
 import { Head, router } from "@inertiajs/react";
@@ -36,6 +37,7 @@ const InstallationPage = () => {
         type: "success",
     });
     const [itemsPerPage, setItemsPerPage] = useState(10);
+    const [selectedIds, setSelectedIds] = useState([]);
 
     const headers = [
         { key: "code_installation", label: "Code", sortable: true },
@@ -67,8 +69,8 @@ const InstallationPage = () => {
                         value === "installée"
                             ? "bg-green-500/50"
                             : value === "en cours"
-                            ? "bg-blue-500/50"
-                            : "bg-red-500/50"
+                              ? "bg-blue-500/50"
+                              : "bg-red-500/50"
                     }`}
                 >
                     {value}
@@ -163,7 +165,7 @@ const InstallationPage = () => {
                 el?.date_installation
                     ?.toString()
                     .toLowerCase()
-                    .includes(value.toLowerCase())
+                    .includes(value.toLowerCase()),
         );
 
         setFilteredData(filteredData);
@@ -176,19 +178,27 @@ const InstallationPage = () => {
     };
 
     const handleDelete = (item) => {
+        const message =
+            selectedIds.length > 0
+                ? `Êtes-vous sûr de vouloir supprimer ces ${selectedIds.length} installations ?`
+                : `Êtes-vous sûr de vouloir supprimer l'installation numéro ${item.code_installation} du ${item.nom} le ${item.date_installation} ?`;
         setSuppression({
             open: true,
-            message: `Êtes-vous sûr de vouloir supprimer l'installation numéro ${item.code_installation} du ${item.nom} le ${item.date_installation} ?`,
+            message,
             id: item.id,
         });
     };
 
     const confirmDelete = async () => {
-        const { message } = await deleteinstallations(suppression.id);
+        const { message } =
+            selectedIds.length > 0
+                ? await deleteManyInstallations(selectedIds)
+                : await deleteinstallations(suppression.id);
         setAlert({ ...alert, message, open: true });
         setSuppression({ ...suppression, open: false, id: 0 });
         fetchInstallation();
         setCurrentPage(1);
+        setSelectedIds([]);
     };
 
     const editItem = (item) => {
@@ -260,6 +270,9 @@ const InstallationPage = () => {
                                 "longitude",
                             ]}
                             onItemsPerPageChange={(n) => setItemsPerPage(n)}
+                            selectedIds={selectedIds}
+                            setSelectedIds={setSelectedIds}
+                            selectable
                         />
                     ) : (
                         <EmptyState nom="installation" search={search} />

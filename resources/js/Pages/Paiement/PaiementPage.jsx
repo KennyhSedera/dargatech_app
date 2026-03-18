@@ -4,7 +4,11 @@ import PaiementFormulaire from "@/Components/Paiement/PaiementFormulaire";
 import Snackbar from "@/Components/Snackbar";
 import { formatdate, parsedate } from "@/constant";
 import AuthenticatedLayout from "@/Layouts/AuthenticatedLayout";
-import { deletePaiement, getPaiements } from "@/Services/PaiementService";
+import {
+    deleteManyPaiement,
+    deletePaiement,
+    getPaiements,
+} from "@/Services/PaiementService";
 import { Head, router } from "@inertiajs/react";
 import React, { useEffect, useState } from "react";
 import { GoTrash } from "react-icons/go";
@@ -35,6 +39,7 @@ const PaiementPage = () => {
     const [isType, setIsType] = useState(false);
     const [id, setId] = useState(false);
     const [itemsPerPage, setItemsPerPage] = useState(10);
+    const [selectedIds, setSelectedIds] = useState([]);
 
     const headers = [
         { key: "id", label: "ID", sortable: true },
@@ -54,8 +59,8 @@ const PaiementPage = () => {
                         value === "En attente"
                             ? "bg-yellow-500/50"
                             : value === "Payé"
-                            ? "bg-green-500/50"
-                            : "bg-red-500/50"
+                              ? "bg-green-500/50"
+                              : "bg-red-500/50"
                     }`}
                 >
                     {value}
@@ -141,7 +146,7 @@ const PaiementPage = () => {
                 el?.date_paiement
                     ?.toString()
                     .toLowerCase()
-                    .includes(value.toLowerCase())
+                    .includes(value.toLowerCase()),
         );
 
         setFilteredData(filtered);
@@ -154,19 +159,27 @@ const PaiementPage = () => {
     };
 
     const handleDelete = (item) => {
+        const message =
+            selectedIds.length > 0
+                ? `Êtes-vous sûr de vouloir supprimer ces ${selectedIds.length} paiments (reçus) ?`
+                : `Êtes-vous sûr de vouloir supprimer la paiement du ${item.nom} le ${item.date_paiement} ?`;
         setSuppression({
             open: true,
-            message: `Êtes-vous sûr de vouloir supprimer la paiement du ${item.nom} le ${item.date_paiement} ?`,
+            message,
             id: item.id,
         });
     };
 
     const confirmDelete = async () => {
-        const { message } = await deletePaiement(suppression.id);
+        const { message } =
+            selectedIds.length > 0
+                ? await deleteManyPaiement(selectedIds)
+                : await deletePaiement(suppression.id);
         setAlert({ ...alert, message, open: true });
         setSuppression({ ...suppression, open: false, id: 0 });
         getPaiementDB();
         setCurrentPage(1);
+        setSelectedIds([]);
     };
 
     const editItem = (item) => {
@@ -257,6 +270,9 @@ const PaiementPage = () => {
                                     onItemsPerPageChange={(n) =>
                                         setItemsPerPage(n)
                                     }
+                                    selectedIds={selectedIds}
+                                    setSelectedIds={setSelectedIds}
+                                    selectable
                                 />
                             ) : (
                                 <EmptyState nom="paiement" search={search} />

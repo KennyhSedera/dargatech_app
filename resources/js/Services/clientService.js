@@ -59,3 +59,15 @@ export const deleteClients = async (id) => {
         throw error;
     }
 };
+
+export const deleteManyClients = async (ids) => {
+    try {
+        const response = await api.delete(`/clients/delete/destroy-many`, {
+            data: { ids },
+        });
+        return response.data;
+    } catch (error) {
+        console.error("Erreur lors de la suppression du client", error);
+        throw error;
+    }
+};

@@ -31,6 +31,7 @@ Route::group(['prefix' => 'api'], function () {
         Route::put('/{id}', [ClientController::class, 'update'])->name('update');
         Route::delete('/{id}', [ClientController::class, 'destroy'])->name('destroy');
         Route::put('/{id}/is-paid', [ClientController::class, 'updateIsPaid'])->name('update-is-paid');
+        Route::delete('/delete/destroy-many', [ClientController::class, 'destroyMany'])->name('destroy-many');
     });
 
     Route::group(['prefix' => 'maintenance', 'as' => 'maintenance.',], function () {
@@ -40,6 +41,7 @@ Route::group(['prefix' => 'api'], function () {
         Route::put('/{id}', [MaintenanceController::class, 'update'])->name('update');
         Route::delete('/{id}', [MaintenanceController::class, 'destroy'])->name('destroy');
         Route::get('/installation/{id}', [MaintenanceController::class, 'findMaintenanceByInstallation'])->name('findMaintenanceByInstallation');
+        Route::delete('/delete/destroy-many', [MaintenanceController::class, 'destroyMany'])->name('destroy-many');
     });
 
     Route::group(['prefix' => 'rapport-maintenances', 'as' => 'rapport-maintenances.',], function () {
@@ -61,6 +63,7 @@ Route::group(['prefix' => 'api'], function () {
         Route::post('/', [InstallationController::class, 'store'])->name('store');
         Route::put('/{id}', [InstallationController::class, 'update'])->name('update');
         Route::delete('/{id}', [InstallationController::class, 'destroy'])->name('destroy');
+        Route::delete('/delete/destroy-many', [InstallationController::class, 'destroyMany'])->name('destroy-many');
     });
 
     Route::group(['prefix' => 'localisation', 'as' => 'localisation.',], function () {
@@ -88,6 +91,7 @@ Route::group(['prefix' => 'api'], function () {
         Route::delete('/{id}', [PaiementController::class, 'destroy'])->name('destroy');
         Route::get('/client/{id}', [ClientController::class, 'updateIsPaid'])->name('client-is-paid');
         Route::get('/echeance/client/{id}', [PaiementPdfController::class, 'echeanceclient'])->name('echeanceclient');
+        Route::delete('/delete/destroy-many', [PaiementController::class, 'destroyMany'])->name('destroy-many');
     });
 
     Route::group(['prefix' => 'rapport', 'as' => 'rapport.',], function () {

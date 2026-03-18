@@ -5,6 +5,7 @@ use App\Http\Requests\MaintenanceRequest;
 use App\Models\Installation;
 use App\Models\Maintenance;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Http\Request;
 use Inertia\Inertia;
 
 class MaintenanceController extends Controller
@@ -121,6 +122,22 @@ class MaintenanceController extends Controller
 
         return Inertia::render('InterventionDetailPage', [
             'data' => $data
+        ]);
+    }
+
+    public function destroyMany(Request $request)
+    {
+        $request->validate([
+            'ids' => 'required|array',
+            'ids.*' => 'exists:maintenances,id'
+        ]);
+
+        $ids = $request->input('ids');
+
+        Maintenance::whereIn('id', $ids)->delete();
+
+        return response()->json([
+            'message' => 'Interventions ou maintenances supprimées avec succès.'
         ]);
     }
 }

@@ -17,7 +17,7 @@ export const getLastPaiements = async () => {
     } catch (error) {
         console.error(
             "Erreur lors de la récupération du dernier paiement",
-            error
+            error,
         );
         throw error;
     }
@@ -56,6 +56,18 @@ export const updatePaiement = async (id, data) => {
 export const deletePaiement = async (id) => {
     try {
         const response = await api.delete(`/paiement/${id}`);
+        return response.data;
+    } catch (error) {
+        console.error("Erreur lors de la suppression du paiement", error);
+        throw error;
+    }
+};
+
+export const deleteManyPaiement = async (ids) => {
+    try {
+        const response = await api.delete(`/paiement/delete/destroy-many`, {
+            data: { ids },
+        });
         return response.data;
     } catch (error) {
         console.error("Erreur lors de la suppression du paiement", error);

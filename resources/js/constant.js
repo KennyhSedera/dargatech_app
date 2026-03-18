@@ -10,12 +10,12 @@ import { MdWaterDrop } from "react-icons/md";
 const sidebarPages = [
     { route: "dashboard", label: "Tableau de bord", icon: HiHome },
     { route: "clients", label: "Maraîchers", icon: HiMiniUsers },
-    { route: "technicien", label: "Techniciens", icon: FaPersonDigging },
     { route: "installations", label: "Installations", icon: IoBuild },
     { route: "pompage", label: "Pompages", icon: MdWaterDrop },
     { route: "interventions", label: "Maintenances", icon: ImCogs },
     { route: "paiements", label: "Paiements", icon: FaMoneyCheckDollar },
     { route: "users", label: "Utilisateurs", icon: FaUserCircle },
+    { route: "technicien", label: "Techniciens", icon: FaPersonDigging },
     { route: "partenaires", label: "Partenaires", icon: LuHandshake },
 ];
 

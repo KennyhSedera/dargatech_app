@@ -60,6 +60,18 @@ export const deletemaintenances = async (id) => {
     }
 };
 
+export const deletemanymaintenances = async (ids) => {
+    try {
+        const response = await api.delete("/maintenance/delete/destroy-many", {
+            data: { ids },
+        });
+        return response.data;
+    } catch (error) {
+        console.error("Erreur lors de la suppression du maintenance", error);
+        throw error;
+    }
+};
+
 export const createRapportMaintenance = async (data) => {
     try {
         const response = await api.post("/rapport-maintenances", data);
@@ -67,7 +79,7 @@ export const createRapportMaintenance = async (data) => {
     } catch (error) {
         console.error(
             "Erreur lors de la création du rapport de maintenance",
-            error
+            error,
         );
         throw error;
     }

@@ -5,7 +5,11 @@ import EmptyState from "@/Components/EmptyState";
 import HeaderPage from "@/Components/HeaderPage";
 import Snackbar from "@/Components/Snackbar";
 import AuthenticatedLayout from "@/Layouts/AuthenticatedLayout";
-import { deleteClients, getClients } from "@/Services/clientService";
+import {
+    deleteClients,
+    deleteManyClients,
+    getClients,
+} from "@/Services/clientService";
 import { Head, router } from "@inertiajs/react";
 import React, { useEffect, useState } from "react";
 import { FaEye } from "react-icons/fa";
@@ -32,6 +36,7 @@ const ClientPage = () => {
         type: "success",
     });
     const [itemsPerPage, setItemsPerPage] = useState(10);
+    const [selectedIds, setSelectedIds] = useState([]);
 
     const fetchClients = async () => {
         setIsLoading(true);
@@ -40,7 +45,6 @@ const ClientPage = () => {
             id: el.id,
             nom: el.nom,
             prenom: el.prenom,
-            // CIN: el.CIN,
             email: el.email,
             telephone: el.telephone,
             localisation: el.localisation,
@@ -98,7 +102,6 @@ const ClientPage = () => {
         },
         { key: "nom", label: "Nom", sortable: true },
         { key: "prenom", label: "Prénom", sortable: true },
-        // { key: "CIN", label: "CIN" },
         { key: "email", label: "Email", sortable: true },
         { key: "telephone", label: "Téléphone" },
         { key: "localisation", label: "Localisation", sortable: true },
@@ -165,19 +168,27 @@ const ClientPage = () => {
     };
 
     const handleDelete = (item) => {
+        const message =
+            selectedIds.length > 0
+                ? `Êtes-vous sûr de vouloir supprimer ces ${selectedIds.length} clients ?`
+                : `Êtes-vous sûr de vouloir supprimer ${item.nom} ${item.prenom}?`;
         setSuppression({
             open: true,
-            message: `Êtes-vous sûr de vouloir supprimer ${item.nom} ${item.prenom}?`,
+            message,
             id: item.id,
         });
     };
 
     const confirmDelete = async () => {
-        const { message } = await deleteClients(suppression.id);
+        const { message } =
+            selectedIds.length > 0
+                ? await deleteManyClients(selectedIds)
+                : await deleteClients(suppression.id);
         setAlert({ ...alert, message, open: true });
         setSuppression({ ...suppression, open: false, id: 0 });
         fetchClients();
         setCurrentPage(1);
+        setSelectedIds([]);
     };
 
     const ShowDetail = async (id) => {
@@ -232,6 +243,9 @@ const ClientPage = () => {
                             currentPage={currentPage}
                             onPageChange={setCurrentPage}
                             onItemsPerPageChange={(n) => setItemsPerPage(n)}
+                            selectedIds={selectedIds}
+                            setSelectedIds={setSelectedIds}
+                            selectable
                         />
                     ) : (
                         <EmptyState nom="maraîcher" search={search} />

@@ -7,7 +7,6 @@ use App\Models\Products;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
 use Inertia\Inertia;
-use Log;
 
 class PaiementController extends Controller
 {
@@ -329,5 +328,21 @@ class PaiementController extends Controller
                 'success' => false
             ], 500);
         }
+    }
+
+    public function destroyMany(Request $request)
+    {
+        $request->validate([
+            'ids' => 'required|array',
+            'ids.*' => 'exists:paiements,id'
+        ]);
+
+        $ids = $request->input('ids');
+
+        Paiement::whereIn('id', $ids)->delete();
+
+        return response()->json([
+            'message' => 'Reçus supprimées avec succès.'
+        ]);
     }
 }

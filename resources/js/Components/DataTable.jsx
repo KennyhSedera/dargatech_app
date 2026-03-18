@@ -1,6 +1,8 @@
 import { usePage } from "@inertiajs/react";
 import React, { useState, useMemo, useEffect } from "react";
-import { FaEye } from "react-icons/fa6";
+import { FaSquareCheck } from "react-icons/fa6";
+import { MdCheckBoxOutlineBlank } from "react-icons/md";
+import { TbSquareMinusFilled } from "react-icons/tb";
 
 export default function DataTable({
     headers,
@@ -12,6 +14,9 @@ export default function DataTable({
     onItemsPerPageChange = () => {},
     masqueColumns = [],
     itemsPerPageOptions = [5, 8, 10, 25, 50, 100],
+    selectedIds = [],
+    setSelectedIds,
+    selectable = false,
 }) {
     const [sortConfig, setSortConfig] = useState({
         key: null,
@@ -184,12 +189,50 @@ export default function DataTable({
         }
     };
 
+    const handleCheckItem = (id) => {
+        const existing = selectedIds.includes(id);
+        if (existing) {
+            setSelectedIds(selectedIds.filter((e) => e != id));
+        } else {
+            setSelectedIds([...selectedIds, id]);
+        }
+    };
+
+    const handleSelectAll = () => {
+        if (selectedIds.length === 0) {
+            const ids = currentRows.map((e) => e.id);
+            setSelectedIds(ids);
+        } else {
+            setSelectedIds([]);
+        }
+    };
+
     return (
         <div>
             <div className={`overflow-auto rounded-lg shadow-sm ${className}`}>
                 <table className="w-full min-w-full bg-white table-auto dark:bg-gray-800">
                     <thead className="bg-gray-50 dark:bg-gray-700">
                         <tr>
+                            {selectable && (
+                                <th>
+                                    <div
+                                        onClick={handleSelectAll}
+                                        className="cursor-pointer "
+                                    >
+                                        {selectedIds.length === 0 ? (
+                                            <MdCheckBoxOutlineBlank
+                                                className="ml-1 text-gray-400"
+                                                size={18}
+                                            />
+                                        ) : (
+                                            <TbSquareMinusFilled
+                                                className="ml-1 text-blue-500 dark:text-white"
+                                                size={18}
+                                            />
+                                        )}
+                                    </div>
+                                </th>
+                            )}
                             {headers.map(
                                 (header, index) =>
                                     !masqueColumns.includes(header.key) && (
@@ -227,8 +270,27 @@ export default function DataTable({
                         {currentRows.map((row, rowIndex) => (
                             <tr
                                 key={rowIndex}
-                                className="transition-colors hover:bg-gray-50 dark:hover:bg-gray-700"
+                                className={`${selectedIds.includes(row.id) && "bg-blue-100 dark:bg-blue-700"} transition-colors hover:bg-gray-50 dark:hover:bg-gray-700`}
                             >
+                                {selectable && (
+                                    <td className="text-center">
+                                        <div
+                                            onClick={() =>
+                                                handleCheckItem(row.id)
+                                            }
+                                            className="cursor-pointer "
+                                        >
+                                            {selectedIds?.includes(row.id) ? (
+                                                <FaSquareCheck className="ml-1.5 text-blue-500 dark:text-white rounded-sm" />
+                                            ) : (
+                                                <MdCheckBoxOutlineBlank
+                                                    className="ml-1 text-gray-400"
+                                                    size={18}
+                                                />
+                                            )}
+                                        </div>
+                                    </td>
+                                )}
                                 {headers.map(
                                     (header, cellIndex) =>
                                         !masqueColumns.includes(header.key) && (
@@ -307,6 +369,14 @@ export default function DataTable({
                     {sortedRows.length})
                 </div>
 
+                {selectedIds.length > 0 && (
+                    <div className="text-sm font-bold text-blue-500">
+                        {`${selectedIds.length} lignes séléctionées`}{" "}
+                        {/* <span className="text-red-500 cursor-pointer">
+                            (Supprimer)
+                        </span> */}
+                    </div>
+                )}
                 <div className="flex items-center space-x-4">
                     <div className="flex items-center space-x-2">
                         <label

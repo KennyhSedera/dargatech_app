@@ -273,7 +273,7 @@ export default function Dashboard() {
                                             <div>
                                                 <div>
                                                     {" "}
-                                                    {item.data}{" "}
+                                                    {item.data.toFixed(2)}{" "}
                                                     {item.title === "Eau pompée"
                                                         ? "m³"
                                                         : "Kg"}

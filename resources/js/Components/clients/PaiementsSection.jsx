@@ -43,7 +43,7 @@ const PaiementInstallation = ({
                     {paiement.date_paiement && (
                         <p className="text-sm text-gray-500 dark:text-gray-400">
                             {moment(
-                                installation[0].date_installation ||
+                                installation[0]?.date_installation ||
                                     paiement.date_paiement,
                             ).format("DD MMM YYYY")}
                         </p>
@@ -255,7 +255,7 @@ const PaiementsSection = ({ paiements, installation }) => {
         p.echeance?.match(/^T\d+$/i),
     );
     const dateInstallation =
-        installation[0].date_installation ||
+        installation[0]?.date_installation ||
         paiementInstallation?.date_paiement ||
         paiementsTrimestrielsExistants[0]?.date_paiement ||
         new Date();
