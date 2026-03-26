@@ -248,7 +248,7 @@ const FormulaireClient = ({
                         className="mt-2"
                     />
                 </div>
-                <div>
+                <div className="md:col-span-2">
                     <InputLabel
                         htmlFor="type_activite_agricole"
                         value="Type activité agricole"

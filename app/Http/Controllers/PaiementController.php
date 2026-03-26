@@ -5,6 +5,8 @@ use App\Models\Client;
 use App\Models\Paiement;
 use App\Models\Products;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Validator;
 use Inertia\Inertia;
 
@@ -316,7 +318,6 @@ class PaiementController extends Controller
                 $data['total_ttc'] += $totalTtc;
             }
 
-            // Envoi vers la page Inertia
             return Inertia::render('Paiement/PaiementDetail', [
                 'data' => $data,
             ]);
@@ -344,5 +345,106 @@ class PaiementController extends Controller
         return response()->json([
             'message' => 'Reçus supprimées avec succès.'
         ]);
+    }
+
+    public function editManyForm(Request $request)
+    {
+        $ids = $request->input('ids', []);
+
+        $data = Paiement::with('client', 'produits')->whereIn('id', $ids)->get();
+
+        return Inertia::render('Form/FormPaiementMany', [
+            'datas' => $data,
+        ]);
+    }
+
+    public function updateMany(Request $request)
+    {
+        $validated = $request->validate([
+            'paiements' => 'required|array|min:1',
+            'paiements.*.id' => 'required|exists:paiements,id',
+            'paiements.*.client_id' => 'required|exists:clients,id',
+            'paiements.*.date_paiement' => 'required|string|max:255',
+            'paiements.*.montant' => 'required|numeric|min:0',
+            'paiements.*.produits' => 'nullable|array',
+            'paiements.*.produits.*.prix_unitaire' => 'nullable|numeric',
+            'paiements.*.produits.*.quantite' => 'nullable|numeric',
+            'paiements.*.produits.*.tva' => 'nullable|numeric',
+            'paiements.*.produits.*.designation' => 'nullable|string',
+            'paiements.*.produits.*.reference' => 'nullable|string',
+            'paiements.*.produits.*.id' => 'nullable|numeric',
+            'paiements.*.numero' => 'nullable|string',
+            'paiements.*.lieu_creation' => 'nullable|string',
+            'paiements.*.date_creation' => 'nullable|string',
+            'paiements.*.nom_vendeurs' => 'nullable|string',
+            'paiements.*.ville_vendeur' => 'nullable|string',
+            'paiements.*.pays_vendeur' => 'nullable|string',
+            'paiements.*.observation' => 'nullable|string',
+            'paiements.*.mode_paiement' => 'nullable|string',
+            'paiements.*.nom_vendeur' => 'nullable|string',
+        ]);
+
+        try {
+            DB::beginTransaction();
+
+            foreach ($validated['paiements'] as $paiementData) {
+                $paiement = Paiement::with('produits')->find($paiementData['id']);
+
+                if (!$paiement)
+                    continue;
+
+                $paiement->update([
+                    'client_id' => $paiementData['client_id'],
+                    'date_paiement' => $paiementData['date_paiement'],
+                    'montant' => $paiementData['montant'],
+                    'numero' => $paiementData['numero'],
+                    'lieu_creation' => $paiementData['lieu_creation'],
+                    'date_creation' => $paiementData['date_creation'],
+                    'nom_vendeurs' => $paiementData['nom_vendeurs'],
+                    'ville_vendeur' => $paiementData['ville_vendeur'],
+                    'pays_vendeur' => $paiementData['pays_vendeur'],
+                    'observation' => $paiementData['observation'],
+                    'mode_paiement' => $paiementData['mode_paiement'],
+                    'nom_vendeur' => $paiementData['nom_vendeur'],
+                ]);
+
+                foreach ($paiementData['produits'] as $produit) {
+                    $totalHt = $produit['prix_unitaire'] * $produit['quantite'];
+                    $tva = $produit['tva'] ?? 0;
+                    $montantTva = $totalHt * ($tva / 100);
+                    $totalTtc = $totalHt + $montantTva;
+
+                    $produits = Products::find($produit['id']);
+
+                    $produits->update([
+                        'designation' => $produit['designation'],
+                        'reference' => $produit['reference'] ?? 'N/A',
+                        'quantite' => $produit['quantite'],
+                        'prix_unitaire' => $produit['prix_unitaire'],
+                        'total_ht' => $totalHt,
+                        'tva' => $tva,
+                        'montant_tva' => $montantTva,
+                        'total_ttc' => $totalTtc,
+                    ]);
+                }
+            }
+
+            DB::commit();
+
+            return response()->json([
+                'message' => 'Reçus modifiées avec succès.',
+                'success' => true,
+            ]);
+
+        } catch (\Throwable $e) {
+            DB::rollBack();
+            Log::error('Erreur mise à jour multiple paiements: ' . $e->getMessage());
+
+            return response()->json([
+                'message' => 'Erreur lors de la mise à jour des paiements',
+                'error' => $e->getMessage(),
+                'success' => false,
+            ], 500);
+        }
     }
 }

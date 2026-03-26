@@ -11,6 +11,8 @@ import {
     getClients,
 } from "@/Services/clientService";
 import { Head, router } from "@inertiajs/react";
+import { data } from "autoprefixer";
+import axios from "axios";
 import React, { useEffect, useState } from "react";
 import { FaEye } from "react-icons/fa";
 import { GoTrash } from "react-icons/go";
@@ -175,7 +177,7 @@ const ClientPage = () => {
         setSuppression({
             open: true,
             message,
-            id: item.id,
+            id: item?.id,
         });
     };
 
@@ -193,6 +195,13 @@ const ClientPage = () => {
 
     const ShowDetail = async (id) => {
         router.visit(`/client/${id}`);
+    };
+
+    const handleEditMany = () => {
+        router.visit("/client/form/many", {
+            method: "get",
+            data: { ids: selectedIds },
+        });
     };
 
     return (
@@ -246,6 +255,8 @@ const ClientPage = () => {
                             selectedIds={selectedIds}
                             setSelectedIds={setSelectedIds}
                             selectable
+                            deleteMany={() => handleDelete(null)}
+                            editMany={handleEditMany}
                         />
                     ) : (
                         <EmptyState nom="maraîcher" search={search} />

@@ -1,5 +1,7 @@
 <?php
 
+use App\Http\Controllers\ClientController;
+use App\Http\Controllers\InstallationController;
 use App\Http\Controllers\MaintenanceController;
 use App\Http\Controllers\PaiementController;
 use App\Http\Controllers\ProfileController;
@@ -8,6 +10,7 @@ use App\Models\Client;
 use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Http;
 
 Route::get('/', function () {
     return Inertia::render('Dashboard');
@@ -31,6 +34,8 @@ Route::get('/client/{id}', function ($id) {
         'client' => $client,
     ]);
 })->middleware(['auth', 'verified'])->name('clients.detail');
+
+Route::get('/client/form/many', [ClientController::class, 'editManyForm'])->name('clients.form.many');
 
 Route::get('/pompes', function () {
     return Inertia::render('PompePage');
@@ -121,6 +126,11 @@ Route::middleware(['web', 'telegram.token'])->group(function () {
 Route::get('/pompage', function () {
     return Inertia::render('PompagePage');
 })->middleware(['auth', 'verified'])->name('pompage');
+
+Route::get('/client/form/many', [ClientController::class, 'editManyForm'])->middleware(['auth', 'verified']);
+Route::get('/installation/form/many', [InstallationController::class, 'editManyForm'])->middleware(['auth', 'verified']);
+Route::get('/maintenance/form/many', [MaintenanceController::class, 'editManyForm'])->middleware(['auth', 'verified']);
+Route::get('/paiement/form/many', [PaiementController::class, 'editManyForm'])->middleware(['auth', 'verified']);
 
 require __DIR__ . '/auth.php';
 require __DIR__ . '/api.php';

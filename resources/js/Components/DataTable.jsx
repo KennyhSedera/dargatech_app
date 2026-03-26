@@ -12,6 +12,8 @@ export default function DataTable({
     currentPage = 1,
     onPageChange = () => {},
     onItemsPerPageChange = () => {},
+    deleteMany = () => {},
+    editMany = () => {},
     masqueColumns = [],
     itemsPerPageOptions = [5, 8, 10, 25, 50, 100],
     selectedIds = [],
@@ -199,11 +201,11 @@ export default function DataTable({
     };
 
     const handleSelectAll = () => {
-        if (selectedIds.length === 0) {
+        if (selectedIds.length > 0) {
+            setSelectedIds([]);
+        } else {
             const ids = currentRows.map((e) => e.id);
             setSelectedIds(ids);
-        } else {
-            setSelectedIds([]);
         }
     };
 
@@ -219,14 +221,14 @@ export default function DataTable({
                                         onClick={handleSelectAll}
                                         className="cursor-pointer "
                                     >
-                                        {selectedIds.length === 0 ? (
-                                            <MdCheckBoxOutlineBlank
-                                                className="ml-1 text-gray-400"
+                                        {selectedIds.length > 0 ? (
+                                            <TbSquareMinusFilled
+                                                className="ml-1 text-blue-500 dark:text-white"
                                                 size={18}
                                             />
                                         ) : (
-                                            <TbSquareMinusFilled
-                                                className="ml-1 text-blue-500 dark:text-white"
+                                            <MdCheckBoxOutlineBlank
+                                                className="ml-1 text-gray-400"
                                                 size={18}
                                             />
                                         )}
@@ -270,7 +272,7 @@ export default function DataTable({
                         {currentRows.map((row, rowIndex) => (
                             <tr
                                 key={rowIndex}
-                                className={`${selectedIds.includes(row.id) && "bg-blue-100 dark:bg-blue-700"} transition-colors hover:bg-gray-50 dark:hover:bg-gray-700`}
+                                className={`${selectedIds.includes(row.id) ? "bg-blue-100 dark:bg-blue-700" : "hover:bg-gray-50 dark:hover:bg-gray-700"} transition-colors `}
                             >
                                 {selectable && (
                                     <td className="text-center">
@@ -360,67 +362,85 @@ export default function DataTable({
                     </tbody>
                 </table>
             </div>
-
-            <div className="flex flex-col items-center justify-between p-2 mt-4 space-y-3 bg-white rounded-lg shadow-sm dark:bg-gray-800 sm:flex-row sm:space-y-0">
-                <div className="text-sm text-gray-700 dark:text-gray-300">
-                    Page {currentPage} sur {totalPages} (éléments{" "}
-                    {indexOfFirstItem + 1} à{" "}
-                    {Math.min(indexOfLastItem, sortedRows.length)} sur{" "}
-                    {sortedRows.length})
-                </div>
-
+            <div className="p-3 mt-4 space-y-1 bg-white rounded-lg shadow-sm dark:bg-gray-800">
                 {selectedIds.length > 0 && (
-                    <div className="text-sm font-bold text-blue-500">
-                        {`${selectedIds.length} lignes séléctionées`}{" "}
-                        {/* <span className="text-red-500 cursor-pointer">
-                            (Supprimer)
-                        </span> */}
+                    <div className="space-y-3 ">
+                        <div className="flex flex-col items-center justify-start text-xs sm:flex-row sm:space-y-0">
+                            <div className="text-sm">
+                                {`${selectedIds.length} lignes séléctionées :`}{" "}
+                            </div>
+                            <div className="space-x-2 text-sm">
+                                <button
+                                    onClick={deleteMany}
+                                    className="p-2 text-red-500 cursor-pointer"
+                                >
+                                    Supprimer
+                                </button>
+                                ou
+                                <button
+                                    onClick={editMany}
+                                    className="p-2 text-blue-500 cursor-pointer "
+                                >
+                                    Modifier
+                                </button>
+                            </div>
+                        </div>
                     </div>
                 )}
-                <div className="flex items-center space-x-4">
-                    <div className="flex items-center space-x-2">
-                        <label
-                            htmlFor="itemsPerPage"
-                            className="text-sm font-medium text-gray-700 dark:text-gray-300"
-                        >
-                            Afficher :
-                        </label>
-                        <select
-                            id="itemsPerPage"
-                            value={itemsPerPage}
-                            onChange={(e) =>
-                                handleItemsPerPageChange(Number(e.target.value))
-                            }
-                            className="w-16 px-2 py-1 text-sm bg-transparent border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent dark:border-gray-600 dark:text-gray-200"
-                        >
-                            {itemsPerPageOptions.map((option) => (
-                                <option
-                                    className="bg-gray-200 dark:bg-gray-800"
-                                    key={option}
-                                    value={option}
-                                >
-                                    {option}
-                                </option>
-                            ))}
-                        </select>
+                <div className="flex flex-col items-center justify-between sm:flex-row sm:space-y-0">
+                    <div className="text-sm text-gray-700 dark:text-gray-300">
+                        Page {currentPage} sur {totalPages} (éléments{" "}
+                        {indexOfFirstItem + 1} à{" "}
+                        {Math.min(indexOfLastItem, sortedRows.length)} sur{" "}
+                        {sortedRows.length})
                     </div>
+                    <div className="flex items-center space-x-4">
+                        <div className="flex items-center space-x-2">
+                            <label
+                                htmlFor="itemsPerPage"
+                                className="text-sm font-medium text-gray-700 dark:text-gray-300"
+                            >
+                                Afficher :
+                            </label>
+                            <select
+                                id="itemsPerPage"
+                                value={itemsPerPage}
+                                onChange={(e) =>
+                                    handleItemsPerPageChange(
+                                        Number(e.target.value),
+                                    )
+                                }
+                                className="w-16 px-2 py-1 text-sm bg-transparent border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent dark:border-gray-600 dark:text-gray-200"
+                            >
+                                {itemsPerPageOptions.map((option) => (
+                                    <option
+                                        className="bg-gray-200 dark:bg-gray-800"
+                                        key={option}
+                                        value={option}
+                                    >
+                                        {option}
+                                    </option>
+                                ))}
+                            </select>
+                        </div>
 
-                    {/* Boutons de pagination */}
-                    <div className="flex space-x-2">
-                        <button
-                            onClick={() => paginate(currentPage - 1)}
-                            disabled={currentPage === 1}
-                            className="px-4 py-2 text-sm font-medium text-gray-700 bg-gray-200 rounded-md hover:bg-gray-300 disabled:opacity-50 disabled:cursor-not-allowed dark:text-gray-200 dark:bg-gray-700 dark:hover:bg-gray-600"
-                        >
-                            Précédent
-                        </button>
-                        <button
-                            onClick={() => paginate(currentPage + 1)}
-                            disabled={currentPage === totalPages}
-                            className="px-4 py-2 text-sm font-medium text-gray-700 bg-gray-200 rounded-md hover:bg-gray-300 disabled:opacity-50 disabled:cursor-not-allowed dark:text-gray-200 dark:bg-gray-700 dark:hover:bg-gray-600"
-                        >
-                            Suivant
-                        </button>
+                        {/* Boutons de pagination */}
+                        <div className="flex space-x-2">
+                            <button
+                                onClick={() => paginate(currentPage - 1)}
+                                disabled={currentPage === 1}
+                                className="px-4 py-2 text-sm font-medium text-gray-700 bg-gray-200 rounded-md hover:bg-gray-300 disabled:opacity-50 disabled:cursor-not-allowed dark:text-gray-200 dark:bg-gray-700 dark:hover:bg-gray-600"
+                            >
+                                Précédent
+                            </button>
+                            <button
+                                onClick={() => paginate(currentPage + 1)}
+                                disabled={currentPage === totalPages}
+                                className="px-4 py-2 text-sm font-medium text-gray-700 bg-gray-200 rounded-md hover:bg-gray-300 disabled:opacity-50 disabled:cursor-not-allowed dark:text-gray-200 dark:bg-gray-700 dark:hover:bg-gray-600"
+                            >
+                                Suivant
+                            </button>
+                        </div>
                     </div>
                 </div>
             </div>

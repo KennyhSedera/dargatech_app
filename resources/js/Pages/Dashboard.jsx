@@ -225,7 +225,7 @@ export default function Dashboard() {
                             <h3 className="text-lg font-medium">
                                 {stat.label}
                             </h3>
-                            <p className="text-3xl font-extrabold">
+                            <p className="text-xl font-semibold md:text-3xl">
                                 {stat.value}
                             </p>
                         </div>

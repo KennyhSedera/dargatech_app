@@ -274,6 +274,13 @@ const InterventionPage = () => {
         setOpen(true);
     };
 
+    const handleEditMany = () => {
+        router.visit("/maintenance/form/many", {
+            method: "get",
+            data: { ids: selectedIds },
+        });
+    };
+
     return (
         <AuthenticatedLayout setId={setid}>
             <Head title="Maintenance" />
@@ -333,6 +340,8 @@ const InterventionPage = () => {
                             selectedIds={selectedIds}
                             setSelectedIds={setSelectedIds}
                             selectable
+                            deleteMany={() => handleDelete(null)}
+                            editMany={handleEditMany}
                         />
                     ) : (
                         <EmptyState nom="intervention" search={search} />

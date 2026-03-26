@@ -28,6 +28,7 @@ class Paiement extends Model
         'nom_vendeurs',
         'select1',
         'num_tva',
+        'date_creation',
         'nom_rue_vendeur',
         'ville_vendeur',
         'pays_vendeur',

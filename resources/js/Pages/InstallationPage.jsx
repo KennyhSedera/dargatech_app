@@ -185,7 +185,7 @@ const InstallationPage = () => {
         setSuppression({
             open: true,
             message,
-            id: item.id,
+            id: item?.id,
         });
     };
 
@@ -214,6 +214,13 @@ const InstallationPage = () => {
 
     const showItem = (id) => {
         router.visit(`/installation/${id}`);
+    };
+
+    const handleEditMany = () => {
+        router.visit("/installation/form/many", {
+            method: "get",
+            data: { ids: selectedIds },
+        });
     };
 
     return (
@@ -273,6 +280,8 @@ const InstallationPage = () => {
                             selectedIds={selectedIds}
                             setSelectedIds={setSelectedIds}
                             selectable
+                            deleteMany={() => handleDelete(null)}
+                            editMany={handleEditMany}
                         />
                     ) : (
                         <EmptyState nom="installation" search={search} />

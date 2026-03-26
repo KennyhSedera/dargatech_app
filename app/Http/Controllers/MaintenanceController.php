@@ -6,6 +6,7 @@ use App\Models\Installation;
 use App\Models\Maintenance;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Log;
 use Inertia\Inertia;
 
 class MaintenanceController extends Controller
@@ -139,5 +140,63 @@ class MaintenanceController extends Controller
         return response()->json([
             'message' => 'Interventions ou maintenances supprimées avec succès.'
         ]);
+    }
+
+    public function editManyForm(Request $request)
+    {
+        $ids = $request->input('ids', []);
+
+        $data = Maintenance::whereIn('id', $ids)->get();
+
+        return Inertia::render('Form/FormMaintenanceMany', [
+            'datas' => $data,
+        ]);
+    }
+
+    public function updateMany(Request $request)
+    {
+        $validated = $request->validate([
+            'interventions' => 'required|array|min:1',
+            'interventions.*.id' => 'required|exists:maintenances,id',
+            'interventions.*.installation_id' => 'required|exists:installations,id',
+            'interventions.*.date_intervention' => 'required|string|max:255',
+            'interventions.*.type_intervention' => 'required|string|max:255',
+            'interventions.*.description_probleme' => 'nullable|string',
+        ]);
+
+        try {
+            DB::beginTransaction();
+
+            foreach ($validated['interventions'] as $interventionData) {
+                $intervention = Maintenance::find($interventionData['id']);
+
+                if (!$intervention)
+                    continue;
+
+                $intervention->update([
+                    'installation_id' => $interventionData['installation_id'],
+                    'date_intervention' => $interventionData['date_intervention'],
+                    'type_intervention' => $interventionData['type_intervention'] ?? $intervention->type_intervention,
+                    'description_probleme' => $interventionData['description_probleme'] ?? $intervention->description_probleme,
+                ]);
+            }
+
+            DB::commit();
+
+            return response()->json([
+                'message' => 'interventions mis à jour avec succès !',
+                'success' => true,
+            ]);
+
+        } catch (\Exception $e) {
+            DB::rollBack();
+            Log::error('Erreur mise à jour multiple interventions: ' . $e->getMessage());
+
+            return response()->json([
+                'message' => 'Erreur lors de la mise à jour des interventions',
+                'error' => $e->getMessage(),
+                'success' => false,
+            ], 500);
+        }
     }
 }

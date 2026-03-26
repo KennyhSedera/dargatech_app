@@ -7,6 +7,7 @@ use Illuminate\Http\Request;
 use App\Models\Localisation;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Support\Facades\DB;
+use Inertia\Inertia;
 use Log;
 
 class InstallationController extends Controller
@@ -207,5 +208,102 @@ class InstallationController extends Controller
         return response()->json([
             'message' => 'Installations supprimées avec succès.'
         ]);
+    }
+
+    public function editManyForm(Request $request)
+    {
+        $ids = $request->input('ids', []);
+
+        $data = Installation::with('localisation')->whereIn('id', $ids)->get();
+
+        return Inertia::render('Form/FormInstallationMany', [
+            'datas' => $data,
+        ]);
+    }
+
+    public function updateMany(Request $request)
+    {
+        $validated = $request->validate([
+            'installations' => 'required|array|min:1',
+            'installations.*.id' => 'required|exists:installations,id',
+            'installations.*.client_id' => 'required|numeric',
+            'installations.*.date_installation' => 'required|string|max:255',
+            'installations.*.puissance_pompe' => 'required|numeric',
+            'installations.*.profondeur_forage' => 'nullable|numeric',
+            'installations.*.code_installation' => 'nullable|string',
+            'installations.*.statuts' => 'nullable|string|max:255',
+            'installations.*.localisation_id' => 'required|numeric',
+            'installations.*.localisation' => 'nullable|string|max:255',
+            'installations.*.source_eau' => 'nullable|string|max:255',
+            'installations.*.hmt' => 'nullable|numeric',
+            'installations.*.latitude' => 'nullable|numeric',
+            'installations.*.longitude' => 'nullable|numeric',
+            'installations.*.pays' => 'nullable|string',
+            'installations.*.ville' => 'nullable|string',
+            'installations.*.debit_nominal' => 'nullable|string',
+        ]);
+
+        try {
+            DB::beginTransaction();
+
+            foreach ($validated['installations'] as $installationData) {
+                $installation = Installation::find($installationData['id']);
+
+                if (!$installation)
+                    continue;
+
+                if ($installation->localisation_id) {
+                    $localisation = Localisation::find($installation->localisation_id);
+                    if ($localisation) {
+                        $localisation->update([
+                            'latitude' => $installationData['latitude'] ?? $localisation->latitude,
+                            'longitude' => $installationData['longitude'] ?? $localisation->longitude,
+                            'pays' => $installationData['pays'] ?? $localisation->pays,
+                            'ville' => $installationData['ville'] ?? $localisation->ville,
+                        ]);
+                    }
+                } else {
+                    $localisation = Localisation::create([
+                        'latitude' => $installationData['latitude'] ?? 0,
+                        'longitude' => $installationData['longitude'] ?? 0,
+                        'pays' => $installationData['pays'] ?? 'Togo',
+                        'ville' => $installationData['ville'] ?? 'Kara',
+                    ]);
+
+                    $installationData['localisation_id'] = $localisation->id;
+                }
+
+                $installation->update([
+                    'client_id' => $installationData['client_id'] ?? $installation->client_id,
+                    'date_installation' => $installationData['date_installation'] ?? $installation->date_installation,
+                    'puissance_pompe' => $installationData['puissance_pompe'] ?? $installation->puissance_pompe,
+                    'profondeur_forage' => $installationData['profondeur_forage'] ?? $installation->profondeur_forage,
+                    'numero_serie' => $installationData['numero_serie'] ?? $installation->numero_serie,
+                    'debit_nominal' => $installationData['debit_nominal'] ?? $installation->debit_nominal,
+                    'code_installation' => $installationData['code_installation'] ?? $installation->code_installation,
+                    'statuts' => $installationData['statuts'] ?? $installation->statuts,
+                    'localisation_id' => $installationData['localisation_id'] ?? $installation->localisation_id,
+                    'source_eau' => $installationData['source_eau'] ?? $installation->source_eau,
+                    'hmt' => $installationData['hmt'] ?? $installation->hmt,
+                ]);
+            }
+
+            DB::commit();
+
+            return response()->json([
+                'message' => 'Installations mis à jour avec succès !',
+                'success' => true,
+            ]);
+
+        } catch (\Exception $e) {
+            DB::rollBack();
+            Log::error('Erreur mise à jour multiple installations: ' . $e->getMessage());
+
+            return response()->json([
+                'message' => 'Erreur lors de la mise à jour des installations',
+                'error' => $e->getMessage(),
+                'success' => false,
+            ], 500);
+        }
     }
 }

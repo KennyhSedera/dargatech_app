@@ -74,7 +74,7 @@ const DesignationComponent = ({
                 }
                 // Vérifier si le tableau d'erreurs de produits est vide
                 const hasErrors = Object.keys(newErrors.produits).some(
-                    (key) => Object.keys(newErrors.produits[key]).length > 0
+                    (key) => Object.keys(newErrors.produits[key]).length > 0,
                 );
                 if (!hasErrors) {
                     delete newErrors.produits;
@@ -92,11 +92,11 @@ const DesignationComponent = ({
 
         const totalHTGlobal = productsList.reduce(
             (sum, product) => sum + ensureNumber(product.total_ht),
-            0
+            0,
         );
         const totalTTCGlobal = productsList.reduce(
             (sum, product) => sum + ensureNumber(product.total_ttc),
-            0
+            0,
         );
         const totalTVAGlobal = productsList.reduce((sum, product) => {
             const tva = ensureNumber(product.tva);
@@ -231,7 +231,7 @@ const DesignationComponent = ({
                                         handleChange(
                                             index,
                                             "designation",
-                                            e.target.value
+                                            e.target.value,
                                         )
                                     }
                                     required
@@ -240,7 +240,7 @@ const DesignationComponent = ({
                                 <InputError
                                     message={getProductError(
                                         index,
-                                        "designation"
+                                        "designation",
                                     )}
                                     className="mt-2"
                                 />
@@ -261,7 +261,7 @@ const DesignationComponent = ({
                                         handleChange(
                                             index,
                                             "reference",
-                                            e.target.value
+                                            e.target.value,
                                         )
                                     }
                                     required
@@ -283,7 +283,7 @@ const DesignationComponent = ({
                                         handleChange(
                                             index,
                                             "quantite",
-                                            e.target.value
+                                            e.target.value,
                                         )
                                     }
                                     required
@@ -307,7 +307,7 @@ const DesignationComponent = ({
                                         handleChange(
                                             index,
                                             "unite",
-                                            e.target.value
+                                            e.target.value,
                                         )
                                     }
                                     required
@@ -329,7 +329,7 @@ const DesignationComponent = ({
                                         handleChange(
                                             index,
                                             "tva",
-                                            e.target.value
+                                            e.target.value,
                                         )
                                     }
                                     required
@@ -353,7 +353,7 @@ const DesignationComponent = ({
                                         handleChange(
                                             index,
                                             "prix_unitaire",
-                                            e.target.value
+                                            e.target.value,
                                         )
                                     }
                                     required
@@ -363,7 +363,7 @@ const DesignationComponent = ({
                                 <InputError
                                     message={getProductError(
                                         index,
-                                        "prix_unitaire"
+                                        "prix_unitaire",
                                     )}
                                     className="mt-2"
                                 />
@@ -483,7 +483,7 @@ const DesignationComponent = ({
                                         handleChange(
                                             index,
                                             "designation",
-                                            e.target.value
+                                            e.target.value,
                                         )
                                     }
                                     required
@@ -507,7 +507,7 @@ const DesignationComponent = ({
                                         handleChange(
                                             index,
                                             "reference",
-                                            e.target.value
+                                            e.target.value,
                                         )
                                     }
                                     required
@@ -524,7 +524,7 @@ const DesignationComponent = ({
                                         handleChange(
                                             index,
                                             "quantite",
-                                            e.target.value
+                                            e.target.value,
                                         )
                                     }
                                     required
@@ -543,7 +543,7 @@ const DesignationComponent = ({
                                         handleChange(
                                             index,
                                             "unite",
-                                            e.target.value
+                                            e.target.value,
                                         )
                                     }
                                     required
@@ -560,7 +560,7 @@ const DesignationComponent = ({
                                         handleChange(
                                             index,
                                             "tva",
-                                            e.target.value
+                                            e.target.value,
                                         )
                                     }
                                     required
@@ -579,7 +579,7 @@ const DesignationComponent = ({
                                         handleChange(
                                             index,
                                             "prix_unitaire",
-                                            e.target.value
+                                            e.target.value,
                                         )
                                     }
                                     required
@@ -631,7 +631,7 @@ const DesignationComponent = ({
                                 <InputError
                                     message={getProductError(
                                         index,
-                                        "designation"
+                                        "designation",
                                     )}
                                     className="mt-1"
                                 />
@@ -644,7 +644,7 @@ const DesignationComponent = ({
                                 <InputError
                                     message={getProductError(
                                         index,
-                                        "prix_unitaire"
+                                        "prix_unitaire",
                                     )}
                                     className="mt-1"
                                 />

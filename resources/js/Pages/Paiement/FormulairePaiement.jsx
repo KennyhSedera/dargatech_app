@@ -27,6 +27,7 @@ import { sendPdfByEmail } from "@/Services/envoyePdfEmail";
 import { extractDateRange } from "@/utils/getTwoDateUtils";
 import { incrementRecuNumber, logo, titre } from "@/constant";
 import { validateFormPaiement } from "./../../Components/validateForm";
+import AuthenticatedLayout from "@/Layouts/AuthenticatedLayout";
 
 const FormulairePaiement = ({ token_data, telegramback }) => {
     const { theme, setTheme } = useTheme();
@@ -142,10 +143,10 @@ const FormulairePaiement = ({ token_data, telegramback }) => {
                     localisation: el.localisation,
                     pays_acheteur: el.pays_acheteur,
                     ville_acheteur: el.ville_acheteur,
-                }))
+                })),
             );
             setTypePaiement(
-                type.type?.map((el) => ({ id: el.id, nom: el.name }))
+                type.type?.map((el) => ({ id: el.id, nom: el.name })),
             );
         } catch (error) {
             console.error("Error fetching payment types:", error);
@@ -309,7 +310,7 @@ const FormulairePaiement = ({ token_data, telegramback }) => {
                 if (item?.echeance && /^T\d+$/i.test(item.echeance)) {
                     const num = parseInt(
                         item.echeance.match(/^T(\d+)$/i)[1],
-                        10
+                        10,
                     );
                     if (!echeanceMap[num]) echeanceMap[num] = 0;
                     echeanceMap[num] +=
@@ -384,7 +385,7 @@ const FormulairePaiement = ({ token_data, telegramback }) => {
             setData("pays_acheteur", cli.pays_acheteur);
             setData(
                 "civilite_acheteur",
-                cli.genre === "Homme" ? "Mr." : "Mme."
+                cli.genre === "Homme" ? "Mr." : "Mme.",
             );
             setEmail(cli.email);
             !client_id && getLastEcheance(cli.id);
@@ -444,7 +445,7 @@ const FormulairePaiement = ({ token_data, telegramback }) => {
                                 `/api/paiement/client/${id}`,
                                 {
                                     method: "GET",
-                                }
+                                },
                             );
 
                             const json = await res.json();

@@ -161,12 +161,12 @@ const PaiementPage = () => {
     const handleDelete = (item) => {
         const message =
             selectedIds.length > 0
-                ? `Êtes-vous sûr de vouloir supprimer ces ${selectedIds.length} paiments (reçus) ?`
+                ? `Êtes-vous sûr de vouloir supprimer ces ${selectedIds.length} paiments ?`
                 : `Êtes-vous sûr de vouloir supprimer la paiement du ${item.nom} le ${item.date_paiement} ?`;
         setSuppression({
             open: true,
             message,
-            id: item.id,
+            id: item?.id,
         });
     };
 
@@ -191,6 +191,13 @@ const PaiementPage = () => {
             date_paiement: parsedate(paiementDate),
         });
         router.visit("/form/paiement?id=" + item.id);
+    };
+
+    const handleEditMany = () => {
+        router.visit("/paiement/form/many", {
+            method: "get",
+            data: { ids: selectedIds },
+        });
     };
 
     return (
@@ -273,6 +280,8 @@ const PaiementPage = () => {
                                     selectedIds={selectedIds}
                                     setSelectedIds={setSelectedIds}
                                     selectable
+                                    deleteMany={() => handleDelete(null)}
+                                    editMany={handleEditMany}
                                 />
                             ) : (
                                 <EmptyState nom="paiement" search={search} />

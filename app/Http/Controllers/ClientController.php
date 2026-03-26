@@ -6,6 +6,7 @@ use App\Models\Client;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
+use Inertia\Inertia;
 use Log;
 
 class ClientController extends Controller
@@ -181,5 +182,74 @@ class ClientController extends Controller
         return response()->json([
             'message' => 'Clients supprimées avec succès.'
         ]);
+    }
+
+    public function editManyForm(Request $request)
+    {
+        $ids = $request->input('ids', []);
+
+        $clients = Client::whereIn('id', $ids)->get();
+
+        return Inertia::render('Form/FormulaireClientMany', [
+            'clients' => $clients,
+        ]);
+    }
+
+    public function updateMany(Request $request)
+    {
+        $validated = $request->validate([
+            'clients' => 'required|array|min:1',
+            'clients.*.id' => 'required|exists:clients,id',
+            'clients.*.nom' => 'required|string|max:255',
+            'clients.*.prenom' => 'required|string|max:255',
+            'clients.*.email' => 'nullable|email|max:255',
+            'clients.*.genre' => 'nullable|in:Homme,Femme',
+            'clients.*.CIN' => 'nullable|string|max:255',
+            'clients.*.telephone' => 'required|string|max:255',
+            'clients.*.localisation' => 'nullable|string|max:255',
+            'clients.*.surface_cultivee' => 'nullable|numeric|min:0',
+            'clients.*.type_activite_agricole' => 'nullable|string|max:255',
+            'clients.*.created_via' => 'nullable|string',
+        ]);
+
+        try {
+            DB::beginTransaction();
+
+            foreach ($validated['clients'] as $clientData) {
+                $client = Client::find($clientData['id']);
+
+                if (!$client)
+                    continue;
+
+                $client->update([
+                    'nom' => $clientData['nom'],
+                    'prenom' => $clientData['prenom'],
+                    'email' => $clientData['email'] ?? $client->email,
+                    'genre' => $clientData['genre'] ?? $client->genre,
+                    'CIN' => $clientData['CIN'] ?? $client->CIN,
+                    'telephone' => $clientData['telephone'],
+                    'localisation' => $clientData['localisation'] ?? $client->localisation,
+                    'surface_cultivee' => $clientData['surface_cultivee'] ?? $client->surface_cultivee,
+                    'type_activite_agricole' => $clientData['type_activite_agricole'] ?? $client->type_activite_agricole,
+                ]);
+            }
+
+            DB::commit();
+
+            return response()->json([
+                'message' => 'Clients mis à jour avec succès !',
+                'success' => true,
+            ]);
+
+        } catch (\Exception $e) {
+            DB::rollBack();
+            Log::error('Erreur mise à jour multiple clients: ' . $e->getMessage());
+
+            return response()->json([
+                'message' => 'Erreur lors de la mise à jour des clients',
+                'error' => $e->getMessage(),
+                'success' => false,
+            ], 500);
+        }
     }
 }

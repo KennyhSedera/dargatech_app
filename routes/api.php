@@ -28,6 +28,7 @@ Route::group(['prefix' => 'api'], function () {
         Route::get('/avec/installation', [ClientController::class, 'getclientinstallation'])->name('getclientinstallation');
         Route::get('/{id}', [ClientController::class, 'show'])->name('show');
         Route::post('/', [ClientController::class, 'store'])->name('store');
+        Route::put('/update-many', [ClientController::class, 'updateMany']);
         Route::put('/{id}', [ClientController::class, 'update'])->name('update');
         Route::delete('/{id}', [ClientController::class, 'destroy'])->name('destroy');
         Route::put('/{id}/is-paid', [ClientController::class, 'updateIsPaid'])->name('update-is-paid');
@@ -38,6 +39,7 @@ Route::group(['prefix' => 'api'], function () {
         Route::get('/', [MaintenanceController::class, 'index'])->name('index');
         Route::get('/{id}', [MaintenanceController::class, 'show'])->name('show');
         Route::post('/', [MaintenanceController::class, 'store'])->name('store');
+        Route::put('/update-many', [MaintenanceController::class, 'updateMany']);
         Route::put('/{id}', [MaintenanceController::class, 'update'])->name('update');
         Route::delete('/{id}', [MaintenanceController::class, 'destroy'])->name('destroy');
         Route::get('/installation/{id}', [MaintenanceController::class, 'findMaintenanceByInstallation'])->name('findMaintenanceByInstallation');
@@ -61,6 +63,7 @@ Route::group(['prefix' => 'api'], function () {
         Route::get('/en/panne', [InstallationController::class, 'getInstallation'])->name('getInstallation');
         Route::get('/{id}', [InstallationController::class, 'show'])->name('show');
         Route::post('/', [InstallationController::class, 'store'])->name('store');
+        Route::put('/update-many', [InstallationController::class, 'updateMany']);
         Route::put('/{id}', [InstallationController::class, 'update'])->name('update');
         Route::delete('/{id}', [InstallationController::class, 'destroy'])->name('destroy');
         Route::delete('/delete/destroy-many', [InstallationController::class, 'destroyMany'])->name('destroy-many');
@@ -87,6 +90,7 @@ Route::group(['prefix' => 'api'], function () {
         Route::get('/{id}', [PaiementController::class, 'show'])->name('show');
         Route::get('/last/id', [PaiementController::class, 'findLastPaiement'])->name('findLastPaiement');
         Route::post('/', [PaiementController::class, 'store'])->name('store');
+        Route::put('/update-many', [PaiementController::class, 'updateMany'])->name('update-many');
         Route::put('/{id}', [PaiementController::class, 'update'])->name('update');
         Route::delete('/{id}', [PaiementController::class, 'destroy'])->name('destroy');
         Route::get('/client/{id}', [ClientController::class, 'updateIsPaid'])->name('client-is-paid');
@@ -162,5 +166,4 @@ Route::group(['prefix' => 'api'], function () {
     Route::post('/installations/{id}/calcul-personnalise', [PompageController::class, 'calculPersonnalise']);
     Route::put('/installations/{id}/mise-a-jour-cumuls', [PompageController::class, 'miseAJourCumuls']);
     Route::get('/installations/calcul-tous', [PompageController::class, 'calculTous']);
-
 });

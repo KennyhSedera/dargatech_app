@@ -73,7 +73,7 @@ const Technicien = () => {
                 el?.telegram_username
                     ?.toLowerCase()
                     .includes(value.toLowerCase()) ||
-                el?.adress?.toLowerCase().includes(value.toLowerCase())
+                el?.adress?.toLowerCase().includes(value.toLowerCase()),
         );
 
         setFilteredData(data);
@@ -104,7 +104,6 @@ const Technicien = () => {
         setCurrentPage(1);
     };
 
-    // Pagination
     const indexOfLastItem = currentPage * itemsPerPage;
     const indexOfFirstItem = indexOfLastItem - itemsPerPage;
     const currentItems = filteredData.slice(indexOfFirstItem, indexOfLastItem);
@@ -113,7 +112,6 @@ const Technicien = () => {
     const pageNumbers = [];
     const maxPagesToShow = 5;
 
-    // Calculate start and end page numbers
     let startPage = Math.max(1, currentPage - Math.floor(maxPagesToShow / 2));
     let endPage = startPage + maxPagesToShow - 1;
 
@@ -178,7 +176,6 @@ const Technicien = () => {
                                 ))}
                             </div>
 
-                            {/* Enhanced Pagination Controls */}
                             {totalPages > 1 && (
                                 <div className="flex justify-center mt-8">
                                     <nav className="flex items-center px-2 py-2 bg-white border border-gray-200 rounded-lg shadow-sm">
@@ -198,7 +195,7 @@ const Technicien = () => {
                                         <button
                                             onClick={() =>
                                                 setCurrentPage((prev) =>
-                                                    Math.max(prev - 1, 1)
+                                                    Math.max(prev - 1, 1),
                                                 )
                                             }
                                             disabled={currentPage === 1}
@@ -212,7 +209,6 @@ const Technicien = () => {
                                             &lsaquo;
                                         </button>
 
-                                        {/* Page numbers */}
                                         {pageNumbers.map((number) => (
                                             <button
                                                 key={number}
@@ -234,8 +230,8 @@ const Technicien = () => {
                                                 setCurrentPage((prev) =>
                                                     Math.min(
                                                         prev + 1,
-                                                        totalPages
-                                                    )
+                                                        totalPages,
+                                                    ),
                                                 )
                                             }
                                             disabled={
